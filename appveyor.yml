@@ -24,7 +24,7 @@ install:
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
   - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
   - "%PYTHON%\\Scripts\\pip install pyquickhelper --no-deps"
-  - "%PYTHON%\\Scripts\\pip install wcwidth"
+  - "%PYTHON%\\Scripts\\pip install wcwidth guzzle_sphinx_theme"
   - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy"
   - "set PATH=%PATH%;C:\\projects\\jyquickhelper\\build\\update_modules\\Graphviz\\bin"
 build: off

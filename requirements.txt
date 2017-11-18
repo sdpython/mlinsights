@@ -5,6 +5,7 @@ coverage
 Cython
 docformatter
 ipython>=5.0.0
+guzzle_sphinx_theme
 jupyter
 jupyter-client
 jupyter_sphinx

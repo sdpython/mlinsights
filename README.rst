@@ -8,7 +8,7 @@ README
     :target: https://travis-ci.org/sdpython/mlinsights
     :alt: Build status
 
-.. image:: https://ci.appveyor.com/api/projects/status/itkrtmperlhjm4xw?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/uj6tq445k3na7hs9?svg=true
     :target: https://ci.appveyor.com/project/sdpython/mlinsights
     :alt: Build Status Windows
 
