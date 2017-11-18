@@ -46,6 +46,9 @@ mlinsights
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
+.. image:: phdoc_static/project_ico.png
+    :width: 20
+
 *mlinsights* implements function to get insights on machine learned
 models.
 
