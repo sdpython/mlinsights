@@ -45,7 +45,8 @@ README
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
-*mlinsights* implements a REST API for machine learned models.
+*mlinsights* implements a couple of ways to 
+dig into machine learned models to get insights.
 
 *not ready*
 

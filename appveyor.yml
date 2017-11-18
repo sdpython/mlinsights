@@ -31,5 +31,10 @@ build: off
 
 before_test:
   - "%PYTHON%\\python -u setup.py build_ext --inplace"
+
 test_script:
   - "%PYTHON%\\python -u setup.py unittests"
+
+artifacts:
+  - path: dist
+    name: mlinsights
