@@ -1,0 +1,11 @@
+
+.. blogpost::
+    :title: Function to get insights on machine learned models
+    :keywords: reference, blog, post
+    :date: 2017-11-18
+    :categories: blog
+
+    Machine learned models are black boxes.
+    The modules tries to implements some functions
+    to get insights on machine learned models.
+

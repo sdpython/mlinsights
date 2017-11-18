@@ -1,0 +1,38 @@
+.admonition-mathdef {
+	color: #424242;
+	background-color: #F9F9F9;
+	font-size: 14px;
+}
+.admonition-todoext {
+	color: #424242;
+	background-color: #F9F9B9;
+	font-size: 14px;
+}
+.admonition-faqref {
+	color: #424242;
+	background-color: #F9F9B9;
+	font-size: 14px;
+}
+.admonition-exref {
+	color: #424242;
+	background-color: #F9F9B9;
+	font-size: 14px;
+}
+.admonition-nbref {
+	color: #424242;
+	background-color: #F9F9B9;
+	font-size: 14px;
+}
+.admonition-blocref {
+	color: #424242;
+	background-color: #F9F9B9;
+	font-size: 14px;
+}
+
+.wy-nav-top {
+	background-color: #ADD8E6;
+}
+
+.wy-side-nav-search {
+	background-color: #ADD8E6;
+}

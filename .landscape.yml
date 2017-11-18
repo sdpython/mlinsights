@@ -1,0 +1,16 @@
+doc-warnings: yes
+test-warnings: no
+strictness: veryhigh
+max-line-length: 120
+autodetect: yes
+requirements:
+    - requirement.txt
+ignore-paths:
+    - _unittests
+    - _doc
+    - src
+    - dist
+    - build
+ignore-patterns:
+    - .*Parser\.py$
+    - .*Lexer\.py$
