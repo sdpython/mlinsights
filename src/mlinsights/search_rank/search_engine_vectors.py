@@ -77,6 +77,7 @@ class SearchEngineVectors:
         self._prepare_fit(data=data, features=features, metadata=metadata)
         self.knn_ = NearestNeighbors(**self.pknn)
         self.knn_.fit(self.features_)
+        return self
 
     def _first_pass(self, X, n_neighbors=None):
         """
@@ -134,6 +135,10 @@ class SearchEngineVectors:
             rind = [self.index_[i] for i in ind]
         if self.metadata_ is None:
             rmeta = None
-        else:
+        elif hasattr(self.metadata_, 'iloc'):
             rmeta = self.metadata_.iloc[ind, :]
+        elif len(self.metadata_.shape) == 1:
+            rmeta = self.metadata_[ind]
+        else:
+            rmeta = self.metadata_[ind, :]
         return score, rind, rmeta

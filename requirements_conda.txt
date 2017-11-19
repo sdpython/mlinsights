@@ -7,6 +7,7 @@ ipython
 jupyter
 jupyter_client
 jupyter_core
+keras
 matplotlib
 nbformat
 nbpresent
@@ -25,5 +26,6 @@ seaborn
 setuptools
 Sphinx
 sympy
+tensorflow
 toolz
 xarray

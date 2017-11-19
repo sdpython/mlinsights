@@ -20,18 +20,22 @@ class SearchEnginePredictions(SearchEngineVectors):
     See function @see fn model_featurizer.
     """
 
-    def __init__(self, fct, **knn):
+    def __init__(self, fct, fct_params=None, **knn):
         """
         @param      fct         function *f* applied before looking for neighbors,
                                 it can also be a machine learned model
+        @param      fct_params  parameters sent to function @see fn model_featurizer
         @param      pknn        list of parameters, see :epkg:`sklearn:neighborsNearestNeighbors`
         """
         super().__init__(**knn)
-        if callable(fct):
+        self._fct_params = fct_params
+        self._fct_init = fct
+        if callable(fct) and not hasattr(fct, 'predict'):
             self.fct = fct
         else:
-            self.fct = model_featurizer(fct)
-        self._fct_init = fct
+            if fct_params is None:
+                fct_params = {}
+            self.fct = model_featurizer(fct, **fct_params)
 
     def __repr__(self):
         """
@@ -42,6 +46,7 @@ class SearchEnginePredictions(SearchEngineVectors):
         else:
             pp = {}
         pp['fct'] = self._fct_init
+        pp['fct_params'] = self._fct_params
         return format_function_call(self.__class__.__name__, pp)
 
     def fit(self, data=None, features=None, metadata=None):
@@ -60,9 +65,10 @@ class SearchEnginePredictions(SearchEngineVectors):
         if isinstance(self.features_, list):
             raise TypeError(
                 "features_ cannot be a list when training the model.")
-        self.features_ = self.fct(self.features_)
+        self.features_ = self.fct(self.features_, True)
         self.knn_ = NearestNeighbors(**self.pknn)
         self.knn_.fit(self.features_)
+        return self
 
     def kneighbors(self, X, n_neighbors=None):
         """
@@ -73,9 +79,9 @@ class SearchEnginePredictions(SearchEngineVectors):
 
         *score* is an array representing the lengths to points,
         *ind* contains the indices of the nearest points in the population matrix,
-        *meta* is the metadata
+        *meta* is the metadata.
         """
-        xp = self.fct(X)
+        xp = self.fct(X, False)
         if len(xp.shape) == 1:
             xp = xp.reshape((1, len(xp)))
         return super().kneighbors(xp, n_neighbors=n_neighbors)
