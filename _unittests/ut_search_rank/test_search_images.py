@@ -106,7 +106,7 @@ class TestSearchPredictionsImages(ExtTestCase):
         self.assertIsInstance(meta, (numpy.ndarray, pandas.DataFrame))
         self.assertEqual(meta.shape, (5,))
         self.assertEqual(meta[0].replace('\\', '/'),
-                         'simages/cat-1192026__480.jpg')
+                         'simages/cat-1151519__480.jpg')
 
         # neighbors 2
         img = load_img(os.path.join(temp, 'simages', 'cat-2603300__480.jpg'),
