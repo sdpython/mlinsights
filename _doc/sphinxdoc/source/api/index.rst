@@ -4,4 +4,4 @@ API
 
 .. toctree::
 
-    rdata
+    search_rank

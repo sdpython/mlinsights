@@ -235,6 +235,6 @@ if not r:
         package_dir=package_dir,
         package_data=package_data,
         # data_files=data_files,
-        install_requires=['scikit-learn'],
+        install_requires=['scikit-learn', 'pandas'],
         # include_package_data=True,
     )

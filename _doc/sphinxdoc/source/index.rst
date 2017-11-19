@@ -19,7 +19,6 @@ models.
     blog/blogindex
     index_modules
 
-
 ::
 
     import mlinsights
@@ -29,7 +28,6 @@ models.
 `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
 :ref:`l-README`,
 :ref:`blog <ap-main-0>`
-
 
 .. image:: https://travis-ci.org/sdpython/mlinsights.svg?branch=master
     :target: https://travis-ci.org/sdpython/mlinsights
