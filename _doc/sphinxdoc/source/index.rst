@@ -3,7 +3,33 @@
              :height: 20
 
 mlinsights
-==============
+==========
+
+*mlinsights* implements function to get insights on machine learned
+models.
+
+.. toctree::
+    :maxdepth: 1
+
+    tutorial/index
+    api/index
+    i_index
+    i_ex
+    all_notebooks
+    blog/blogindex
+    index_modules
+
+
+::
+
+    import mlinsights
+    ...
+
+**Links:** `github <https://github.com/sdpython/mlinsights/>`_,
+`documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
+:ref:`l-README`,
+:ref:`blog <ap-main-0>`
+
 
 .. image:: https://travis-ci.org/sdpython/mlinsights.svg?branch=master
     :target: https://travis-ci.org/sdpython/mlinsights
@@ -45,35 +71,6 @@ mlinsights
 .. image:: nbcov.png
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
-
-.. image:: phdoc_static/project_ico.png
-    :width: 20
-
-*mlinsights* implements function to get insights on machine learned
-models.
-
-.. toctree::
-    :maxdepth: 1
-
-    tutorial/index
-    api/index
-    i_index
-    i_ex
-    all_notebooks
-    blog/blogindex
-    index_modules
-
-You can start the web application by running:
-
-::
-
-    import mlinsights
-    ...
-
-**Links:** `github <https://github.com/sdpython/mlinsights/>`_,
-`documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
-:ref:`l-README`,
-:ref:`blog <ap-main-0>`
 
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |

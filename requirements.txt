@@ -28,7 +28,7 @@ pycodestyle>=2.0.0
 pycryptodomex
 pydocstyle
 pyflakes
-pyquickhelper>=1.5.2215
+pyquickhelper>=1.5.2259
 python-jenkins
 PyYAML
 scikit-learn
