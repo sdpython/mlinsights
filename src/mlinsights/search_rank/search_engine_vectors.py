@@ -9,14 +9,20 @@ import pandas
 import numpy
 
 
-class SearchEngineExamples:
+class SearchEngineVectors:
     """
     Implements a kind of local search engine which
-    looks for similar results based on the output
-    of a function such as the predictions of the machine
-    leanrned model. The class is using
+    looks for similar results assuming they are vectors.
+    The class is using
     :epkg:`sklearn:neighborsNearestNeighbors` to find
-    the nearest neighbors of an example.
+    the nearest neighbors of a vector and follows
+    the same API.
+    The class populates members:
+
+    * ``features_``: vectors used to compute the neighbors
+    * ``index_``: index of each vectors, can be None
+    * ``knn_``: parameters for the :epkg:`sklearn:neighborsNearestNeighbors`
+    * ``metadata_``: metadata, can be None
     """
 
     def __init__(self, **pknn):
@@ -31,10 +37,9 @@ class SearchEngineExamples:
         """
         return format_function_call(self.__class__.__name__, self.pknn)
 
-    def fit(self, data=None, features=None, metadata=None):
+    def _prepare_fit(self, data=None, features=None, metadata=None):
         """
-        Every observation is described with an id (or index),
-        a list of features, a list of metadata.
+        Stores data in the class itself.
 
         @param      data        a dataframe or None if the
                                 the features and the metadata
@@ -47,18 +52,31 @@ class SearchEngineExamples:
         if data is None:
             if not isinstance(features, numpy.ndarray):
                 raise TypeError("features must be an array if data is None")
-            self.features = features
-            self.metadata = metadata
-            self.index = list(range(features.shape[0]))
+            self.features_ = features
+            self.metadata_ = metadata
+            self.index_ = None
         else:
             if not isinstance(data, pandas.DataFrame):
                 raise ValueError("data should be a dataframe")
-            self.index = list(range(data.shape[0]))
-            self.features = data[features]
-            self.metadata = data[metadata] if metadata else None
+            self.index_ = None
+            self.features_ = data[features]
+            self.metadata_ = data[metadata] if metadata else None
 
+    def fit(self, data=None, features=None, metadata=None):
+        """
+        Every vector comes with a list of metadata.
+
+        @param      data        a dataframe or None if the
+                                the features and the metadata
+                                are specified with an array and a
+                                dictionary
+        @param      features    features columns  or
+                                or an array
+        @param      metadata    data
+        """
+        self._prepare_fit(data=data, features=features, metadata=metadata)
         self.knn_ = NearestNeighbors(**self.pknn)
-        self.knn_.fit(self.features)
+        self.knn_.fit(self.features_)
 
     def _first_pass(self, X, n_neighbors=None):
         """
@@ -110,7 +128,12 @@ class SearchEngineExamples:
         """
         dist, ind = self._first_pass(X, n_neighbors=n_neighbors)
         score, ind = self._second_pass(X, dist, ind)
-        rind = [self.index[i] for i in ind]
-        rmeta = self.metadata.iloc[ind,
-                                   :] if self.metadata is not None else None
+        if self.index_ is None:
+            rind = ind
+        else:
+            rind = [self.index_[i] for i in ind]
+        if self.metadata_ is None:
+            rmeta = None
+        else:
+            rmeta = self.metadata_.iloc[ind, :]
         return score, rind, rmeta

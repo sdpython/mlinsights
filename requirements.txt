@@ -5,12 +5,11 @@ jyquickhelper
 openpyxl
 pycodestyle>=2.0.0
 pydocstyle
-pyquickhelper>=1.5.2259
+pyquickhelper>1.5.2259
 sphinx-bootstrap-theme
 sphinx-gallery
 sphinxcontrib-images
 sphinxcontrib-imagesvg
-sphinxcontrib-jsdemo
 sphinxjp.themes.basicstrap
 sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp
