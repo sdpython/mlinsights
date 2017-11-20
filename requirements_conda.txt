@@ -3,6 +3,7 @@ bokeh
 Cython
 dask
 datashape
+h5py
 ipython
 jupyter
 jupyter_client
