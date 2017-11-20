@@ -25,7 +25,7 @@ install:
   - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
   - "%PYTHON%\\Scripts\\pip install pyquickhelper --no-deps"
   - "%PYTHON%\\Scripts\\pip install wcwidth guzzle_sphinx_theme"
-  - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy tensorflow protobuf"
+  - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy tensorflow protobuf h5py"
   - "%PYTHON%\\Scripts\\pip install keras"
   - "set PATH=%PATH%;C:\\projects\\jyquickhelper\\build\\update_modules\\Graphviz\\bin"
 build: off
