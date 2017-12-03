@@ -3,7 +3,6 @@
 @brief Implements a way to get close examples based
 on the output of a machine learned model.
 """
-from sklearn.neighbors import NearestNeighbors
 from ..featurizers import model_featurizer
 from ..helpers.parameters import format_function_call
 from .search_engine_vectors import SearchEngineVectors
@@ -57,18 +56,24 @@ class SearchEnginePredictions(SearchEngineVectors):
                                 the features and the metadata
                                 are specified with an array and a
                                 dictionary
-        @param      features    features columns  or
-                                or an array
+        @param      features    features columns or an array
         @param      metadata    data
         """
-        self._prepare_fit(data=data, features=features, metadata=metadata)
-        if isinstance(self.features_, list):
-            raise TypeError(
-                "features_ cannot be a list when training the model.")
-        self.features_ = self.fct(self.features_, True)
-        self.knn_ = NearestNeighbors(**self.pknn)
-        self.knn_.fit(self.features_)
-        return self
+        try:
+            iter(data)
+            iterate = True
+        except TypeError:
+            iterate = False
+        if iterate:
+            self._prepare_fit(data=data, features=features,
+                              metadata=metadata, transform=self.fct)
+        else:
+            self._prepare_fit(data=data, features=features, metadata=metadata)
+            if isinstance(self.features_, list):
+                raise TypeError(
+                    "features_ cannot be a list when training the model.")
+            self.features_ = self.fct(self.features_, True)
+        return self._fit_knn()
 
     def kneighbors(self, X, n_neighbors=None):
         """
