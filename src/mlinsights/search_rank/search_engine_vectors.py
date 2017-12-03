@@ -202,6 +202,7 @@ class SearchEngineVectors:
 
         The function relies on function
         `to_zip <http://www.xavierdupre.fr/app/pandas_streaming/helpsphinx/pandas_streaming/df/dataframe_io.html#pandas_streaming.df.dataframe_io.to_zip>`_.
+        It only works for :epkg:`Python` 3.6+.
         """
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, 'w')
@@ -227,6 +228,8 @@ class SearchEngineVectors:
         @param      zname       a filename in th zipfile
         @param      kwargs      parameters for :epkg:`pandas:read_csv`
         @return                 @see cl SearchEngineVectors
+
+        It only works for :epkg:`Python` 3.6+.
         """
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, 'r')
