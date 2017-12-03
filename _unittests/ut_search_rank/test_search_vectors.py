@@ -28,7 +28,7 @@ except ImportError:
 
 
 try:
-    import pandas_streaming as skip_
+    import pandas_streaming as skip__
 except ImportError:
     path = os.path.normpath(
         os.path.abspath(
@@ -41,7 +41,7 @@ except ImportError:
                 "src")))
     if path not in sys.path:
         sys.path.append(path)
-    import pandas_streaming as skip_
+    import pandas_streaming as skip__
 
 
 try:
