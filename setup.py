@@ -236,6 +236,7 @@ if not r:
         package_data=package_data,
         # data_files=data_files,
         install_requires=['scikit-learn', 'pandas',
-                          'pillow', 'matplotlib', 'h5py'],
+                          'pillow', 'matplotlib', 'h5py',
+                          'pandas_streaming'],
         # include_package_data=True,
     )
