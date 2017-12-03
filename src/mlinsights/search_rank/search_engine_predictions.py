@@ -59,11 +59,7 @@ class SearchEnginePredictions(SearchEngineVectors):
         @param      features    features columns or an array
         @param      metadata    data
         """
-        try:
-            iter(data)
-            iterate = True
-        except TypeError:
-            iterate = False
+        iterate = self._is_iterable(data)
         if iterate:
             self._prepare_fit(data=data, features=features,
                               metadata=metadata, transform=self.fct)

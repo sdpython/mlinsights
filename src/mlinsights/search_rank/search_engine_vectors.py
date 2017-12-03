@@ -3,10 +3,13 @@
 @brief Implements a way to get close examples based
 on the output of a machine learned model.
 """
-from ..helpers.parameters import format_function_call
 from sklearn.neighbors import NearestNeighbors
+from pandas_streaming.df import to_zip, read_zip
 import pandas
 import numpy
+import json
+import zipfile
+from ..helpers.parameters import format_function_call
 
 
 class SearchEngineVectors:
@@ -20,7 +23,6 @@ class SearchEngineVectors:
     The class populates members:
 
     * ``features_``: vectors used to compute the neighbors
-    * ``index_``: index of each vectors, can be None
     * ``knn_``: parameters for the :epkg:`sklearn:neighborsNearestNeighbors`
     * ``metadata_``: metadata, can be None
     """
@@ -36,6 +38,16 @@ class SearchEngineVectors:
         usual
         """
         return format_function_call(self.__class__.__name__, self.pknn)
+
+    def _is_iterable(self, data):
+        """
+        Tells if an objet is an iterator or not.
+        """
+        try:
+            iter(data)
+            return not isinstance(data, (list, tuple, pandas.DataFrame, numpy.ndarray))
+        except TypeError:
+            return False
 
     def _prepare_fit(self, data=None, features=None, metadata=None, transform=None):
         """
@@ -55,11 +67,7 @@ class SearchEngineVectors:
                 # Many tells is the functions receives many vectors
                 # or just one (many=False).
         """
-        try:
-            iter(data)
-            iterate = True
-        except TypeError:
-            iterate = False
+        iterate = self._is_iterable(data)
         if iterate:
             if data is None:
                 raise ValueError("iterator is True, data must be specified.")
@@ -89,17 +97,14 @@ class SearchEngineVectors:
                     arrays.append(transform(arr, False))
             self.features_ = numpy.vstack(arrays)
             self.metadata_ = pandas.DataFrame(metas)
-            self.index_ = None
         elif data is None:
             if not isinstance(features, numpy.ndarray):
                 raise TypeError("features must be an array if data is None")
             self.features_ = features
             self.metadata_ = metadata
-            self.index_ = None
         else:
             if not isinstance(data, pandas.DataFrame):
                 raise ValueError("data should be a dataframe")
-            self.index_ = None
             self.features_ = data[features]
             self.metadata_ = data[metadata] if metadata else None
 
@@ -175,10 +180,7 @@ class SearchEngineVectors:
         """
         dist, ind = self._first_pass(X, n_neighbors=n_neighbors)
         score, ind = self._second_pass(X, dist, ind)
-        if self.index_ is None:
-            rind = ind
-        else:
-            rind = [self.index_[i] for i in ind]
+        rind = ind
         if self.metadata_ is None:
             rmeta = None
         elif hasattr(self.metadata_, 'iloc'):
@@ -188,3 +190,57 @@ class SearchEngineVectors:
         else:
             rmeta = self.metadata_[ind, :]
         return score, rind, rmeta
+
+    def to_zip(self, zipfilename, **kwargs):
+        """
+        Saves the features and the metadata into a zipfile.
+        The function does not save the *k-nn*.
+
+        @param      zipfilename a :epkg:`*py:zipfile:ZipFile` or a filename
+        @param      kwargs      parameters for :epkg:`pandas:to_csv` (for the metadata)
+        @return                 zipfilename
+
+        The function relies on function
+        `to_zip <http://www.xavierdupre.fr/app/pandas_streaming/helpsphinx/pandas_streaming/df/dataframe_io.html#pandas_streaming.df.dataframe_io.to_zip>`_.
+        """
+        if isinstance(zipfilename, str):
+            zf = zipfile.ZipFile(zipfilename, 'w')
+            close = True
+        else:
+            zf = zipfilename
+            close = False
+        if 'index' is not kwargs:
+            kwargs['index'] = False
+        to_zip(self.features_, zf, 'SearchEngineVectors-features.npy')
+        to_zip(self.metadata_, zf, 'SearchEngineVectors-metadata.csv', **kwargs)
+        js = json.dumps(self.pknn)
+        zf.writestr('SearchEngineVectors-knn.json', js)
+        if close:
+            zf.close()
+
+    @staticmethod
+    def read_zip(zipfilename, **kwargs):
+        """
+        Restore the features, the metadata to a @see cl SearchEngineVectors.
+
+        @param      zipfilename a :epkg:`*py:zipfile:ZipFile` or a filename
+        @param      zname       a filename in th zipfile
+        @param      kwargs      parameters for :epkg:`pandas:read_csv`
+        @return                 @see cl SearchEngineVectors
+        """
+        if isinstance(zipfilename, str):
+            zf = zipfile.ZipFile(zipfilename, 'r')
+            close = True
+        else:
+            zf = zipfilename
+            close = False
+        feat = read_zip(zf, 'SearchEngineVectors-features.npy')
+        meta = read_zip(zf, 'SearchEngineVectors-metadata.csv', **kwargs)
+        js = zf.read('SearchEngineVectors-knn.json')
+        knn = json.loads(js)
+        if close:
+            zf.close()
+
+        obj = SearchEngineVectors(**knn)
+        obj.fit(features=feat, metadata=meta)
+        return obj
