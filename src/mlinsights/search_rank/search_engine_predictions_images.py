@@ -3,7 +3,6 @@
 @brief Implements a way to get close examples based
 on the output of a machine learned model.
 """
-import numpy
 from keras.preprocessing.image import Iterator
 from .search_engine_predictions import SearchEnginePredictions
 
@@ -17,15 +16,21 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     :ref:`searchimagesrst`.
     """
 
-    def fit(self, iter_images, n=None, fLOG=None):
+    def _prepare_fit(self, data=None, features=None, metadata=None, transform=None, n=None, fLOG=None):
         """
-        Processes images through the model and fits a *k-nn*.
+        Stores data in the class itself.
 
-        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/master/keras/preprocessing/image.py#L719>`_
+        @param      data        a dataframe or None if the
+                                the features and the metadata
+                                are specified with an array and a
+                                dictionary
+        @param      features    features columns or an array
+        @param      metadata    data
+        @param      transform   transform each vector before using it
         @param      n           takes *n* images (or ``len(iter_images)``)
         @param      fLOG        logging function
-        @param      kwimg       parameters used to preprocess the images
         """
+        iter_images = data
         if not isinstance(iter_images, Iterator):
             raise NotImplementedError(
                 "iter_images must be a keras Iterator. No other option implemented.")
@@ -42,16 +47,27 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         def get_current_index(flow):
             return flow.index_array[(flow.batch_index + flow.n - 1) % flow.n]
 
-        X = []
-        for i, im in zip(range(n), iter_images):
-            X.append(
-                (im[0], iter_images.filenames[get_current_index(iter_images)]))
-            if fLOG and len(X) % 10000 == 0:
-                fLOG(
-                    '[SearchEnginePredictionImages.fit] i={}/{} - {}'.format(i, n, X[-1][1]))
-        meta = numpy.array([_[1] for _ in X])
-        X = numpy.stack([_[0] for _ in X])
-        return super().fit(features=X, metadata=meta)
+        def iterator_feature_meta():
+            for i, im in zip(range(n), iter_images):
+                name = iter_images.filenames[get_current_index(iter_images)]
+                yield im[0], dict(name=name)
+                if fLOG and i % 10000 == 0:
+                    fLOG(
+                        '[SearchEnginePredictionImages.fit] i={}/{} - {}'.format(i, n, name))
+
+        super()._prepare_fit(data=iterator_feature_meta(), transform=transform)
+
+    def fit(self, iter_images, n=None, fLOG=None):
+        """
+        Processes images through the model and fits a *k-nn*.
+
+        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/master/keras/preprocessing/image.py#L719>`_
+        @param      n           takes *n* images (or ``len(iter_images)``)
+        @param      fLOG        logging function
+        @param      kwimg       parameters used to preprocess the images
+        """
+        self._prepare_fit(data=iter_images, transform=self.fct, n=n, fLOG=fLOG)
+        return self._fit_knn()
 
     def kneighbors(self, iter_images, n_neighbors=None):
         """

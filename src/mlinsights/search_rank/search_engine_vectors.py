@@ -37,7 +37,7 @@ class SearchEngineVectors:
         """
         return format_function_call(self.__class__.__name__, self.pknn)
 
-    def _prepare_fit(self, data=None, features=None, metadata=None):
+    def _prepare_fit(self, data=None, features=None, metadata=None, transform=None):
         """
         Stores data in the class itself.
 
@@ -45,11 +45,52 @@ class SearchEngineVectors:
                                 the features and the metadata
                                 are specified with an array and a
                                 dictionary
-        @param      features    features columns  or
-                                or an array
+        @param      features    features columns or an array
         @param      metadata    data
+        @param      transform   transform each vector before using it
+
+        *transform* is a function whose signature::
+
+            def transform(vec, many):
+                # Many tells is the functions receives many vectors
+                # or just one (many=False).
         """
-        if data is None:
+        try:
+            iter(data)
+            iterate = True
+        except TypeError:
+            iterate = False
+        if iterate:
+            if data is None:
+                raise ValueError("iterator is True, data must be specified.")
+            if features is not None:
+                raise ValueError("iterator is True, features must be None.")
+            if metadata is not None:
+                raise ValueError("iterator is True, metadata must be None.")
+            metas = []
+            arrays = []
+            for row in data:
+                if not isinstance(row, tuple):
+                    raise TypeError('data must be an iterator on tuple')
+                if len(row) != 2:
+                    raise ValueError(
+                        'data must be an iterator on tuple on two elements')
+                arr, meta = row
+                if not isinstance(arr, numpy.ndarray):
+                    raise TypeError(
+                        'First element of the tuple must be a numpy array')
+                if not isinstance(meta, dict):
+                    raise TypeError(
+                        'Second element of the tuple must be a dictionary')
+                metas.append(meta)
+                if transform is None:
+                    arrays.append(arr)
+                else:
+                    arrays.append(transform(arr, False))
+            self.features_ = numpy.vstack(arrays)
+            self.metadata_ = pandas.DataFrame(metas)
+            self.index_ = None
+        elif data is None:
             if not isinstance(features, numpy.ndarray):
                 raise TypeError("features must be an array if data is None")
             self.features_ = features
@@ -70,11 +111,16 @@ class SearchEngineVectors:
                                 the features and the metadata
                                 are specified with an array and a
                                 dictionary
-        @param      features    features columns  or
-                                or an array
+        @param      features    features columns or an array
         @param      metadata    data
         """
         self._prepare_fit(data=data, features=features, metadata=metadata)
+        return self._fit_knn()
+
+    def _fit_knn(self):
+        """
+        Fits the nearest neighbors.
+        """
         self.knn_ = NearestNeighbors(**self.pknn)
         self.knn_.fit(self.features_)
         return self
