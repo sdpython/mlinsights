@@ -17,12 +17,13 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     :ref:`searchimagesrst`.
     """
 
-    def fit(self, iter_images, n=None):
+    def fit(self, iter_images, n=None, fLOG=None):
         """
         Processes images through the model and fits a *k-nn*.
 
         @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/master/keras/preprocessing/image.py#L719>`_
         @param      n           takes *n* images (or ``len(iter_images)``)
+        @param      fLOG        logging function
         @param      kwimg       parameters used to preprocess the images
         """
         if not isinstance(iter_images, Iterator):
@@ -41,8 +42,13 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         def get_current_index(flow):
             return flow.index_array[(flow.batch_index + flow.n - 1) % flow.n]
 
-        X = [(im[0], iter_images.filenames[get_current_index(iter_images)])
-             for i, im in zip(range(n), iter_images)]
+        X = []
+        for i, im in zip(range(n), iter_images):
+            X.append(
+                (im[0], iter_images.filenames[get_current_index(iter_images)]))
+            if fLOG and len(X) % 10000 == 0:
+                fLOG(
+                    '[SearchEnginePredictionImages.fit] i={}/{} - {}'.format(i, n, X[-1][1]))
         meta = numpy.array([_[1] for _ in X])
         X = numpy.stack([_[0] for _ in X])
         return super().fit(features=X, metadata=meta)

@@ -89,7 +89,7 @@ class TestSearchPredictionsImages(ExtTestCase):
         self.assertIn("SearchEnginePredictionImages", r)
 
         # fit
-        se.fit(iterim)
+        se.fit(iterim, fLOG=fLOG)
 
         # neighbors
         score, ind, meta = se.kneighbors(iterim)
