@@ -9,6 +9,7 @@ pydocstyle
 pyquickhelper>=1.5.2269
 sphinx-bootstrap-theme
 sphinx-gallery
+sphinx-redactor-theme
 sphinxcontrib-images
 sphinxcontrib-imagesvg
 sphinxjp.themes.basicstrap
