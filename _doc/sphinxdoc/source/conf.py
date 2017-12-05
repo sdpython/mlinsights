@@ -3,7 +3,6 @@ import sys
 import os
 import datetime
 import re
-import sphinx_rtd_theme
 import sphinx_redactor_theme
 
 
