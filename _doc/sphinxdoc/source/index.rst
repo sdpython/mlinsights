@@ -2,28 +2,6 @@
 .. |gitlogo| image:: _static/git_logo.png
              :height: 20
 
-mlinsights
-==========
-
-*mlinsights* implements function to get insights on machine learned
-models.
-
-.. toctree::
-    :maxdepth: 1
-
-    tutorial/index
-    api/index
-    i_index
-    i_ex
-    all_notebooks
-    blog/blogindex
-    index_modules
-
-::
-
-    import mlinsights
-    ...
-
 **Links:** `github <https://github.com/sdpython/mlinsights/>`_,
 `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
 :ref:`l-README`,
@@ -65,6 +43,30 @@ models.
 .. image:: nbcov.png
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
+
+mlinsights
+==========
+
+*mlinsights* implements functions to get insights on machine learned
+models.
+
+*not really ready yet*
+
+.. toctree::
+    :maxdepth: 1
+
+    tutorial/index
+    api/index
+    i_index
+    i_ex
+    all_notebooks
+    blog/blogindex
+    index_modules
+
+::
+
+    import mlinsights
+    ...
 
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |

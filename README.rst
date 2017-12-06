@@ -35,7 +35,7 @@ README
 
 .. image:: https://badge.waffle.io/sdpython/mlinsights.png?label=ready&title=Ready
     :alt: Waffle
-    :target: https://waffle.io/mlinsights/mlinsights
+    :target: https://waffle.io/sdpython/mlinsights
 
 .. image:: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/_images/nbcov.png
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
