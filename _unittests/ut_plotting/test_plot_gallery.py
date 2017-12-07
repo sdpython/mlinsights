@@ -66,6 +66,25 @@ class TestPlotGallery(ExtTestCase):
         fig.savefig(img)
         plt.close('all')
 
+    def test_plot_gallery_url(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        fix_tkinter_issues_virtualenv(fLOG=fLOG)
+        from matplotlib import pyplot as plt
+
+        root = "http://www.xavierdupre.fr/enseignement/complements/dog-cat-pixabay/"
+        files = [root + 'cat-2603300__480.jpg',
+                 root + 'cat-2947188__480.jpg']
+
+        temp = get_temp_folder(__file__, "temp_plot_gallery_url")
+        fig, ax = plot_gallery_images(files, return_figure=True)
+        img = os.path.join(temp, "gallery.png")
+        fig.savefig(img)
+        plt.close('all')
+
 
 if __name__ == "__main__":
     unittest.main()

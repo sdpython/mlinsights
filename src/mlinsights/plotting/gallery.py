@@ -3,6 +3,8 @@
 @brief Featurizers for machine learned models.
 """
 import sys
+import io
+import urllib.request
 from PIL import Image
 
 
@@ -10,7 +12,7 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False, **figure
     """
     Plots a gallery of images using :epkg:`matplotlib`.
 
-    @param      imgs            list of images (filename or :epkg:`Pillow` objects)
+    @param      imgs            list of images (filename, urls or :epkg:`Pillow` objects),
     @param      texts           text to display (if None, print ``'img % i'``)
     @param      width           number of images on the same line
     @param      figure          additional parameters when the figure is created
@@ -39,7 +41,14 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False, **figure
             ind = y, x
 
         if isinstance(img, str):
-            im = Image.open(img)
+            if "//" in img:
+                # url
+                with urllib.request.urlopen(img) as response:
+                    content = response.read()
+                im = Image.open(io.BytesIO(content))
+            else:
+                # local file
+                im = Image.open(img)
         else:
             im = img
         ax[ind].imshow(im)
