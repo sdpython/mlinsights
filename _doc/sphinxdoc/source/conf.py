@@ -31,6 +31,10 @@ set_sphinx_variables(__file__, "mlinsights", "Xavier Dupré", 2017,
 
 blog_root = "http://www.xavierdupre.fr/app/mlinsights/helpsphinx/"
 
+html_context = {
+    'css_files': get_default_stylesheet() + ['_static/my-styles.css'],
+}
+
 html_logo = "project_ico.png"
 
 html_sidebars = {}
