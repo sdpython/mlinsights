@@ -23,7 +23,7 @@ local_template = os.path.join(os.path.abspath(
     os.path.dirname(__file__)), "phdoc_templates")
 
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables, get_default_stylesheet
-set_sphinx_variables(__file__, "mlinsights", "Xavier Dupré", 2017,
+set_sphinx_variables(__file__, "mlinsights", "Xavier Dupré", 2018,
                      "sphinx_redactor_theme", sphinx_redactor_theme.get_html_theme_path(),
                      locals(), extlinks=dict(
                          issue=('https://github.com/sdpython/mlinsights/issues/%s', 'issue')),
