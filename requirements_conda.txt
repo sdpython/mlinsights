@@ -15,7 +15,7 @@ nbpresent
 notebook>=5.0.0
 networkx
 numba
-numpy>=1.11.0
+numpy>=1.14.0
 pandas>=0.20.0
 pillow
 pyproj
