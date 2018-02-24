@@ -1,9 +1,13 @@
+
 language: python
+
 python:
   - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.6, DIST: conda }
+  
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
 install:
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyquickhelper --extra-index-url=https://pypi.python.org/simple/
@@ -16,8 +20,7 @@ script:
   - { CMD: "python -u setup.py unittests", NAME: "UT" }
 after_script:
   - python setup.py bdist_wheel
-  - if [  ${DIST} != "conda" and ${VERSION} == "3.6" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
+  - if [ ${DIST} != "conda" and ${VERSION} == "3.6" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
 documentation:
   - if [ ${NAME} == "UT" ] then python -u setup.py build_sphinx fi
   - if [ ${NAME} == "UT" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi
-  
