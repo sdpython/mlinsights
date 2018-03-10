@@ -50,7 +50,7 @@ def is_local():
                   "copy27", "copy_dist", "local_pypi", "notebook", "publish", "publish_doc",
                   "register", "unittests", "unittests_LONG", "unittests_SKIP", "unittests_GUI",
                   "run27", "sdist", "setupdep", "test_local_pypi", "upload_docs", "setup_hook",
-                  "copy_sphinx", "write_version"}:
+                  "copy_sphinx", "write_version", "lab"}:
         if cname in sys.argv:
             try:
                 import_pyquickhelper()
