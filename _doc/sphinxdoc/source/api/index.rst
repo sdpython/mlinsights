@@ -6,4 +6,5 @@ API
 
     featurizers
     plotting
+    metrics
     search_rank
