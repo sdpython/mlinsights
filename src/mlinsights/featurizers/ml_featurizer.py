@@ -56,12 +56,12 @@ def is_vector(X):
         else:
             return True
     if isinstance(X, numpy.ndarray):
-        if (len(X.shape) > 1 and X.shape[0] != 1):
+        if len(X.shape) > 1 and X.shape[0] != 1:
             return False
         else:
             return True
     if isinstance(X, pandas.DataFrame):
-        if (len(X.shape) > 1 and X.shape[0] != 1):
+        if len(X.shape) > 1 and X.shape[0] != 1:
             return False
         else:
             return True
