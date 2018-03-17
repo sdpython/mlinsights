@@ -43,4 +43,6 @@ language = "en"
 
 mathdef_link_only = True
 
+epkg_dictionary['Iris'] = 'http://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html'
+epkg_dictionary['RandomForestRegressor'] = 'http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html'
 epkg_dictionary['REST API'] = "https://en.wikipedia.org/wiki/Representational_state_transfer"

@@ -8,7 +8,7 @@ from sklearn import clone
 import numpy
 
 
-def non_linear_correlations(df, model, draws=5):
+def non_linear_correlations(df, model, draws=5, minmax=False):
     """
     Computes non linear correlations.
 
@@ -19,7 +19,9 @@ def non_linear_correlations(df, model, draws=5):
     @param      draws   number of tries for :epkg:`bootstrap`,
                         the correlation is the average of the results
                         obtained at each draw
-    @return             correlation matrix
+    @param      minmax  if True, returns three matrices correlations, min, max,
+                        only the correlation matrix if False
+    @return             see parameter minmax
 
     `Pearson Correlations <https://fr.wikipedia.org/wiki/Corr%C3%A9lation_(statistiques)>`_
     is:
@@ -72,16 +74,45 @@ def non_linear_correlations(df, model, draws=5):
     one to compute the correlation. The same split are used
     for every coefficient. The returned matrix is not
     necessarily symmetric.
+
+    ..exref::
+        :title: Compute non linear correlations
+
+        The following example compute non linear correlations
+        on :epkg:`Iris` datasets based on a
+        :epkg:`RandomForestRegressor` model.
+
+        .. runpython::
+            :showcode:
+
+            import pandas
+            from sklearn import datasets
+            from sklearn.ensemble import RandomForestRegressor
+            from mlinsights.metrics import non_linear_correlations
+
+            iris = datasets.load_iris()
+            X = iris.data[:, :4]
+            df = pandas.DataFrame(X)
+            df.columns = ["X1", "X2", "X3", "X4"]
+            cor = non_linear_correlations(df, RandomForestRegressor())
+            print(cor)
+
     """
 
     if hasattr(df, 'iloc'):
         cor = df.corr()
         cor.iloc[:, :] = 0.
         iloc = True
+        if minmax:
+            mini = cor.copy()
+            maxi = cor.copy()
     else:
         cor = numpy.corrcoef(df, rowvar=False)
         cor[:, :] = 0.
         iloc = False
+        if minmax:
+            mini = cor.copy()
+            maxi = cor.copy()
     df = scale(df)
 
     for k in range(0, draws):
@@ -106,6 +137,23 @@ def non_linear_correlations(df, model, draws=5):
                 co = max(c, 0) ** 0.5
                 if iloc:
                     cor.iloc[i, j] += co
+                    if minmax:
+                        if k == 0:
+                            mini.iloc[i, j] = co
+                            maxi.iloc[i, j] = co
+                        else:
+                            mini.iloc[i, j] = min(mini.iloc[i, j], co)
+                            maxi.iloc[i, j] = max(maxi.iloc[i, j], co)
                 else:
                     cor[i, j] += co
-    return cor / draws
+                    if minmax:
+                        if k == 0:
+                            mini[i, j] = co
+                            maxi[i, j] = co
+                        else:
+                            mini[i, j] = min(mini[i, j], co)
+                            maxi[i, j] = max(maxi[i, j], co)
+    if minmax:
+        return cor / draws, mini, maxi
+    else:
+        return cor / draws
