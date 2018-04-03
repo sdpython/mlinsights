@@ -21,7 +21,7 @@ install:
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
   - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
   - "%PYTHON%\\Scripts\\pip install pyquickhelper --no-deps"
-  - "%PYTHON%\\Scripts\\pip install wcwidth guzzle_sphinx_theme"
+  - "%PYTHON%\\Scripts\\pip install wcwidth guzzle_sphinx_theme  backcall"
   - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy tensorflow protobuf h5py"
   - "%PYTHON%\\Scripts\\pip install keras pandas_streaming kiwisolver"
   - "set PATH=%PATH%;C:\\projects\\jyquickhelper\\build\\update_modules\\Graphviz\\bin"
