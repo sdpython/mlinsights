@@ -3,7 +3,7 @@ coverage
 guzzle_sphinx_theme
 jyquickhelper
 pandas_streaming
-pyquickhelper>=1.7.2438
+pyquickhelper>=1.7.2539
 sphinx-redactor-theme
 sphinxjp.themes.basicstrap
 sphinxjp.themes.sphinxjp
