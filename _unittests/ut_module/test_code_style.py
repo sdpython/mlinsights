@@ -41,9 +41,9 @@ from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import check_pep8, ExtTestCase
 
 
-class TestFlake8(ExtTestCase):
+class TestCodeStyle(ExtTestCase):
 
-    def test_flake8_src(self):
+    def test_code_style_src(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -52,14 +52,14 @@ class TestFlake8(ExtTestCase):
         if sys.version_info[0] == 2 or "Anaconda" in sys.executable \
                 or "condavir" in sys.executable:
             warnings.warn(
-                "skipping test_flake8 because of Python 2 or " + sys.executable)
+                "skipping test_code_style because of Python 2 or " + sys.executable)
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))
         src_ = os.path.normpath(os.path.join(thi, "..", "..", "src"))
         check_pep8(src_, neg_filter="__init__.py", fLOG=fLOG)
 
-    def test_flake8_test(self):
+    def test_code_style_test(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -68,7 +68,7 @@ class TestFlake8(ExtTestCase):
         if sys.version_info[0] == 2 or "Anaconda" in sys.executable \
                 or "condavir" in sys.executable:
             warnings.warn(
-                "skipping test_flake8 because of Python 2 or " + sys.executable)
+                "skipping test_code_style because of Python 2 or " + sys.executable)
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))
