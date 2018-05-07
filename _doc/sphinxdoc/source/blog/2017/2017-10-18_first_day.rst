@@ -6,5 +6,5 @@
     :categories: blog
 
     Machine learned models are black boxes.
-    The modules tries to implements some functions
+    The module tries to implements some functions
     to get insights on machine learned models.

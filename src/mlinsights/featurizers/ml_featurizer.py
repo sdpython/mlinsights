@@ -93,7 +93,7 @@ def wrap_predict_sklearn(X, fct, many):
 
 def model_featurizer_lr(model):
     """
-    Builds a featurizer from a :epkg:`scikit-learn:linear_model:LogisticRegresion`.
+    Builds a featurizer from a :epkg:`scikit-learn:linear_model:LogisticRegression`.
     It returns a function which returns ``model.decision_function(X)``.
 
     @param      model       model to use to featurize a vector
