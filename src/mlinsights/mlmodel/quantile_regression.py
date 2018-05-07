@@ -129,6 +129,8 @@ class QuantileLinearRegression(LinearRegression):
             beta = clr.coef_
             W, epsilon = compute_z(Xm, beta, y, W, delta=self.delta)
             E = epsilon.sum()
+            if sample_weight is not None:
+                W *= sample_weight
             self.n_iter_ = i
             if self.verbose:
                 print(

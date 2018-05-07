@@ -71,6 +71,19 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqualArray(clr.intercept_, clq.intercept_)
         self.assertEqualArray(clr.coef_, clq.coef_)
 
+    def test_quantile_regression_intercept_weights(self):
+        X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
+        Y = numpy.array([1., 1.1, 1.2])
+        W = numpy.array([1., 1., 1.])
+        clr = LinearRegression(fit_intercept=True)
+        clr.fit(X, Y, W)
+        clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
+        clq.fit(X, Y, W)
+        self.assertNotEqual(clr.intercept_, 0)
+        self.assertNotEqual(clq.intercept_, 0)
+        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualArray(clr.coef_, clq.coef_)
+
     def test_quantile_regression_diff(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4]])
         Y = numpy.array([1., 1.1, 1.2, 10])
