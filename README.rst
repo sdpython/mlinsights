@@ -41,10 +41,10 @@ README
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
-*mlinsights* implements a couple of ways to
-dig into machine learned models to get insights.
-
-*not ready*
+*mlinsights* extends *scikit-learn* with a couple of new models,
+transform, metrics, plotting. It provides new trainer such as
+*QuantileLinearRegression* trains a linear regression with L1 norm
+or non-linear correlation based on decision trees.
 
 **Links:**
 
