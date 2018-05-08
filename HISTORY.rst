@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2018-05-07 - 0.00Mb
+current - 2018-05-08 - 0.00Mb
 =============================
+
+* `9`: move items from ensae_teaching_cs (2018-05-08)
+
+0.1.61 - 2018-05-08 - 0.02Mb
+============================
 
 * `7`: add quantile regression (2018-05-07)
 * `5`: replace flake8 by code style (2018-04-14)
