@@ -171,8 +171,8 @@ class TestQuantileRegression(ExtTestCase):
                                           X, Y, delta=[0.1, 0.001])
         self.assertIn('model', res)
         self.assertIn('score', res)
-        self.assertGreater(res['score'], 3)
-        self.assertLesser(res['score'], 10)
+        self.assertGreater(res['score'], 0)
+        self.assertLesser(res['score'], 1)
 
 
 if __name__ == "__main__":

@@ -170,4 +170,5 @@ class QuantileLinearRegression(LinearRegression):
         score : float
             mean absolute error regression loss
         """
-        return mean_absolute_error(X, y, sample_weight=sample_weight)
+        pred = self.predict(X)
+        return mean_absolute_error(y, pred, sample_weight=sample_weight)
