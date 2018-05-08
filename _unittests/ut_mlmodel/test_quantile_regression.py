@@ -43,6 +43,7 @@ except ImportError:
 
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from src.mlinsights.mlmodel import QuantileLinearRegression
+from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 
 
 class TestQuantileRegression(ExtTestCase):
@@ -143,6 +144,35 @@ class TestQuantileRegression(ExtTestCase):
         pr = clr.predict(X)
         pq = clq.predict(X)
         self.assertEqual(pr.shape, pq.shape)
+
+    def test_quantile_regression_pickle(self):
+        X = numpy.random.random(100)
+        eps1 = (numpy.random.random(90) - 0.5) * 0.1
+        eps2 = numpy.random.random(10) * 2
+        eps = numpy.hstack([eps1, eps2])
+        X = X.reshape((100, 1))
+        Y = X.ravel() * 3.4 + 5.6 + eps
+        test_sklearn_pickle(lambda: LinearRegression(), X, Y)
+        test_sklearn_pickle(lambda: QuantileLinearRegression(), X, Y)
+
+    def test_quantile_regression_clone(self):
+        test_sklearn_clone(lambda: QuantileLinearRegression(delta=0.001))
+
+    def test_quantile_regression_grid_search(self):
+        X = numpy.random.random(100)
+        eps1 = (numpy.random.random(90) - 0.5) * 0.1
+        eps2 = numpy.random.random(10) * 2
+        eps = numpy.hstack([eps1, eps2])
+        X = X.reshape((100, 1))
+        Y = X.ravel() * 3.4 + 5.6 + eps
+        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+            lambda: QuantileLinearRegression(), X, Y), ValueError)
+        res = test_sklearn_grid_search_cv(lambda: QuantileLinearRegression(),
+                                          X, Y, delta=[0.1, 0.001])
+        self.assertIn('model', res)
+        self.assertIn('score', res)
+        self.assertGreater(res['score'], 3)
+        self.assertLesser(res['score'], 10)
 
 
 if __name__ == "__main__":

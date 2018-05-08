@@ -4,6 +4,7 @@
 """
 import numpy
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error
 
 
 class QuantileLinearRegression(LinearRegression):
@@ -147,3 +148,26 @@ class QuantileLinearRegression(LinearRegression):
             self.intercept_ = 0
 
         return self
+
+    def score(self, X, y, sample_weight=None):
+        """
+        Returns Mean absolute error regression loss.
+
+        Parameters
+        ----------
+        X : array-like, shape = (n_samples, n_features)
+            Test samples.
+
+        y : array-like, shape = (n_samples) or (n_samples, n_outputs)
+            True values for X.
+
+        sample_weight : array-like, shape = [n_samples], optional
+            Sample weights.
+
+        Returns
+        -------
+
+        score : float
+            mean absolute error regression loss
+        """
+        return mean_absolute_error(X, y, sample_weight=sample_weight)
