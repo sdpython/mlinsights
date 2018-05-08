@@ -31,7 +31,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             :showcode:
 
             import pandas
-            from ensae_teaching_cs.ml import CategoriesToIntegers
+            from mlinsights.mlmodel import CategoriesToIntegers
             df = pandas.DataFrame( [{"cat": "a"}, {"cat": "b"}] )
             trans = CategoriesToIntegers()
             trans.fit(df)
