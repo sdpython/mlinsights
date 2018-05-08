@@ -26,6 +26,8 @@ class QuantileLinearRegression(LinearRegression):
 
     n_iter_: int
         Number of iterations at training time.
+
+    See notebook :ref:`quantileregressionrst`.
     """
 
     def __init__(self, fit_intercept=True, normalize=False, copy_X=True,

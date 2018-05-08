@@ -7,4 +7,5 @@ API
     featurizers
     plotting
     metrics
+    mlmodel
     search_rank
