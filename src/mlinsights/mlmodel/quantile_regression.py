@@ -12,21 +12,6 @@ class QuantileLinearRegression(LinearRegression):
     Quantile Linear Regression or linear regression
     trained with norm *L1*. This class inherits from
     :epkg:`sklearn:linear_models:LinearRegression`.
-
-    Attributes
-    ----------
-    coef_ : array, shape (n_features, ) or (n_targets, n_features)
-        Estimated coefficients for the linear regression problem.
-        If multiple targets are passed during the fit (y 2D), this
-        is a 2D array of shape (n_targets, n_features), while if only
-        one target is passed, this is a 1D array of length n_features.
-
-    intercept_ : array
-        Independent term in the linear model.
-
-    n_iter_: int
-        Number of iterations at training time.
-
     See notebook :ref:`quantileregressionrst`.
     """
 
@@ -75,7 +60,9 @@ class QuantileLinearRegression(LinearRegression):
 
     def fit(self, X, y, sample_weight=None):
         """
-        Fit linear model.
+        Fits a linear model with *L1* norm which
+        is equivalent to a quantile regression.
+
         Parameters
         ----------
         X : numpy array or sparse matrix of shape [n_samples,n_features]
@@ -91,14 +78,28 @@ class QuantileLinearRegression(LinearRegression):
         -------
         self : returns an instance of self.
 
-        Notes
-        -----
+        The training produces the following attributes
+        as results of the training.
         The implementation is not the most efficient
         as it calls multiple times method fit
         from :epkg:`sklearn:linear_models:LinearRegression`.
         Data gets checked and rescaled each time.
         The optimization follows the algorithm
         `Iteratively reweighted least squares <https://en.wikipedia.org/wiki/Iteratively_reweighted_least_squares>`_.
+
+        Attributes
+        ----------
+        coef_ : array, shape (n_features, ) or (n_targets, n_features)
+            Estimated coefficients for the linear regression problem.
+            If multiple targets are passed during the fit (y 2D), this
+            is a 2D array of shape (n_targets, n_features), while if only
+            one target is passed, this is a 1D array of length n_features.
+
+        intercept_ : array
+            Independent term in the linear model.
+
+        n_iter_: int
+            Number of iterations at training time.
         """
         if len(y.shape) > 1 and y.shape[1] != 1:
             raise ValueError("QuantileLinearRegression only works for Y real")
