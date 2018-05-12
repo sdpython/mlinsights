@@ -11,23 +11,8 @@ import numpy
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-
-
-try:
-    import pyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "pyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import pyquickhelper as skip_
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase
 
 
 try:
@@ -43,8 +28,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import ExtTestCase
 from src.mlinsights.search_rank import SearchEnginePredictions
 
 
@@ -75,7 +58,8 @@ class TestSearchPredictions(ExtTestCase):
         self.assertEqual(r.replace("\n", "").replace(" ", ""),
                          "SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False," +
                          "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='ovr',n_jobs=1," +
-                         "penalty='l2',random_state=None,solver='liblinear',tol=0.0001,verbose=0,warm_start=False),fct_params=None,n_neighbors=5)")
+                         "penalty='l2',random_state=None,solver='liblinear',tol=0.0001,verbose=0,warm_start=False)," +
+                         "fct_params=None,n_neighbors=5)")
 
         se.fit(data=None, features=df[["f1", "f2"]].as_matrix(),
                metadata=df[["ind", "meta1", "meta2"]])

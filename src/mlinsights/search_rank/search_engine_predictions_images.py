@@ -45,9 +45,11 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                 "Iterator does not iterate on images but numpy arrays (not implemented).")
 
         def get_current_index(flow):
+            "get current index"
             return flow.index_array[(flow.batch_index + flow.n - 1) % flow.n]
 
         def iterator_feature_meta():
+            "iterators on metadaat"
             for i, im in zip(range(n), iter_images):
                 name = iter_images.filenames[get_current_index(iter_images)]
                 yield im[0], dict(name=name)

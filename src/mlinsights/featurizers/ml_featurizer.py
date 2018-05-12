@@ -101,6 +101,7 @@ def model_featurizer_lr(model):
     """
 
     def feat(X, model, many):
+        "wraps sklearn"
         return wrap_predict_sklearn(X, model.decision_function, many)
 
     return lambda X, many, model=model: feat(X, model, many)
@@ -119,11 +120,13 @@ def model_featurizer_rfc(model, output=True):
     """
     if output:
         def feat(X, model, many):
+            "wraps sklearn"
             return wrap_predict_sklearn(X, model.predict_proba, many)
 
         return lambda X, many, model=model: feat(X, model, many)
     else:
         def feat(X, model, many):
+            "wraps sklearn"
             return wrap_predict_sklearn(X, model.apply, many)
 
         return lambda X, many, model=model: feat(X, model, many)
@@ -169,6 +172,7 @@ def model_featurizer_keras(model, layer=None):
         model = model.__class__(model.input, output)
 
     def feat(X, model, many, shapes):
+        "wraps keras"
         return wrap_predict_keras(X, model.predict, many, shapes)
 
     return lambda X, many, model=model, shapes=model._feed_input_shapes[0]: feat(X, model, many, shapes)

@@ -9,24 +9,7 @@ import unittest
 import numpy
 import pandas
 from sklearn.linear_model import LinearRegression
-
-
-try:
-    import pyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "pyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import pyquickhelper as skip_
-
+from pyquickhelper.pycode import ExtTestCase
 
 try:
     import src
@@ -41,7 +24,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from src.mlinsights.mlmodel import QuantileLinearRegression
 from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 
@@ -116,7 +98,7 @@ class TestQuantileRegression(ExtTestCase):
         clq = QuantileLinearRegression(fit_intercept=False)
         self.assertRaise(lambda: clq.fit(X, Y), TypeError)
 
-    def test_quantile_regression_list(self):
+    def test_quantile_regression_list2(self):
         X = numpy.random.random(1000)
         eps1 = (numpy.random.random(900) - 0.5) * 0.1
         eps2 = numpy.random.random(100) * 2

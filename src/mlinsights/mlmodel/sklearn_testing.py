@@ -24,7 +24,6 @@ def train_test_split_with_none(X, y=None, sample_weight=None, random_state=0):
     """
     not_none = [_ for _ in [X, y, sample_weight] if _ is not None]
     res = train_test_split(*not_none)
-    pos = 0
     inc = len(not_none)
     trains = []
     tests = []
@@ -54,7 +53,7 @@ def test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
     :raises:
         AssertionError
     """
-    X_train, y_train, w_train, X_test, y_test, w_test = train_test_split_with_none(
+    X_train, y_train, w_train, X_test, _, __ = train_test_split_with_none(
         X, y, sample_weight)
     model = fct_model()
     model.fit(X_train, y_train, w_train)

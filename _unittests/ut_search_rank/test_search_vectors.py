@@ -8,41 +8,8 @@ import os
 import unittest
 import pandas
 import numpy
-
-
-try:
-    import pyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "pyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import pyquickhelper as skip_
-
-
-try:
-    import pandas_streaming as skip__
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "pandas_streaming",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import pandas_streaming as skip__
-
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 
 try:
     import src
@@ -57,8 +24,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from src.mlinsights.search_rank import SearchEngineVectors
 
 

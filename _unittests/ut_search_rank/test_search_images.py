@@ -6,27 +6,18 @@
 import sys
 import os
 import unittest
-import pandas
-import numpy
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
+import pandas
+import numpy
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder
+from pyquickhelper.filehelper import unzip_files
 
-
-try:
-    import pyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "pyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import pyquickhelper as skip_
+with redirect_stderr(StringIO()):
+    from keras.applications.mobilenet import MobileNet
+    from keras.preprocessing.image import ImageDataGenerator
+    from keras.preprocessing.image import img_to_array, load_img
 
 
 try:
@@ -41,15 +32,6 @@ except ImportError:
     if path not in sys.path:
         sys.path.append(path)
     import src
-
-from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder
-from pyquickhelper.filehelper import unzip_files
-
-with redirect_stderr(StringIO()):
-    from keras.applications.mobilenet import MobileNet
-    from keras.preprocessing.image import ImageDataGenerator
-    from keras.preprocessing.image import img_to_array, load_img
 
 
 class TestSearchPredictionsImages(ExtTestCase):

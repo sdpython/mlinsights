@@ -105,6 +105,7 @@ class QuantileLinearRegression(LinearRegression):
             raise ValueError("QuantileLinearRegression only works for Y real")
 
         def compute_z(Xm, beta, Y, W, delta=0.0001):
+            "compute z"
             epsilon = numpy.abs(Y - Xm @ beta)
             r = numpy.reciprocal(numpy.maximum(
                 epsilon, numpy.ones(epsilon.shape) * delta))

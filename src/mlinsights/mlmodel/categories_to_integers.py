@@ -3,11 +3,9 @@
 @brief Implements a transformation which can be put in a pipeline to transform categories in
 integers.
 """
-
+import textwrap
 import numpy
 import pandas
-import textwrap
-
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
@@ -168,6 +166,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             b = not self._p_skip_errors
 
             def transform(v, vec):
+                "transform a vector"
                 if v in vec:
                     return vec[v]
                 elif v is None:
