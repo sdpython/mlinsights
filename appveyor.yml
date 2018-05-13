@@ -24,7 +24,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install wcwidth sphinx_rtd_theme  backcall absl-py"
   - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy tensorflow protobuf h5py"
   - "%PYTHON%\\Scripts\\pip install keras pandas_streaming kiwisolver"
-  - "%PYTHON%\\Scripts\\pip install -r requirements"
+  - "%PYTHON%\\Scripts\\pip install -r requirements.txt"
   - "set PATH=%PATH%;C:\\projects\\jyquickhelper\\build\\update_modules\\Graphviz\\bin"
 build: off
 
