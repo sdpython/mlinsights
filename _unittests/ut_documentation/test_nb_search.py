@@ -12,20 +12,17 @@ from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
 
 
 try:
-    import pyquickhelper as skip_
+    import src
 except ImportError:
     path = os.path.normpath(
         os.path.abspath(
             os.path.join(
                 os.path.split(__file__)[0],
                 "..",
-                "..",
-                "..",
-                "pyquickhelper",
-                "src")))
+                "..")))
     if path not in sys.path:
         sys.path.append(path)
-    import pyquickhelper as skip_
+    import src
 
 
 import src.mlinsights
