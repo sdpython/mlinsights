@@ -3,6 +3,7 @@
 @brief Helpers to test a model which follows :epkg:`scikit-learn` API.
 """
 import pickle
+import pprint
 from io import BytesIO
 from numpy.testing import assert_almost_equal
 from sklearn.model_selection import train_test_split
@@ -83,7 +84,13 @@ def test_sklearn_clone(fct_model):
     cloned = clone(conv)
     p2 = cloned.get_params(deep=True)
     ext = ExtTestCase()
-    ext.assertEqual(p1, p2)
+    try:
+        ext.assertEqual(p1, p2)
+    except AssertionError as e:
+        p1 = pprint.pformat(p1)
+        p2 = pprint.pformat(p2)
+        raise AssertionError(
+            "Differences between\n----\n{0}\n----\n{1}".format(p1, p2)) from e
     return conv, cloned
 
 
