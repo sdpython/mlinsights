@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import numpy
+from numpy.random import RandomState
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
 
@@ -65,6 +66,25 @@ class TestClassifierAfterKMeans(ExtTestCase):
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
         self.assertLesser(res['score'], 1)
+
+    def test_classification_kmeans_relevance(self):
+        state = RandomState(seed=0)
+        Xs = []
+        Ys = []
+        n = 20
+        for i in range(0, 5):
+            for j in range(0, 4):
+                x1 = state.rand(n) + i * 1.1
+                x2 = state.rand(n) + j * 1.1
+                Xs.append(numpy.vstack([x1, x2]).T)
+                cl = state.randint(0, 4)
+                Ys.extend([cl for i in range(n)])
+        X = numpy.vstack(Xs)
+        Y = numpy.array(Ys)
+        clk = ClassifierAfterKMeans(c_n_clusters=6, c_random_state=state)
+        clk.fit(X, Y)
+        score = clk.score(X, Y)
+        self.assertGreater(score, 0.97)
 
 
 if __name__ == "__main__":

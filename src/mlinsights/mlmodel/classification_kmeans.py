@@ -14,6 +14,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
     Applies a *k-means* for each class, then
     adds the distance to each cluster as a feature
     for a classifier.
+    See notebook :ref:`logisticregressionclusteringrst`.
     """
 
     def __init__(self, estimator=None, clus=None, **kwargs):
@@ -70,9 +71,9 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         classes = set(y)
         self.labels_ = list(sorted(classes))
         self.clus_ = {}
-        m = clone(self.clus)
         sig = inspect.signature(self.clus.fit)
         for cl in classes:
+            m = clone(self.clus)
             Xcl = X[y == cl]
             if sample_weight is None or 'sample_weight' not in sig.parameters:
                 w = None
