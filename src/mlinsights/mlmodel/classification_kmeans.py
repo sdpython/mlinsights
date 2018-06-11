@@ -23,7 +23,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
                                     by default
         @param      clus            clustering applied on each class,
                                     by default k-means with two classes
-        @aram       kwargs          sent to *set_params*
+        @param      kwargs          sent to *set_params*
         """
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -40,7 +40,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
 
     def fit(self, X, y, sample_weight=None):
         """
-        Runs a k-means on each class
+        Runs a *k-means* on each class
         then trains a classifier on the
         extended set of features.
 
