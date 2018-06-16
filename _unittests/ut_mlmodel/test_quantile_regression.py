@@ -68,8 +68,8 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqualArray(clr.coef_, clq.coef_)
 
     def test_quantile_regression_diff(self):
-        X = numpy.array([[0.1], [0.2], [0.3], [0.4]])
-        Y = numpy.array([1., 1.1, 1.2, 10])
+        X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
+        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
@@ -155,6 +155,52 @@ class TestQuantileRegression(ExtTestCase):
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
         self.assertLesser(res['score'], 1)
+
+    def test_quantile_regression_diff_quantile(self):
+        X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5], [0.6]])
+        Y = numpy.array([1., 1.11, 1.21, 10, 1.29, 1.39])
+        clqs = []
+        scores = []
+        for q in [0.25, 0.4999, 0.5, 0.5001, 0.75]:
+            clq = QuantileLinearRegression(
+                verbose=False, fit_intercept=True, quantile=q)
+            clq.fit(X, Y)
+            clqs.append(clq)
+            sc = clq.score(X, Y)
+            scores.append(sc)
+            self.assertGreater(sc, 0)
+
+        self.assertLesser(abs(clqs[1].intercept_ - clqs[2].intercept_), 0.01)
+        self.assertLesser(abs(clqs[2].intercept_ - clqs[3].intercept_), 0.01)
+        self.assertLesser(abs(clqs[1].coef_[0] - clqs[2].coef_[0]), 0.01)
+        self.assertLesser(abs(clqs[2].coef_[0] - clqs[3].coef_[0]), 0.01)
+
+        self.assertGreater(abs(clqs[0].intercept_ - clqs[1].intercept_), 0.01)
+        # self.assertGreater(abs(clqs[3].intercept_ - clqs[4].intercept_), 0.01)
+        self.assertGreater(abs(clqs[0].coef_[0] - clqs[1].coef_[0]), 0.05)
+        # self.assertGreater(abs(clqs[3].coef_[0] - clqs[4].coef_[0]), 0.05)
+
+        self.assertLesser(abs(scores[1] - scores[2]), 0.01)
+        self.assertLesser(abs(scores[2] - scores[3]), 0.01)
+
+    def test_quantile_regression_quantile_check(self):
+        n = 100
+        X = (numpy.arange(n) / n)
+        Y = X + X * X / n
+        X = X.reshape((n, 1))
+        for q in [0.1, 0.5, 0.9]:
+            clq = QuantileLinearRegression(
+                verbose=False, fit_intercept=True, quantile=q, max_iter=10)
+            clq.fit(X, Y)
+            y = clq.predict(X)
+            diff = y - Y
+            sign = numpy.sign(diff)
+            pos = (sign > 0).sum()
+            neg = (sign < 0).sum()
+            if q < 0.5:
+                self.assertGreater(neg, pos * 4)
+            if q > 0.5:
+                self.assertLesser(neg * 7, pos)
 
 
 if __name__ == "__main__":

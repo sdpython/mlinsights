@@ -5,14 +5,18 @@
 History
 =======
 
-current - 2018-05-08 - 0.00Mb
+current - 2018-06-16 - 0.00Mb
 =============================
 
-* `9`: move items from ensae_teaching_cs (2018-05-08)
+* `12`: fix bug in quantile regression: wrong weight for linear regression (2018-06-16)
+* `11`: specifying quantile (2018-06-16)
+* `4`: add function to compute non linear correlations (2018-06-16)
+* `10`: implements combination between logistic regression and k-means (2018-05-27)
 
 0.1.61 - 2018-05-08 - 0.02Mb
 ============================
 
+* `9`: move items from ensae_teaching_cs (2018-05-08)
 * `7`: add quantile regression (2018-05-07)
 * `5`: replace flake8 by code style (2018-04-14)
 * `1`: change background for cells in notebooks converted into rst then in html, highlight-ipython3 (2018-01-05)

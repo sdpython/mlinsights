@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief Implements a quantile linear regression.
@@ -14,10 +14,24 @@ class QuantileLinearRegression(LinearRegression):
     trained with norm *L1*. This class inherits from
     :epkg:`sklearn:linear_models:LinearRegression`.
     See notebook :ref:`quantileregressionrst`.
+
+    Norm *L1* is chosen if ``quantile=0.5``, otherwise,
+    for *quantile=*:math:`\\rho`,
+    the following error is optimized:
+
+    .. math::
+
+        \\sum_i \\rho |f(X_i) - Y_i|^- + (1-\\rho) |f(X_i) - Y_i|^+
+
+    where :math:`|f(X_i) - Y_i|^-= \\max(Y_i - f(X_i), 0)` and
+    :math:`|f(X_i) - Y_i|^+= \\max(f(X_i) - Y_i, 0)`.
+    :math:`f(i)` is the prediction, :math:`Y_i` the expected
+    value.
     """
 
     def __init__(self, fit_intercept=True, normalize=False, copy_X=True,
-                 n_jobs=1, delta=0.0001, max_iter=10, verbose=False):
+                 n_jobs=1, delta=0.0001, max_iter=10, quantile=0.5,
+                 verbose=False):
         """
         Parameters
         ----------
@@ -50,6 +64,10 @@ class QuantileLinearRegression(LinearRegression):
             Used to ensure matrices has an inverse
             (*M + delta*I*).
 
+        quantile: float, by default 0.5,
+            determines which quantile to use
+            to estimate the regression.
+
         verbose: bool, optional, default False
             Prints error at each iteration of the optimisation.
         """
@@ -58,6 +76,7 @@ class QuantileLinearRegression(LinearRegression):
         self.max_iter = max_iter
         self.verbose = verbose
         self.delta = delta
+        self.quantile = quantile
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -109,15 +128,18 @@ class QuantileLinearRegression(LinearRegression):
 
         def compute_z(Xm, beta, Y, W, delta=0.0001):
             "compute z"
-            epsilon = numpy.abs(Y - Xm @ beta)
-            r = numpy.reciprocal(numpy.maximum(
-                epsilon, numpy.ones(epsilon.shape) * delta))
-            r = r * r
+            deltas = numpy.ones(X.shape[0]) * delta
+            epsilon, mult = QuantileLinearRegression._epsilon(
+                Y, Xm @ beta, self.quantile)
+            r = numpy.reciprocal(numpy.maximum(epsilon, deltas))
+            if mult is not None:
+                epsilon *= 1 - mult
+                r *= 1 - mult
             return r, epsilon
 
         if not isinstance(X, numpy.ndarray):
-            if hasattr(X, 'as_matrix'):
-                X = X.as_matrix()
+            if hasattr(X, 'values'):
+                X = X.values
             else:
                 raise TypeError("X must be an array or a dataframe.")
 
@@ -136,9 +158,10 @@ class QuantileLinearRegression(LinearRegression):
             clr.fit(Xm, y, W)
             beta = clr.coef_
             W, epsilon = compute_z(Xm, beta, y, W, delta=self.delta)
-            E = epsilon.sum()
             if sample_weight is not None:
                 W *= sample_weight
+                epsilon *= sample_weight
+            E = epsilon.sum()
             self.n_iter_ = i
             if self.verbose:
                 print(
@@ -155,6 +178,21 @@ class QuantileLinearRegression(LinearRegression):
             self.intercept_ = 0
 
         return self
+
+    @staticmethod
+    def _epsilon(y_true, y_pred, quantile, sample_weight=None):
+        diff = y_pred - y_true
+        epsilon = numpy.abs(diff)
+        if quantile != 0.5:
+            sign = numpy.sign(diff)
+            mult = numpy.ones(y_true.shape[0])
+            mult[sign > 0] *= quantile
+            mult[sign < 0] *= (1 - quantile)
+        else:
+            mult = None
+        if sample_weight is not None:
+            epsilon *= sample_weight
+        return epsilon, mult
 
     def score(self, X, y, sample_weight=None):
         """
@@ -178,4 +216,12 @@ class QuantileLinearRegression(LinearRegression):
             mean absolute error regression loss
         """
         pred = self.predict(X)
-        return mean_absolute_error(y, pred, sample_weight=sample_weight)
+
+        if self.quantile != 0.5:
+            epsilon, mult = QuantileLinearRegression._epsilon(
+                y, pred, self.quantile, sample_weight)
+            if mult is not None:
+                epsilon *= mult * 2
+            return epsilon.sum() / X.shape[0]
+        else:
+            return mean_absolute_error(y, pred, sample_weight=sample_weight)
