@@ -6,6 +6,10 @@ import sys
 import os
 import unittest
 import pandas
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Imputer
+from pyquickhelper.pycode import ExtTestCase
 
 
 try:
@@ -22,9 +26,10 @@ except ImportError:
     import src
 
 from src.mlinsights.mlmodel import CategoriesToIntegers
+from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 
 
-class TestCategoriesToIntegers(unittest.TestCase):
+class TestCategoriesToIntegers(ExtTestCase):
 
     def test_categories_to_integers(self):
         data = os.path.join(os.path.abspath(
@@ -92,6 +97,45 @@ class TestCategoriesToIntegers(unittest.TestCase):
         newdf = trans.transform(df)
         self.assertEqual(len(newdf.columns), len(df.columns))
         self.assertEqual(list(newdf.columns), list(df.columns))
+        newdf2 = trans.fit_transform(df)
+        self.assertEqual(newdf, newdf2)
+        rep = repr(trans)
+        self.assertEqual("CategoriesToIntegers(columns=None,remove=None,single=True,skip_errors=False)",
+                         rep.replace(" ", "").replace("\n", ""))
+
+    def test_categories_to_integers_pickle(self):
+        data = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "data", "adult_set.txt")
+        df = pandas.read_csv(data, sep="\t")
+        test_sklearn_pickle(lambda: CategoriesToIntegers(skip_errors=True), df)
+
+    def test_categories_to_integers_clone(self):
+        self.maxDiff = None
+        test_sklearn_clone(lambda: CategoriesToIntegers())
+
+    def test_categories_to_integers_grid_search(self):
+        data = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "data", "adult_set.txt")
+        df = pandas.read_csv(data, sep="\t")
+        X = df.drop('income', axis=1)
+        y = df['income']
+        pipe = make_pipeline(CategoriesToIntegers(), LogisticRegression())
+        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+            lambda: pipe, df), ValueError)
+        self.assertRaise(lambda: test_sklearn_grid_search_cv(lambda: pipe, X, y,
+                                                             categoriestointegers__single=[True, False]),
+                         ValueError, "Unable to find category value")
+        pipe = make_pipeline(CategoriesToIntegers(),
+                             Imputer(strategy='most_frequent'),
+                             LogisticRegression())
+        res = test_sklearn_grid_search_cv(lambda: pipe, X, y,
+                                          categoriestointegers__single=[
+                                              True, False],
+                                          categoriestointegers__skip_errors=[True])
+        self.assertIn('model', res)
+        self.assertIn('score', res)
+        self.assertGreater(res['score'], 0)
+        self.assertLesser(res['score'], 1)
 
 
 if __name__ == "__main__":

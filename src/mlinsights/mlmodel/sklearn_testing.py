@@ -5,7 +5,9 @@
 import pickle
 import pprint
 from io import BytesIO
+from numpy import ndarray
 from numpy.testing import assert_almost_equal
+from pandas.testing import assert_frame_equal
 from sklearn.model_selection import train_test_split
 from sklearn.base import clone
 from sklearn.pipeline import make_pipeline
@@ -57,15 +59,27 @@ def test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
     X_train, y_train, w_train, X_test, _, __ = train_test_split_with_none(
         X, y, sample_weight)
     model = fct_model()
-    model.fit(X_train, y_train, w_train)
-    pred1 = model.predict(X_test)
+    if y_train is None and w_train is None:
+        model.fit(X_train)
+    else:
+        model.fit(X_train, y_train, w_train)
+    if hasattr(model, 'predict'):
+        pred1 = model.predict(X_test)
+    else:
+        pred1 = model.transform(X_test)
 
     st = BytesIO()
     pickle.dump(model, st)
     data = BytesIO(st.getvalue())
     model2 = pickle.load(data)
-    pred2 = model2.predict(X_test)
-    assert_almost_equal(pred1, pred2, **kwargs)
+    if hasattr(model2, 'predict'):
+        pred2 = model2.predict(X_test)
+    else:
+        pred2 = model2.transform(X_test)
+    if isinstance(pred1, ndarray):
+        assert_almost_equal(pred1, pred2, **kwargs)
+    else:
+        assert_frame_equal(pred1, pred2, **kwargs)
     return model, model2
 
 
@@ -118,7 +132,10 @@ def test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid
         raise ValueError(
             "Some parameters must be tested when running grid search.")
     clf = GridSearchCV(pipe, parameters)
-    clf.fit(X_train, y_train, w_train)
+    if y_train is None and w_train is None:
+        clf.fit(X_train)
+    else:
+        clf.fit(X_train, y_train, w_train)
     score = clf.score(X_test, y_test)
     ExtTestCase().assertIsInstance(score, float)
     return dict(model=clf, X_train=X_train, y_train=y_train, w_train=w_train,

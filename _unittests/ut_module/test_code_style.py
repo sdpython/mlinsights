@@ -35,7 +35,7 @@ class TestCodeStyle(ExtTestCase):
         check_pep8(src_, fLOG=fLOG,
                    pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
                                   'W0201', 'W0221', 'E0632', 'R1702', 'W0212'),
-                   skip=["categories_to_integers.py:189: W0640"])
+                   skip=["categories_to_integers.py:174: W0640"])
 
     def test_style_test(self):
         thi = os.path.abspath(os.path.dirname(__file__))

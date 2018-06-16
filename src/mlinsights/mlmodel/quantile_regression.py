@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
 @file
 @brief Implements a quantile linear regression.
@@ -86,6 +87,8 @@ class QuantileLinearRegression(LinearRegression):
         Data gets checked and rescaled each time.
         The optimization follows the algorithm
         `Iteratively reweighted least squares <https://en.wikipedia.org/wiki/Iteratively_reweighted_least_squares>`_.
+        It is described in French at
+        `Régression quantile <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td_note_2017_2.html>`_.
 
         Attributes
         ----------

@@ -3,7 +3,6 @@
 @brief Implements a transformation which can be put in a pipeline to transform categories in
 integers.
 """
-import textwrap
 import numpy
 import pandas
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -37,37 +36,23 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             print(newdf)
     """
 
-    def __init__(self, columns=None, remove=None, skip_errors=False, single=False, fLOG=None):
+    def __init__(self, columns=None, remove=None, skip_errors=False, single=False):
         """
         @param      columns         specify a columns selection
         @param      remove          modalities to remove
         @param      skip_errors     skip when a new categories appear (no 1)
         @param      single          use a single column per category, do not multiply them for each value
-        @param      fLOG            logging function
 
         The logging function displays a message when a new dense and big matrix
         is created when it should be sparse. A sparse matrix should be allocated instead.
         """
         BaseEstimator.__init__(self)
         TransformerMixin.__init__(self)
-        self._p_columns = columns if isinstance(
+        self.columns = columns if isinstance(
             columns, list) or columns is None else [columns]
-        self._p_skip_errors = skip_errors
-        self._p_remove = remove
-        self._p_single = single
-        self.fLOG = fLOG
-
-    def __repr__(self):
-        """
-        usual
-        """
-        s1 = ', '.join("'{0}'".format(_)
-                       for _ in self._p_columns) if self._p_columns else None
-        s2 = ', '.join("'{0}'".format(_)
-                       for _ in self._p_remove) if self._p_remove else None
-        s = "DictVectorizerTransformer(columns=[{0}], remove=[{1}], skip_errors={2})".format(
-            s1, s2, self._p_skip_errors)
-        return "\n".join(textwrap.wrap(s))
+        self.skip_errors = skip_errors
+        self.remove = remove
+        self.single = single
 
     def __str__(self):
         """
@@ -95,8 +80,8 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         if not isinstance(X, pandas.DataFrame):
             raise TypeError(
                 "this transformer only accept Dataframes, not {0}".format(type(X)))
-        if self._p_columns:
-            columns = self._p_columns
+        if self.columns:
+            columns = self.columns
         else:
             columns = [c for c, d in zip(
                 X.columns, X.dtypes) if d in (object,)]
@@ -130,8 +115,8 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         for c, v in self._categories.items():
             sch = [(_[1], "{0}={1}".format(c, _[1]))
                    for _ in sorted((n, d) for d, n in v.items())]
-            if self._p_remove:
-                sch = [d for d in sch if d[1] not in self._p_remove]
+            if self.remove:
+                sch = [d for d in sch if d[1] not in self.remove]
             position[c] = last
             new_vector[c] = {d[0]: i for i, d in enumerate(sch)}
             last += len(sch)
@@ -162,8 +147,8 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             raise TypeError(
                 "X is not a dataframe: {0}".format(type(X)))
 
-        if self._p_single:
-            b = not self._p_skip_errors
+        if self.single:
+            b = not self.skip_errors
 
             def transform(v, vec):
                 "transform a vector"
@@ -173,13 +158,13 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     return numpy.nan
                 elif isinstance(v, float) and numpy.isnan(v):
                     return numpy.nan
-                elif not self._p_skip_errors:
+                elif not self.skip_errors:
                     lv = list(sorted(vec))
                     if len(lv) > 20:
                         lv = lv[:20]
                         lv.append("...")
-                    raise ValueError("unable to find category value '{0}': '{1}' type(v)={3} among\n{2}".format(
-                        k, v, "\n".join(lv), type(v)))
+                    raise ValueError("Unable to find category value '{0}' type(v)={2} among\n{1}".format(
+                        v, "\n".join(lv), type(v)))
                 else:
                     return numpy.nan
 
@@ -194,12 +179,10 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             sch, pos, new_vector = self._schema
             vec = new_vector
 
-            new_size = X.shape[0] * len(sch)
-            if new_size >= 2e30 and self.fLOG:
-                self.fLOG("Allocating {0} floats.".format(new_size))
+            # new_size = X.shape[0] * len(sch)
             res = numpy.zeros((X.shape[0], len(sch)))
             res.fill(numpy.nan)
-            b = not self._p_skip_errors
+            b = not self.skip_errors
 
             for i, row in enumerate(dfcat.to_dict("records")):
                 for k, v in row.items():
