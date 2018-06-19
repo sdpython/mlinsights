@@ -14,3 +14,7 @@ div.highlight-ipython3 pre {
 .wy-side-nav-search {
 	background-color: #FF0040;
 }
+
+pre.highlight-default {
+	background-color: #b5b5b5;
+}
