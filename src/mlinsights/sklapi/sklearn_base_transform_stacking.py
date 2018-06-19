@@ -31,7 +31,7 @@ class SkBaseTransformStacking(SkBaseTransform):
             from sklearn.tree import DecisionTreeClassifier
             from sklearn.metrics import accuracy_score
             from sklearn.pipeline import make_pipeline
-            from papierstat.mltricks import SkBaseTransformStacking
+            from mlinsights.sklapi import SkBaseTransformStacking
 
             data = load_iris()
             X, y = data.data, data.target
@@ -46,20 +46,21 @@ class SkBaseTransformStacking(SkBaseTransform):
 
     def __init__(self, models=None, method=None, **kwargs):
         """
-        @param  models  liste de learners
-        @param  method  méthode ou list de méthodes à appeler pour
-                        transformer les features (voir-ci-dessous)
-        @param  kwargs  paramètres
+        @param  models  list of learners
+        @param  method  methods or list of methods to call
+                        to convert features into prediction
+                        (see below)
+        @param  kwargs  parameters
 
-        Options pour le paramètres *method* :
+        Available options for parameter *method*:
 
         * ``'predict'``
         * ``'predict_proba'``
         * ``'decision_function'``
-        * une fonction
+        * a function
 
-        Si *method is None*, la fonction essaye dans l'ordre
-        ``predict_proba`` puis ``predict``.
+        If *method is None*, the default value is first
+        ``predict_proba`` it it exists then ``predict``.
         """
         super().__init__(**kwargs)
         if models is None:
@@ -97,12 +98,12 @@ class SkBaseTransformStacking(SkBaseTransform):
 
     def fit(self, X, y=None, **kwargs):
         """
-        Apprends un modèle.
+        Trains a model.
 
         @param      X               features
-        @param      y               cibles
-        @param      kwargs          paramètres additionnels
-        @return                     self, lui-même
+        @param      y               targets
+        @param      kwargs          additional parameters
+        @return                     self
         """
         for m in self.models:
             m.fit(X, y=y, **kwargs)
@@ -110,7 +111,8 @@ class SkBaseTransformStacking(SkBaseTransform):
 
     def transform(self, X):
         """
-        Prédit, souvent cela se résume à appeler la mathode *decision_function*.
+        Calls the learners predictions to convert
+        the features.
 
         @param      X   features
         @return         prédictions
@@ -124,8 +126,8 @@ class SkBaseTransformStacking(SkBaseTransform):
 
     def get_params(self, deep=True):
         """
-        Retourne les paramètres qui définissent l'objet
-        (tous ceux nécessaires pour le cloner).
+        Returns the parameters which define the object.
+        It follows :epkg:`scikit-learn` API.
 
         @param      deep        unused here
         @return                 dict
@@ -142,7 +144,7 @@ class SkBaseTransformStacking(SkBaseTransform):
 
     def set_params(self, **values):
         """
-        Set parameters.
+        Sets the parameters.
 
         @param      params      parameters
         """

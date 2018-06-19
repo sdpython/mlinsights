@@ -1,12 +1,20 @@
 
+
 .. _l-HISTORY:
 
 =======
 History
 =======
 
-current - 2018-06-16 - 0.00Mb
+current - 2018-06-19 - 0.00Mb
 =============================
+
+* `8`: move items from papierstat (2018-06-19)
+* `14`: add transform to convert a learner into a transform (sometimes called a  featurizer) (2018-06-19)
+* `13`: add transform to do model stacking (2018-06-19)
+
+0.1.75 - 2018-06-18 - 0.02Mb
+============================
 
 * `12`: fix bug in quantile regression: wrong weight for linear regression (2018-06-16)
 * `11`: specifying quantile (2018-06-16)

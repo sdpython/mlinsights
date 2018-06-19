@@ -9,3 +9,4 @@ Examples
 
 .. exreflist::
     :contents:
+    :tag: sklearn

@@ -20,7 +20,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
 
     .. exref::
         :title: DictVectorizer or CategoriesToIntegers
-        :tag: Machine Learning
+        :tag: sklearn
 
         Example which transforms text into integers:
 
