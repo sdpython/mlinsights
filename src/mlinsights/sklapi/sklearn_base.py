@@ -124,6 +124,8 @@ class SkBase:
                         b = e1[1].test_equality(e2[1], exc=exc)
                         if not b:
                             return b
+                    elif e1[1] != e2[1]:
+                        return False
             elif hasattr(v1, "get_params") and hasattr(v2, "get_params"):
                 b = SkBase.compare_params(v1.get_params(
                     deep=False), v2.get_params(deep=False), exc=exc)
