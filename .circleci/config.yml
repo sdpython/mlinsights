@@ -42,6 +42,14 @@ jobs:
           command: |
                     sudo apt-get install -y graphviz
           
+      # statsmodels setup.py requires it
+      - run:
+          name: install numpy
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install numpy
+
       - run:
           name: install dependencies (1)
           command: |
