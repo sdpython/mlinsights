@@ -1,9 +1,9 @@
-dist: trusty
-sudo: required
+dist: xenial
+sudo: true
 language: python
 
 python:
-    - "3.6"
+    - "3.7"
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
