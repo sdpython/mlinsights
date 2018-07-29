@@ -61,7 +61,7 @@ class TestSearchPredictions(ExtTestCase):
                          "penalty='l2',random_state=None,solver='liblinear',tol=0.0001,verbose=0,warm_start=False)," +
                          "fct_params=None,n_neighbors=5)")
 
-        se.fit(data=None, features=df[["f1", "f2"]].as_matrix(),
+        se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
         score, ind, meta = se.kneighbors([0.5, 0.5])
 
@@ -134,7 +134,7 @@ class TestSearchPredictions(ExtTestCase):
                          "min_samples_leaf=1,min_samples_split=2,min_weight_fraction_leaf=0.0,n_estimators=10,n_jobs=1,oob_score=False," +
                          "random_state=None,verbose=0,warm_start=False),fct_params=None,n_neighbors=5)")
 
-        se.fit(data=None, features=df[["f1", "f2"]].as_matrix(),
+        se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
         score, ind, meta = se.kneighbors([0.5, 0.5])
 
@@ -160,7 +160,7 @@ class TestSearchPredictions(ExtTestCase):
                          "min_samples_leaf=1,min_samples_split=2,min_weight_fraction_leaf=0.0,n_estimators=10,n_jobs=1,oob_score=False," +
                          "random_state=None,verbose=0,warm_start=False),fct_params={'output':True},n_neighbors=5)")
 
-        se.fit(data=None, features=df[["f1", "f2"]].as_matrix(),
+        se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
         score, ind, meta = se.kneighbors([0.5, 0.5])
 

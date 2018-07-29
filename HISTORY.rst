@@ -5,12 +5,13 @@
 History
 =======
 
-current - 2018-06-19 - 0.00Mb
+current - 2018-07-29 - 0.00Mb
 =============================
 
-* `8`: move items from papierstat (2018-06-19)
+* `17`: replace as_matrix by values (pandas deprecated warning) (2018-07-29)
 * `14`: add transform to convert a learner into a transform (sometimes called a  featurizer) (2018-06-19)
 * `13`: add transform to do model stacking (2018-06-19)
+* `8`: move items from papierstat (2018-06-19)
 
 0.1.75 - 2018-06-18 - 0.02Mb
 ============================

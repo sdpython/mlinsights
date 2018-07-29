@@ -48,7 +48,7 @@ class TestSearchVectors(ExtTestCase):
         self.assertEqual(r.replace("\n", "").replace(" ", ""),
                          'SearchEngineVectors(n_neighbors=5)')
 
-        se.fit(data=None, features=df[["f1", "f2"]].as_matrix(),
+        se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
         score, ind, meta = se.kneighbors([0.5, 0.5])
 
@@ -113,7 +113,7 @@ class TestSearchVectors(ExtTestCase):
         self.assertEqual(r.replace("\n", "").replace(" ", ""),
                          'SearchEngineVectors(n_neighbors=5)')
 
-        se.fit(data=None, features=df[["f1", "f2"]].as_matrix(),
+        se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
         score, ind, meta = se.kneighbors([0.5, 0.5])
 
