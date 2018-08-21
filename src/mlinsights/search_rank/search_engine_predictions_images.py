@@ -3,7 +3,6 @@
 @brief Implements a way to get close examples based
 on the output of a machine learned model.
 """
-from keras.preprocessing.image import Iterator
 from .search_engine_predictions import SearchEnginePredictions
 
 
@@ -31,6 +30,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         @param      fLOG        logging function
         """
         iter_images = data
+        # We delay the import as keras backend is not necessarily installed.
+        from keras.preprocessing.image import Iterator
         if not isinstance(iter_images, Iterator):
             raise NotImplementedError(
                 "iter_images must be a keras Iterator. No other option implemented.")
@@ -84,6 +85,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         *ind* contains the indices of the nearest points in the population matrix,
         *meta* is the metadata.
         """
+        # We delay the import as keras backend is not necessarily installed.
+        from keras.preprocessing.image import Iterator
         if not isinstance(iter_images, Iterator):
             raise NotImplementedError(
                 "iter_images must be a keras Iterator. No other option implemented.")
