@@ -6,6 +6,8 @@
 import sys
 import os
 import unittest
+import warnings
+from contextlib import redirect_stderr, redirect_stdout
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
@@ -38,6 +40,14 @@ class TestNotebookSearch(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        with redirect_stderr(StringIO()):
+            try:
+                from keras.applications.mobilenet import MobileNet
+                assert MobileNet is not None
+            except SyntaxError as e:
+                warnings.warn("tensorflow is probably not available yet on python 3.7: {0}".format(e))
+                return
 
         self.assertTrue(src.mlinsights is not None)
         folder = os.path.join(os.path.dirname(__file__),

@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 import pandas
@@ -41,7 +42,11 @@ class TestSearchPredictionsImages(ExtTestCase):
 
         # We delay the import as keras backend is not necessarily available.
         with redirect_stderr(StringIO()):
-            from keras.applications.mobilenet import MobileNet
+            try:
+                from keras.applications.mobilenet import MobileNet
+            except SyntaxError as e:
+                warnings.warn("tensorflow is probably not available yet on python 3.7: {0}".format(e))
+                return
             from keras.preprocessing.image import ImageDataGenerator
             from keras.preprocessing.image import img_to_array, load_img
 

@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.5
+      - image: circleci/python:3.7.0
     
     working_directory: ~/repo
     
@@ -49,6 +49,37 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install numpy
+
+      - run:
+          name: Install cython
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install cython
+
+      - run:
+          name: Install pyproj (1)
+          command: |
+            sudo apt-get -qq update
+            sudo apt-get install -y libproj-dev proj-bin proj-data
+
+      - run:
+          name: Install pyproj (2)
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install git+https://github.com/jswhit/pyproj.git
+
+      - run:
+          name: Install pyproj (3) - optional
+          command: |
+            sudo apt-get install -y libc6
+            sudo apt-get install libgeos-dev
+            sudo apt-get install python-gdal gdal-bin
+            wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj9_4.9.2-2_amd64.deb 
+            sudo dpkg -i libproj9_4.9.2-2_amd64.deb 
+            wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj-dev_4.9.2-2_amd64.deb
+            sudo dpkg -i libproj-dev_4.9.2-2_amd64.deb
 
       - run:
           name: install dependencies (1)
