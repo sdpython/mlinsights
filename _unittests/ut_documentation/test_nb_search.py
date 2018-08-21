@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import warnings
+from io import StringIO
 from contextlib import redirect_stderr, redirect_stdout
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
