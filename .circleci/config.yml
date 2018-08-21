@@ -86,7 +86,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements_conda.txt
+            pip install -r requirements_conda-3.7.txt
 
       - run:
           name: install dependencies (2)
