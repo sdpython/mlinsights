@@ -14,11 +14,6 @@ from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from pyquickhelper.filehelper import unzip_files
 
-with redirect_stderr(StringIO()):
-    from keras.applications.mobilenet import MobileNet
-    from keras.preprocessing.image import ImageDataGenerator
-    from keras.preprocessing.image import img_to_array, load_img
-
 
 try:
     import src
@@ -43,6 +38,12 @@ class TestSearchPredictionsImages(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         from src.mlinsights.search_rank import SearchEnginePredictionImages
+
+        # We delay the import as keras backend is not necessarily available.
+        with redirect_stderr(StringIO()):
+            from keras.applications.mobilenet import MobileNet
+            from keras.preprocessing.image import ImageDataGenerator
+            from keras.preprocessing.image import img_to_array, load_img
 
         # deep learning model
         model = MobileNet(input_shape=None, alpha=1.0, depth_multiplier=1, dropout=1e-3, include_top=True,
