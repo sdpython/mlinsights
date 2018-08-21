@@ -26,4 +26,3 @@ after_script:
 documentation:
   - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx fi
   - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
-  - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/latex/*.pdf dist/html fi
