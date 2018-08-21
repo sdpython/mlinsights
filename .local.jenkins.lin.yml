@@ -1,0 +1,29 @@
+
+language: python
+
+python:
+  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7 }
+  
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("$NAME_JENKINS", project_name + "_$VERSION_$DIST_$NAME"), "_venv")}}
+  
+install:
+  - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
+  - $PYINT -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
+  - $PYINT --version
+  - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
+
+before_script:
+  - $PYINT -u setup.py build_ext --inplace
+
+script:
+  - { CMD: "$PYINT -u setup.py unittests", NAME: "UT" }
+
+after_script:
+  - $PYINT -u setup.py bdist_wheel
+  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
+
+documentation:
+  - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx fi
+  - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
+  - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/latex/*.pdf dist/html fi
