@@ -8,7 +8,7 @@ import os
 import unittest
 import warnings
 from io import StringIO
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import redirect_stderr
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
