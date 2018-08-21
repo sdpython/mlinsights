@@ -46,7 +46,7 @@ class TestNotebookSearch(unittest.TestCase):
             try:
                 from keras.applications.mobilenet import MobileNet
                 assert MobileNet is not None
-            except SyntaxError as e:
+            except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn("tensorflow is probably not available yet on python 3.7: {0}".format(e))
                 return
 

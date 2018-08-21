@@ -44,7 +44,7 @@ class TestSearchPredictionsImages(ExtTestCase):
         with redirect_stderr(StringIO()):
             try:
                 from keras.applications.mobilenet import MobileNet
-            except SyntaxError as e:
+            except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn("tensorflow is probably not available yet on python 3.7: {0}".format(e))
                 return
             from keras.preprocessing.image import ImageDataGenerator
