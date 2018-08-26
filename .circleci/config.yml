@@ -133,7 +133,7 @@ jobs:
           name: copy documentation
           command: |
             mkdir -p test-reports/doc
-            cp -r  _doc/sphinxdoc/build/html test-reports/doc
+            zip -r -9  test-reports/doc/documentation_html.zip _doc/sphinxdoc/build/html
             
       - store_artifacts:
           path: test-reports
