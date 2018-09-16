@@ -12,7 +12,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     Vectors are coming from images. The metadata must contains
     information about path names. We assume all images can hold
     in memory. An example can found in notebook
-    :ref:`searchimagesrst`.
+    :ref:`searchimageskerasrst` or :ref:`searchimagestorchrst`.
     """
 
     def _prepare_fit(self, data=None, features=None, metadata=None, transform=None, n=None, fLOG=None):

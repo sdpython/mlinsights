@@ -7,6 +7,7 @@ import os
 import unittest
 from io import BytesIO
 import pickle
+import warnings
 import pandas
 from numpy.random import permutation
 from sklearn.model_selection import train_test_split
@@ -17,7 +18,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.base import clone
-from sklearn.ensemble import RandomForestClassifier
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", DeprecationWarning)
+    from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer

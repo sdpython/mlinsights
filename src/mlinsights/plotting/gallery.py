@@ -19,7 +19,8 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False, **figure
     @param      return_figure   return the figure as well as the axes
     @return                     axes or (figure, axes) if *return_figure* is True
 
-    See notebook :ref:`searchimagesrst` for an example.
+    See notebook :ref:`searchimageskerasrst` or
+    :ref:`searchimagestorchrst` for an example.
     """
     if "plt" not in sys.modules:
         import matplotlib.pyplot as plt

@@ -20,7 +20,7 @@ class SkBase:
         Stores the parameters, see
         @see cl SkLearnParameters, it keeps a copy of
         the parameters to easily implements method *get_params*
-        and clone a model.
+        and clones a model.
         """
         self.P = SkLearnParameters(**kwargs)
 

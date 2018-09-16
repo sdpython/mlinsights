@@ -95,7 +95,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pip install git+https://github.com/sdpython/sphinxcontrib-images.git --upgrade --no-deps
 
       - save_cache:
           paths:

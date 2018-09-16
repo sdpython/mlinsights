@@ -81,20 +81,34 @@ class SkBaseTransformStacking(SkBaseTransform):
         else:
             method = [method for m in models]
 
-        def convert2transform(c):
-            "converting function as a transform"
+        def convert2transform(c, new_learners):
+            "converting function into a transform"
             m, me = c
             if isinstance(m, SkBaseTransformLearner):
                 if me == m.method:
                     return m
                 else:
-                    return SkBaseTransformLearner(m.model, me)
+                    res = SkBaseTransformLearner(m.model, me)
+                    new_learners.append(res)
+                    return res
             elif hasattr(m, 'transform'):
                 return m
             else:
-                return SkBaseTransformLearner(m, me)
+                res = SkBaseTransformLearner(m, me)
+                new_learners.append(res)
+                return res
 
-        self.models = list(map(convert2transform, zip(models, method)))
+        new_learners = []
+        res = list(map(lambda c: convert2transform(
+            c, new_learners), zip(models, method)))
+        if len(new_learners) == 0:
+            # We need to do that to avoid creating new objects
+            # when it is not necessary. This behavior is not
+            # supported anymore by scikit-learn.
+            # See sklearn.base.py
+            self.models = models
+        else:
+            self.models = res
 
     def fit(self, X, y=None, **kwargs):
         """

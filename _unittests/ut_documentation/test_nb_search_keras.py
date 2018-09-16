@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=13s)
+@brief      test log(time=65s)
 """
 
 import sys
@@ -31,7 +31,7 @@ except ImportError:
 import src.mlinsights
 
 
-class TestNotebookSearch(unittest.TestCase):
+class TestNotebookSearchKeras(unittest.TestCase):
 
     def setUp(self):
         add_missing_development_version(["jyquickhelper"], __file__, hide=True)
@@ -47,13 +47,14 @@ class TestNotebookSearch(unittest.TestCase):
                 from keras.applications.mobilenet import MobileNet
                 assert MobileNet is not None
             except (SyntaxError, ModuleNotFoundError) as e:
-                warnings.warn("tensorflow is probably not available yet on python 3.7: {0}".format(e))
+                warnings.warn(
+                    "tensorflow is probably not available yet on python 3.7: {0}".format(e))
                 return
 
         self.assertTrue(src.mlinsights is not None)
         folder = os.path.join(os.path.dirname(__file__),
                               "..", "..", "_doc", "notebooks")
-        test_notebook_execution_coverage(__file__, "search", folder, 'mlinsights',
+        test_notebook_execution_coverage(__file__, "keras", folder, 'mlinsights',
                                          copy_files=["data/dog-cat-pixabay.zip"], fLOG=fLOG)
 
 
