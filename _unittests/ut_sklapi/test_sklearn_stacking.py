@@ -18,14 +18,13 @@ from sklearn.metrics import accuracy_score
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.base import clone
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", DeprecationWarning)
-    from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", DeprecationWarning)
+    from sklearn.ensemble import RandomForestClassifier
 from pyquickhelper.pycode import ExtTestCase
-
 
 try:
     import src

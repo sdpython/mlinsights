@@ -51,6 +51,7 @@ class TestCodeStyle(ExtTestCase):
                          "imported as skip_",
                          "Unused import src",
                          "Instance of 'tuple' has no",
+                         "[E402] module level import",
                          ])
 
 
