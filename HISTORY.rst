@@ -5,8 +5,17 @@
 History
 =======
 
-current - 2018-07-29 - 0.00Mb
+current - 2018-09-17 - 0.00Mb
 =============================
+
+0.1.99 - 2018-09-16 - 0.03Mb
+============================
+
+* `18`: remove warning from scikit-learn about cloning (2018-09-16)
+* `16`: move CI to python 3.7 (2018-08-21)
+
+0.1.85 - 2018-07-29 - 0.03Mb
+============================
 
 * `17`: replace as_matrix by values (pandas deprecated warning) (2018-07-29)
 * `14`: add transform to convert a learner into a transform (sometimes called a  featurizer) (2018-06-19)
