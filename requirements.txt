@@ -3,7 +3,8 @@ coverage
 guzzle_sphinx_theme
 jyquickhelper
 pandas_streaming
-pyquickhelper>=1.8
+pyquickhelper>=1.8.2814
 sphinx>=1.8
 sphinx_rtd_theme
+torchvision
 wheel
