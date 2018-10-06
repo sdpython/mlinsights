@@ -57,8 +57,8 @@ class TestSearchPredictions(ExtTestCase):
         r = repr(se)
         self.assertEqual(r.replace("\n", "").replace(" ", ""),
                          "SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False," +
-                         "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='ovr',n_jobs=1," +
-                         "penalty='l2',random_state=None,solver='liblinear',tol=0.0001,verbose=0,warm_start=False)," +
+                         "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='warn',n_jobs=None," +
+                         "penalty='l2',random_state=None,solver='warn',tol=0.0001,verbose=0,warm_start=False)," +
                          "fct_params=None,n_neighbors=5)")
 
         se.fit(data=None, features=df[["f1", "f2"]].values,
@@ -129,9 +129,11 @@ class TestSearchPredictions(ExtTestCase):
         se = SearchEnginePredictions(clf, n_neighbors=5)
         r = repr(se)
         self.assertEqual(r.replace("\n", "").replace(" ", ""),
-                         "SearchEnginePredictions(fct=RandomForestClassifier(bootstrap=True,class_weight=None,criterion='gini'," +
-                         "max_depth=None,max_features='auto',max_leaf_nodes=None,min_impurity_decrease=0.0,min_impurity_split=None," +
-                         "min_samples_leaf=1,min_samples_split=2,min_weight_fraction_leaf=0.0,n_estimators=10,n_jobs=1,oob_score=False," +
+                         "SearchEnginePredictions(fct=RandomForestClassifier(bootstrap=True,class_weight=None," +
+                         "criterion='gini',max_depth=None,max_features='auto',max_leaf_nodes=None," +
+                         "min_impurity_decrease=0.0,min_impurity_split=None," +
+                         "min_samples_leaf=1,min_samples_split=2,min_weight_fraction_leaf=0.0,n_estimators=10," +
+                         "n_jobs=None,oob_score=False," +
                          "random_state=None,verbose=0,warm_start=False),fct_params=None,n_neighbors=5)")
 
         se.fit(data=None, features=df[["f1", "f2"]].values,
@@ -155,10 +157,14 @@ class TestSearchPredictions(ExtTestCase):
             clf, fct_params={'output': True}, n_neighbors=5)
         r = repr(se)
         self.assertEqual(r.replace("\n", "").replace(" ", ""),
-                         "SearchEnginePredictions(fct=RandomForestClassifier(bootstrap=True,class_weight=None,criterion='gini'," +
-                         "max_depth=None,max_features='auto',max_leaf_nodes=None,min_impurity_decrease=0.0,min_impurity_split=None," +
-                         "min_samples_leaf=1,min_samples_split=2,min_weight_fraction_leaf=0.0,n_estimators=10,n_jobs=1,oob_score=False," +
-                         "random_state=None,verbose=0,warm_start=False),fct_params={'output':True},n_neighbors=5)")
+                         "SearchEnginePredictions(fct=RandomForestClassifier(bootstrap=True," +
+                         "class_weight=None,criterion='gini'," +
+                         "max_depth=None,max_features='auto',max_leaf_nodes=None," +
+                         "min_impurity_decrease=0.0,min_impurity_split=None," +
+                         "min_samples_leaf=1,min_samples_split=2,min_weight_fraction_leaf=0.0," +
+                         "n_estimators=10,n_jobs=None,oob_score=False," +
+                         "random_state=None,verbose=0,warm_start=False),fct_params={'output':True}," +
+                         "n_neighbors=5)")
 
         se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])

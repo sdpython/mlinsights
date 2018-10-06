@@ -32,9 +32,10 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         iter_images = data
         # We delay the import as keras backend is not necessarily installed.
         from keras.preprocessing.image import Iterator
-        if not isinstance(iter_images, Iterator):
+        from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
+        if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
             raise NotImplementedError(
-                "iter_images must be a keras Iterator. No other option implemented.")
+                "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
         if iter_images.batch_size != 1:
             raise ValueError("batch_size must be 1 not {0}".format(
                 iter_images.batch_size))
@@ -87,9 +88,10 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         """
         # We delay the import as keras backend is not necessarily installed.
         from keras.preprocessing.image import Iterator
-        if not isinstance(iter_images, Iterator):
+        from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
+        if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
             raise NotImplementedError(
-                "iter_images must be a keras Iterator. No other option implemented.")
+                "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
         if iter_images.batch_size != 1:
             raise ValueError("batch_size must be 1 not {0}".format(
                 iter_images.batch_size))
