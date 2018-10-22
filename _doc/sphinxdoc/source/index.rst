@@ -49,9 +49,14 @@ mlinsights
 
 *mlinsights* implements functions to get insights on machine learned
 models or various kind of transforms to help manipulating
-data in a single pipeline.
+data in a single pipeline. It implements
+:class:`QuantileLinearRegression <mlinsights.mlmodel.quantile_regression.QuantileLinearRegression`
+which trains a linear regression with L1 norm
+non-linear correlation based on decision trees,
+:class:`QuantileMLPRegressor <mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor>`
+which is a modification of scikit-learn's MLPRegressor
+which trains a multi-layer perceptron with L1 norm...
 
-*not really ready yet*
 
 .. toctree::
     :maxdepth: 1
@@ -64,10 +69,13 @@ data in a single pipeline.
     blog/blogindex
     index_modules
 
+Short example:
+
 ::
 
-    import mlinsights
-    ...
+    from mlinsights.mlmodel import QuantileLinearRegression
+    clq = QuantileLinearRegression()
+    clq.fit(X, Y)
 
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |
