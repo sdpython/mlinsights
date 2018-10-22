@@ -10,6 +10,8 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
 
+.. autosignature:: mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor
+
 .. autosignature:: mlinsights.mlmodel.quantile_regression.QuantileLinearRegression
 
 Transforms

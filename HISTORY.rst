@@ -5,7 +5,12 @@
 History
 =======
 
-current - 2018-10-06 - 0.00Mb
+current - 2018-10-23 - 0.00Mb
+=============================
+
+* `20`: implements a QuantileMLPRegressor (quantile regression with MLP) (2018-10-22)
+
+0.1.110 - 2018-10-08 - 0.03Mb
 =============================
 
 * `19`: fix issues introduced with changes in keras 2.2.4 (2018-10-06)

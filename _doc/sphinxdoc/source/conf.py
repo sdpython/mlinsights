@@ -31,15 +31,16 @@ language = "en"
 
 mathdef_link_only = True
 
-epkg_dictionary['keras'] = 'https://keras.io/'
-epkg_dictionary['Iris'] = 'http://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html'
-epkg_dictionary['RandomForestRegressor'] = 'http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html'
-epkg_dictionary['REST API'] = "https://en.wikipedia.org/wiki/Representational_state_transfer"
-
 epkg_dictionary.update({
+    'keras': 'https://keras.io/',
+    'Iris': 'http://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html',
+    'MLPClassifier': 'http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html',
+    'MLPRegressor': 'http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html',
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/',
                ('http://pandas.pydata.org/pandas-docs/stable/generated/pandas.{0}.html', 1),
                ('http://pandas.pydata.org/pandas-docs/stable/generated/pandas.{0}.{1}.html', 2)),
+    'RandomForestRegressor': 'http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html',
+    'REST API': 'https://en.wikipedia.org/wiki/Representational_state_transfer',
     'sklearn': ('http://scikit-learn.org/stable/',
                 ('http://scikit-learn.org/stable/modules/generated/{0}.html', 1),
                 ('http://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),

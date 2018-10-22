@@ -62,7 +62,11 @@ def test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
     if y_train is None and w_train is None:
         model.fit(X_train)
     else:
-        model.fit(X_train, y_train, w_train)
+        try:
+            model.fit(X_train, y_train, w_train)
+        except TypeError:
+            # Do not accept weights?
+            model.fit(X_train, y_train)
     if hasattr(model, 'predict'):
         pred1 = model.predict(X_test)
     else:
