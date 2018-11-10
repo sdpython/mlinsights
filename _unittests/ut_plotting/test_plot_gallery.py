@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=33s)
+@brief      test log(time=4s)
 """
 
 import sys
 import os
 import unittest
-from pyquickhelper.loghelper import fLOG
+import numpy
+from pyquickhelper.loghelper import noLOG
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from pyquickhelper.filehelper import unzip_files
 from pyquickhelper.pycode import fix_tkinter_issues_virtualenv
@@ -31,17 +32,12 @@ from src.mlinsights.plotting import plot_gallery_images
 class TestPlotGallery(ExtTestCase):
 
     def test_plot_gallery(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_plot_gallery")
         zipimg = os.path.join(temp, "..", "..", "..", "_doc",
                               "notebooks", "data", "dog-cat-pixabay.zip")
         files = unzip_files(zipimg, where_to=temp)
 
-        fix_tkinter_issues_virtualenv(fLOG=fLOG)
+        fix_tkinter_issues_virtualenv(fLOG=noLOG)
         from matplotlib import pyplot as plt
 
         fig, _ = plot_gallery_images(files[:2], return_figure=True)
@@ -49,13 +45,23 @@ class TestPlotGallery(ExtTestCase):
         fig.savefig(img)
         plt.close('all')
 
-    def test_plot_gallery_url(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
+    def test_plot_gallery_matrix(self):
+        temp = get_temp_folder(__file__, "temp_plot_gallery_matrix")
+        zipimg = os.path.join(temp, "..", "..", "..", "_doc",
+                              "notebooks", "data", "dog-cat-pixabay.zip")
+        files = unzip_files(zipimg, where_to=temp)
 
-        fix_tkinter_issues_virtualenv(fLOG=fLOG)
+        fix_tkinter_issues_virtualenv(fLOG=noLOG)
+        from matplotlib import pyplot as plt
+
+        fig, _ = plot_gallery_images(numpy.array(
+            files[:2]).reshape((2, 1)), return_figure=True)
+        img = os.path.join(temp, "gallery.png")
+        fig.savefig(img)
+        plt.close('all')
+
+    def test_plot_gallery_url(self):
+        fix_tkinter_issues_virtualenv(fLOG=noLOG)
         from matplotlib import pyplot as plt
 
         root = "http://www.xavierdupre.fr/enseignement/complements/dog-cat-pixabay/"

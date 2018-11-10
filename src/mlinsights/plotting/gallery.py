@@ -4,37 +4,61 @@
 """
 import sys
 import io
+import os
 import urllib.request
 from PIL import Image
 
 
-def plot_gallery_images(imgs, texts=None, width=4, return_figure=False, **figure):
+def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
+                        ax=None, folder_image=None, **figure):
     """
     Plots a gallery of images using :epkg:`matplotlib`.
 
     @param      imgs            list of images (filename, urls or :epkg:`Pillow` objects),
     @param      texts           text to display (if None, print ``'img % i'``)
-    @param      width           number of images on the same line
+    @param      width           number of images on the same line (unused if *imgs* is a matrix)
     @param      figure          additional parameters when the figure is created
     @param      return_figure   return the figure as well as the axes
+    @param      ax              None or existing axes, it should have the same
+                                shape of *imgs*
+    @param      folder_image    image paths may be relative to some folder,
+                                in that case, they should be relative to
+                                this folder
     @return                     axes or (figure, axes) if *return_figure* is True
 
     See notebook :ref:`searchimageskerasrst` or
     :ref:`searchimagestorchrst` for an example.
+    *imgs* can also be a matrix to force the function to
+    use the same coordinates.
     """
     if "plt" not in sys.modules:
         import matplotlib.pyplot as plt
 
-    height = len(imgs) // width
-    if len(imgs) % width != 0:
-        height += 1
+    if hasattr(imgs, 'shape') and len(imgs.shape) == 2:
+        width, height = imgs.shape
+        if ax is not None and ax.shape != imgs.shape:
+            raise ValueError(
+                "ax.shape {0} != imgs.shape {1}".format(ax.shape, imgs.shape))
+        imgs = imgs.ravel()
+        if texts is not None:
+            texts = texts.ravel()
+    else:
+        height = len(imgs) // width
+        if len(imgs) % width != 0:
+            height += 1
 
-    if 'figsize' not in figure:
-        figure['figsize'] = (12, height * 3)
-
-    fig, ax = plt.subplots(height, width, **figure)
+    if ax is None:
+        if 'figsize' not in figure:
+            figure['figsize'] = (12, height * 3)
+        fig, ax = plt.subplots(height, width, **figure)
+    elif return_figure:
+        raise ValueError("ax is specified and return_figure is True")
+    elif width != ax.shape[1]:
+        raise ValueError("ax is specified and return_figure is True")
 
     for i, img in enumerate(imgs):
+        if img is None:
+            continue
         y, x = i // width, i % width
         if height == 1:
             ind = x
@@ -49,15 +73,19 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False, **figure
                 im = Image.open(io.BytesIO(content))
             else:
                 # local file
-                im = Image.open(img)
+                if folder_image is not None:
+                    im = Image.open(os.path.join(folder_image, img))
+                else:
+                    im = Image.open(img)
         else:
             im = img
-        ax[ind].imshow(im)
-        if texts is None:
-            t = "img %d" % i
-        else:
-            t = texts[i]
-        ax[ind].text(0, 0, t)
+        if hasattr(im, 'size'):
+            ax[ind].imshow(im)
+            if texts is None:
+                t = "img %d" % i
+            else:
+                t = texts[i]
+            ax[ind].text(0, 0, t)
         ax[ind].axis('off')
 
     for i in range(len(imgs), width * height):

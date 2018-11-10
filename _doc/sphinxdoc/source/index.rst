@@ -57,7 +57,6 @@ non-linear correlation based on decision trees,
 which is a modification of scikit-learn's MLPRegressor
 which trains a multi-layer perceptron with L1 norm...
 
-
 .. toctree::
     :maxdepth: 1
 
