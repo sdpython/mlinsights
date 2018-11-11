@@ -37,6 +37,10 @@ class TestClassifierAfterKMeans(ExtTestCase):
         clr.fit(X, y)
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
+        prob = clr.predict_proba(X)
+        self.assertEqual(prob.shape[1], 3)
+        dec = clr.decision_function(X)
+        self.assertEqual(prob.shape, dec.shape)
 
     def test_classification_kmeans_intercept_weights(self):
         iris = datasets.load_iris()

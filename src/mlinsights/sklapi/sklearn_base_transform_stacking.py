@@ -193,6 +193,7 @@ class SkBaseTransformStacking(SkBaseTransform):
         rps = repr(self.P)
         res = "{0}([{1}], [{2}], {3})".format(
             self.__class__.__name__,
-            ", ".join(repr(m.model) for m in self.models),
-            ", ".join(repr(m.method) for m in self.models), rps)
+            ", ".join(repr(m.model if hasattr(m, 'model') else m)
+                      for m in self.models),
+            ", ".join(repr(m.method if hasattr(m, 'method') else None) for m in self.models), rps)
         return "\n".join(textwrap.wrap(res, subsequent_indent="    "))

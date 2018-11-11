@@ -21,6 +21,7 @@ from sklearn.base import clone
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
+from sklearn.preprocessing import Normalizer, MinMaxScaler
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
     from sklearn.ensemble import RandomForestClassifier
@@ -72,6 +73,23 @@ class TestSklearnStacking(ExtTestCase):
         rp = repr(conv)
         self.assertStartsWith(
             'SkBaseTransformStacking([LogisticRegression(C=1.0, class_weight=None,', rp)
+
+    def test_pipeline_with_two_transforms(self):
+        data = load_iris()
+        X, y = data.data, data.target
+        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        conv = SkBaseTransformStacking(
+            [Normalizer(), MinMaxScaler()])
+        pipe = make_pipeline(conv, DecisionTreeClassifier())
+        pipe.fit(X_train, y_train)
+        pred = pipe.predict(X_test)
+        score = accuracy_score(y_test, pred)
+        self.assertGreater(score, 0.8)
+        score2 = pipe.score(X_test, y_test)
+        self.assertEqual(score, score2)
+        rp = repr(conv)
+        self.assertStartsWith(
+            "SkBaseTransformStacking([Normalizer(copy=True, norm='l2'),", rp)
 
     def test_pipeline_with_params(self):
         conv = SkBaseTransformStacking([LinearRegression(normalize=True),

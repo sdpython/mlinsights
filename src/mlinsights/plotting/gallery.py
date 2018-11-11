@@ -35,7 +35,7 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
         import matplotlib.pyplot as plt
 
     if hasattr(imgs, 'shape') and len(imgs.shape) == 2:
-        width, height = imgs.shape
+        height, width = imgs.shape
         if ax is not None and ax.shape != imgs.shape:
             raise ValueError(
                 "ax.shape {0} != imgs.shape {1}".format(ax.shape, imgs.shape))
