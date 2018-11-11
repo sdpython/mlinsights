@@ -62,6 +62,8 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
         y, x = i // width, i % width
         if height == 1:
             ind = x
+        elif width == 1:
+            ind = y
         else:
             ind = y, x
 
