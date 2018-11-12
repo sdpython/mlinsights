@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-10-23 - 0.00Mb
+current - 2018-11-12 - 0.00Mb
 =============================
 
+* `22`: modifies plot gallery to impose coordinates (2018-11-10)
 * `20`: implements a QuantileMLPRegressor (quantile regression with MLP) (2018-10-22)
 
 0.1.110 - 2018-10-08 - 0.03Mb
