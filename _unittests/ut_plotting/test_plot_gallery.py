@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=4s)
+@brief      test log(time=6s)
 """
 
 import sys
 import os
 import unittest
+import warnings
+import http.client
 import numpy
 from pyquickhelper.loghelper import noLOG
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
@@ -69,7 +71,11 @@ class TestPlotGallery(ExtTestCase):
                  root + 'cat-2947188__480.jpg']
 
         temp = get_temp_folder(__file__, "temp_plot_gallery_url")
-        fig, _ = plot_gallery_images(files, return_figure=True)
+        try:
+            fig, _ = plot_gallery_images(files, return_figure=True)
+        except http.client.RemoteDisconnected as e:
+            warnings.warn("Unable to fetch image {0}'".format(e))
+            return
         img = os.path.join(temp, "gallery.png")
         fig.savefig(img)
         plt.close('all')

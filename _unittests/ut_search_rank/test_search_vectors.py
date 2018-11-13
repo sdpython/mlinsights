@@ -8,7 +8,7 @@ import os
 import unittest
 import pandas
 import numpy
-from pyquickhelper.loghelper import fLOG
+from sklearn.linear_model import LogisticRegression
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 
 try:
@@ -29,12 +29,10 @@ from src.mlinsights.search_rank import SearchEngineVectors
 
 class TestSearchVectors(ExtTestCase):
 
-    def test_search_vectors(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
+    def test_import(self):
+        self.assertTrue(LogisticRegression is not None)
 
+    def test_search_vectors(self):
         res = []
         for i in range(20):
             h = i * 0.05
@@ -93,11 +91,6 @@ class TestSearchVectors(ExtTestCase):
         self.assertTrue(meta is None)
 
     def test_search_vectors_zip(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_search_vectors_zip")
 
         res = []
