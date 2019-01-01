@@ -50,7 +50,7 @@ mlinsights
 *mlinsights* implements functions to get insights on machine learned
 models or various kind of transforms to help manipulating
 data in a single pipeline. It implements
-:class:`QuantileLinearRegression <mlinsights.mlmodel.quantile_regression.QuantileLinearRegression`
+:class:`QuantileLinearRegression <mlinsights.mlmodel.quantile_regression.QuantileLinearRegression>`
 which trains a linear regression with L1 norm
 non-linear correlation based on decision trees,
 :class:`QuantileMLPRegressor <mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor>`
