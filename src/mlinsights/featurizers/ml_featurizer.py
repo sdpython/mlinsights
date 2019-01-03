@@ -17,9 +17,11 @@ class FeaturizerTypeError(TypeError):
 
 def model_featurizer(model, **params):
     """
-    Converts a model into a function which converts
+    Converts a machine learned model into a function which converts
     a vector into features produced by the model.
     It can be the output itself or intermediate results.
+    The model can come from :epkg:`scikit-learn`,
+    :epkg:`keras` or :epkg:`torch`.
 
     @param      model       model
     @param      params      additional parameters
@@ -201,11 +203,12 @@ def wrap_predict_torch(X, fct, many, shapes):
     else:
         if shapes is None or len(X.shape) == len(shapes):
             t = fct(X)
-            return t.detach().numpy().ravel()
+            nt = t.detach().numpy().ravel()
         else:
             x = X[numpy.newaxis, :, :, :]
             t = fct(x)
-            return t.detach().numpy().ravel()
+            nt = t.detach().numpy().ravel()
+        return nt
 
 
 def model_featurizer_torch(model, layer=None):

@@ -79,9 +79,11 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         self.assertIn("SearchEnginePredictionImages", r)
 
         # fit
+        fLOG('[fit]')
         se.fit(imgs_, fLOG=fLOG)
 
         # neighbors
+        fLOG('[test]')
         score, ind, meta = se.kneighbors(imgs[0])
 
         # assert
@@ -91,12 +93,12 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
 
         self.assertIsInstance(score, numpy.ndarray)
         self.assertEqual(score.shape, (5,))
-        self.assertEqual(score[0], 0)
+        self.assertLess(score[0], 50)
 
         self.assertIsInstance(meta, (numpy.ndarray, pandas.DataFrame))
-        self.assertEqual(meta.shape, (5, 1))
-        self.assertEqual(meta.iloc[0, 0].replace('\\', '/'),
-                         'simages/cat-1151519__480.jpg')
+        self.assertEqual(meta.shape, (5, 2))
+        self.assertEndsWith('simages/cat-1151519__480.jpg',
+                            meta.iloc[0, 1].replace('\\', '/'))
 
         # neighbors 2
         score, ind, meta = se.kneighbors(imgs)

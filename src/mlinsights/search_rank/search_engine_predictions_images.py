@@ -3,6 +3,7 @@
 @brief Implements a way to get close examples based
 on the output of a machine learned model.
 """
+import numpy
 from .search_engine_predictions import SearchEnginePredictions
 
 
@@ -76,7 +77,6 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             for i, it in zip(range(n), iter_images):
                 im, name = acc(i, it)
                 if not isinstance(name, str):
-                    print(name)
                     raise TypeError(
                         "name should be a string, not {0}".format(type(name)))
                 yield im[0], dict(name=name, i=i)
@@ -129,5 +129,11 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             # torch: it expects a tensor
             X = iter_images
             return super().kneighbors(X, n_neighbors=n_neighbors)
+        elif isinstance(iter_images, list):
+            res = [self.kneighbors(it, n_neighbors=n_neighbors)
+                   for it in iter_images]
+            return (numpy.vstack([_[0] for _ in res]),
+                    numpy.vstack([_[1] for _ in res]),
+                    numpy.vstack([_[2] for _ in res]))
         else:
             raise TypeError("Unexpected type {0}".format(type(iter_images)))

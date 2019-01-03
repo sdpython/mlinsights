@@ -53,7 +53,7 @@ class SearchEngineVectors:
         """
         Stores data in the class itself.
 
-        @param      data        a dataframe or None if the
+        @param      data        a :epkg:`dataframe` or None if the
                                 the features and the metadata
                                 are specified with an array and a
                                 dictionary
@@ -66,6 +66,9 @@ class SearchEngineVectors:
             def transform(vec, many):
                 # Many tells is the functions receives many vectors
                 # or just one (many=False).
+
+        Function *transform* is applied only if
+        *data* is not None.
         """
         iterate = self._is_iterable(data)
         if iterate:
@@ -84,17 +87,22 @@ class SearchEngineVectors:
                     raise ValueError(
                         'data must be an iterator on tuple on two elements')
                 arr, meta = row
-                if not isinstance(arr, numpy.ndarray):
-                    raise TypeError(
-                        'First element of the tuple must be a numpy array')
                 if not isinstance(meta, dict):
                     raise TypeError(
                         'Second element of the tuple must be a dictionary')
                 metas.append(meta)
                 if transform is None:
-                    arrays.append(arr)
+                    tradd = arr
                 else:
-                    arrays.append(transform(arr, False))
+                    tradd = transform(arr, False)
+                if not isinstance(tradd, numpy.ndarray):
+                    if transform is None:
+                        raise TypeError(
+                            "feature should be of type numpy.array not {}".format(type(tradd)))
+                    else:
+                        raise TypeError("output of method transform ({}) should be of type numpy.array not {}".format(
+                            transform, type(tradd)))
+                arrays.append(tradd)
             self.features_ = numpy.vstack(arrays)
             self.metadata_ = pandas.DataFrame(metas)
         elif data is None:
