@@ -30,7 +30,7 @@ except ImportError:
     import src
 
 
-class TestSearchPredictionsImages(ExtTestCase):
+class TestSearchPredictionsImagesKeras(ExtTestCase):
 
     def test_search_predictions_keras(self):
         fLOG(

@@ -15,7 +15,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     :ref:`searchimageskerasrst` or :ref:`searchimagestorchrst`.
     """
 
-    def _prepare_fit(self, data=None, features=None, metadata=None, transform=None, n=None, fLOG=None):
+    def _prepare_fit(self, data=None, features=None, metadata=None,
+                     transform=None, n=None, fLOG=None):
         """
         Stores data in the class itself.
 
@@ -29,36 +30,59 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         @param      n           takes *n* images (or ``len(iter_images)``)
         @param      fLOG        logging function
         """
-        iter_images = data
-        # We delay the import as keras backend is not necessarily installed.
-        from keras.preprocessing.image import Iterator
-        from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
-        if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
-            raise NotImplementedError(
-                "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
-        if iter_images.batch_size != 1:
-            raise ValueError("batch_size must be 1 not {0}".format(
-                iter_images.batch_size))
-        self.iter_images_ = iter_images
-        if n is None:
-            n = len(iter_images)
-        if not hasattr(iter_images, "filenames"):
-            raise NotImplementedError(
-                "Iterator does not iterate on images but numpy arrays (not implemented).")
+        if "torch" in str(type(data)):
+            from torch.utils.data import DataLoader
+            dataloader = DataLoader(
+                data, batch_size=1, shuffle=False, num_workers=1)
+            self.iter_images_ = iter_images = iter(
+                zip(dataloader, data.samples))
+            if n is None:
+                n = len(data)
+        elif "keras" in str(type(data)):
+            iter_images = data
+            # We delay the import as keras backend is not necessarily installed.
+            from keras.preprocessing.image import Iterator
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
+            if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
+                raise NotImplementedError(
+                    "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
+            if iter_images.batch_size != 1:
+                raise ValueError("batch_size must be 1 not {0}".format(
+                    iter_images.batch_size))
+            self.iter_images_ = iter_images
+            if n is None:
+                n = len(iter_images)
+            if not hasattr(iter_images, "filenames"):
+                raise NotImplementedError(
+                    "Iterator does not iterate on images but numpy arrays (not implemented).")
+        else:
+            raise TypeError("Unexpected data type {0}.".format(type(data)))
 
         def get_current_index(flow):
             "get current index"
             return flow.index_array[(flow.batch_index + flow.n - 1) % flow.n]
 
         def iterator_feature_meta():
-            "iterators on metadaat"
-            for i, im in zip(range(n), iter_images):
-                name = iter_images.filenames[get_current_index(iter_images)]
-                yield im[0], dict(name=name)
+            "iterators on metadata"
+            def accessor(iter_images):
+                if hasattr(iter_images, 'filenames'):
+                    # keras
+                    return (lambda i, ite: (ite, iter_images.filenames[get_current_index(iter_images)]))
+                else:
+                    # torch
+                    return (lambda i, ite: (ite[0], ite[1][0]))
+            acc = accessor(iter_images)
+
+            for i, it in zip(range(n), iter_images):
+                im, name = acc(i, it)
+                if not isinstance(name, str):
+                    print(name)
+                    raise TypeError(
+                        "name should be a string, not {0}".format(type(name)))
+                yield im[0], dict(name=name, i=i)
                 if fLOG and i % 10000 == 0:
                     fLOG(
                         '[SearchEnginePredictionImages.fit] i={}/{} - {}'.format(i, n, name))
-
         super()._prepare_fit(data=iterator_feature_meta(), transform=transform)
 
     def fit(self, iter_images, n=None, fLOG=None):
@@ -87,15 +111,23 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         *meta* is the metadata.
         """
         # We delay the import as keras backend is not necessarily installed.
-        from keras.preprocessing.image import Iterator
-        from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
-        if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
-            raise NotImplementedError(
-                "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
-        if iter_images.batch_size != 1:
-            raise ValueError("batch_size must be 1 not {0}".format(
-                iter_images.batch_size))
-        for img in iter_images:
-            X = img[0]
-            break
-        return super().kneighbors(X, n_neighbors=n_neighbors)
+        if "keras" in str(iter_images):
+            # keras, it expects an iterator
+            from keras.preprocessing.image import Iterator
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
+            if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
+                raise NotImplementedError(
+                    "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
+            if iter_images.batch_size != 1:
+                raise ValueError("batch_size must be 1 not {0}".format(
+                    iter_images.batch_size))
+            for img in iter_images:
+                X = img[0]
+                break
+            return super().kneighbors(X, n_neighbors=n_neighbors)
+        elif "torch" in str(type(iter_images)):
+            # torch: it expects a tensor
+            X = iter_images
+            return super().kneighbors(X, n_neighbors=n_neighbors)
+        else:
+            raise TypeError("Unexpected type {0}".format(type(iter_images)))

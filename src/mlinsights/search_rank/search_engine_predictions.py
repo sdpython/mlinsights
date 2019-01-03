@@ -29,7 +29,8 @@ class SearchEnginePredictions(SearchEngineVectors):
         super().__init__(**knn)
         self._fct_params = fct_params
         self._fct_init = fct
-        if callable(fct) and not hasattr(fct, 'predict'):
+        if callable(fct) and not hasattr(fct, 'predict') and \
+                not hasattr(fct, 'forward'):
             self.fct = fct
         else:
             if fct_params is None:

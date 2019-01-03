@@ -39,6 +39,11 @@ def model_featurizer(model, **params):
         return model_featurizer_keras(model, **params)
     else:
         tried.append("Keras")
+    if hasattr(model, "forward"):
+        # It should be a torch model.
+        return model_featurizer_torch(model, **params)
+    else:
+        tried.append("torch")
     raise FeaturizerTypeError("Unable to process type '{0}', allowed:\n{1}".format(
         type(model), "\n".join(sorted(str(_) for _ in tried))))
 
@@ -176,3 +181,49 @@ def model_featurizer_keras(model, layer=None):
         return wrap_predict_keras(X, model.predict, many, shapes)
 
     return lambda X, many, model=model, shapes=model._feed_input_shapes[0]: feat(X, model, many, shapes)
+
+
+def wrap_predict_torch(X, fct, many, shapes):
+    """
+    Checks types and dimension.
+    Calls *fct* and returns the approriate type.
+    A vector if *X* is a vector, the raw output
+    otherwise.
+
+    @param      X       vector or list
+    @param      fct     function
+    @param      many    many observations or just one
+    @param      shapes  expected input shapes for the neural network
+    """
+    if many:
+        y = [fct(X[i]).ravel() for i in range(X.shape[0])]
+        return numpy.stack(y)
+    else:
+        if shapes is None or len(X.shape) == len(shapes):
+            t = fct(X)
+            return t.detach().numpy().ravel()
+        else:
+            x = X[numpy.newaxis, :, :, :]
+            t = fct(x)
+            return t.detach().numpy().ravel()
+
+
+def model_featurizer_torch(model, layer=None):
+    """
+    Builds a featurizer from a :epkg:`torch` model
+    It returns a function which returns the output of one
+    particular layer.
+
+    @param      model       model to use to featurize a vector
+    @param      layer       number of layers to keep
+    @return                 function
+    """
+    if layer is not None:
+        output = model.layers[layer].output
+        model = model.__class__(model.input, output)
+
+    def feat(X, model, many, shapes):
+        "wraps torch"
+        return wrap_predict_torch(X, model.forward, many, shapes)
+
+    return lambda X, many, model=model, shapes=None: feat(X, model, many, shapes)
