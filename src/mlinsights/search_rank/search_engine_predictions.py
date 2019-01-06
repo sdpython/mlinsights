@@ -24,7 +24,8 @@ class SearchEnginePredictions(SearchEngineVectors):
         @param      fct         function *f* applied before looking for neighbors,
                                 it can also be a machine learned model
         @param      fct_params  parameters sent to function @see fn model_featurizer
-        @param      pknn        list of parameters, see :epkg:`sklearn:neighborsNearestNeighbors`
+        @param      pknn        list of parameters, see
+                                :epkg:`sklearn:neighborsNearestNeighbors`
         """
         super().__init__(**knn)
         self._fct_params = fct_params
@@ -53,7 +54,7 @@ class SearchEnginePredictions(SearchEngineVectors):
         """
         Every vector comes with a list of metadata.
 
-        @param      data        a dataframe or None if the
+        @param      data        a :epkg:`dataframe` or None if the
                                 the features and the metadata
                                 are specified with an array and a
                                 dictionary

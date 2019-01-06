@@ -14,6 +14,9 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     information about path names. We assume all images can hold
     in memory. An example can found in notebook
     :ref:`searchimageskerasrst` or :ref:`searchimagestorchrst`.
+    Another example can be found there:
+    `search_images_dogcat.py
+    <https://github.com/sdpython/ensae_projects/blob/master/src/ensae_projects/restapi/search_images_dogcat.py>`_.
     """
 
     def _prepare_fit(self, data=None, features=None, metadata=None,

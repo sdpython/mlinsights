@@ -5,7 +5,7 @@
 History
 =======
 
-current - 2019-01-03 - 0.00Mb
+current - 2019-01-06 - 0.00Mb
 =============================
 
 * `6`: use keras and pytorch (2019-01-03)
