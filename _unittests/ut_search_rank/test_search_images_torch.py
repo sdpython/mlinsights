@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=10s)
+@brief      test log(time=27s)
 """
 
 import sys
@@ -52,7 +52,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
             from torch.utils.data import DataLoader
 
         # deep learning model
-        model = tmodels.squeezenet1_0(pretrained=True)
+        model = tmodels.squeezenet1_1(pretrained=True)
 
         # images
         temp = get_temp_folder(__file__, "temp_search_predictions_torch")
@@ -83,7 +83,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         se.fit(imgs_, fLOG=fLOG)
 
         # neighbors
-        fLOG('[test]')
+        fLOG('[test]', type(imgs[0]), imgs[0].shape)
         score, ind, meta = se.kneighbors(imgs[0])
 
         # assert

@@ -32,6 +32,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         @param      fLOG        logging function
         """
         if "torch" in str(type(data)):
+            self.module_ = "torch"
             from torch.utils.data import DataLoader
             dataloader = DataLoader(
                 data, batch_size=1, shuffle=False, num_workers=1)
@@ -40,6 +41,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             if n is None:
                 n = len(data)
         elif "keras" in str(type(data)):
+            self.module_ = "keras"
             iter_images = data
             # We delay the import as keras backend is not necessarily installed.
             from keras.preprocessing.image import Iterator
@@ -110,9 +112,22 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         *ind* contains the indices of the nearest points in the population matrix,
         *meta* is the metadata.
         """
-        # We delay the import as keras backend is not necessarily installed.
-        if "keras" in str(iter_images):
-            # keras, it expects an iterator
+        if isinstance(iter_images, numpy.ndarray):
+            if self.module_ == "keras":
+                raise NotImplementedError("Not yet implemented or Keras.")
+            elif self.module_ == "torch":
+                from torch import from_numpy  # pylint: disable=E0611
+                X = from_numpy(iter_images[numpy.newaxis, :, :, :])
+                return super().kneighbors(X, n_neighbors=n_neighbors)
+            else:
+                raise RuntimeError(
+                    "Unknown module '{0}'.".format(self.module_))
+        elif "keras" in str(iter_images):
+            if self.module_ != "keras":
+                raise RuntimeError(
+                    "Keras object but {0} was used to train the KNN.".format(self.module_))
+            # We delay the import as keras backend is not necessarily installed.
+            # keras, it expects an iterator.
             from keras.preprocessing.image import Iterator
             from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
@@ -126,6 +141,9 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                 break
             return super().kneighbors(X, n_neighbors=n_neighbors)
         elif "torch" in str(type(iter_images)):
+            if self.module_ != "torch":
+                raise RuntimeError(
+                    "Torch object but {0} was used to train the KNN.".format(self.module_))
             # torch: it expects a tensor
             X = iter_images
             return super().kneighbors(X, n_neighbors=n_neighbors)
@@ -136,4 +154,5 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                     numpy.vstack([_[1] for _ in res]),
                     numpy.vstack([_[2] for _ in res]))
         else:
-            raise TypeError("Unexpected type {0}".format(type(iter_images)))
+            raise TypeError("Unexpected type {0} in SearchEnginePredictionImages.kneighbors".format(
+                type(iter_images)))
