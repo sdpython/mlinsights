@@ -38,7 +38,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             self.module_ = "torch"
             from torch.utils.data import DataLoader
             dataloader = DataLoader(
-                data, batch_size=1, shuffle=False, num_workers=1)
+                data, batch_size=1, shuffle=False, num_workers=0)
             self.iter_images_ = iter_images = iter(
                 zip(dataloader, data.samples))
             if n is None:
