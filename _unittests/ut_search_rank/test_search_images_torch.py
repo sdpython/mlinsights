@@ -12,7 +12,7 @@ from io import StringIO
 import pandas
 import numpy
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor
 from pyquickhelper.filehelper import unzip_files
 
 
@@ -32,6 +32,7 @@ except ImportError:
 
 class TestSearchPredictionsImagesTorch(ExtTestCase):
 
+    @skipif_appveyor("Fails due to: Tune using inter_op_parallelism_threads for best performance.")
     def test_search_predictions_torch(self):
         fLOG(
             __file__,
