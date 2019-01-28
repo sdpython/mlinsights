@@ -194,7 +194,7 @@ class TestQuantileRegression(ExtTestCase):
             clq.fit(X, Y)
             y = clq.predict(X)
             diff = y - Y
-            sign = numpy.sign(diff)
+            sign = numpy.sign(diff)  # pylint: disable=E1111
             pos = (sign > 0).sum()
             neg = (sign < 0).sum()
             if q < 0.5:
