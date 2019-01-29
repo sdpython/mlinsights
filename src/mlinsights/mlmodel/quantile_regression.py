@@ -131,7 +131,8 @@ class QuantileLinearRegression(LinearRegression):
             deltas = numpy.ones(X.shape[0]) * delta
             epsilon, mult = QuantileLinearRegression._epsilon(
                 Y, Xm @ beta, self.quantile)
-            r = numpy.reciprocal(numpy.maximum(epsilon, deltas))  # pylint: disable=E1111
+            r = numpy.reciprocal(numpy.maximum(  # pylint: disable=E1111
+                epsilon, deltas))  # pylint: disable=E1111
             if mult is not None:
                 epsilon *= 1 - mult
                 r *= 1 - mult

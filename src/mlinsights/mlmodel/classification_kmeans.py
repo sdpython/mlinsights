@@ -11,9 +11,9 @@ from sklearn.base import BaseEstimator, ClassifierMixin, clone
 
 class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
     """
-    Applies a *k-means* for each class, then
-    adds the distance to each cluster as a feature
-    for a classifier.
+    Applies a *k-means* (see :epkg:`sklearn:cluster:KMeans`)
+    for each class, then adds the distance to each cluster
+    as a feature for a classifier.
     See notebook :ref:`logisticregressionclusteringrst`.
     """
 
@@ -23,7 +23,9 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
                                     by default
         @param      clus            clustering applied on each class,
                                     by default k-means with two classes
-        @param      kwargs          sent to *set_params*
+        @param      kwargs          sent to :meth:`set_params
+                                    <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`,
+                                    see its documentation to understand how to specify parameters
         """
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -131,6 +133,9 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
 
         @param      deep        unused here
         @return                 dict
+
+        :meth:`set_params <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`
+        describes the pattern parameters names follow.
         """
         res = {}
         for k, v in self.clus.get_params().items():
@@ -142,6 +147,9 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
     def set_params(self, **values):
         """
         Sets the parameters before training.
+        Every parameter prefixed by ``'e_'`` is an estimator
+        parameter, every parameter prefixed by ``'c_'`` is for
+        the :epkg:`sklearn:cluster:KMeans`.
 
         @param      values      valeurs
         @return                 dict
