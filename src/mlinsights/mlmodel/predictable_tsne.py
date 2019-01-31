@@ -6,6 +6,7 @@ import inspect
 from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.manifold import TSNE
 from sklearn.neural_network import MLPRegressor
+from sklearn.metrics import mean_squared_error
 
 
 class PredictableTSNE(BaseEstimator, TransformerMixin):
@@ -21,16 +22,23 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
     use this class.
     """
 
-    def __init__(self, normalizer=None, transformer=None, estimator=None, **kwargs):
+    def __init__(self, normalizer=None, transformer=None, estimator=None,
+                 normalize=True, keep_tsne_outputs=False, **kwargs):
         """
-        @param      normalizer      None by default
-        @param      transformer     :epkg:`sklearn:manifold:TSNE`
-                                    by default
-        @param      estimator       :epkg:`sklearn:neural_network:MLPRegressor`
-                                    by default
-        @param      kwargs          sent to :meth:`set_params
-                                    <mlinsights.mlmodel.tsne_transformer.PredictableTSNE.set_params>`,
-                                    see its documentation to understand how to specify parameters
+        @param      normalizer          None by default
+        @param      transformer         :epkg:`sklearn:manifold:TSNE`
+                                        by default
+        @param      estimator           :epkg:`sklearn:neural_network:MLPRegressor`
+                                        by default
+        @param      normalize           normalizes the outputs, centers and normalizes
+                                        the output of the *t-SNE* and applies that same
+                                        normalization to he prediction of the estimator
+        @param      keep_tsne_output    if True, keep raw outputs of
+                                        :epkg:`TSNE` is stored in member
+                                        *tsne_outputs_*
+        @param      kwargs              sent to :meth:`set_params
+                                        <mlinsights.mlmodel.tsne_transformer.PredictableTSNE.set_params>`,
+                                        see its documentation to understand how to specify parameters
         """
         TransformerMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -41,6 +49,7 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         self.estimator = estimator
         self.transformer = transformer
         self.normalizer = normalizer
+        self.keep_tsne_outputs = keep_tsne_outputs
         if normalizer is not None and not hasattr(normalizer, "transform"):
             raise AttributeError(
                 "normalizer {} does not have a 'transform' method.".format(type(normalizer)))
@@ -50,10 +59,11 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         if not hasattr(estimator, "predict"):
             raise AttributeError(
                 "estimator {} does not have a 'predict' method.".format(type(estimator)))
+        self.normalize = normalize
         if kwargs:
             self.set_params(**kwargs)
 
-    def fit(self, X, y, sample_weight=None, memoize_targets=None):
+    def fit(self, X, y, sample_weight=None):
         """
         Runs a *k-means* on each class
         then trains a classifier on the
@@ -70,9 +80,6 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         sample_weight : numpy array of shape [n_samples]
             Individual weights for each sample
 
-        memoize_targets: if not None, raw outputs of
-            :epkg:`TSNE` is added to this list
-
         Returns
         -------
         self : returns an instance of self.
@@ -85,6 +92,16 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         transformer_: trained transformeer
 
         estimator_: trained regressor
+
+        tsne_outputs_: t-SNE outputs if *keep_tsne_outputs* is True
+
+        mean_: average of the *t-SNE* output on each dimension
+
+        inv_std_: inverse of the standard deviation of the *t-SNE*
+            output on each dimension
+
+        loss_: loss (:epkg:`sklearn:metrics:mean_squared_error`) between the predictions
+            and the outputs of t-SNE
         """
         params = dict(y=y, sample_weight=sample_weight)
 
@@ -108,18 +125,21 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
                 pars[p] = params[p]
         target = self.transformer_.fit_transform(X, **pars)
 
-        if memoize_targets is not None:
-            if not isinstance(memoize_targets, list):
-                raise TypeError("memoize_targets must be a list")
-            memoize_targets.append(target)
-
         sig = inspect.signature(self.estimator.fit)
         if 'sample_weight' in sig.parameters:
             self.estimator_ = clone(self.estimator).fit(
                 X, target, sample_weight=sample_weight)
         else:
             self.estimator_ = clone(self.estimator).fit(X, target)
-
+        mean = target.mean(axis=0)
+        var = target.std(axis=0)
+        self.mean_ = mean
+        self.inv_std_ = 1. / var
+        exp = (target - mean) * self.inv_std_
+        got = (self.estimator_.predict(X) - mean) * self.inv_std_
+        self.loss_ = mean_squared_error(exp, got)
+        if self.keep_tsne_outputs:
+            self.tsne_outputs_ = exp if self.normalize else target
         return self
 
     def transform(self, X):
@@ -137,7 +157,11 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         """
         if self.normalizer_ is not None:
             X = self.normalizer_.transform(X)
-        return self.estimator_.predict(X)
+        pred = self.estimator_.predict(X)
+        if self.normalize:
+            pred -= self.mean_
+            pred *= self.inv_std_
+        return pred
 
     def get_params(self, deep=True):
         """

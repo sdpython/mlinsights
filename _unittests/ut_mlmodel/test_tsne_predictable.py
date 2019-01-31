@@ -36,34 +36,31 @@ class TestPredictableTSNE(ExtTestCase):
     def test_predictable_tsne(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
-        clr = PredictableTSNE()
-        memoize_targets = []
-        clr.fit(X, y, memoize_targets=memoize_targets)
+        clr = PredictableTSNE(keep_tsne_outputs=True)
+        clr.fit(X, y)
         pred = clr.transform(X)
-        diff = numpy.trace(pred.T @ memoize_targets[0]) / X.shape[0]
-        self.assertGreater(diff, 0)
         self.assertIsInstance(clr.estimator_, MLPRegressor)
+        self.assertGreater(clr.loss_, 0)
+        print(pred.min(axis=0), pred.max(axis=0))
 
     def test_predictable_tsne_knn(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
-        clr = PredictableTSNE(estimator=KNeighborsRegressor())
-        memoize_targets = []
-        clr.fit(X, y, memoize_targets=memoize_targets)
+        clr = PredictableTSNE(estimator=KNeighborsRegressor(),
+                              keep_tsne_outputs=True)
+        clr.fit(X, y)
         pred = clr.transform(X)
-        diff = numpy.trace(pred.T @ memoize_targets[0]) / X.shape[0]
-        self.assertGreater(diff, 0)
+        self.assertTrue(hasattr(clr, "tsne_outputs_"))
         self.assertIsInstance(clr.estimator_, KNeighborsRegressor)
+        self.assertEqual(pred.shape, (X.shape[0], 2))
 
     def test_predictable_tsne_intercept_weights(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
-        clr = PredictableTSNE()
-        memoize_targets = []
-        clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)),
-                memoize_targets=memoize_targets)
+        clr = PredictableTSNE(keep_tsne_outputs=True)
+        clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
         acc = clr.transform(X)
-        diff = numpy.trace(acc.T @ memoize_targets[0]) / X.shape[0]
+        diff = numpy.trace(acc.T @ clr.tsne_outputs_) / X.shape[0]
         self.assertGreater(diff, 0)
 
     def test_predictable_tsne_pickle(self):
@@ -89,11 +86,11 @@ class TestPredictableTSNE(ExtTestCase):
                 Ys.extend([cl for i in range(n)])
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
-        clk = PredictableTSNE(t_n_components=3, normalizer=StandardScaler())
-        memoize_targets = []
-        clk.fit(X, Y, memoize_targets=memoize_targets)
+        clk = PredictableTSNE(t_n_components=3, normalizer=StandardScaler(),
+                              keep_tsne_outputs=True)
+        clk.fit(X, Y)
         pred = clk.transform(X)
-        diff = numpy.trace(pred.T @ memoize_targets[0]) / X.shape[0]
+        diff = numpy.trace(pred.T @ clk.tsne_outputs_) / X.shape[0]
         self.assertGreater(diff, 0)
 
 
