@@ -36,7 +36,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         self.estimator = estimator
         self.clus = clus
         if not hasattr(clus, "transform"):
-            raise AttributeError("clus does not have a predict transform.")
+            raise AttributeError("clus does not have a transform method.")
         if kwargs:
             self.set_params(**kwargs)
 

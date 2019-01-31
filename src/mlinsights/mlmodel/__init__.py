@@ -2,6 +2,7 @@
 @file
 @brief Shortcuts to *mlmodel*.
 """
+from .predictable_tsne import PredictableTSNE
 from .categories_to_integers import CategoriesToIntegers
 from .classification_kmeans import ClassifierAfterKMeans
 from .quantile_mlpregressor import QuantileMLPRegressor
