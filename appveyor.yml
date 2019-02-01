@@ -26,7 +26,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install keras pandas_streaming kiwisolver"
   - "%PYTHON%\\Scripts\\pip install http://download.pytorch.org/whl/cpu/torch-0.4.1-cp37-cp37m-win_amd64.whl"
   - "%PYTHON%\\Scripts\\pip install -r requirements.txt"
-  - "set PATH=%PATH%;C:\\projects\\jyquickhelper\\build\\update_modules\\Graphviz\\bin"
+  - "set PATH=%PATH%;C:\\projects\\mlinsights\\build\\update_modules\\Graphviz\\bin"
 build: off
 
 before_test:
