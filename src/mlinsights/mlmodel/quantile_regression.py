@@ -11,11 +11,11 @@ from sklearn.metrics import mean_absolute_error
 class QuantileLinearRegression(LinearRegression):
     """
     Quantile Linear Regression or linear regression
-    trained with norm *L1*. This class inherits from
+    trained with norm :epkg:`L1`. This class inherits from
     :epkg:`sklearn:linear_models:LinearRegression`.
     See notebook :ref:`quantileregressionrst`.
 
-    Norm *L1* is chosen if ``quantile=0.5``, otherwise,
+    Norm :epkg:`L1` is chosen if ``quantile=0.5``, otherwise,
     for *quantile=*:math:`\\rho`,
     the following error is optimized:
 
@@ -80,7 +80,7 @@ class QuantileLinearRegression(LinearRegression):
 
     def fit(self, X, y, sample_weight=None):
         """
-        Fits a linear model with *L1* norm which
+        Fits a linear model with :epkg:`L1` norm which
         is equivalent to a quantile regression.
 
         Parameters

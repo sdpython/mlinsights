@@ -26,6 +26,7 @@ except ImportError:
 
 from src.mlinsights.mlmodel import QuantileLinearRegression
 from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from src.mlinsights.mlmodel.quantile_mlpregressor import float_sign
 
 
 class TestQuantileRegression(ExtTestCase):
@@ -201,6 +202,19 @@ class TestQuantileRegression(ExtTestCase):
                 self.assertGreater(neg, pos * 4)
             if q > 0.5:
                 self.assertLesser(neg * 7, pos)
+
+    def test_float_sign(self):
+        self.assertEqual(float_sign(-1), -1)
+        self.assertEqual(float_sign(1), 1)
+        self.assertEqual(float_sign(1e-16), 0)
+
+    def test_quantile_regression_intercept_D2(self):
+        X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
+        Y = numpy.array([[1., 0.], [1.1, 0.1], [1.2, 0.19]])
+        clr = LinearRegression(fit_intercept=True)
+        clr.fit(X, Y)
+        clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
+        self.assertRaise(lambda: clq.fit(X, Y), ValueError)
 
 
 if __name__ == "__main__":

@@ -86,7 +86,7 @@ class TestPredictableTSNE(ExtTestCase):
                 Ys.extend([cl for i in range(n)])
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
-        clk = PredictableTSNE(t_n_components=3, normalizer=StandardScaler(),
+        clk = PredictableTSNE(t_n_components=3, normalizer=StandardScaler(with_mean=False),
                               keep_tsne_outputs=True)
         clk.fit(X, Y)
         pred = clk.transform(X)

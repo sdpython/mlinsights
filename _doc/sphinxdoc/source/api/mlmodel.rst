@@ -19,6 +19,8 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.categories_to_integers.CategoriesToIntegers
 
+.. autosignature:: mlinsights.sklapi.predictable_tsne.PredictableTSNE
+
 .. autosignature:: mlinsights.sklapi.sklearn_base_transform_learner.SkBaseTransformLearner
 
 .. autosignature:: mlinsights.sklapi.sklearn_base_transform_stacking.SkBaseTransformStacking

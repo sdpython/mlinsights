@@ -207,7 +207,7 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         self.transformer.set_params(**pt)
         self.estimator.set_params(**pe)
         if self.normalizer is not None:
-            self.transformer.set_params(**pn)
+            self.normalizer.set_params(**pn)
         elif pn and self.normalizer is None:
             raise ValueError(
                 "There is no normalizer, cannot change parameter {}.".format(pn))

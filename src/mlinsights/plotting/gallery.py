@@ -55,8 +55,6 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
         fig, ax = plt.subplots(height, width, **figure)
     elif return_figure:
         raise ValueError("ax is specified and return_figure is True")
-    elif width != ax.shape[1]:
-        raise ValueError("ax is specified and return_figure is True")
 
     for i, img in enumerate(imgs):
         if img is None:

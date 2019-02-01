@@ -1,0 +1,26 @@
+
+.. blogpost::
+    :title: Pipeline visualization
+    :keywords: scikit-learn, pipeline
+    :date: 2019-02-01
+    :categories: machine learning
+
+    :epkg:`scikit-learn` introduced nice feature to
+    be able to process mixed type column in a single
+    pipeline which follows :epkg:`scikit-learn` API:
+    :epkg:`sklearn:compose:ColumnTransformer` or
+    :epkg:`sklearn:pipeline:FeatureUnion` and
+    :epkg:`sklearn:pipeline:Pipeline`. Ideas are not
+    new but it is finally taking place in
+    :epkg:`scikit-learn`.
+
+    As *a picture says a thousand words*, I tried to
+    do something similar to what I did for
+    `nimbusml <https://github.com/Microsoft/NimbusML>`_
+    to draw a :epkg:`scikit-learn` pipeline.
+    I ended it up implemented function
+    :ref:`pipeline2dot <mlinsights.plotting.visualize.pipeline2dot>`
+    which converts a pipeline into :epkg:`DOT` language
+    as :epkg:`scikit-learn` does for a decision tree with
+    :epkg:`sklearn:tree:export_graphviz`. I created the
+    notebook :ref:`visualizepipelinerst`.

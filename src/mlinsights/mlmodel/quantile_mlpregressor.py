@@ -167,7 +167,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
 class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
     """
     Quantile MLP Regression or neural networks regression
-    trained with norm *L1*. This class inherits from
+    trained with norm :epkg:`L1`. This class inherits from
     :epkg:`sklearn:neural_networks:MLPRegressor`.
     This model optimizes the absolute-loss using LBFGS or stochastic gradient
     descent.
@@ -199,7 +199,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         For small datasets, however, 'lbfgs' can converge faster and perform
         better.
     alpha : float, optional, default 0.0001
-        L2 penalty (regularization term) parameter.
+        :epkg:`L2` penalty (regularization term) parameter.
     batch_size : int, optional, default 'auto'
         Size of minibatches for stochastic optimizers.
         If the solver is 'lbfgs', the classifier will not use minibatch.

@@ -51,11 +51,11 @@ mlinsights
 models or various kind of transforms to help manipulating
 data in a single pipeline. It implements
 :class:`QuantileLinearRegression <mlinsights.mlmodel.quantile_regression.QuantileLinearRegression>`
-which trains a linear regression with L1 norm
+which trains a linear regression with :epkg:`L1` norm
 non-linear correlation based on decision trees,
 :class:`QuantileMLPRegressor <mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor>`
 which is a modification of scikit-learn's MLPRegressor
-which trains a multi-layer perceptron with L1 norm...
+which trains a multi-layer perceptron with :epkg:`L1` norm...
 
 .. toctree::
     :maxdepth: 1

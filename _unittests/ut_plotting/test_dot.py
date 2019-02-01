@@ -30,7 +30,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.mlinsights.helpers import pipeline2dot
+from src.mlinsights.plotting import pipeline2dot
 
 
 class TestDot(ExtTestCase):

@@ -72,13 +72,21 @@ class TestPlotGallery(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_plot_gallery_url")
         try:
-            fig, _ = plot_gallery_images(files, return_figure=True)
+            fig, ax = plot_gallery_images(files, return_figure=True)
         except http.client.RemoteDisconnected as e:
             warnings.warn("Unable to fetch image {0}'".format(e))
             return
         img = os.path.join(temp, "gallery.png")
         fig.savefig(img)
         plt.close('all')
+
+        # ax
+        try:
+            ax = plot_gallery_images(files, return_figure=False, ax=ax)
+            self.assertNotEmpty(ax)
+        except http.client.RemoteDisconnected as e:
+            warnings.warn("Unable to fetch image {0}'".format(e))
+            return
 
 
 if __name__ == "__main__":

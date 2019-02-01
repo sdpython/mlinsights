@@ -1,0 +1,18 @@
+
+.. blogpost::
+    :title: Predictable t-SNE
+    :keywords: scikit-learn, t-SNE
+    :date: 2019-02-01
+    :categories: machine learning
+
+    :epkg:`t-SNE` is quite an interesting tool to
+    visualize data on a map but it has one drawback:
+    results are not reproducible. It is much more powerful
+    than a :epkg:`PCA` but the results is difficult to
+    interpret. Based on some experiment, if :epkg:`t-SNE`
+    manages to separate classes, there is a good chance that
+    a classifier can get good performances. Anyhow, I implemented
+    a regressor which approximates the :epkg:`t-SNE` outputs
+    so that it can be used as features for a further classifier.
+    I create a notebook :ref:`predictabletsnerst` and a new tranform
+    :class:`PredictableTSNE <mlinsights.sklapi.predictable_tsne.PredictableTSNE>`.
