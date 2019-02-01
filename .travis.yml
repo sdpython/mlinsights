@@ -4,6 +4,10 @@ language: python
 
 python:
     - "3.6"
+addons:
+-  apt:
+-    packages:
+      - graphviz
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
