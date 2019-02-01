@@ -60,8 +60,8 @@ class TestPredictableTSNE(ExtTestCase):
         clr = PredictableTSNE(keep_tsne_outputs=True)
         clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
         acc = clr.transform(X)
-        diff = numpy.trace(acc.T @ clr.tsne_outputs_) / X.shape[0]
-        self.assertGreater(diff, 0)
+        self.assertGreater(clr.loss_, 0)
+        self.assertEqual(acc.shape, (X.shape[0], 2))
 
     def test_predictable_tsne_pickle(self):
         iris = datasets.load_iris()
@@ -90,8 +90,8 @@ class TestPredictableTSNE(ExtTestCase):
                               keep_tsne_outputs=True)
         clk.fit(X, Y)
         pred = clk.transform(X)
-        diff = numpy.trace(pred.T @ clk.tsne_outputs_) / X.shape[0]
-        self.assertGreater(diff, 0)
+        self.assertGreater(clk.loss_, 0)
+        self.assertEqual(pred.shape, (X.shape[0], 3))
 
 
 if __name__ == "__main__":
