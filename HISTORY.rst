@@ -5,7 +5,13 @@
 History
 =======
 
-current - 2019-01-06 - 0.00Mb
+current - 2019-02-01 - 0.00Mb
+=============================
+
+* `26`: add function to convert a scikit-learn pipeline into a graph (2019-02-01)
+* `25`: implements kind of trainable t-SNE (2019-01-31)
+
+0.1.125 - 2019-01-06 - 0.04Mb
 =============================
 
 * `6`: use keras and pytorch (2019-01-03)

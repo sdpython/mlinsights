@@ -32,8 +32,9 @@ language = "en"
 mathdef_link_only = True
 
 epkg_dictionary.update({
-    'keras': 'https://keras.io/',
+    'DOT': 'https://en.wikipedia.org/wiki/DOT_(graph_description_language)',
     'Iris': 'http://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html',
+    'keras': 'https://keras.io/',
     'MLPClassifier': 'http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html',
     'MLPRegressor': 'http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html',
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/',
