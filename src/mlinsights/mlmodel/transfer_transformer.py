@@ -47,7 +47,7 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
                 "Cannot find method '{}' in object {}".format(method, type(estimator)))
         self.method = method
 
-    def fit(self, X, y=None, sample_weight=None):
+    def fit(self, X=None, y=None, sample_weight=None):
         """
         The function does nothing.
 
