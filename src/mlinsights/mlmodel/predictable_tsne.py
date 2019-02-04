@@ -65,9 +65,8 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y, sample_weight=None):
         """
-        Runs a *k-means* on each class
-        then trains a classifier on the
-        extended set of features.
+        Trains a :epkg:`TSNE` then trains an estimator
+        to approximate its outputs.
 
         Parameters
         ----------
