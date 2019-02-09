@@ -4,6 +4,7 @@
 """
 from .categories_to_integers import CategoriesToIntegers
 from .classification_kmeans import ClassifierAfterKMeans
+from .ml_featurizer import model_featurizer
 from .predictable_tsne import PredictableTSNE
 from .quantile_mlpregressor import QuantileMLPRegressor
 from .quantile_regression import QuantileLinearRegression

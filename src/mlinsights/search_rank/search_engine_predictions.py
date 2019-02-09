@@ -3,7 +3,7 @@
 @brief Implements a way to get close examples based
 on the output of a machine learned model.
 """
-from ..featurizers import model_featurizer
+from ..mlmodel import model_featurizer
 from ..helpers.parameters import format_function_call
 from .search_engine_vectors import SearchEngineVectors
 

@@ -4,7 +4,6 @@ API
 
 .. toctree::
 
-    featurizers
     plotting
     metrics
     mlmodel

@@ -5,6 +5,11 @@ Machine Learning Models
 .. contents::
     :local:
 
+Helpers
+=======
+
+.. autosignature:: mlinsights.mlmodel.ml_featurizer.model_featurizer
+
 Trainers
 ++++++++
 
