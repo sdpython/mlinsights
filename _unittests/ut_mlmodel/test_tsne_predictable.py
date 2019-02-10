@@ -12,6 +12,7 @@ from sklearn import datasets
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
+from sklearn.manifold import TSNE
 from pyquickhelper.pycode import ExtTestCase
 
 try:
@@ -86,7 +87,8 @@ class TestPredictableTSNE(ExtTestCase):
                 Ys.extend([cl for i in range(n)])
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
-        clk = PredictableTSNE(t_n_components=3, normalizer=StandardScaler(with_mean=False),
+        clk = PredictableTSNE(transformer=TSNE(n_components=3),
+                              normalizer=StandardScaler(with_mean=False),
                               keep_tsne_outputs=True)
         clk.fit(X, Y)
         pred = clk.transform(X)

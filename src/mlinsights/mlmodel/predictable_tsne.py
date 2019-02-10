@@ -23,7 +23,7 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, normalizer=None, transformer=None, estimator=None,
-                 normalize=True, keep_tsne_outputs=False, **kwargs):
+                 normalize=True, keep_tsne_outputs=False):
         """
         @param      normalizer          None by default
         @param      transformer         :epkg:`sklearn:manifold:TSNE`
@@ -36,9 +36,6 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         @param      keep_tsne_output    if True, keep raw outputs of
                                         :epkg:`TSNE` is stored in member
                                         *tsne_outputs_*
-        @param      kwargs              sent to :meth:`set_params
-                                        <mlinsights.mlmodel.tsne_transformer.PredictableTSNE.set_params>`,
-                                        see its documentation to understand how to specify parameters
         """
         TransformerMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -60,8 +57,6 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
             raise AttributeError(
                 "estimator {} does not have a 'predict' method.".format(type(estimator)))
         self.normalize = normalize
-        if kwargs:
-            self.set_params(**kwargs)
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -161,52 +156,3 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
             pred -= self.mean_
             pred *= self.inv_std_
         return pred
-
-    def get_params(self, deep=True):
-        """
-        Returns the parameters for all the embedded objects.
-
-        @param      deep        unused here
-        @return                 dict
-
-        :meth:`set_params <mlinsights.mlmodel.tsne_transformer.PredictableTSNE.set_params>`
-        describes the pattern parameters names follow.
-        """
-        res = {}
-        if self.normalizer is not None:
-            for k, v in self.normalizer.get_params().items():
-                res["n_" + k] = v
-        for k, v in self.transformer.get_params().items():
-            res["t_" + k] = v
-        for k, v in self.estimator.get_params().items():
-            res["e_" + k] = v
-        return res
-
-    def set_params(self, **values):
-        """
-        Sets the parameters before training.
-        Every parameter prefixed by ``'e_'`` is an estimator
-        parameter, every parameter prefixed by ``'n_'`` is for
-        a normalizer parameter, every parameter prefixed by
-        ``t_`` is for a transformer parameter.
-
-        @param      values      valeurs
-        @return                 dict
-        """
-        pt, pe, pn = {}, {}, {}
-        for k, v in values.items():
-            if k.startswith('e_'):
-                pe[k[2:]] = v
-            elif k.startswith('t_'):
-                pt[k[2:]] = v
-            elif k.startswith('n_'):
-                pn[k[2:]] = v
-            else:
-                raise ValueError("Unexpected parameter name '{0}'".format(k))
-        self.transformer.set_params(**pt)
-        self.estimator.set_params(**pe)
-        if self.normalizer is not None:
-            self.normalizer.set_params(**pn)
-        elif pn and self.normalizer is None:
-            raise ValueError(
-                "There is no normalizer, cannot change parameter {}.".format(pn))
