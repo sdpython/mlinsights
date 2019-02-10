@@ -24,6 +24,8 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.categories_to_integers.CategoriesToIntegers
 
+.. autosignature:: mlinsights.sklapi.piecewise_linear_regression.PiecewiseLinearRegression
+
 .. autosignature:: mlinsights.sklapi.predictable_tsne.PredictableTSNE
 
 .. autosignature:: mlinsights.sklapi.sklearn_base_transform_learner.SkBaseTransformLearner

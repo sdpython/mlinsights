@@ -5,6 +5,7 @@
 from .categories_to_integers import CategoriesToIntegers
 from .classification_kmeans import ClassifierAfterKMeans
 from .ml_featurizer import model_featurizer
+from .piecewise_linear_regression import PiecewiseLinearRegression
 from .predictable_tsne import PredictableTSNE
 from .quantile_mlpregressor import QuantileMLPRegressor
 from .quantile_regression import QuantileLinearRegression

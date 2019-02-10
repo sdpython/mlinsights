@@ -53,15 +53,15 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : unused
+        X: unused
 
-        y : unused
+        y: unused
 
-        sample_weight : unused
+        sample_weight: unused
 
         Returns
         -------
-        self : returns an instance of self.
+        self: returns an instance of self.
 
         Attributes
         ----------
