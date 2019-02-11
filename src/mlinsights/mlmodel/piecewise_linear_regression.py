@@ -8,6 +8,7 @@ from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import KBinsDiscretizer
+from sklearn.utils.validation import check_is_fitted
 try:
     from tqdm import tqdm
 except ImportError:
@@ -49,6 +50,11 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
         self.binner = binner
         self.estimator = estimator
         self.verbose = verbose
+
+    @property
+    def n_estimators_(self):
+        check_is_fitted(self, 'estimators_')
+        return len(self.estimators_)        
 
     def _mapping_train(self, X, binner):
         if hasattr(binner, "tree_"):
@@ -98,8 +104,7 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
         """
         Maps every row to a tree in *self.estimators_*.
         """
-        if not hasattr(self, "mapping_"):
-            raise RuntimeError("Estimator was not fitted.")
+        check_is_fitted(self, 'mapping_')
         binner = self.binner_
         if hasattr(binner, "tree_"):
             dec_path = self.binner_.decision_path(X)
@@ -205,8 +210,7 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
 
         predictions
         """
-        if not hasattr(self, "mapping_"):
-            raise RuntimeError("Estimator was not fitted.")
+        check_is_fitted(self, 'estimators_')
         if isinstance(X, pandas.DataFrame):
             X = X.values
 

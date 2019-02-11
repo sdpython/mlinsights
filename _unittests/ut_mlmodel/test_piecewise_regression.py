@@ -51,6 +51,7 @@ class TestPiecewiseRegression(ExtTestCase):
         s = paths.sum()
         self.assertEqual(s, 8)
         self.assertNotEqual(pred2.min(), pred2.max())
+        self.assertGreater(clq.n_estimators_, 1)
 
     def test_piecewise_regression_no_intercept_bins(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.2, 0.35], [0.2, 0.36]])
