@@ -53,8 +53,12 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
 
     @property
     def n_estimators_(self):
+        """
+        Returns the number of estimators = the number of buckets
+        the data was split in.
+        """
         check_is_fitted(self, 'estimators_')
-        return len(self.estimators_)        
+        return len(self.estimators_)
 
     def _mapping_train(self, X, binner):
         if hasattr(binner, "tree_"):
