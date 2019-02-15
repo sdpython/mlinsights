@@ -6,7 +6,7 @@ Machine Learning Models
     :local:
 
 Helpers
-=======
++++++++
 
 .. autosignature:: mlinsights.mlmodel.ml_featurizer.model_featurizer
 
@@ -23,6 +23,8 @@ Transforms
 ++++++++++
 
 .. autosignature:: mlinsights.mlmodel.categories_to_integers.CategoriesToIntegers
+
+.. autosignature:: mlinsights.mlmodel.extended_features.ExtendedFeatures
 
 .. autosignature:: mlinsights.sklapi.piecewise_linear_regression.PiecewiseLinearRegression
 

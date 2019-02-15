@@ -1,5 +1,6 @@
 chardet
 coverage
+cpyquickhelper
 guzzle_sphinx_theme
 jyquickhelper
 pandas_streaming

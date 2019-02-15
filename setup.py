@@ -127,9 +127,9 @@ if is_local():
     r = process_standard_options_for_setup(
         sys.argv, __file__, project_var_name,
         unittest_modules=["pyquickhelper"],
-        additional_notebook_path=["pyquickhelper",
+        additional_notebook_path=["pyquickhelper", "cpyquickhelper",
                                   "jyquickhelper", "pandas_streaming"],
-        additional_local_path=["pyquickhelper",
+        additional_local_path=["pyquickhelper", "cpyquickhelper",
                                "jyquickhelper", "pandas_streaming"],
         requirements=["pyquickhelper", "jyquickhelper", "pandas_streaming"],
         layout=["html"],
