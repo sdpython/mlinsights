@@ -40,7 +40,7 @@ class TestNotebookTSNE(unittest.TestCase):
 
         self.assertTrue(src.mlinsights is not None)
         folder = os.path.join(os.path.dirname(__file__),
-                              "..", "..", "_doc", "notebooks")
+                              "..", "..", "_doc", "notebooks", "sklearn")
         test_notebook_execution_coverage(
             __file__, "tsne", folder, 'mlinsights', fLOG=fLOG)
 

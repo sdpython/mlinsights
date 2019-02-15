@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=65s)
+@brief      test log(time=82s)
 """
 
 import sys
 import os
 import unittest
-import warnings
-from io import StringIO
-from contextlib import redirect_stderr
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
@@ -27,35 +24,25 @@ except ImportError:
         sys.path.append(path)
     import src
 
-
 import src.mlinsights
 
 
-class TestNotebookSearchKeras(unittest.TestCase):
+class TestNotebookPolynomialFeatures(unittest.TestCase):
 
     def setUp(self):
         add_missing_development_version(["jyquickhelper"], __file__, hide=True)
 
-    def test_notebook_search_images(self):
+    def test_notebook_poly(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        with redirect_stderr(StringIO()):
-            try:
-                from keras.applications.mobilenet import MobileNet
-                assert MobileNet is not None
-            except (SyntaxError, ModuleNotFoundError) as e:
-                warnings.warn(
-                    "tensorflow is probably not available yet on python 3.7: {0}".format(e))
-                return
-
         self.assertTrue(src.mlinsights is not None)
         folder = os.path.join(os.path.dirname(__file__),
-                              "..", "..", "_doc", "notebooks", "explore")
-        test_notebook_execution_coverage(__file__, "keras", folder, 'mlinsights',
-                                         copy_files=["data/dog-cat-pixabay.zip"], fLOG=fLOG)
+                              "..", "..", "_doc", "notebooks", "sklearn")
+        test_notebook_execution_coverage(
+            __file__, "poly", folder, 'mlinsights', fLOG=fLOG)
 
 
 if __name__ == "__main__":
