@@ -96,6 +96,13 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
 
+      - run:
+          name: install cpyquickhelper
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install cpyquickhelper
+
       - save_cache:
           paths:
             - ./venv
