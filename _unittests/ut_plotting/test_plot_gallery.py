@@ -36,7 +36,7 @@ class TestPlotGallery(ExtTestCase):
     def test_plot_gallery(self):
         temp = get_temp_folder(__file__, "temp_plot_gallery")
         zipimg = os.path.join(temp, "..", "..", "..", "_doc",
-                              "notebooks", "data", "dog-cat-pixabay.zip")
+                              "notebooks", "explore", "data", "dog-cat-pixabay.zip")
         files = unzip_files(zipimg, where_to=temp)
 
         fix_tkinter_issues_virtualenv(fLOG=noLOG)
@@ -50,7 +50,7 @@ class TestPlotGallery(ExtTestCase):
     def test_plot_gallery_matrix(self):
         temp = get_temp_folder(__file__, "temp_plot_gallery_matrix")
         zipimg = os.path.join(temp, "..", "..", "..", "_doc",
-                              "notebooks", "data", "dog-cat-pixabay.zip")
+                              "notebooks", "explore", "data", "dog-cat-pixabay.zip")
         files = unzip_files(zipimg, where_to=temp)
 
         fix_tkinter_issues_virtualenv(fLOG=noLOG)
