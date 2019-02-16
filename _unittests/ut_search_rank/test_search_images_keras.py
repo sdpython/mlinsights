@@ -61,7 +61,7 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
         dest = os.path.join(temp, "simages")
         os.mkdir(dest)
         zipname = os.path.join(
-            temp, "..", "..", "..", "_doc", "notebooks", "data", "dog-cat-pixabay.zip")
+            temp, "..", "..", "..", "_doc", "notebooks", "explore", "data", "dog-cat-pixabay.zip")
         files = unzip_files(zipname, where_to=dest)
         self.assertTrue(len(files) > 0)
 
