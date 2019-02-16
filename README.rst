@@ -1,9 +1,4 @@
 
-.. _l-README:
-
-README
-======
-
 .. image:: https://travis-ci.org/sdpython/mlinsights.svg?branch=master
     :target: https://travis-ci.org/sdpython/mlinsights
     :alt: Build status
@@ -41,6 +36,11 @@ README
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
+.. _l-README:
+
+mlsinsights
+===========
+
 *mlinsights* extends *scikit-learn* with a couple of new models,
 transform, metrics, plotting. It provides new trainer such as
 *QuantileLinearRegression* trains a linear regression with *L1* norm
@@ -50,8 +50,6 @@ which trains a multi-layer perceptron with *L1* norm.
 It also explores *PredictableTSNE* which trains a supervized
 model to replicate *t-SNE* results or a *PiecewiseLinearRegression*
 which partitions the data before fitting a model on each bucket.
-
-**Links:**
 
 * `GitHub/mlinsights <https://github.com/sdpython/mlinsights/>`_
 * `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_
