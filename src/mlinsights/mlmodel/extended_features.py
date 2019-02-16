@@ -1,6 +1,6 @@
 """
 @file
-@brief Featurizers for machine learned models.
+@brief Implements new features such as polynomial features.
 """
 import numpy
 from scipy import sparse

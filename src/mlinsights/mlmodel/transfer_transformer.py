@@ -1,6 +1,7 @@
 """
 @file
-@brief Implements a quantile linear regression.
+@brief Implements a transformer which wraps a predictor
+to do transfer learning.
 """
 from sklearn.base import BaseEstimator, TransformerMixin
 from .sklearn_testing import clone_with_fitted_parameters

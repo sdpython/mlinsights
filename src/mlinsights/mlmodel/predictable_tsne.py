@@ -1,6 +1,6 @@
 """
 @file
-@brief Implements a quantile linear regression.
+@brief Implements a predicatable *t-SNE*.
 """
 import inspect
 from sklearn.base import BaseEstimator, TransformerMixin, clone

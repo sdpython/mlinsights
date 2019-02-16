@@ -1,6 +1,6 @@
 """
 @file
-@brief Implements a quantile linear regression.
+@brief Combines a *k-means* followed by a predictor.
 """
 import inspect
 import numpy

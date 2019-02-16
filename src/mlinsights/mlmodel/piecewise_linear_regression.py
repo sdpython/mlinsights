@@ -1,6 +1,6 @@
 """
 @file
-@brief Implements a quantile linear regression.
+@brief Implements a piecewise linear regression.
 """
 import numpy
 import pandas
@@ -17,7 +17,7 @@ except ImportError:
 
 class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
     """
-    Uses a :epkg:`DeecisionTree` to split the space of features
+    Uses a :epkg:`decision tree` to split the space of features
     into buckets and trains a linear regression on each of them.
     The second estimator is usually a :epkg:`sklearn:linear_model:LinearRegression`.
     It can also be :epkg:`sklearn:dummy:DummyRegressor` to just get

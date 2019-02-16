@@ -32,6 +32,7 @@ language = "en"
 mathdef_link_only = True
 
 epkg_dictionary.update({
+    'decision tree': 'https://en.wikipedia.org/wiki/Decision_tree',
     'DOT': 'https://en.wikipedia.org/wiki/DOT_(graph_description_language)',
     'Iris': 'http://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html',
     'L1': 'https://en.wikipedia.org/wiki/Norm_(mathematics)#Absolute-value_norm',

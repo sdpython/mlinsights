@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Implements a quantile linear regression.
+@brief Implements a quantile non-linear regression.
 """
 import numpy as np
 from sklearn.base import RegressorMixin
