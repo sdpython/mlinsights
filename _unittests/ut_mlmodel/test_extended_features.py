@@ -114,6 +114,29 @@ class TestExtendedFeatures(ExtTestCase):
         self.assertEqual(Xt_sparse.dtype, Xt_dense.dtype)
         self.assertEqual(Xt_sparse.A, Xt_dense)
 
+    def test_polynomial_features_bigger_transpose(self):
+        X = numpy.arange(15).reshape((5, 3))
+        for deg in (1, 2, 3, 4):
+            poly = PolynomialFeatures(deg, include_bias=True)
+            X_sk = poly.fit_transform(X)
+            names_sk = poly.get_feature_names()
+
+            ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True)
+            X_ext = ext.fit_transform(X)
+
+            inames = ["x%d" % i for i in range(0, X.shape[1])]
+            names_ext = ext.get_feature_names(inames)
+
+            self.assertEqual(len(names_sk), len(names_ext))
+            self.assertEqual(names_sk, names_ext)
+
+            names_ext = ext.get_feature_names()
+            self.assertEqual(len(names_sk), len(names_ext))
+            self.assertEqual(names_sk, names_ext)
+
+            self.assertEqual(X_sk.shape, X_ext.shape)
+            self.assertEqual(X_sk, X_ext)
+
 
 if __name__ == "__main__":
     unittest.main()

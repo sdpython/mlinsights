@@ -21,6 +21,9 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
     poly_degree : integer
         The degree of the polynomial features. Default = 2.
 
+    poly_transpose: boolean
+        Transpose the matrix before doing the computation. Default is False.
+
     Attributes
     ----------
     poly_powers_ : array, shape (n_output_features, n_input_features)
@@ -35,11 +38,12 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         of input features.
     """
 
-    def __init__(self, kind='poly', poly_degree=2):
+    def __init__(self, kind='poly', poly_degree=2, poly_transpose=False):
         BaseEstimator.__init__(self)
         TransformerMixin.__init__(self)
         self.kind = kind
         self.poly_degree = poly_degree
+        self.poly_transpose = poly_transpose
 
     def get_feature_names(self, input_features=None):
         """
@@ -164,8 +168,12 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         X = check_array(X, dtype=FLOAT_DTYPES, accept_sparse='csc')
 
         if sparse.isspmatrix(X):
-            XP = sparse.lil_matrix(
-                (X.shape[0], self.n_output_features_), dtype=X.dtype)
+            if self.poly_transpose:
+                XP = sparse.lil_matrix(
+                    (self.n_output_features_, X.shape[0]), dtype=X.dtype)
+            else:
+                XP = sparse.lil_matrix(
+                    (X.shape[0], self.n_output_features_), dtype=X.dtype)
 
             def multiply(A, B):
                 return A.multiply(B)
@@ -173,8 +181,12 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             def final(X):
                 return X.tocsc()
         else:
-            XP = numpy.empty(
-                (X.shape[0], self.n_output_features_), dtype=X.dtype)
+            if self.poly_transpose:
+                XP = numpy.empty(
+                    (self.n_output_features_, X.shape[0]), dtype=X.dtype)
+            else:
+                XP = numpy.empty(
+                    (X.shape[0], self.n_output_features_), dtype=X.dtype)
 
             def multiply(A, B):
                 return numpy.multiply(A, B)
@@ -182,27 +194,56 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             def final(X):
                 return X
 
-        XP[:, 0] = 1
-        pos = 1
-        n = X.shape[1]
-        for d in range(0, self.poly_degree):
-            if d == 0:
-                XP[:, pos:pos + n] = X
-                index = list(range(pos, pos + n))
-                pos += n
-                index.append(pos)
-            else:
-                new_index = []
-                end = index[-1]
-                for i in range(0, n):
-                    a = index[i]
+        if self.poly_transpose:
+            XP[0, :] = 1
+            pos = 1
+            n = X.shape[1]
+            for d in range(0, self.poly_degree):
+                if d == 0:
+                    XP[pos:pos + n, :] = X.T
+                    X = XP[pos:pos + n, :]
+                    index = list(range(pos, pos + n))
+                    pos += n
+                    index.append(pos)
+                else:
+                    new_index = []
+                    end = index[-1]
+                    for i in range(0, n):
+                        a = index[i]
+                        new_index.append(pos)
+                        new_pos = pos + end - a
+                        XP[pos:new_pos, :] = multiply(
+                            XP[a:end, :], X[i:i + 1, :])
+                        pos = new_pos
+
                     new_index.append(pos)
-                    new_pos = pos + end - a
-                    XP[:, pos:new_pos] = multiply(XP[:, a:end], X[:, i:i + 1])
-                    pos = new_pos
+                    index = new_index
 
-                new_index.append(pos)
-                index = new_index
+            XP = final(XP)
+            return XP.T
+        else:
+            XP[:, 0] = 1
+            pos = 1
+            n = X.shape[1]
+            for d in range(0, self.poly_degree):
+                if d == 0:
+                    XP[:, pos:pos + n] = X
+                    index = list(range(pos, pos + n))
+                    pos += n
+                    index.append(pos)
+                else:
+                    new_index = []
+                    end = index[-1]
+                    for i in range(0, n):
+                        a = index[i]
+                        new_index.append(pos)
+                        new_pos = pos + end - a
+                        XP[:, pos:new_pos] = multiply(
+                            XP[:, a:end], X[:, i:i + 1])
+                        pos = new_pos
 
-        XP = final(XP)
-        return XP
+                    new_index.append(pos)
+                    index = new_index
+
+            XP = final(XP)
+            return XP
