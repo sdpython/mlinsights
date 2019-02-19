@@ -29,6 +29,7 @@ def _pipeline_info(pipe, data, context):
             data = info[-1]["outputs"]
             infos.extend(info)
         return infos
+
     elif isinstance(pipe, ColumnTransformer):
         infos = []
         outputs = []
@@ -42,14 +43,31 @@ def _pipeline_info(pipe, data, context):
             info[-1]['outputs'] = new_outputs
             infos.extend(info)
         if len(pipe.transformers) > 1:
-            infos.append({'name': 'union', 'outputs': [_get_name(context)], 'inputs': outputs,
-                          'type': 'transform'})
+            infos.append({'name': 'union', 'outputs': [_get_name(context)],
+                          'inputs': outputs, 'type': 'transform'})
         return infos
+
+    elif isinstance(pipe, FeatureUnion):
+        infos = []
+        outputs = []
+        for _, model in pipe.transformer_list:
+            info = _pipeline_info(model, data, context)
+            new_outputs = []
+            for o in info[-1]['outputs']:
+                add = _get_name(context, prefix=o)
+                outputs.append(add)
+                new_outputs.append(add)
+            info[-1]['outputs'] = new_outputs
+            infos.extend(info)
+        if len(pipe.transformer_list) > 1:
+            infos.append({'name': 'union', 'outputs': [_get_name(context)],
+                          'inputs': outputs, 'type': 'transform'})
+        return infos
+
     elif isinstance(pipe, TransformedTargetRegressor):
         raise NotImplementedError(
             "Not yet implemented for TransformedTargetRegressor.")
-    elif isinstance(pipe, FeatureUnion):
-        raise NotImplementedError("Not yet implemented for FeatureUnion.")
+
     elif isinstance(pipe, TransformerMixin):
         info = {'name': pipe.__class__.__name__, 'type': 'transform'}
         if len(data) == 1:
@@ -59,9 +77,10 @@ def _pipeline_info(pipe, data, context):
         else:
             info['inputs'] = [_get_name(context)]
             info['outputs'] = [_get_name(context)]
-            info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
-                     'type': 'transform'}, info]
+            info = [{'name': 'union', 'outputs': info['inputs'],
+                     'inputs': data, 'type': 'transform'}, info]
         return info
+
     elif isinstance(pipe, ClassifierMixin):
         info = {'name': pipe.__class__.__name__, 'type': 'classifier'}
         exp = ['PredictedLabel', 'Probabilities']
@@ -75,6 +94,7 @@ def _pipeline_info(pipe, data, context):
             info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
                      'type': 'transform'}, info]
         return info
+
     elif isinstance(pipe, RegressorMixin):
         info = {'name': pipe.__class__.__name__, 'type': 'regressor'}
         exp = ['Prediction']
@@ -88,6 +108,7 @@ def _pipeline_info(pipe, data, context):
             info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
                      'type': 'transform'}, info]
         return info
+
     else:
         raise NotImplementedError(
             "Not yet implemented for {}.".format(type(pipe)))
@@ -104,6 +125,18 @@ def pipeline2dot(pipe, data, **params):
                             or just a list with the variable names
     @param      params      additional params to draw the graph
     @return                 string
+
+    Default options for the graph are:
+
+    ::
+
+        options = {
+            'orientation': 'portrait',
+            'ranksep': '0.25',
+            'nodesep': '0.05',
+            'width': '0.5',
+            'height': '0.1',
+        }
     """
     if isinstance(data, pandas.DataFrame):
         data = list(data.columns)
@@ -115,7 +148,19 @@ def pipeline2dot(pipe, data, **params):
     elif not isinstance(data, list):
         raise TypeError("Unexpected data type: {}.".format(type(data)))
 
-    exp = ["digraph{", "  orientation=portrait;"]
+    options = {
+        'orientation': 'portrait',
+        'ranksep': '0.25',
+        'nodesep': '0.05',
+        'width': '0.5',
+        'height': '0.1',
+    }
+    options.update(params)
+
+    exp = ["digraph{"]
+    for opt in {'orientation', 'pad', 'nodesep', 'ranksep'}:
+        if opt in options:
+            exp.append("  {}={};".format(opt, options[opt]))
     fontsize = 8
     info = [dict(schema_after=data)]
     info.extend(_pipeline_info(pipe, data, context=dict(n=0, names=set(data))))

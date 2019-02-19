@@ -9,9 +9,9 @@ import unittest
 import pandas
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression, LinearRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from pyquickhelper.pycode import ExtTestCase
@@ -97,6 +97,17 @@ class TestDot(ExtTestCase):
         dot = pipeline2dot(clf, columns)
         self.assertIn("digraph{", dot)
         self.assertIn("StandardScaler", dot)
+
+    def test_union_features(self):
+        columns = ['X', 'Y']
+        model = Pipeline([('scaler1', StandardScaler()),
+                          ('union', FeatureUnion([
+                              ('scaler2', StandardScaler()),
+                              ('scaler3', MinMaxScaler())]))])
+        dot = pipeline2dot(model, columns)
+        self.assertIn("digraph{", dot)
+        self.assertIn("StandardScaler", dot)
+        print(dot)
 
 
 if __name__ == "__main__":

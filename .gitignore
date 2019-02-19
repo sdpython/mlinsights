@@ -276,3 +276,6 @@ _doc/notebooks/example.train.txt
 _doc/notebooks/simages/
 _doc/notebooks/data/dog-cat-pixabay
 _doc/notebooks/graph*.dot*
+_doc/notebooks/sklearn/graph*.png
+_doc/notebooks/sklearn/graph*.dot
+
