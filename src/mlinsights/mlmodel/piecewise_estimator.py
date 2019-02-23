@@ -74,7 +74,7 @@ def _decision_function_piecewise_estimator(i, est, X, association):
     return ind, est.decision_function(X[ind, :])
 
 
-class PiecewiseEstimator(BaseEstimator, RegressorMixin):
+class PiecewiseEstimator(BaseEstimator):
     """
     Uses a :epkg:`decision tree` to split the space of features
     into buckets and trains a linear regression on each of them.
@@ -92,9 +92,7 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
         @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
                                         to fit the estimators
 
-        *binner* allows the following values:
-        * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
-          or :epkg:`sklearn:tree:DecisionTreeClassifier`
+        *binner* must be filled or must be:
         * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
         * any instanciated model
 
@@ -102,18 +100,12 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
         * ``None``: the model is :epkg:`sklearn:linear_model:LinearRegression`
         * any instanciated model
         """
-        RegressorMixin.__init__(self)
         BaseEstimator.__init__(self)
         if estimator is None:
             raise ValueError("estimator cannot be null.")
         if binner is None:
-            if isinstance(estimator, RegressorMixin):
-                binner = DecisionTreeRegressor(min_samples_leaf=2)
-            elif isinstance(estimator, ClassifierMixin):
-                binner = DecisionTreeClassifier(min_samples_leaf=2)
-            else:
-                raise TypeError(
-                    "Unsupported options for binner=='tree' and model {}.".format(type(estimator)))
+            raise TypeError(
+                "Unsupported options for binner=='tree' and model {}.".format(type(estimator)))
         elif binner == "bins":
             binner = KBinsDiscretizer()
         self.binner = binner
@@ -262,7 +254,7 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
 
         if hasattr(self, 'random_state') and self.random_state is not None:  # pylint: disable=E1101
             rnd = numpy.random.RandomState(  # pylint: disable=E1101
-                self.random_state)
+                self.random_state)  # pylint: disable=E1101
         else:
             rnd = None
 
@@ -335,7 +327,7 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
                                         to fit the estimators
 
         *binner* allows the following values:
-        * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
+        * ``tree``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
         * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
         * any instanciated model
 
@@ -345,6 +337,8 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
         """
         if estimator is None:
             estimator = LinearRegression()
+        if binner in ('tree', None):
+            binner = DecisionTreeRegressor(min_samples_leaf=2)
         RegressorMixin.__init__(self)
         PiecewiseEstimator.__init__(self, binner=binner, estimator=estimator,
                                     n_jobs=n_jobs, verbose=verbose)
@@ -365,7 +359,7 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
         return self._apply_predict_method(X, "predict", _predict_piecewise_estimator, self.dim_)
 
 
-class PiecewiseClassifier(PiecewiseEstimator, RegressorMixin):
+class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
     """
     Uses a :epkg:`decision tree` to split the space of features
     into buckets and trains a logistic regression (default) on each of them.
@@ -391,7 +385,7 @@ class PiecewiseClassifier(PiecewiseEstimator, RegressorMixin):
                                         to fit the estimators
 
         *binner* allows the following values:
-        * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeClassifier`
+        * ``tree``: the model is :epkg:`sklearn:tree:DecisionTreeClassifier`
         * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
         * any instanciated model
 
@@ -401,7 +395,9 @@ class PiecewiseClassifier(PiecewiseEstimator, RegressorMixin):
         """
         if estimator is None:
             estimator = LogisticRegression()
-        RegressorMixin.__init__(self)
+        if binner in ('tree', None):
+            binner = DecisionTreeClassifier(min_samples_leaf=2)
+        ClassifierMixin.__init__(self)
         PiecewiseEstimator.__init__(self, binner=binner, estimator=estimator,
                                     n_jobs=n_jobs, verbose=verbose)
         self.random_state = random_state

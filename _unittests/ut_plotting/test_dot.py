@@ -107,7 +107,7 @@ class TestDot(ExtTestCase):
         dot = pipeline2dot(model, columns)
         self.assertIn("digraph{", dot)
         self.assertIn("StandardScaler", dot)
-        print(dot)
+        self.assertIn("MinMaxScaler", dot)
 
 
 if __name__ == "__main__":
