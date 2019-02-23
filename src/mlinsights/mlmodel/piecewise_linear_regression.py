@@ -9,10 +9,30 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.utils.validation import check_is_fitted
+from sklearn.utils._joblib import Parallel, delayed
+from sklearn.utils.fixes import _joblib_parallel_args
 try:
     from tqdm import tqdm
 except ImportError:
     pass
+
+
+def _fit_piecewise_estimator(i, model, X, y, sample_weight, association):
+    ind = association == i
+    if not numpy.any(ind):
+        # No training example for this bucket.
+        return None
+    Xi = X[ind, :]
+    yi = y[ind]
+    sw = sample_weight[ind] if sample_weight is not None else None
+    return model.fit(Xi, yi, sample_weight=sw)
+
+
+def _predict_piecewise_estimator(i, est, X, association):
+    ind = association == i
+    if not numpy.any(ind):
+        return None, None
+    return ind, est.predict(X[ind, :])
 
 
 class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
@@ -24,11 +44,13 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
     the average on each bucket.
     """
 
-    def __init__(self, binner=None, estimator=None, verbose=False):
+    def __init__(self, binner=None, estimator=None, n_jobs=None, verbose=False):
         """
         @param      binner              transformer or predictor which creates the buckets
         @param      estimator           predictor trained on every bucket
-        @param      verbose             use :epkg:`tqdm` to fit the estimators
+        @param      n_jobs              number of
+        @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
+                                        to fit the estimators
 
         *binner* allows the following values:
         * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
@@ -49,6 +71,7 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
             estimator = LinearRegression()
         self.binner = binner
         self.estimator = estimator
+        self.n_jobs = n_jobs
         self.verbose = verbose
 
     @property
@@ -176,27 +199,19 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
         association, self.mapping_, self.leaves_ = self._mapping_train(
             X, self.binner_)
 
-        def fit_estimator(i):
-            ind = association == i
-            if not numpy.any(ind):
-                # No training example for this bucket.
-                return None
-            Xi = X[ind, :]
-            yi = y[ind]
-            sw = sample_weight[ind] if sample_weight is not None else None
-            model = clone(self.estimator).fit(Xi, yi, sample_weight=sw)
-            return model
+        estimators = [clone(self.estimator) for i in self.mapping_]
 
-        self.estimators_ = [None for i in self.mapping_]
+        loop = tqdm(range(len(estimators))
+                    ) if self.verbose == 'tqdm' else range(len(estimators))
+        verbose = 1 if self.verbose == 'tqdm' else (1 if self.verbose else 0)
 
-        if self.verbose:
-            for i in tqdm(range(len(self.estimators_))):
-                est = fit_estimator(i)
-                self.estimators_[i] = est
-        else:
-            for i in range(len(self.estimators_)):
-                est = fit_estimator(i)
-                self.estimators_[i] = est
+        self.estimators_ = \
+            Parallel(n_jobs=self.n_jobs, verbose=verbose,
+                     **_joblib_parallel_args(prefer='threads'))(
+                delayed(_fit_piecewise_estimator)(
+                    i, estimators[i], X, y, sample_weight, association)
+                for i in loop)
+
         self.dim_ = 1 if len(y.shape) == 1 else y.shape[1]
         self.mean_ = numpy.average(y, weights=sample_weight)
         return self
@@ -220,12 +235,15 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
 
         association = self.transform_bins(X)
 
+        indpred = Parallel(n_jobs=self.n_jobs, **_joblib_parallel_args(prefer='threads'))(
+            delayed(_predict_piecewise_estimator)(i, model, X, association)
+            for i, model in enumerate(self.estimators_))
+
         pred = numpy.zeros((X.shape[0], self.dim_)
                            if self.dim_ > 1 else (X.shape[0],))
         pred[:] = self.mean_
-        for ntree, est in enumerate(self.estimators_):
-            ind = association == ntree
-            if not numpy.any(ind):
+        for ind, p in indpred:
+            if ind is None:
                 continue
-            pred[ind] = est.predict(X[ind, :])
+            pred[ind] = p
         return pred
