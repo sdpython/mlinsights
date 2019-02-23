@@ -9,5 +9,5 @@
     `Piecewise Linear Regression <http://www.xavierdupre.fr/app/mlstatpy/helpsphinx/notebooks/regression_lineaire.html#regression-lineaire-par-morceaux>`_.
     I wanted to turn my code into something usable and following
     the *scikit-learn* API:
-    :class:`PiecewiseLinearRegression <mlinsights.mlmodel.piecewise_linear_regression.PiecewiseLinearRegression>`
+    :class:`PiecewiseRegression <mlinsights.mlmodel.piecewise_estimator.PiecewiseRegression>`
     and another notebook :ref:`piecewiselinearregressionrst`.

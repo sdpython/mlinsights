@@ -25,7 +25,7 @@ except ImportError:
     import src
 
 from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
-from src.mlinsights.mlmodel.piecewise_linear_regression import PiecewiseLinearRegression
+from src.mlinsights.mlmodel.piecewise_estimator import PiecewiseRegression
 
 
 class TestPiecewiseRegression(ExtTestCase):
@@ -35,7 +35,7 @@ class TestPiecewiseRegression(ExtTestCase):
         Y = numpy.array([1., 1.1, 1.15, 1.2])
         clr = LinearRegression(fit_intercept=False)
         clr.fit(X, Y)
-        clq = PiecewiseLinearRegression()
+        clq = PiecewiseRegression()
         clq.fit(X, Y)
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
@@ -58,7 +58,7 @@ class TestPiecewiseRegression(ExtTestCase):
         Y = numpy.array([1., 1.1, 1.15, 1.2])
         clr = LinearRegression(fit_intercept=False)
         clr.fit(X, Y)
-        clq = PiecewiseLinearRegression(binner="bins")
+        clq = PiecewiseRegression(binner="bins")
         clq.fit(X, Y)
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
@@ -78,7 +78,7 @@ class TestPiecewiseRegression(ExtTestCase):
         W = numpy.array([1., 1., 1.])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y, W)
-        clq = PiecewiseLinearRegression(verbose=False)
+        clq = PiecewiseRegression(verbose=False)
         clq.fit(X, Y, W)
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
@@ -92,7 +92,7 @@ class TestPiecewiseRegression(ExtTestCase):
         W = numpy.array([1., 1., 1., 1., 1., 1.])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y, W)
-        clq = PiecewiseLinearRegression(verbose=False)
+        clq = PiecewiseRegression(verbose=False)
         clq.fit(X, Y, W)
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
@@ -104,7 +104,7 @@ class TestPiecewiseRegression(ExtTestCase):
         Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
         clr = LinearRegression()
         clr.fit(X, Y)
-        clq = PiecewiseLinearRegression(verbose=False)
+        clq = PiecewiseRegression(verbose=False)
         clq.fit(X, Y)
         pred1 = clr.predict(X)
         self.assertNotEmpty(pred1)
@@ -122,7 +122,7 @@ class TestPiecewiseRegression(ExtTestCase):
         Y = numpy.array([1., 1.1])
         clr = LinearRegression(fit_intercept=False)
         clr.fit(X, Y)
-        clq = PiecewiseLinearRegression()
+        clq = PiecewiseRegression()
         clq.fit(X, Y)
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
@@ -131,7 +131,7 @@ class TestPiecewiseRegression(ExtTestCase):
     def test_piecewise_regression_list(self):
         X = [[0.1, 0.2], [0.2, 0.3]]
         Y = numpy.array([1., 1.1])
-        clq = PiecewiseLinearRegression()
+        clq = PiecewiseRegression()
         self.assertRaise(lambda: clq.fit(X, Y), TypeError)
 
     def test_piecewise_regression_pickle(self):
@@ -142,10 +142,10 @@ class TestPiecewiseRegression(ExtTestCase):
         X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         test_sklearn_pickle(lambda: LinearRegression(), X, Y)
-        test_sklearn_pickle(lambda: PiecewiseLinearRegression(), X, Y)
+        test_sklearn_pickle(lambda: PiecewiseRegression(), X, Y)
 
     def test_piecewise_regression_clone(self):
-        test_sklearn_clone(lambda: PiecewiseLinearRegression(verbose=True))
+        test_sklearn_clone(lambda: PiecewiseRegression(verbose=True))
 
     def test_piecewise_regression_grid_search(self):
         X = numpy.random.random(100)
@@ -155,8 +155,8 @@ class TestPiecewiseRegression(ExtTestCase):
         X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
-            lambda: PiecewiseLinearRegression(), X, Y), ValueError)
-        res = test_sklearn_grid_search_cv(lambda: PiecewiseLinearRegression(),
+            lambda: PiecewiseRegression(), X, Y), ValueError)
+        res = test_sklearn_grid_search_cv(lambda: PiecewiseRegression(),
                                           X, Y, binner__max_depth=[2, 3])
         self.assertIn('model', res)
         self.assertIn('score', res)

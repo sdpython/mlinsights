@@ -26,7 +26,7 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.extended_features.ExtendedFeatures
 
-.. autosignature:: mlinsights.sklapi.piecewise_linear_regression.PiecewiseLinearRegression
+.. autosignature:: mlinsights.sklapi.piecewise_estimator.PiecewiseRegression
 
 .. autosignature:: mlinsights.sklapi.predictable_tsne.PredictableTSNE
 

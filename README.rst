@@ -48,7 +48,7 @@ non-linear correlation based on decision trees, or
 *QuantileMLPRegressor* a modification of scikit-learn's MLPRegressor
 which trains a multi-layer perceptron with *L1* norm.
 It also explores *PredictableTSNE* which trains a supervized
-model to replicate *t-SNE* results or a *PiecewiseLinearRegression*
+model to replicate *t-SNE* results or a *PiecewiseRegression*
 which partitions the data before fitting a model on each bucket.
 
 * `GitHub/mlinsights <https://github.com/sdpython/mlinsights/>`_

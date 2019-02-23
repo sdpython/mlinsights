@@ -35,13 +35,21 @@ def _predict_piecewise_estimator(i, est, X, association):
     return ind, est.predict(X[ind, :])
 
 
-class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
+def _predict_proba_piecewise_estimator(i, est, X, association):
+    ind = association == i
+    if not numpy.any(ind):
+        return None, None
+    return ind, est.predict_proba(X[ind, :])
+
+
+class PiecewiseEstimator(BaseEstimator, RegressorMixin):
     """
     Uses a :epkg:`decision tree` to split the space of features
     into buckets and trains a linear regression on each of them.
-    The second estimator is usually a :epkg:`sklearn:linear_model:LinearRegression`.
-    It can also be :epkg:`sklearn:dummy:DummyRegressor` to just get
-    the average on each bucket.
+    The second estimator can be a :epkg:`sklearn:linear_model:LinearRegression`
+    for a regression or :epkg:`sklearn:linear_model:LogisticRegression`
+    for a classifier. It can also be :epkg:`sklearn:dummy:DummyRegressor`
+    :epkg:`sklearn:dummy:DummyClassifier` to just get the average on each bucket.
     """
 
     def __init__(self, binner=None, estimator=None, n_jobs=None, verbose=False):
@@ -68,7 +76,7 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
         elif binner == "bins":
             binner = KBinsDiscretizer()
         if estimator is None:
-            estimator = LinearRegression()
+            raise ValueError("estimator cannot be null.")
         self.binner = binner
         self.estimator = estimator
         self.n_jobs = n_jobs
@@ -216,6 +224,69 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
         self.mean_ = numpy.average(y, weights=sample_weight)
         return self
 
+    def _apply_predict_method(self, X, method, parallelized, mean):
+        """
+        Generic *predict* method, works for *predict_proba* and
+        *decision_function* as well.
+        """
+        check_is_fitted(self, 'estimators_')
+        if len(self.estimators_) == 0:
+            raise RuntimeError(
+                "Estimator was apparently fitted but contains no estimator.")
+        if not hasattr(self.estimators_[0], method):
+            raise TypeError("Estimator {} does not have method '{}'.".format(
+                type(self.estimators_[0]), method))
+        if isinstance(X, pandas.DataFrame):
+            X = X.values
+
+        association = self.transform_bins(X)
+
+        indpred = Parallel(n_jobs=self.n_jobs, **_joblib_parallel_args(prefer='threads'))(
+            delayed(parallelized)(i, model, X, association)
+            for i, model in enumerate(self.estimators_))
+
+        pred = numpy.zeros((X.shape[0], self.dim_)
+                           if self.dim_ > 1 else (X.shape[0],))
+        pred[:] = mean
+        for ind, p in indpred:
+            if ind is None:
+                continue
+            pred[ind] = p
+        return pred
+
+
+class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
+    """
+    Uses a :epkg:`decision tree` to split the space of features
+    into buckets and trains a linear regression on each of them.
+    The second estimator is usually a :epkg:`sklearn:linear_model:LinearRegression`.
+    It can also be :epkg:`sklearn:dummy:DummyRegressor` to just get
+    the average on each bucket.
+    """
+
+    def __init__(self, binner=None, estimator=None, n_jobs=None, verbose=False):
+        """
+        @param      binner              transformer or predictor which creates the buckets
+        @param      estimator           predictor trained on every bucket
+        @param      n_jobs              number of
+        @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
+                                        to fit the estimators
+
+        *binner* allows the following values:
+        * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
+        * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
+        * any instanciated model
+
+        *estimator* allows the following values:
+        * ``None``: the model is :epkg:`sklearn:linear_model:LinearRegression`
+        * any instanciated model
+        """
+        if estimator is None:
+            estimator = LinearRegression()
+        RegressorMixin.__init__(self)
+        PiecewiseEstimator.__init__(self, binner=binner, estimator=estimator,
+                                    n_jobs=n_jobs, verbose=verbose)
+
     def predict(self, X):
         """
         Runs the predictions.
@@ -229,21 +300,5 @@ class PiecewiseLinearRegression(BaseEstimator, RegressorMixin):
 
         predictions
         """
-        check_is_fitted(self, 'estimators_')
-        if isinstance(X, pandas.DataFrame):
-            X = X.values
-
-        association = self.transform_bins(X)
-
-        indpred = Parallel(n_jobs=self.n_jobs, **_joblib_parallel_args(prefer='threads'))(
-            delayed(_predict_piecewise_estimator)(i, model, X, association)
-            for i, model in enumerate(self.estimators_))
-
-        pred = numpy.zeros((X.shape[0], self.dim_)
-                           if self.dim_ > 1 else (X.shape[0],))
-        pred[:] = self.mean_
-        for ind, p in indpred:
-            if ind is None:
-                continue
-            pred[ind] = p
-        return pred
+        return self._apply_predict_method(X, "predict", _predict_piecewise_estimator,
+                                          self.mean_)
