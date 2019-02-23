@@ -12,7 +12,7 @@
     independently and that increases the number of
     data exchanged between *numpy* and *Python*.
     The idea of the implementation in
-    :class:`ExtendedFeatures <mlinsights.mldmodel.extended_features.ExtendedFeatures>`
+    :class:`ExtendedFeatures <mlinsights.mlmodel.extended_features.ExtendedFeatures>`
     is to reduce this number by brodcast multiplications.
     The second optimization occurs by transposing the matrix:
     dense matrix are organized by rows in memory so
