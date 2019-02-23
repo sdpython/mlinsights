@@ -3,10 +3,11 @@
 @brief Implements a piecewise linear regression.
 """
 import numpy
+import numpy.random
 import pandas
-from sklearn.base import BaseEstimator, RegressorMixin, clone
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression
+from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin, clone
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.utils.validation import check_is_fitted
 from sklearn.utils._joblib import Parallel, delayed
@@ -17,7 +18,7 @@ except ImportError:
     pass
 
 
-def _fit_piecewise_estimator(i, model, X, y, sample_weight, association):
+def _fit_piecewise_estimator(i, model, X, y, sample_weight, association, nb_classes, random_state):
     ind = association == i
     if not numpy.any(ind):
         # No training example for this bucket.
@@ -25,6 +26,30 @@ def _fit_piecewise_estimator(i, model, X, y, sample_weight, association):
     Xi = X[ind, :]
     yi = y[ind]
     sw = sample_weight[ind] if sample_weight is not None else None
+
+    if nb_classes is not None and len(set(yi)) != nb_classes:
+        # Issues a classifiers requires to have at least one example
+        # of each class.
+        if random_state is None:
+            random_state = numpy.random.RandomState()  # pylint: disable=E1101
+        addition = numpy.arange(len(ind))
+        random_state.shuffle(addition)
+        found = set(yi)
+        allcl = set(y)
+        res = []
+        while len(found) < len(allcl):
+            for ki in addition:
+                if y[ki] not in found:
+                    res.append(ki)
+                    found.add(y[ki])
+        ind = ind.copy()
+        for ki in res:
+            ind[ki] = True
+
+        Xi = X[ind, :]
+        yi = y[ind]
+        sw = sample_weight[ind] if sample_weight is not None else None
+
     return model.fit(Xi, yi, sample_weight=sw)
 
 
@@ -42,6 +67,13 @@ def _predict_proba_piecewise_estimator(i, est, X, association):
     return ind, est.predict_proba(X[ind, :])
 
 
+def _decision_function_piecewise_estimator(i, est, X, association):
+    ind = association == i
+    if not numpy.any(ind):
+        return None, None
+    return ind, est.decision_function(X[ind, :])
+
+
 class PiecewiseEstimator(BaseEstimator, RegressorMixin):
     """
     Uses a :epkg:`decision tree` to split the space of features
@@ -56,12 +88,13 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
         """
         @param      binner              transformer or predictor which creates the buckets
         @param      estimator           predictor trained on every bucket
-        @param      n_jobs              number of
+        @param      n_jobs              number of parallel jobs (for training and predicting)
         @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
                                         to fit the estimators
 
         *binner* allows the following values:
         * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
+          or :epkg:`sklearn:tree:DecisionTreeClassifier`
         * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
         * any instanciated model
 
@@ -71,12 +104,18 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
         """
         RegressorMixin.__init__(self)
         BaseEstimator.__init__(self)
-        if binner is None:
-            binner = DecisionTreeRegressor(min_samples_leaf=2)
-        elif binner == "bins":
-            binner = KBinsDiscretizer()
         if estimator is None:
             raise ValueError("estimator cannot be null.")
+        if binner is None:
+            if isinstance(estimator, RegressorMixin):
+                binner = DecisionTreeRegressor(min_samples_leaf=2)
+            elif isinstance(estimator, ClassifierMixin):
+                binner = DecisionTreeClassifier(min_samples_leaf=2)
+            else:
+                raise TypeError(
+                    "Unsupported options for binner=='tree' and model {}.".format(type(estimator)))
+        elif binner == "bins":
+            binner = KBinsDiscretizer()
         self.binner = binner
         self.estimator = estimator
         self.n_jobs = n_jobs
@@ -191,6 +230,10 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
         estimators_: dictionary of estimators, each of them
             mapped to a leave to the tree
 
+        mean_estimator_: estimator trained on the whole
+            datasets in case the binner can find a bucket for
+            a new observation
+
         dim_: dimension of the output
         mean_: average targets
         """
@@ -213,18 +256,27 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
                     ) if self.verbose == 'tqdm' else range(len(estimators))
         verbose = 1 if self.verbose == 'tqdm' else (1 if self.verbose else 0)
 
+        self.mean_estimator_ = clone(self.estimator).fit(X, y, sample_weight)
+        nb_classes = None if not hasattr(self.mean_estimator_, 'classes_') \
+            else len(set(self.mean_estimator_.classes_))
+
+        if hasattr(self, 'random_state') and self.random_state is not None:  # pylint: disable=E1101
+            rnd = numpy.random.RandomState(  # pylint: disable=E1101
+                self.random_state)
+        else:
+            rnd = None
+
         self.estimators_ = \
             Parallel(n_jobs=self.n_jobs, verbose=verbose,
                      **_joblib_parallel_args(prefer='threads'))(
                 delayed(_fit_piecewise_estimator)(
-                    i, estimators[i], X, y, sample_weight, association)
+                    i, estimators[i], X, y, sample_weight, association, nb_classes, rnd)
                 for i in loop)
 
         self.dim_ = 1 if len(y.shape) == 1 else y.shape[1]
-        self.mean_ = numpy.average(y, weights=sample_weight)
         return self
 
-    def _apply_predict_method(self, X, method, parallelized, mean):
+    def _apply_predict_method(self, X, method, parallelized, dimout):
         """
         Generic *predict* method, works for *predict_proba* and
         *decision_function* as well.
@@ -245,20 +297,30 @@ class PiecewiseEstimator(BaseEstimator, RegressorMixin):
             delayed(parallelized)(i, model, X, association)
             for i, model in enumerate(self.estimators_))
 
-        pred = numpy.zeros((X.shape[0], self.dim_)
-                           if self.dim_ > 1 else (X.shape[0],))
-        pred[:] = mean
+        pred = numpy.zeros((X.shape[0], dimout)
+                           if dimout > 1 else (X.shape[0],))
+        indall = numpy.empty((X.shape[0],))
+        indall[:] = False
         for ind, p in indpred:
             if ind is None:
                 continue
             pred[ind] = p
+            indall = numpy.logical_or(indall, ind)  # pylint: disable=E1111
+
+        # no in a bucket
+        indall = numpy.logical_not(indall)  # pylint: disable=E1111
+        Xmissed = X[indall]
+        if Xmissed.shape[0] > 0:
+            meth = getattr(self.mean_estimator_, method)
+            missed = meth(Xmissed)
+            pred[indall] = missed
         return pred
 
 
 class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
     """
     Uses a :epkg:`decision tree` to split the space of features
-    into buckets and trains a linear regression on each of them.
+    into buckets and trains a linear regression (default) on each of them.
     The second estimator is usually a :epkg:`sklearn:linear_model:LinearRegression`.
     It can also be :epkg:`sklearn:dummy:DummyRegressor` to just get
     the average on each bucket.
@@ -268,7 +330,7 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
         """
         @param      binner              transformer or predictor which creates the buckets
         @param      estimator           predictor trained on every bucket
-        @param      n_jobs              number of
+        @param      n_jobs              number of parallel jobs (for training and predicting)
         @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
                                         to fit the estimators
 
@@ -289,7 +351,7 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
 
     def predict(self, X):
         """
-        Runs the predictions.
+        Computes the predictions.
 
         Parameters
         ----------
@@ -300,5 +362,94 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
 
         predictions
         """
-        return self._apply_predict_method(X, "predict", _predict_piecewise_estimator,
-                                          self.mean_)
+        return self._apply_predict_method(X, "predict", _predict_piecewise_estimator, self.dim_)
+
+
+class PiecewiseClassifier(PiecewiseEstimator, RegressorMixin):
+    """
+    Uses a :epkg:`decision tree` to split the space of features
+    into buckets and trains a logistic regression (default) on each of them.
+    The second estimator is usually a :epkg:`sklearn:linear_model:LogisticRegression`.
+    It can also be :epkg:`sklearn:dummy:DummyClassifier` to just get
+    the average on each bucket.
+
+    The main issue with the *PiecewiseClassifier* is that each piece requires
+    one example of each class in each bucket which may not happen.
+    To avoid that, the training will pick up random example
+    from other bucket to ensure this case does not happen.
+    """
+
+    def __init__(self, binner=None, estimator=None, n_jobs=None,
+                 random_state=None, verbose=False):
+        """
+        @param      binner              transformer or predictor which creates the buckets
+        @param      estimator           predictor trained on every bucket
+        @param      n_jobs              number of parallel jobs (for training and predicting)
+        @param      random_state        to pick up random examples when buckets do not
+                                        contain enough examples of each class
+        @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
+                                        to fit the estimators
+
+        *binner* allows the following values:
+        * ``None``: the model is :epkg:`sklearn:tree:DecisionTreeClassifier`
+        * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
+        * any instanciated model
+
+        *estimator* allows the following values:
+        * ``None``: the model is :epkg:`sklearn:linear_model:LogisticRegression`
+        * any instanciated model
+        """
+        if estimator is None:
+            estimator = LogisticRegression()
+        RegressorMixin.__init__(self)
+        PiecewiseEstimator.__init__(self, binner=binner, estimator=estimator,
+                                    n_jobs=n_jobs, verbose=verbose)
+        self.random_state = random_state
+
+    def predict(self, X):
+        """
+        Computes the predictions.
+
+        Parameters
+        ----------
+        X: features, *X* is converted into an array if *X* is a dataframe
+
+        Returns
+        -------
+
+        predictions
+        """
+        return self._apply_predict_method(X, "predict", _predict_piecewise_estimator, 1)
+
+    def predict_proba(self, X):
+        """
+        Computes the predictions probabilities.
+
+        Parameters
+        ----------
+        X: features, *X* is converted into an array if *X* is a dataframe
+
+        Returns
+        -------
+
+        predictions probabilities
+        """
+        return self._apply_predict_method(X, "predict_proba", _predict_proba_piecewise_estimator,
+                                          len(self.mean_estimator_.classes_))
+
+    def decision_function(self, X):
+        """
+        Computes the predictions probabilities.
+
+        Parameters
+        ----------
+        X: features, *X* is converted into an array if *X* is a dataframe
+
+        Returns
+        -------
+
+        predictions probabilities
+        """
+        justone = self.mean_estimator_.decision_function(X[:1])
+        return self._apply_predict_method(X, "decision_function", _decision_function_piecewise_estimator,
+                                          1 if len(justone.shape) == 1 else justone.shape[1])

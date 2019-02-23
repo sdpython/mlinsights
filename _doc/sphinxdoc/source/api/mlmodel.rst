@@ -15,6 +15,10 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
 
+.. autosignature:: mlinsights.sklapi.piecewise_estimator.PiecewiseClassifier
+
+.. autosignature:: mlinsights.sklapi.piecewise_estimator.PiecewiseRegression
+
 .. autosignature:: mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor
 
 .. autosignature:: mlinsights.mlmodel.quantile_regression.QuantileLinearRegression
@@ -25,8 +29,6 @@ Transforms
 .. autosignature:: mlinsights.mlmodel.categories_to_integers.CategoriesToIntegers
 
 .. autosignature:: mlinsights.mlmodel.extended_features.ExtendedFeatures
-
-.. autosignature:: mlinsights.sklapi.piecewise_estimator.PiecewiseRegression
 
 .. autosignature:: mlinsights.sklapi.predictable_tsne.PredictableTSNE
 
