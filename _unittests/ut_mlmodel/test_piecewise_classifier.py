@@ -50,7 +50,7 @@ class TestPiecewiseClassifier(ExtTestCase):
         self.assertIsInstance(sc3, float)
         paths = clq.binner_.decision_path(X)
         s = paths.sum()
-        self.assertEqual(s, 8)
+        self.assertEqual(s, 4)
         self.assertNotEqual(pred2.min(), pred2.max())
         self.assertGreater(clq.n_estimators_, 1)
 
