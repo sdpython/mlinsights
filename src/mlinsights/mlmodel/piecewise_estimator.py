@@ -217,12 +217,12 @@ class PiecewiseEstimator(BaseEstimator):
         Attributes
         ----------
 
-        binner_: binner
+        binner_ : binner
 
-        estimators_: dictionary of estimators, each of them
+        estimators_ : dictionary of estimators, each of them
             mapped to a leave to the tree
 
-        mean_estimator_: estimator trained on the whole
+        mean_estimator_ : estimator trained on the whole
             datasets in case the binner can find a bucket for
             a new observation
 
@@ -266,6 +266,8 @@ class PiecewiseEstimator(BaseEstimator):
                 for i in loop)
 
         self.dim_ = 1 if len(y.shape) == 1 else y.shape[1]
+        if hasattr(self.estimators_[0], 'classes_'):
+            self.classes_ = self.estimators_[0].classes_
         return self
 
     def _apply_predict_method(self, X, method, parallelized, dimout):
@@ -396,7 +398,7 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         if estimator is None:
             estimator = LogisticRegression()
         if binner in ('tree', None):
-            binner = DecisionTreeClassifier(min_samples_leaf=2)
+            binner = DecisionTreeClassifier(min_samples_leaf=5)
         ClassifierMixin.__init__(self)
         PiecewiseEstimator.__init__(self, binner=binner, estimator=estimator,
                                     n_jobs=n_jobs, verbose=verbose)
@@ -415,7 +417,9 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
 
         predictions
         """
-        return self._apply_predict_method(X, "predict", _predict_piecewise_estimator, 1)
+        pred = self._apply_predict_method(
+            X, "predict", _predict_piecewise_estimator, 1)
+        return pred.astype(numpy.int32)
 
     def predict_proba(self, X):
         """
