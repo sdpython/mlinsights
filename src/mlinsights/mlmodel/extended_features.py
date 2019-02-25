@@ -24,6 +24,16 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
     poly_transpose: boolean
         Transpose the matrix before doing the computation. Default is False.
 
+    poly_interaction_only: boolean
+        If true, only interaction features are produced: features that
+        are products of at most degree distinct input features
+        (so not ``x[1] ** 2, x[0] * x[2] ** 3``, etc.).
+
+    poly_include_bias: boolean
+        If True (default), then include a bias column, the feature in
+        which all polynomial powers are zero (i.e. a column of ones -
+        acts as an intercept term in a linear model).
+
     Attributes
     ----------
     poly_powers_ : array, shape (n_output_features, n_input_features)
@@ -38,13 +48,15 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         of input features.
     """
 
-    def __init__(self, kind='poly', poly_degree=2, poly_transpose=False, include_bias=True):
+    def __init__(self, kind='poly', poly_degree=2, poly_transpose=False,
+                 poly_interaction_only=False, poly_include_bias=True):
         BaseEstimator.__init__(self)
         TransformerMixin.__init__(self)
         self.kind = kind
         self.poly_degree = poly_degree
         self.poly_transpose = poly_transpose
-        self.include_bias = include_bias
+        self.poly_include_bias = poly_include_bias
+        self.poly_interaction_only = poly_interaction_only
 
     def get_feature_names(self, input_features=None):
         """
@@ -70,6 +82,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         Returns feature names for output features for
         the polynomial features.
         """
+        if self.poly_interaction_only:
+            raise NotImplementedError()
         check_is_fitted(self, ['n_input_features_'])
         if input_features is None:
             input_features = ["x%d" %
@@ -78,7 +92,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             raise ValueError("input_features should contain {} strings.".format(
                 self.n_input_features_))
 
-        names = ["1"] if self.include_bias else []
+        names = ["1"] if self.poly_include_bias else []
         n = self.n_input_features_
         for d in range(0, self.poly_degree):
             if d == 0:
@@ -196,7 +210,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
                 return X
 
         if self.poly_transpose:
-            if self.include_bias:
+            if self.poly_include_bias:
                 XP[0, :] = 1
                 pos = 1
             else:
@@ -226,7 +240,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             XP = final(XP)
             return XP.T
         else:
-            if self.include_bias:
+            if self.poly_include_bias:
                 XP[:, 0] = 1
                 pos = 1
             else:

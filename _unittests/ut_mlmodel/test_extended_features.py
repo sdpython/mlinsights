@@ -92,7 +92,7 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, P[:, 1:])
             names = poly.get_feature_names()
 
-            ext = ExtendedFeatures(poly_degree=deg, include_bias=False)
+            ext = ExtendedFeatures(poly_degree=deg, poly_include_bias=False)
             e_test = ext.fit_transform(X)
             self.assertEqual(P_test, P[:, 1:])
             e_names = ext.get_feature_names()
@@ -177,7 +177,8 @@ class TestExtendedFeatures(ExtTestCase):
             X_sk = poly.fit_transform(X)
             names_sk = poly.get_feature_names()
 
-            ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True, include_bias=False)
+            ext = ExtendedFeatures(
+                poly_degree=deg, poly_transpose=True, poly_include_bias=False)
             X_ext = ext.fit_transform(X)
 
             inames = ["x%d" % i for i in range(0, X.shape[1])]
