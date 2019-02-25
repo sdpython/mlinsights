@@ -38,12 +38,13 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         of input features.
     """
 
-    def __init__(self, kind='poly', poly_degree=2, poly_transpose=False):
+    def __init__(self, kind='poly', poly_degree=2, poly_transpose=False, include_bias=True):
         BaseEstimator.__init__(self)
         TransformerMixin.__init__(self)
         self.kind = kind
         self.poly_degree = poly_degree
         self.poly_transpose = poly_transpose
+        self.include_bias = include_bias
 
     def get_feature_names(self, input_features=None):
         """
@@ -77,7 +78,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             raise ValueError("input_features should contain {} strings.".format(
                 self.n_input_features_))
 
-        names = ["1"]
+        names = ["1"] if self.include_bias else []
         n = self.n_input_features_
         for d in range(0, self.poly_degree):
             if d == 0:
@@ -195,8 +196,11 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
                 return X
 
         if self.poly_transpose:
-            XP[0, :] = 1
-            pos = 1
+            if self.include_bias:
+                XP[0, :] = 1
+                pos = 1
+            else:
+                pos = 0
             n = X.shape[1]
             for d in range(0, self.poly_degree):
                 if d == 0:
@@ -222,8 +226,11 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             XP = final(XP)
             return XP.T
         else:
-            XP[:, 0] = 1
-            pos = 1
+            if self.include_bias:
+                XP[:, 0] = 1
+                pos = 1
+            else:
+                pos = 0
             n = X.shape[1]
             for d in range(0, self.poly_degree):
                 if d == 0:

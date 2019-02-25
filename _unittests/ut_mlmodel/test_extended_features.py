@@ -69,6 +69,39 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test.shape, e_test.shape)
             self.assertEqual(P_test, e_test)
 
+    def test_polynomial_features_nobias(self):
+        X1 = numpy.arange(6)[:, numpy.newaxis]
+        P1 = numpy.hstack([numpy.ones_like(X1),
+                           X1, X1 ** 2, X1 ** 3])
+        deg1 = 3
+
+        X2 = numpy.arange(6).reshape((3, 2))
+        x1 = X2[:, :1]
+        x2 = X2[:, 1:]
+        P2 = numpy.hstack([x1 ** 0 * x2 ** 0,
+                           x1 ** 1 * x2 ** 0,
+                           x1 ** 0 * x2 ** 1,
+                           x1 ** 2 * x2 ** 0,
+                           x1 ** 1 * x2 ** 1,
+                           x1 ** 0 * x2 ** 2])
+        deg2 = 2
+
+        for (deg, X, P) in [(deg1, X1, P1), (deg2, X2, P2)]:
+            poly = PolynomialFeatures(deg, include_bias=False)
+            P_test = poly.fit_transform(X)
+            self.assertEqual(P_test, P[:, 1:])
+            names = poly.get_feature_names()
+
+            ext = ExtendedFeatures(poly_degree=deg, include_bias=False)
+            e_test = ext.fit_transform(X)
+            self.assertEqual(P_test, P[:, 1:])
+            e_names = ext.get_feature_names()
+
+            self.assertEqual(len(names), len(e_names))
+            self.assertEqual(names, e_names)
+            self.assertEqual(P_test.shape, e_test.shape)
+            self.assertEqual(P_test, e_test)
+
     def test_polynomial_features_bigger(self):
         X = numpy.arange(15).reshape((5, 3))
         for deg in (1, 2, 3, 4):
@@ -122,6 +155,29 @@ class TestExtendedFeatures(ExtTestCase):
             names_sk = poly.get_feature_names()
 
             ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True)
+            X_ext = ext.fit_transform(X)
+
+            inames = ["x%d" % i for i in range(0, X.shape[1])]
+            names_ext = ext.get_feature_names(inames)
+
+            self.assertEqual(len(names_sk), len(names_ext))
+            self.assertEqual(names_sk, names_ext)
+
+            names_ext = ext.get_feature_names()
+            self.assertEqual(len(names_sk), len(names_ext))
+            self.assertEqual(names_sk, names_ext)
+
+            self.assertEqual(X_sk.shape, X_ext.shape)
+            self.assertEqual(X_sk, X_ext)
+
+    def test_polynomial_features_bigger_transpose_nobias(self):
+        X = numpy.arange(15).reshape((5, 3))
+        for deg in (1, 2, 3, 4):
+            poly = PolynomialFeatures(deg, include_bias=False)
+            X_sk = poly.fit_transform(X)
+            names_sk = poly.get_feature_names()
+
+            ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True, include_bias=False)
             X_ext = ext.fit_transform(X)
 
             inames = ["x%d" % i for i in range(0, X.shape[1])]
