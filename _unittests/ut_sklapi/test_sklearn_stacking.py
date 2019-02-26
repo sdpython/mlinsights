@@ -172,7 +172,7 @@ class TestSklearnStacking(ExtTestCase):
         self.assertGreater(acc, 0.5)
         self.assertGreater(accu, 0.5)
         grid = GridSearchCV(estimator=model, param_grid={},
-                            fit_params=None, cv=3, refit='acc',
+                            cv=3, refit='acc',
                             scoring=dict(acc=make_scorer(accuracy_score)))
         grid.fit(X, y)
         best = grid.best_estimator_
