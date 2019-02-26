@@ -97,7 +97,7 @@ jobs:
             pip install -r requirements.txt
 
       - run:
-          name: install cpyquickhelper
+          name: install cpyquickhelper>=0.1.187
           command: |
             python3 -m venv venv
             . venv/bin/activate

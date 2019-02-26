@@ -1,11 +1,25 @@
 
+
 .. _l-HISTORY:
 
 =======
 History
 =======
 
-current - 2019-02-01 - 0.00Mb
+current - 2019-02-26 - 0.00Mb
+=============================
+
+* `37`: implements interaction_only for polynomial features (2019-02-26)
+* `36`: add parameter include_bias to extended features (2019-02-25)
+* `33`: implement the piecewise classifier (2019-02-23)
+* `34`: rename PiecewiseLinearRegression into PiecewiseRegression (2019-02-23)
+* `31`: uses joblib for piecewise linear regression (2019-02-23)
+* `30`: explore transpose matrix before computing the polynomial features (2019-02-17)
+* `29`: explore different implementation of polynomialfeatures (2019-02-15)
+* `28`: implement PiecewiseLinearRegression (2019-02-10)
+* `27`: implement TransferTransformer (2019-02-04)
+
+0.1.138 - 2019-02-01 - 0.05Mb
 =============================
 
 * `26`: add function to convert a scikit-learn pipeline into a graph (2019-02-01)
