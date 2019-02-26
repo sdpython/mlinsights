@@ -101,7 +101,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install cpyquickhelper>=0.1.182
+            pip install cpyquickhelper>=0.1.187
             python -c "import cpyquickhelper.numbers;import cpyquickhelper;print(cpyquickhelper.__version__)"
 
       - save_cache:
