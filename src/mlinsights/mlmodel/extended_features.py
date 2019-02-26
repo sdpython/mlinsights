@@ -214,10 +214,10 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         if self.poly_transpose:
             if self.poly_interaction_only:
                 return _transform_ionly_transpose(self.poly_degree, self.poly_include_bias,
-                                                  XP, X, multiply, final).T
+                                                  XP, X, multiply, final).T.copy()
             else:
                 return _transform_iall_transpose(self.poly_degree, self.poly_include_bias,
-                                                 XP, X, multiply, final).T
+                                                 XP, X, multiply, final).T.copy()
         else:
             if self.poly_interaction_only:
                 return _transform_ionly(self.poly_degree, self.poly_include_bias,
