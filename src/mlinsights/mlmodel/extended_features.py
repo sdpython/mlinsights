@@ -7,6 +7,8 @@ from scipy import sparse
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_array
 from sklearn.utils.validation import check_is_fitted, FLOAT_DTYPES
+from ._extended_features_polynomial import _transform_iall, _transform_ionly
+from ._extended_features_polynomial import _transform_iall_transpose, _transform_ionly_transpose
 
 
 class ExtendedFeatures(BaseEstimator, TransformerMixin):
@@ -82,8 +84,6 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         Returns feature names for output features for
         the polynomial features.
         """
-        if self.poly_interaction_only:
-            raise NotImplementedError()
         check_is_fitted(self, ['n_input_features_'])
         if input_features is None:
             input_features = ["x%d" %
@@ -94,6 +94,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
 
         names = ["1"] if self.poly_include_bias else []
         n = self.n_input_features_
+        interaction_only = self.poly_interaction_only
         for d in range(0, self.poly_degree):
             if d == 0:
                 pos = len(names)
@@ -106,8 +107,9 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
                 for i in range(0, n):
                     a = index[i]
                     new_index.append(len(names))
+                    start = a + d if interaction_only else a
                     names.extend([a + " " + input_features[i]
-                                  for a in names[a:end]])
+                                  for a in names[start:end]])
                 new_index.append(len(names))
                 index = new_index
 
@@ -210,61 +212,16 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
                 return X
 
         if self.poly_transpose:
-            if self.poly_include_bias:
-                XP[0, :] = 1
-                pos = 1
+            if self.poly_interaction_only:
+                return _transform_ionly_transpose(self.poly_degree, self.poly_include_bias,
+                                                  XP, X, multiply, final).T
             else:
-                pos = 0
-            n = X.shape[1]
-            for d in range(0, self.poly_degree):
-                if d == 0:
-                    XP[pos:pos + n, :] = X.T
-                    X = XP[pos:pos + n, :]
-                    index = list(range(pos, pos + n))
-                    pos += n
-                    index.append(pos)
-                else:
-                    new_index = []
-                    end = index[-1]
-                    for i in range(0, n):
-                        a = index[i]
-                        new_index.append(pos)
-                        new_pos = pos + end - a
-                        XP[pos:new_pos, :] = multiply(
-                            XP[a:end, :], X[i:i + 1, :])
-                        pos = new_pos
-
-                    new_index.append(pos)
-                    index = new_index
-
-            XP = final(XP)
-            return XP.T
+                return _transform_iall_transpose(self.poly_degree, self.poly_include_bias,
+                                                 XP, X, multiply, final).T
         else:
-            if self.poly_include_bias:
-                XP[:, 0] = 1
-                pos = 1
+            if self.poly_interaction_only:
+                return _transform_ionly(self.poly_degree, self.poly_include_bias,
+                                        XP, X, multiply, final)
             else:
-                pos = 0
-            n = X.shape[1]
-            for d in range(0, self.poly_degree):
-                if d == 0:
-                    XP[:, pos:pos + n] = X
-                    index = list(range(pos, pos + n))
-                    pos += n
-                    index.append(pos)
-                else:
-                    new_index = []
-                    end = index[-1]
-                    for i in range(0, n):
-                        a = index[i]
-                        new_index.append(pos)
-                        new_pos = pos + end - a
-                        XP[:, pos:new_pos] = multiply(
-                            XP[:, a:end], X[:, i:i + 1])
-                        pos = new_pos
-
-                    new_index.append(pos)
-                    index = new_index
-
-            XP = final(XP)
-            return XP
+                return _transform_iall(self.poly_degree, self.poly_include_bias,
+                                       XP, X, multiply, final)
