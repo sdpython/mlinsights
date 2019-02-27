@@ -107,7 +107,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
                 for i in range(0, n):
                     a = index[i]
                     new_index.append(len(names))
-                    start = a + d if interaction_only else a
+                    start = a + (index[i + 1] - index[i]
+                                 if interaction_only else 0)
                     names.extend([a + " " + input_features[i]
                                   for a in names[start:end]])
                 new_index.append(len(names))

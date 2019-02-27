@@ -57,11 +57,12 @@ def _transform_ionly(degree, bias, XP, X, multiply, final):
             for i in range(0, n):
                 a = index[i]
                 new_index.append(pos)
-                new_pos = pos + end - a - d
+                dec = index[i + 1] - index[i]
+                new_pos = pos + end - a - dec
                 if new_pos <= pos:
                     break
                 XP[:, pos:new_pos] = multiply(
-                    XP[:, a + d:end], X[:, i:i + 1])
+                    XP[:, a + dec:end], X[:, i:i + 1])
                 pos = new_pos
 
             new_index.append(pos)
@@ -125,11 +126,12 @@ def _transform_ionly_transpose(degree, bias, XP, X, multiply, final):
             for i in range(0, n):
                 a = index[i]
                 new_index.append(pos)
-                new_pos = pos + end - a - d
+                dec = index[i + 1] - index[i]
+                new_pos = pos + end - a - dec
                 if new_pos <= pos:
                     break
                 XP[pos:new_pos, :] = multiply(
-                    XP[a + d:end, :], X[i:i + 1, :])
+                    XP[a + dec:end, :], X[i:i + 1, :])
                 pos = new_pos
 
             new_index.append(pos)
