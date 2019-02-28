@@ -139,7 +139,7 @@ class TestPiecewiseRegression(ExtTestCase):
         eps1 = (numpy.random.random(90) - 0.5) * 0.1
         eps2 = numpy.random.random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))
+        X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
         test_sklearn_pickle(lambda: LinearRegression(), X, Y)
         test_sklearn_pickle(lambda: PiecewiseRegression(), X, Y)
@@ -152,7 +152,7 @@ class TestPiecewiseRegression(ExtTestCase):
         eps1 = (numpy.random.random(90) - 0.5) * 0.1
         eps2 = numpy.random.random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))
+        X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: PiecewiseRegression(), X, Y), ValueError)

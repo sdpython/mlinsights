@@ -104,7 +104,7 @@ class TestQuantileRegression(ExtTestCase):
         eps1 = (numpy.random.random(900) - 0.5) * 0.1
         eps2 = numpy.random.random(100) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((1000, 1))
+        X = X.reshape((1000, 1))  # pylint: disable=E1101
         Y = X * 3.4 + 5.6 + eps
 
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
@@ -133,7 +133,7 @@ class TestQuantileRegression(ExtTestCase):
         eps1 = (numpy.random.random(90) - 0.5) * 0.1
         eps2 = numpy.random.random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))
+        X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
         test_sklearn_pickle(lambda: LinearRegression(), X, Y)
         test_sklearn_pickle(lambda: QuantileLinearRegression(), X, Y)
@@ -146,7 +146,7 @@ class TestQuantileRegression(ExtTestCase):
         eps1 = (numpy.random.random(90) - 0.5) * 0.1
         eps2 = numpy.random.random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))
+        X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: QuantileLinearRegression(), X, Y), ValueError)
@@ -196,8 +196,8 @@ class TestQuantileRegression(ExtTestCase):
             y = clq.predict(X)
             diff = y - Y
             sign = numpy.sign(diff)  # pylint: disable=E1111
-            pos = (sign > 0).sum()
-            neg = (sign < 0).sum()
+            pos = (sign > 0).sum()  # pylint: disable=W0143
+            neg = (sign < 0).sum()  # pylint: disable=W0143
             if q < 0.5:
                 self.assertGreater(neg, pos * 4)
             if q > 0.5:

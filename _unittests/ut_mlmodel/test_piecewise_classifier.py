@@ -168,8 +168,8 @@ class TestPiecewiseClassifier(ExtTestCase):
 
     def test_piecewise_classifier_pickle(self):
         X = numpy.random.random(100)
-        Y = X > 0.5
-        X = X.reshape((100, 1))
+        Y = X > 0.5  # pylint: disable=W0143
+        X = X.reshape((100, 1))  # pylint: disable=E1101
         test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
         test_sklearn_pickle(lambda: PiecewiseClassifier(), X, Y)
 
@@ -178,8 +178,8 @@ class TestPiecewiseClassifier(ExtTestCase):
 
     def test_piecewise_classifier_grid_search(self):
         X = numpy.random.random(100)
-        Y = X > 0.5
-        X = X.reshape((100, 1))
+        Y = X > 0.5  # pylint: disable=W0143
+        X = X.reshape((100, 1))  # pylint: disable=E1101
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: PiecewiseClassifier(), X, Y), ValueError)
         res = test_sklearn_grid_search_cv(lambda: PiecewiseClassifier(),
