@@ -6,9 +6,8 @@ import numpy
 from scipy import sparse
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_array
-from sklearn.utils.validation import check_is_fitted, FLOAT_DTYPES
-from ._extended_features_polynomial import _transform_iall, _transform_ionly
-from ._extended_features_polynomial import _transform_iall_transpose, _transform_ionly_transpose
+from sklearn.utils.validation import check_is_fitted
+from ._extended_features_polynomial import _transform_iall, _transform_ionly, _combinations_poly
 
 
 class ExtendedFeatures(BaseEstimator, TransformerMixin):
@@ -18,13 +17,11 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     kind: string
-        ``'poly'`` for polynomial features
+        ``'poly'`` for polynomial features,
+        ``'poly-slow'`` for polynomial features in *scikit-learn 0.20.2*
 
     poly_degree : integer
         The degree of the polynomial features. Default = 2.
-
-    poly_transpose: boolean
-        Transpose the matrix before doing the computation. Default is False.
 
     poly_interaction_only: boolean
         If true, only interaction features are produced: features that
@@ -38,9 +35,6 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
 
     Attributes
     ----------
-    poly_powers_ : array, shape (n_output_features, n_input_features)
-        powers_[i, j] is the exponent of the jth input in the ith output.
-
     n_input_features_ : int
         The total number of input features.
 
@@ -50,13 +44,12 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         of input features.
     """
 
-    def __init__(self, kind='poly', poly_degree=2, poly_transpose=False,
-                 poly_interaction_only=False, poly_include_bias=True):
+    def __init__(self, kind='poly', poly_degree=2, poly_interaction_only=False,
+                 poly_include_bias=True):
         BaseEstimator.__init__(self)
         TransformerMixin.__init__(self)
         self.kind = kind
         self.poly_degree = poly_degree
-        self.poly_transpose = poly_transpose
         self.poly_include_bias = poly_include_bias
         self.poly_interaction_only = poly_interaction_only
 
@@ -74,6 +67,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         output_feature_names : list of string, length n_output_features
         """
         if self.kind == 'poly':
+            return self._get_feature_names_poly(input_features)
+        elif self.kind == 'poly-slow':
             return self._get_feature_names_poly(input_features)
         else:
             raise ValueError(
@@ -138,11 +133,12 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         -------
         self : instance
         """
-        n_features = check_array(X, accept_sparse=True).shape[1]
-        self.n_input_features_ = n_features
+        self.n_input_features_ = X.shape[1]
         self.n_output_features_ = len(self.get_feature_names())
 
         if self.kind == 'poly':
+            return self._fit_poly(X, y)
+        elif self.kind == 'poly-slow':
             return self._fit_poly(X, y)
         else:
             raise ValueError(
@@ -152,6 +148,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         Fitting method for the polynomial features.
         """
+        check_array(X, accept_sparse=False)
         return self
 
     def transform(self, X):
@@ -160,12 +157,11 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : array-like or sparse matrix, shape [n_samples, n_features]
+        X : array-like, shape [n_samples, n_features]
             The data to transform, row by row.
-            Sparse input should preferably be in CSC format.
-        Returns
+            rns
         -------
-        XP : numpy.ndarray or CSC sparse matrix, shape [n_samples, NP]
+        XP : numpy.ndarray, shape [n_samples, NP]
             The matrix of features, where NP is the number of polynomial
             features generated from the combination of inputs.
         """
@@ -175,6 +171,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             raise ValueError("X shape does not match training shape")
         if self.kind == 'poly':
             return self._transform_poly(X)
+        elif self.kind == 'poly-slow':
+            return self._transform_poly_slow(X)
         else:
             raise ValueError(
                 "Unknown extended features '{}'.".format(self.kind))
@@ -183,46 +181,37 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         Transforms data to polynomial features.
         """
-        X = check_array(X, dtype=FLOAT_DTYPES, accept_sparse='csc')
-
         if sparse.isspmatrix(X):
-            if self.poly_transpose:
-                XP = sparse.lil_matrix(
-                    (self.n_output_features_, X.shape[0]), dtype=X.dtype)
-            else:
-                XP = sparse.lil_matrix(
-                    (X.shape[0], self.n_output_features_), dtype=X.dtype)
-
-            def multiply(A, B):
-                return A.multiply(B)
-
-            def final(X):
-                return X.tocsc()
+            raise NotImplementedError("Not implemented for sparse matrices.")
         else:
-            if self.poly_transpose:
-                XP = numpy.empty(
-                    (self.n_output_features_, X.shape[0]), dtype=X.dtype)
-            else:
-                XP = numpy.empty(
-                    (X.shape[0], self.n_output_features_), dtype=X.dtype)
+            XP = numpy.empty(
+                (X.shape[0], self.n_output_features_), dtype=X.dtype)
 
-            def multiply(A, B):
-                return numpy.multiply(A, B)
+            def multiply(A, B, C):
+                return numpy.multiply(A, B, out=C)
 
             def final(X):
                 return X
 
-        if self.poly_transpose:
-            if self.poly_interaction_only:
-                return _transform_ionly_transpose(self.poly_degree, self.poly_include_bias,
-                                                  XP, X, multiply, final).T.copy()
-            else:
-                return _transform_iall_transpose(self.poly_degree, self.poly_include_bias,
-                                                 XP, X, multiply, final).T.copy()
+        if self.poly_interaction_only:
+            return _transform_ionly(self.poly_degree, self.poly_include_bias,
+                                    XP, X, multiply, final)
         else:
-            if self.poly_interaction_only:
-                return _transform_ionly(self.poly_degree, self.poly_include_bias,
-                                        XP, X, multiply, final)
-            else:
-                return _transform_iall(self.poly_degree, self.poly_include_bias,
-                                       XP, X, multiply, final)
+            return _transform_iall(self.poly_degree, self.poly_include_bias,
+                                   XP, X, multiply, final)
+
+    def _transform_poly_slow(self, X):
+        """
+        Transforms data to polynomial features.
+        """
+        if sparse.isspmatrix(X):
+            raise NotImplementedError("Not implemented for sparse matrices.")
+        else:
+            comb = _combinations_poly(X.shape[1], self.poly_degree, self.poly_interaction_only,
+                                      include_bias=self.poly_include_bias)
+            order = 'C'  # how to get order from X.
+            XP = numpy.empty((X.shape[0], self.n_output_features_),
+                             dtype=X.dtype, order=order)
+            for i, comb in enumerate(comb):
+                XP[:, i] = X[:, comb].prod(1)
+            return XP

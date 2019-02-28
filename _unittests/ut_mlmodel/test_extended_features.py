@@ -70,6 +70,39 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test.shape, e_test.shape)
             self.assertEqual(P_test, e_test)
 
+    def test_polynomial_features_slow(self):
+        X1 = numpy.arange(6)[:, numpy.newaxis]
+        P1 = numpy.hstack([numpy.ones_like(X1),
+                           X1, X1 ** 2, X1 ** 3])
+        deg1 = 3
+
+        X2 = numpy.arange(6).reshape((3, 2))
+        x1 = X2[:, :1]
+        x2 = X2[:, 1:]
+        P2 = numpy.hstack([x1 ** 0 * x2 ** 0,
+                           x1 ** 1 * x2 ** 0,
+                           x1 ** 0 * x2 ** 1,
+                           x1 ** 2 * x2 ** 0,
+                           x1 ** 1 * x2 ** 1,
+                           x1 ** 0 * x2 ** 2])
+        deg2 = 2
+
+        for (deg, X, P) in [(deg1, X1, P1), (deg2, X2, P2)]:
+            poly = PolynomialFeatures(deg, include_bias=True)
+            P_test = poly.fit_transform(X)
+            self.assertEqual(P_test, P)
+            names = poly.get_feature_names()
+
+            ext = ExtendedFeatures(kind='poly-slow', poly_degree=deg)
+            e_test = ext.fit_transform(X)
+            e_names = ext.get_feature_names()
+            self.assertEqual(len(names), len(e_names))
+            self.assertEqual(names, e_names)
+
+            self.assertEqual(P_test, P)
+            self.assertEqual(P_test.shape, e_test.shape)
+            self.assertEqual(P_test, e_test)
+
     def test_polynomial_features_nobias_ionly(self):
         X1 = numpy.arange(6)[:, numpy.newaxis]
         P1 = numpy.hstack([numpy.ones_like(X1),
@@ -109,6 +142,45 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test.shape, e_test.shape)
             self.assertEqual(P_test, e_test)
 
+    def test_polynomial_features_nobias_ionly_slow(self):
+        X1 = numpy.arange(6)[:, numpy.newaxis]
+        P1 = numpy.hstack([numpy.ones_like(X1),
+                           X1, X1 ** 2, X1 ** 3])
+        deg1 = 3
+
+        X2 = numpy.arange(6).reshape((3, 2))
+        x1 = X2[:, :1]
+        x2 = X2[:, 1:]
+        P2 = numpy.hstack([x1 ** 0 * x2 ** 0,
+                           x1 ** 1 * x2 ** 0,
+                           x1 ** 0 * x2 ** 1,
+                           x1 ** 2 * x2 ** 0,
+                           x1 ** 1 * x2 ** 1,
+                           x1 ** 0 * x2 ** 2])
+        deg2 = 2
+
+        for (deg, X, P) in [(deg1, X1, P1), (deg2, X2, P2)]:
+            fc = [1] if deg == 3 else [1, 2, 4]
+            poly = PolynomialFeatures(deg, include_bias=False,
+                                      interaction_only=True)
+            P_test = poly.fit_transform(X)
+
+            names = poly.get_feature_names()
+            self.assertEqual(P_test, P[:, fc])
+
+            ext = ExtendedFeatures(kind="poly-slow", poly_degree=deg,
+                                   poly_include_bias=False,
+                                   poly_interaction_only=True)
+            e_test = ext.fit_transform(X)
+
+            e_names = ext.get_feature_names()
+            self.assertEqual(len(names), len(e_names))
+            self.assertEqual(names, e_names)
+
+            self.assertEqual(P_test, P[:, fc])
+            self.assertEqual(P_test.shape, e_test.shape)
+            self.assertEqual(P_test, e_test)
+
     def test_polynomial_features_bias_ionly(self):
         X1 = numpy.arange(6)[:, numpy.newaxis]
         P1 = numpy.hstack([numpy.ones_like(X1),
@@ -136,6 +208,45 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, P[:, fc])
 
             ext = ExtendedFeatures(poly_degree=deg,
+                                   poly_include_bias=True,
+                                   poly_interaction_only=True)
+            e_test = ext.fit_transform(X)
+
+            e_names = ext.get_feature_names()
+            self.assertEqual(len(names), len(e_names))
+            self.assertEqual(names, e_names)
+
+            self.assertEqual(P_test, P[:, fc])
+            self.assertEqual(P_test.shape, e_test.shape)
+            self.assertEqual(P_test, e_test)
+
+    def test_polynomial_features_bias_ionly_slow(self):
+        X1 = numpy.arange(6)[:, numpy.newaxis]
+        P1 = numpy.hstack([numpy.ones_like(X1),
+                           X1, X1 ** 2, X1 ** 3])
+        deg1 = 3
+
+        X2 = numpy.arange(6).reshape((3, 2))
+        x1 = X2[:, :1]
+        x2 = X2[:, 1:]
+        P2 = numpy.hstack([x1 ** 0 * x2 ** 0,
+                           x1 ** 1 * x2 ** 0,
+                           x1 ** 0 * x2 ** 1,
+                           x1 ** 2 * x2 ** 0,
+                           x1 ** 1 * x2 ** 1,
+                           x1 ** 0 * x2 ** 2])
+        deg2 = 2
+
+        for (deg, X, P) in [(deg1, X1, P1), (deg2, X2, P2)]:
+            fc = [0, 1] if deg == 3 else [0, 1, 2, 4]
+            poly = PolynomialFeatures(deg, include_bias=True,
+                                      interaction_only=True)
+            P_test = poly.fit_transform(X)
+
+            names = poly.get_feature_names()
+            self.assertEqual(P_test, P[:, fc])
+
+            ext = ExtendedFeatures(kind="poly-slow", poly_degree=deg,
                                    poly_include_bias=True,
                                    poly_interaction_only=True)
             e_test = ext.fit_transform(X)
@@ -229,6 +340,7 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(X_sk.shape, X_ext.shape)
             self.assertEqual(X_sk, X_ext)
 
+    @unittest.skip(reason="sparse not implemented for polynomial features")
     def test_polynomial_features_sparse(self):
         dtype = numpy.float64
         rng = numpy.random.RandomState(0)  # pylint: disable=E1101
@@ -252,109 +364,12 @@ class TestExtendedFeatures(ExtTestCase):
         self.assertEqual(Xt_sparse.dtype, Xt_dense.dtype)
         self.assertEqual(Xt_sparse.A, Xt_dense)
 
-    def test_polynomial_features_bigger_transpose(self):
-        X = numpy.arange(30).reshape((5, 6))
-        for deg in (1, 2, 3, 4):
-            poly = PolynomialFeatures(deg, include_bias=True)
-            X_sk = poly.fit_transform(X)
-            names_sk = poly.get_feature_names()
-
-            ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True)
-            X_ext = ext.fit_transform(X)
-
-            inames = ["x%d" % i for i in range(0, X.shape[1])]
-            names_ext = ext.get_feature_names(inames)
-
-            self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
-
-            names_ext = ext.get_feature_names()
-            self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
-
-            self.assertEqual(X_sk.shape, X_ext.shape)
-            self.assertEqual(X_sk, X_ext)
-
-    def test_polynomial_features_bigger_transpose_ionly_nobias(self):
-        X = numpy.arange(30).reshape((5, 6))
-        for deg in (1, 2, 3, 4, 5)[2:]:
-            poly = PolynomialFeatures(
-                deg, include_bias=False, interaction_only=True)
-            ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True,
-                                   poly_include_bias=False,
-                                   poly_interaction_only=True)
-            ext.fit(X)
-            poly.fit(X)
-            inames = ["x%d" % i for i in range(0, X.shape[1])]
-            names_ext = ext.get_feature_names(inames)
-            names_sk = poly.get_feature_names()
-            self.assertEqual(names_sk, names_ext)
-            self.assertEqual(len(names_sk), len(names_ext))
-
-            X_ext = ext.fit_transform(X)
-
-            X_sk = poly.fit_transform(X)
-
-            self.assertEqual(X_sk.shape, X_ext.shape)
-            self.assertEqual(X_sk, X_ext)
-
-    def test_polynomial_features_bigger_transpose_ionly_bias(self):
-        X = numpy.arange(30).reshape((5, 6))
-        for deg in (1, 2, 3, 4, 5):
-            poly = PolynomialFeatures(
-                deg, include_bias=True, interaction_only=True)
-            X_sk = poly.fit_transform(X)
-            names_sk = poly.get_feature_names()
-
-            ext = ExtendedFeatures(poly_degree=deg, poly_transpose=True,
-                                   poly_include_bias=True,
-                                   poly_interaction_only=True)
-            X_ext = ext.fit_transform(X)
-
-            inames = ["x%d" % i for i in range(0, X.shape[1])]
-            names_ext = ext.get_feature_names(inames)
-
-            self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
-
-            names_ext = ext.get_feature_names()
-            self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
-
-            self.assertEqual(X_sk.shape, X_ext.shape)
-            self.assertEqual(X_sk, X_ext)
-
-    def test_polynomial_features_bigger_transpose_nobias(self):
-        X = numpy.arange(30).reshape((5, 6))
-        for deg in (1, 2, 3, 4):
-            poly = PolynomialFeatures(deg, include_bias=False)
-            X_sk = poly.fit_transform(X)
-            names_sk = poly.get_feature_names()
-
-            ext = ExtendedFeatures(
-                poly_degree=deg, poly_transpose=True, poly_include_bias=False)
-            X_ext = ext.fit_transform(X)
-
-            inames = ["x%d" % i for i in range(0, X.shape[1])]
-            names_ext = ext.get_feature_names(inames)
-
-            self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
-
-            names_ext = ext.get_feature_names()
-            self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
-
-            self.assertEqual(X_sk.shape, X_ext.shape)
-            self.assertEqual(X_sk, X_ext)
-
     def polynomial_features_csr_X_zero_row(self, zero_row_index, deg, interaction_only):
         X_csr = sparse_random(3, 10, 1.0, random_state=0).tocsr()
         X_csr[zero_row_index, :] = 0.0
         X = X_csr.toarray()
         est = ExtendedFeatures(poly_degree=deg, poly_include_bias=False,
-                               poly_interaction_only=interaction_only,
-                               poly_transpose=True)
+                               poly_interaction_only=interaction_only)
         est.fit(X)
         poly = PolynomialFeatures(degree=deg, include_bias=False,
                                   interaction_only=interaction_only)
