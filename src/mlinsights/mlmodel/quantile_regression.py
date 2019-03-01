@@ -187,8 +187,8 @@ class QuantileLinearRegression(LinearRegression):
         if quantile != 0.5:
             sign = numpy.sign(diff)  # pylint: disable=E1111
             mult = numpy.ones(y_true.shape[0])
-            mult[sign > 0] *= quantile
-            mult[sign < 0] *= (1 - quantile)
+            mult[sign > 0] *= quantile  # pylint: disable=W0143
+            mult[sign < 0] *= (1 - quantile)  # pylint: disable=W0143
         else:
             mult = None
         if sample_weight is not None:
