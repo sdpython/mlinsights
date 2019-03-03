@@ -1,5 +1,6 @@
 chardet
 coverage
+cpyquickhelper>=0.1.187
 guzzle_sphinx_theme
 jyquickhelper
 memory_profiler
