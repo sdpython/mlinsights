@@ -3,6 +3,7 @@ coverage
 guzzle_sphinx_theme
 jyquickhelper
 memory_profiler
+git+https://github.com/sdpython/nbconvert.git@fixes
 pandas_streaming
 pybind11
 pyquickhelper>=1.8.2973
