@@ -69,7 +69,7 @@ class TestPiecewiseRegression(ExtTestCase):
         self.assertIsInstance(sc1, float)
         self.assertIsInstance(sc2, float)
         paths = clq.binner_.transform(X)
-        self.assertEqual(paths.shape, (4, 10))
+        self.assertIn(paths.shape, ((4, 7), (4, 8), (4, 9), (4, 10)))
         self.assertNotEqual(pred2.min(), pred2.max())
 
     def test_piecewise_regression_intercept_weights3(self):
