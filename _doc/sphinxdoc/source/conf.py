@@ -50,5 +50,6 @@ epkg_dictionary.update({
                 ('http://scikit-learn.org/stable/modules/generated/{0}.html', 1),
                 ('http://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),
     't-SNE': 'https://lvdmaaten.github.io/tsne/',
+    'tqdm': 'https://github.com/tqdm/tqdm',
     'TSNE': 'https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html',
 })

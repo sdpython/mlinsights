@@ -93,12 +93,14 @@ class PiecewiseEstimator(BaseEstimator):
                                         to fit the estimators
 
         *binner* must be filled or must be:
-        * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
-        * any instanciated model
+
+        - ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
+        - any instanciated model
 
         *estimator* allows the following values:
-        * ``None``: the model is :epkg:`sklearn:linear_model:LinearRegression`
-        * any instanciated model
+
+        - ``None``: the model is :epkg:`sklearn:linear_model:LinearRegression`
+        - any instanciated model
         """
         BaseEstimator.__init__(self)
         if estimator is None:
@@ -329,13 +331,15 @@ class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
                                         to fit the estimators
 
         *binner* allows the following values:
-        * ``tree``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
-        * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
-        * any instanciated model
+
+        - ``tree``: the model is :epkg:`sklearn:tree:DecisionTreeRegressor`
+        - ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
+        - any instanciated model
 
         *estimator* allows the following values:
-        * ``None``: the model is :epkg:`sklearn:linear_model:LinearRegression`
-        * any instanciated model
+
+        - ``None``: the model is :epkg:`sklearn:linear_model:LinearRegression`
+        - any instanciated model
         """
         if estimator is None:
             estimator = LinearRegression()
@@ -387,13 +391,15 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
                                         to fit the estimators
 
         *binner* allows the following values:
-        * ``tree``: the model is :epkg:`sklearn:tree:DecisionTreeClassifier`
-        * ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
-        * any instanciated model
+
+        - ``tree``: the model is :epkg:`sklearn:tree:DecisionTreeClassifier`
+        - ``'bins'``: the model :epkg:`sklearn:preprocessing:KBinsDiscretizer`
+        - any instanciated model
 
         *estimator* allows the following values:
-        * ``None``: the model is :epkg:`sklearn:linear_model:LogisticRegression`
-        * any instanciated model
+
+        - ``None``: the model is :epkg:`sklearn:linear_model:LogisticRegression`
+        - any instanciated model
         """
         if estimator is None:
             estimator = LogisticRegression()
