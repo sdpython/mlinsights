@@ -14,6 +14,8 @@ class SkBaseTransformLearner(SkBaseTransform):
     A *transform* which hides a *learner*, it converts
     method *predict* into *transform*. This way,
     two learners can be inserted into the same pipeline.
+    There is another a,d shorter implementation
+    with class @see class TransferTransformer.
 
     .. exref::
         :title: Use two learners into a same pipeline
@@ -26,6 +28,7 @@ class SkBaseTransformLearner(SkBaseTransform):
 
         .. runpython::
             :showcode:
+            :warningout: FutureWarning
 
             from sklearn.model_selection import train_test_split
             from sklearn.datasets import load_iris
@@ -43,7 +46,9 @@ class SkBaseTransformLearner(SkBaseTransform):
                 pipe = make_pipeline(LogisticRegression(),
                                      DecisionTreeClassifier())
             except Exception as e:
-                print("ERREUR :", e)
+                print("ERREUR:")
+                print(e)
+                print('.')
 
             pipe = make_pipeline(SkBaseTransformLearner(LogisticRegression()),
                                  DecisionTreeClassifier())

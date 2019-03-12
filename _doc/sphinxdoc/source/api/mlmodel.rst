@@ -15,9 +15,9 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
 
-.. autosignature:: mlinsights.sklapi.piecewise_estimator.PiecewiseClassifier
+.. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseClassifier
 
-.. autosignature:: mlinsights.sklapi.piecewise_estimator.PiecewiseRegression
+.. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseRegression
 
 .. autosignature:: mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor
 
@@ -30,10 +30,17 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.extended_features.ExtendedFeatures
 
-.. autosignature:: mlinsights.sklapi.predictable_tsne.PredictableTSNE
+.. autosignature:: mlinsights.mlmodel.predictable_tsne.PredictableTSNE
+
+.. autosignature:: mlinsights.mlmodel.transfer_transformer.TransferTransformer
+
+Exploration
++++++++++++
+
+The following implementation play with :epkg:`scikit-learn`
+API, it overwrites the code handling parameters.
 
 .. autosignature:: mlinsights.sklapi.sklearn_base_transform_learner.SkBaseTransformLearner
 
 .. autosignature:: mlinsights.sklapi.sklearn_base_transform_stacking.SkBaseTransformStacking
 
-.. autosignature:: mlinsights.sklapi.transfer_transformer.TransferTransformer
