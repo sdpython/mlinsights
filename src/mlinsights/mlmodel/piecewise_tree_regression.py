@@ -4,8 +4,9 @@
 @brief Implémente une régression linéaire par morceaux en modifiant
 l'algorithme de construction des arbres de décision.
 """
+import sklearn
 from sklearn.tree import DecisionTreeRegressor
-from .piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611
+from pyquickhelper.texthelper import compare_module_version
 
 
 class DecisionTreeLinearRegressor(DecisionTreeRegressor):
@@ -39,7 +40,12 @@ class DecisionTreeLinearRegressor(DecisionTreeRegressor):
             replace = True
             raise NotImplementedError()
         elif self.criterion == "simple":
-            self.criterion = SimpleRegressorCriterion(X, y, sample_weight)
+            if compare_module_version(sklearn.__version__, '0.21') >= 0:
+                from .piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611
+                self.criterion = SimpleRegressorCriterion(X, y, sample_weight)
+            else:
+                raise ImportError(
+                    "SimpleRegressorCriterion only exists for scikit-learn >= 0.21.")
         else:
             replace = False
 

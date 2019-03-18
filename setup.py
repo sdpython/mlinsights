@@ -162,14 +162,20 @@ if not r:
     else:
         extra_compile_args = ['-std=c++11']
 
-    ext_modules = [Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion',
-                             ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx'],
-                             include_dirs=[numpy.get_include()],
-                             extra_compile_args=["-O3"])]
-    opts = dict(boundscheck=False, cdivision=True,
-                wraparound=False, language_level=3,
-                cdivision_warnings=True)
-    ext_modules = cythonize(ext_modules, compiler_directives=opts)
+    from pyquickhelper.texthelper import compare_module_version
+    import sklearn
+    if compare_module_version(sklearn.__version__, "0.21") >= 0:
+        # The C API will change in 0.21.
+        ext_modules = [Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion',
+                                 ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx'],
+                                 include_dirs=[numpy.get_include()],
+                                 extra_compile_args=["-O3"])]
+        opts = dict(boundscheck=False, cdivision=True,
+                    wraparound=False, language_level=3,
+                    cdivision_warnings=True)
+        ext_modules = cythonize(ext_modules, compiler_directives=opts)
+    else:
+        ext_modules = None
 
     setup(
         name=project_var_name,

@@ -67,6 +67,7 @@ cdef class SimpleRegressorCriterion(Criterion):
                   SIZE_t start, SIZE_t end) nogil except -1:
         """
         This function is overwritten to check *y* and *X* size are the same.
+        This API has changed in 0.21.
         """
         if y.shape[0] != self.sample_X.shape[0]:
             raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))

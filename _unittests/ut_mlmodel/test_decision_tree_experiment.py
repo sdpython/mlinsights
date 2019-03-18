@@ -7,10 +7,12 @@ import sys
 import os
 import unittest
 import numpy
+import sklearn
 from sklearn.tree._criterion import MSE  # pylint: disable=E0611
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper import compare_module_version
 
 try:
     import src
@@ -37,6 +39,8 @@ from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_cri
 
 class TestDecisionTreeExperiment(ExtTestCase):
 
+    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
+                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_criterions(self):
         X = numpy.array([[1., 2.]]).T
         y = numpy.array([1., 2.])
@@ -146,6 +150,8 @@ class TestDecisionTreeExperiment(ExtTestCase):
             p2 = _test_criterion_impurity_improvement(c2, 0.)
             self.assertAlmostEqual(p1, p2)
 
+    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
+                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion(self):
         X = numpy.array([[1., 2., 10., 11.]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
@@ -160,6 +166,8 @@ class TestDecisionTreeExperiment(ExtTestCase):
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)
 
+    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
+                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion_iris(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target

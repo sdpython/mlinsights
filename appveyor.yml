@@ -14,7 +14,6 @@ environment:
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
-  - "%PYTHON%\\python setup.py build_ext --inplace"
 
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
@@ -31,6 +30,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install cpyquickhelper"
   - "%PYTHON%\\Scripts\\pip install seaborn"
   - "set PATH=%PATH%;C:\\projects\\mlinsights\\build\\update_modules\\Graphviz\\bin"
+  - "%PYTHON%\\python setup.py build_ext --inplace"
 build: off
 
 before_test:
