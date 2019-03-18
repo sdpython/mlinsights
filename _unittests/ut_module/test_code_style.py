@@ -58,6 +58,8 @@ class TestCodeStyle(ExtTestCase):
                          "R1720",
                          "E0611: No name '_test_criterion_",
                          "E0611: No name 'SimpleRegressorCriterion'",
+                         "E0611: No name 'piecewise_tree_",
+                         "E0401: Unable to import 'src.mlinsights",
                          ])
 
 
