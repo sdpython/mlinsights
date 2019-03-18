@@ -4,6 +4,8 @@ import sys
 import os
 from setuptools import setup, Extension
 from setuptools import find_packages
+from Cython.Build import cythonize
+import numpy
 
 #########
 # settings
@@ -159,6 +161,16 @@ if not r:
         extra_compile_args = None
     else:
         extra_compile_args = ['-std=c++11']
+
+    ext_modules = [Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion',
+                             ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx'],
+                             include_dirs=[numpy.get_include()],
+                             extra_compile_args=["-O3"])]
+    opts = dict(boundscheck=False, cdivision=True,
+                wraparound=False, language_level=3,
+                cdivision_warnings=True)
+    ext_modules = cythonize(ext_modules, compiler_directives=opts)
+
     setup(
         name=project_var_name,
         version='%s%s' % (sversion, subversion),
@@ -175,6 +187,7 @@ if not r:
         package_dir=package_dir,
         package_data=package_data,
         setup_requires=["pyquickhelper"],
-        install_requires=['scikit-learn', 'pandas',
+        install_requires=['Cython', 'scikit-learn', 'pandas',
                           'matplotlib', 'pandas_streaming'],
+        ext_modules=ext_modules,  # cythonize(ext_modules),
     )
