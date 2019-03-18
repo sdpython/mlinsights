@@ -29,14 +29,14 @@ except ImportError:
 
 
 if compare_module_version(sklearn.__version__, "0.21") >= 0:
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement  # pylint: disable=E0611
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement  # pylint: disable=E0611
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement
+    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement
 
 
 class TestDecisionTreeExperiment(ExtTestCase):

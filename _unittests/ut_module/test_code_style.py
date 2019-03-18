@@ -56,6 +56,8 @@ class TestCodeStyle(ExtTestCase):
                          "Instance of 'tuple' has no",
                          "[E402] module level import",
                          "R1720",
+                         "E0611: No name '_test_criterion_",
+                         "E0611: No name 'SimpleRegressorCriterion'",
                          ])
 
 
