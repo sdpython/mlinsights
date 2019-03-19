@@ -28,6 +28,8 @@ except ImportError:
     import src
 
 
+from src.mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
+
 if compare_module_version(sklearn.__version__, "0.21") >= 0:
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init
@@ -37,8 +39,6 @@ if compare_module_version(sklearn.__version__, "0.21") >= 0:
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement
-
-from src.mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
 
 
 class TestDecisionTreeExperiment(ExtTestCase):
