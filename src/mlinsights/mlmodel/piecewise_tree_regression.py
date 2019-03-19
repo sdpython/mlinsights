@@ -35,23 +35,26 @@ class DecisionTreeLinearRegressor(DecisionTreeRegressor):
         """
         Réinterprète le paramètre *criterion*.
         """
-        if self.criterion == 'mselin':
-            # self.criterion = LinearRegressionCriterion(X, y, sample_weight)
-            replace = True
-            raise NotImplementedError()
-        elif self.criterion == "simple":
-            if compare_module_version(sklearn.__version__, '0.21') >= 0:
-                from .piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611
-                self.criterion = SimpleRegressorCriterion(X, y, sample_weight)
-            else:
-                raise ImportError(
-                    "SimpleRegressorCriterion only exists for scikit-learn >= 0.21.")
+        replace = None
+        if isinstance(self.criterion, str):
+            if self.criterion == 'mselin':
+                # self.criterion = LinearRegressionCriterion(X, y, sample_weight)
+                replace = self.criterion
+                raise NotImplementedError()
+            elif self.criterion == "simple":
+                if compare_module_version(sklearn.__version__, '0.21') >= 0:
+                    from .piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611
+                    replace = self.criterion
+                    self.criterion = SimpleRegressorCriterion(X)
+                else:
+                    raise ImportError(
+                        "SimpleRegressorCriterion only exists for scikit-learn >= 0.21.")
         else:
-            replace = False
+            replace = None
 
-        self.fit(X, y, sample_weight=sample_weight, check_input=check_input,
-                 X_idx_sorted=X_idx_sorted)
+        DecisionTreeRegressor.fit(self, X, y, sample_weight=sample_weight, check_input=check_input,
+                                  X_idx_sorted=X_idx_sorted)
 
         if replace:
-            self.criterion = 'mselin'
+            self.criterion = replace
         return self

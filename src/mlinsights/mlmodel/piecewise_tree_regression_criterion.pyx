@@ -16,9 +16,19 @@ from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 cdef class SimpleRegressorCriterion(Criterion):
     """
-    Implements mean square error in a non efficient way.
-    https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/master/hellinger_distance_criterion.pyx
-    http://gael-varoquaux.info/programming/cython-example-of-exposing-c-computed-arrays-in-python-without-data-copies.html
+    Implements `mean square error 
+    <https://en.wikipedia.org/wiki/Mean_squared_error>`_
+    criterion in a non efficient way. The code was inspired from
+    `hellinger_distance_criterion.pyx 
+    <https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/master/
+    hellinger_distance_criterion.pyx>`_,    
+    `Cython example of exposing C-computed arrays in Python without data copies
+    <http://gael-varoquaux.info/programming/
+    cython-example-of-exposing-c-computed-arrays-in-python-without-data-copies.html>`_,
+    `_criterion.pyx
+    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
+    This implementation is not efficient but was made that way on purpose.
+    It adds the features to the class.
     """
     cdef const DOUBLE_t[:, ::1] sample_X
 

@@ -38,6 +38,8 @@ if compare_module_version(sklearn.__version__, "0.21") >= 0:
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement
     from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement
 
+from src.mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
+
 
 class TestDecisionTreeExperiment(ExtTestCase):
 
@@ -177,6 +179,19 @@ class TestDecisionTreeExperiment(ExtTestCase):
         clr1.fit(X, y)
         p1 = clr1.predict(X)
         clr2 = DecisionTreeRegressor(criterion=SimpleRegressorCriterion(X))
+        clr2.fit(X, y)
+        p2 = clr2.predict(X)
+        self.assertEqual(p1[:10], p2[:10])
+
+    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
+                     reason="Only implemented for Criterion API from sklearn >= 0.21")
+    def test_decision_tree_criterion_iris_dtc(self):
+        iris = datasets.load_iris()
+        X, y = iris.data, iris.target
+        clr1 = DecisionTreeRegressor()
+        clr1.fit(X, y)
+        p1 = clr1.predict(X)
+        clr2 = DecisionTreeLinearRegressor(criterion='simple')
         clr2.fit(X, y)
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])
