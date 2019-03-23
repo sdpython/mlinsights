@@ -2,31 +2,14 @@
 """
 @brief      test log(time=2s)
 """
-
-import sys
-import os
 import unittest
 import numpy
 import pandas
 from sklearn.linear_model import LinearRegression
 from pyquickhelper.pycode import ExtTestCase
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.mlmodel import QuantileLinearRegression
-from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
-from src.mlinsights.mlmodel.quantile_mlpregressor import float_sign
+from mlinsights.mlmodel import QuantileLinearRegression
+from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel.quantile_mlpregressor import float_sign
 
 
 class TestQuantileRegression(ExtTestCase):

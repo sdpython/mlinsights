@@ -1,33 +1,14 @@
 """
 @brief      test log(time=0s)
 """
-
-import sys
 import os
 import unittest
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import check_pep8, ExtTestCase
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
 
 class TestCodeStyle(ExtTestCase):
     """Test style."""
-
-    def test_src(self):
-        "skip pylint"
-        self.assertFalse(src is None)
 
     def test_style_src(self):
         thi = os.path.abspath(os.path.dirname(__file__))
@@ -38,7 +19,7 @@ class TestCodeStyle(ExtTestCase):
                                   'W0107'),
                    skip=["categories_to_integers.py:174: W0640",
                          "R1720",
-                         "E0401: Unable to import 'src.mlinsights.mlmodel.piecewise_tree_regression_criterion",
+                         "E0401: Unable to import 'mlinsights.mlmodel.piecewise_tree_regression_criterion",
                          ])
 
     def test_style_test(self):
@@ -53,14 +34,12 @@ class TestCodeStyle(ExtTestCase):
                          "skip___' imported but unused",
                          "Unused variable 'skip_'",
                          "imported as skip_",
-                         "Unused import src",
                          "Instance of 'tuple' has no",
                          "[E402] module level import",
                          "R1720",
                          "E0611: No name '_test_criterion_",
                          "E0611: No name 'SimpleRegressorCriterion'",
                          "E0611: No name 'piecewise_tree_",
-                         "E0401: Unable to import 'src.mlinsights",
                          ])
 
 

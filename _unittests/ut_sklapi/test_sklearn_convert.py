@@ -1,9 +1,6 @@
 """
 @brief      test log(time=2s)
 """
-
-import sys
-import os
 import unittest
 import pickle
 from io import BytesIO
@@ -16,22 +13,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
 from pyquickhelper.pycode import ExtTestCase
-
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.sklapi import SkBaseTransformLearner
+from mlinsights.sklapi import SkBaseTransformLearner
 
 
 class TestSklearnConvert(ExtTestCase):

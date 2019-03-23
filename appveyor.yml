@@ -30,6 +30,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install cpyquickhelper"
   - "%PYTHON%\\Scripts\\pip install seaborn"
   - "set PATH=%PATH%;C:\\projects\\mlinsights\\build\\update_modules\\Graphviz\\bin"
+  - set PYTHONPATH=src
   - "%PYTHON%\\python setup.py build_ext --inplace"
 build: off
 

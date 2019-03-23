@@ -114,18 +114,21 @@ jobs:
           name: compile and build
           command: |
             . venv/bin/activate
+            export PYTHONPATH=src
             python setup.py build_ext --inplace
 
       - run:
           name: run tests
           command: |
             . venv/bin/activate
+            export PYTHONPATH=src
             python setup.py unittests
 
       - run:
           name: wheel
           command: |
             . venv/bin/activate
+            export PYTHONPATH=src
             python setup.py bdist_wheel
             mkdir -p test-reports/dist
             cp dist/*.whl test-reports/dist
@@ -136,6 +139,7 @@ jobs:
           name: documentation
           command: |
             . venv/bin/activate
+            export PYTHONPATH=src
             python setup.py build_sphinx
             
       - run:

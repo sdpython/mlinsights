@@ -1,8 +1,6 @@
 """
 @brief      test log(time=5s)
 """
-
-import sys
 import os
 import unittest
 from io import BytesIO
@@ -26,21 +24,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
     from sklearn.ensemble import RandomForestClassifier
 from pyquickhelper.pycode import ExtTestCase
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.sklapi import SkBaseTransformStacking
+from mlinsights.sklapi import SkBaseTransformStacking
 
 
 def load_wines_dataset(shuffle=False):

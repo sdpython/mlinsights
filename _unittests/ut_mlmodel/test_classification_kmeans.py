@@ -2,30 +2,13 @@
 """
 @brief      test log(time=2s)
 """
-
-import sys
-import os
 import unittest
 import numpy
 from numpy.random import RandomState
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.mlmodel import ClassifierAfterKMeans
-from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import ClassifierAfterKMeans
+from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 
 
 class TestClassifierAfterKMeans(ExtTestCase):

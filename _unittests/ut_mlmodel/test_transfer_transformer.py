@@ -2,31 +2,14 @@
 """
 @brief      test log(time=2s)
 """
-
-import sys
-import os
 import unittest
 import numpy
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from pyquickhelper.pycode import ExtTestCase
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.mlmodel import TransferTransformer
-from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
+from mlinsights.mlmodel import TransferTransformer
+from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
 
 
 class TestTransferTransformer(ExtTestCase):

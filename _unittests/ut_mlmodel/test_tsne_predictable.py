@@ -2,9 +2,6 @@
 """
 @brief      test log(time=10s)
 """
-
-import sys
-import os
 import unittest
 import numpy
 from numpy.random import RandomState
@@ -14,22 +11,8 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.manifold import TSNE
 from pyquickhelper.pycode import ExtTestCase
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.mlmodel import PredictableTSNE
-from src.mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
+from mlinsights.mlmodel import PredictableTSNE
+from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
 
 
 class TestPredictableTSNE(ExtTestCase):

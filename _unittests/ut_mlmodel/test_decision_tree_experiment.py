@@ -2,9 +2,6 @@
 """
 @brief      test log(time=10s)
 """
-
-import sys
-import os
 import unittest
 import numpy
 import sklearn
@@ -13,32 +10,17 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-
-from src.mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
+from mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
 
 if compare_module_version(sklearn.__version__, "0.21") >= 0:
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement
-    from src.mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement
 
 
 class TestDecisionTreeExperiment(ExtTestCase):

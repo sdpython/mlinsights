@@ -2,8 +2,6 @@
 """
 @brief      test log(time=10s)
 """
-
-import sys
 import os
 import unittest
 import warnings
@@ -16,20 +14,6 @@ from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from pyquickhelper.filehelper import unzip_files
 
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-
 class TestSearchPredictionsImagesKeras(ExtTestCase):
 
     def test_search_predictions_keras(self):
@@ -38,7 +22,7 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        from src.mlinsights.search_rank import SearchEnginePredictionImages
+        from mlinsights.search_rank import SearchEnginePredictionImages
 
         # We delay the import as keras backend is not necessarily available.
         with redirect_stderr(StringIO()):

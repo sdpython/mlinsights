@@ -2,9 +2,6 @@
 """
 @brief      test log(time=2s)
 """
-
-import sys
-import os
 import unittest
 import pandas
 import numpy
@@ -15,22 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper.version_helper import compare_module_version
-
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.mlinsights.search_rank import SearchEnginePredictions
+from mlinsights.search_rank import SearchEnginePredictions
 
 
 class TestSearchPredictions(ExtTestCase):
