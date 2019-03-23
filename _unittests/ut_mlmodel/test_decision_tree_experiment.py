@@ -13,14 +13,14 @@ from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
 
 if compare_module_version(sklearn.__version__, "0.21") >= 0:
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement  # pylint: disable=E0401
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement  # pylint: disable=E0401
 
 
 class TestDecisionTreeExperiment(ExtTestCase):
