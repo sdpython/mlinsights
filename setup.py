@@ -169,7 +169,12 @@ if not r:
         ext_modules = [Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion',
                                  ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx'],
                                  include_dirs=[numpy.get_include()],
-                                 extra_compile_args=["-O3"])]
+                                 extra_compile_args=["-O3"]),
+                       Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion_fast',
+                                 ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion_fast.pyx'],
+                                 include_dirs=[numpy.get_include()],
+                                 extra_compile_args=["-O3"]),
+                       ]
         opts = dict(boundscheck=False, cdivision=True,
                     wraparound=False, language_level=3,
                     cdivision_warnings=True)

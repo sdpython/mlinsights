@@ -280,3 +280,4 @@ _doc/notebooks/sklearn/graph*.png
 _doc/notebooks/sklearn/graph*.dot
 
 src/mlinsights/mlmodel/piecewise_tree_regression_criterion.c
+src/mlinsights/mlmodel/piecewise_tree_regression_criterion_fast.c
