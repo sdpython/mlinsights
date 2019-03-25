@@ -108,21 +108,19 @@ if os.path.exists(history):
 if "--verbose" in sys.argv:
     verbose()
 
+build_commmands = {"bdist_msi", "sdist",
+                   "bdist_wheel", "publish", "publish_doc", "register",
+                   "upload_docs", "bdist_wininst", "build_ext"}
+
 if is_local():
     import pyquickhelper
     logging_function = pyquickhelper.get_fLOG()
     logging_function(OutputPrint=True)
     must_build, run_build_ext = pyquickhelper.get_insetup_functions()
 
-    if must_build():
+    if must_build() and not ask_help():
         out = run_build_ext(__file__)
         print(out)
-
-    if "build_sphinx" in sys.argv and not sys.platform.startswith("win"):
-        # There is an issue with matplotlib and notebook gallery on linux
-        # _tkinter.TclError: no display name and no $DISPLAY environment variable
-        import matplotlib
-        matplotlib.use('agg')
 
     from pyquickhelper.pycode import process_standard_options_for_setup
     r = process_standard_options_for_setup(
@@ -138,14 +136,12 @@ if is_local():
         coverage_options=dict(omit=["*exclude*.py"]),
         fLOG=logging_function, github_owner='sdpython',
         covtoken=("1ac0b95d-6722-4f29-804a-e4e0d5295497", "'_UT_37_std' in outfile"))
-    if not r and not ({"bdist_msi", "sdist",
-                       "bdist_wheel", "publish", "publish_doc", "register",
-                       "upload_docs", "bdist_wininst", "build_ext"} & set(sys.argv)):
+    if not r and not (build_commmands & set(sys.argv)):
         raise Exception("unable to interpret command line: " + str(sys.argv))
 else:
     r = False
 
-if ask_help():
+if r and ask_help():
     from pyquickhelper.pycode import process_standard_options_for_setup_help
     process_standard_options_for_setup_help(sys.argv)
 
@@ -164,26 +160,29 @@ if not r:
 
     from pyquickhelper.texthelper import compare_module_version
     import sklearn
+    extensions = ["direct_blas_lapack"]
     if compare_module_version(sklearn.__version__, "0.21") >= 0:
-        # The C API will change in 0.21.
-        ext_modules = []
-        for name in ["direct_blas_lapack",
-                     # "piecewise_tree_regression_criterion_linear",
-                     "piecewise_tree_regression_criterion",
-                     "piecewise_tree_regression_criterion_fast",
-                     ]:
-            m = Extension('src.mlinsights.mlmodel.%s' % name,
-                          ['src/mlinsights/mlmodel/%s.pyx' % name],
-                          include_dirs=[numpy.get_include()],
-                          extra_compile_args=["-O3"])
-            ext_modules.append(m)
-
-        opts = dict(boundscheck=False, cdivision=True,
-                    wraparound=False, language_level=3,
-                    cdivision_warnings=True)
-        ext_modules = cythonize(ext_modules, compiler_directives=opts)
+        extensions.extend([
+            # "piecewise_tree_regression_criterion_linear",
+            "piecewise_tree_regression_criterion",
+            "piecewise_tree_regression_criterion_fast",
+        ])
     else:
-        ext_modules = None
+        if verbose:
+            print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
+
+    ext_modules = []
+    for name in extensions:
+        m = Extension('src.mlinsights.mlmodel.%s' % name,
+                      ['src/mlinsights/mlmodel/%s.pyx' % name],
+                      include_dirs=[numpy.get_include()],
+                      extra_compile_args=["-O3"])
+        ext_modules.append(m)
+
+    opts = dict(boundscheck=False, cdivision=True,
+                wraparound=False, language_level=3,
+                cdivision_warnings=True)
+    ext_modules = cythonize(ext_modules, compiler_directives=opts)
 
     setup(
         name=project_var_name,

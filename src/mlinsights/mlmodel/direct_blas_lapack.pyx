@@ -92,28 +92,35 @@ cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank, const double * 
     """
     Same function as :func:`dgels` but does no check.
     """
-    cdef double *pA
-    cdef double *pB
-    cdef double *pC
-    cdef double *pS
     cdef int col = A.shape[0]
     cdef int row = A.shape[1]
-    cdef int work = min(row, col) * 3 + max(max(row, col), min(row, col) * 2)
-    cdef int nrhs = B.shape[1]
-    cdef int lda = row
-    cdef int ldb = row
     cdef int info
+    cdef double *pC
+    cdef double *pS
+    cdef int work = min(row, col) * 3 + max(max(row, col), min(row, col) * 2)
     
-    pA = &A[0,0]
-    pB = &B[0,0]
     pC = <double*> calloc(work, sizeof(double))
     pS = <double*> calloc(col, sizeof(double))
+    
+    _dgelss_noalloc(A, B, rank, rcond, pS, pC, &work, &info)
 
-    cython_lapack.dgelss(&row, &col, &nrhs,  # 1-3
-                         pA, &lda,           # 4-5
-                         pB, &ldb,           # 6-7
-                         pS, rcond, rank,    # 8-10
-                         pC, &work, &info)   # 11-13
     free(pC)
     free(pS)
     return info
+
+
+cdef void _dgelss_noalloc(double[:, ::1] A, double [:, ::1] B, int* rank, const double* rcond,
+                          double* pS, double *pC, int* work, int* info) nogil:
+    """
+    Same function as :func:`dgels` but does no check.
+    """
+    cdef int col = A.shape[0]
+    cdef int row = A.shape[1]
+    cdef int nrhs = B.shape[1]
+    cdef int lda = row
+    cdef int ldb = row
+    
+    cython_lapack.dgelss(&row, &col, &nrhs,             # 1-3
+                         &A[0,0], &lda, &B[0,0], &ldb,  # 4-7
+                         pS, rcond, rank,               # 8-10
+                         pC, work, info)                # 11-13
