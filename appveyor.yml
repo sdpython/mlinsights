@@ -31,11 +31,11 @@ install:
   - "%PYTHON%\\Scripts\\pip install seaborn"
   - "set PATH=%PATH%;C:\\projects\\mlinsights\\build\\update_modules\\Graphviz\\bin"
   - set PYTHONPATH=src
-  - "%PYTHON%\\python setup.py build_ext --inplace"
 build: off
 
 before_test:
   - "%PYTHON%\\python -u setup.py build_ext --inplace"
+  - "%PYTHON%\\python -u setup.py bdist_wheel"
 
 test_script:
   - "%PYTHON%\\python -u setup.py unittests"

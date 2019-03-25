@@ -38,8 +38,8 @@ mlsinsights
 ===========
 
 *mlinsights* extends *scikit-learn* with a couple of new models,
-transform, metrics, plotting. It provides new trainer such as
-*QuantileLinearRegression* trains a linear regression with *L1* norm
+transformers, metrics, plotting. It provides new trainers such as
+*QuantileLinearRegression* which trains a linear regression with *L1* norm
 non-linear correlation based on decision trees, or
 *QuantileMLPRegressor* a modification of scikit-learn's MLPRegressor
 which trains a multi-layer perceptron with *L1* norm.

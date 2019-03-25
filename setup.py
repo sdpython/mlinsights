@@ -19,7 +19,7 @@ history = "HISTORY.rst"
 requirements = None
 
 KEYWORDS = project_var_name + ', Xavier Dupré'
-DESCRIPTION = """Extends scikit-learn with a couple of new models, transform, metrics, plotting."""
+DESCRIPTION = """Extends scikit-learn with a couple of new models, transformers, metrics, plotting."""
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
     'Intended Audience :: Developers',

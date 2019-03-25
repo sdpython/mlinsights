@@ -1,11 +1,11 @@
 
-BLAS & LAPACK
+Blas & Lapack
 =============
 
 .. contents::
     :local:
 
-LAPACK
+Lapack
 ++++++
 
 .. autosignature:: mlinsights.mlmodel.direct_blas_lapack.dgelss

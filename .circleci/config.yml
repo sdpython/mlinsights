@@ -115,7 +115,8 @@ jobs:
           command: |
             . venv/bin/activate
             export PYTHONPATH=src
-            python setup.py build_ext --inplace
+            python -u setup.py build_ext --inplace
+            python -u setup.py bdist_wheel
 
       - run:
           name: run tests
