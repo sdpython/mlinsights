@@ -166,15 +166,17 @@ if not r:
     import sklearn
     if compare_module_version(sklearn.__version__, "0.21") >= 0:
         # The C API will change in 0.21.
-        ext_modules = [Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion',
-                                 ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx'],
-                                 include_dirs=[numpy.get_include()],
-                                 extra_compile_args=["-O3"]),
-                       Extension('src.mlinsights.mlmodel.piecewise_tree_regression_criterion_fast',
-                                 ['src/mlinsights/mlmodel/piecewise_tree_regression_criterion_fast.pyx'],
-                                 include_dirs=[numpy.get_include()],
-                                 extra_compile_args=["-O3"]),
-                       ]
+        ext_modules = []
+        for name in ["piecewise_tree_regression_criterion_linear",
+                     "piecewise_tree_regression_criterion",
+                     "piecewise_tree_regression_criterion_fast",
+                     ]:
+            m = Extension('src.mlinsights.mlmodel.%s' % name,
+                          ['src/mlinsights/mlmodel/%s.pyx' % name],
+                          include_dirs=[numpy.get_include()],
+                          extra_compile_args=["-O3"])
+            ext_modules.append(m)
+
         opts = dict(boundscheck=False, cdivision=True,
                     wraparound=False, language_level=3,
                     cdivision_warnings=True)

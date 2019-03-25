@@ -2,6 +2,9 @@
 .. |gitlogo| image:: _static/git_logo.png
              :height: 20
 
+mlinsights: tricky scikit-learn
+===============================
+
 **Links:** `github <https://github.com/sdpython/mlinsights/>`_,
 `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
 :ref:`l-README`,
@@ -40,9 +43,6 @@
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
-mlinsights
-==========
-
 *mlinsights* implements functions to get insights on machine learned
 models or various kind of transforms to help manipulating
 data in a single pipeline. It implements
@@ -50,7 +50,7 @@ data in a single pipeline. It implements
 which trains a linear regression with :epkg:`L1` norm
 non-linear correlation based on decision trees,
 :class:`QuantileMLPRegressor <mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor>`
-which is a modification of scikit-learn's MLPRegressor
+which is a modification of *scikit-learn's* :epkg:`MLPRegressor`
 which trains a multi-layer perceptron with :epkg:`L1` norm...
 
 .. toctree::

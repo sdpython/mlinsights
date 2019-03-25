@@ -36,7 +36,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         """
         if "torch" in str(type(data)):
             self.module_ = "torch"
-            from torch.utils.data import DataLoader
+            from torch.utils.data import DataLoader  # pylint: disable=E0401
             dataloader = DataLoader(
                 data, batch_size=1, shuffle=False, num_workers=0)
             self.iter_images_ = iter_images = iter(
@@ -119,7 +119,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             if self.module_ == "keras":
                 raise NotImplementedError("Not yet implemented or Keras.")
             elif self.module_ == "torch":
-                from torch import from_numpy  # pylint: disable=E0611
+                from torch import from_numpy  # pylint: disable=E0611, E0401
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
             else:

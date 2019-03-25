@@ -28,13 +28,13 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         # We delay the import as keras backend is not necessarily available.
         with redirect_stderr(StringIO()):
             try:
-                import torchvision.models as tmodels
+                import torchvision.models as tmodels  # pylint: disable=E0401
             except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn(
                     "torch is not available: {0}".format(e))
                 return
-            from torchvision import datasets, transforms
-            from torch.utils.data import DataLoader
+            from torchvision import datasets, transforms  # pylint: disable=E0401
+            from torch.utils.data import DataLoader  # pylint: disable=E0401
 
         # deep learning model
         model = tmodels.squeezenet1_1(pretrained=True)

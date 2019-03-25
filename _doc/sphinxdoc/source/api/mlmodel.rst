@@ -51,3 +51,15 @@ The following classes require :epkg:`scikit-learn` *>= 0.21*,
 otherwise, they do not get compiled.
 
 .. autosignature:: mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion
+
+A similar design but a much faster implementation close to what
+:epkg:`scikit-learn` implements.
+
+.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression_criterion_fast.SimpleRegressorCriterionFast
+
+The next one implements a criterion which optimizes the mean square error
+assuming the points falling into one node of the tree are approximated by
+a line. The mean square error is the error made with a linear regressor
+and not a constant anymore.
+
+.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression_criterion_linear.LinearRegressorCriterion

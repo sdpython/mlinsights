@@ -15,20 +15,11 @@ from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 cdef class SimpleRegressorCriterionFast(Criterion):
     """
-    Implements `mean square error 
-    <https://en.wikipedia.org/wiki/Mean_squared_error>`_
-    criterion in a non efficient way. The code was inspired from
-    `hellinger_distance_criterion.pyx 
-    <https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/master/
-    hellinger_distance_criterion.pyx>`_,    
-    `Cython example of exposing C-computed arrays in Python without data copies
-    <http://gael-varoquaux.info/programming/
-    cython-example-of-exposing-c-computed-arrays-in-python-without-data-copies.html>`_,
-    `_criterion.pyx
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
-    This implementation is not efficient but was made that way on purpose.
-    It adds the features to the class.
-
+    Criterion which computes the mean square error
+    assuming points falling into one node are approximated
+    by a constant. The implementation follows the same
+    design used in :class:`SimpleRegressorCriterion
+    <mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion>`.
     This implementation is faster as it computes
     cumulated sums and avoids loops to compute
     intermediate gains.
@@ -67,6 +58,14 @@ cdef class SimpleRegressorCriterionFast(Criterion):
         self.sum_total = NULL
         self.sum_left = NULL
         self.sum_right = NULL
+        
+        # allocations
+        if self.sample_w_left == NULL:
+            self.sample_w_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+        if self.sample_wy_left == NULL:
+            self.sample_wy_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+        if self.sample_wy2_left == NULL:
+            self.sample_wy2_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
                   DOUBLE_t* sample_weight,
@@ -78,8 +77,8 @@ cdef class SimpleRegressorCriterionFast(Criterion):
         """
         if y.shape[0] != self.sample_X.shape[0]:
             raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))
-        self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
-                         samples, start, end)
+        return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
+                                samples, start, end)
 
     cdef int init_with_X(self, const DOUBLE_t[:, ::1] X, 
                          const DOUBLE_t[:, ::1] y,
@@ -87,7 +86,7 @@ cdef class SimpleRegressorCriterionFast(Criterion):
                          double weighted_n_samples, SIZE_t* samples, 
                          SIZE_t start, SIZE_t end) nogil except -1:
         """
-        Placeholder for a method which will initialize the criterion.
+        Initializes the criterion.
         Returns -1 in case of failure to allocate memory
         (and raise *MemoryError*) or 0 otherwise.
 
@@ -109,7 +108,7 @@ cdef class SimpleRegressorCriterionFast(Criterion):
             The last sample used on this node
         """
         cdef int ki, ks
-        cdef double w
+        cdef double w, y_
 
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
@@ -120,13 +119,7 @@ cdef class SimpleRegressorCriterionFast(Criterion):
         self.weighted_n_samples = weighted_n_samples
         self.y = y            
 
-        if self.sample_w_left == NULL:
-            self.sample_w_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
-        if self.sample_wy_left == NULL:
-            self.sample_wy_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
-        if self.sample_wy2_left == NULL:
-            self.sample_wy2_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
-
+        # we need to do that in case start > 0 or end < X.shape[0]
         for i in range(0, X.shape[0]):
             self.sample_w_left[i] = 0
             self.sample_wy_left[i] = 0
@@ -136,17 +129,20 @@ cdef class SimpleRegressorCriterionFast(Criterion):
         for ki in range(start, start+1):
             ks = samples[ki]
             w = sample_weight[ks] if sample_weight else 1.
+            y_ = y[ks, 0]
             self.sample_w_left[ki] = w
-            self.sample_wy_left[ki] = w * y[ks, 0]
-            self.sample_wy2_left[ki] = w * y[ks, 0] ** 2
+            self.sample_wy_left[ki] = w * y_
+            self.sample_wy2_left[ki] = w * y_ * y_
         for ki in range(start+1, end):
             ks = samples[ki]
             w = sample_weight[ks] if sample_weight else 1.
+            y_ = y[ks, 0]
             self.sample_w_left[ki] = self.sample_w_left[ki-1] + w 
-            self.sample_wy_left[ki] = self.sample_wy_left[ki-1] + w * y[ks, 0]
-            self.sample_wy2_left[ki] = self.sample_wy2_left[ki-1] + w * y[ks, 0] ** 2
+            self.sample_wy_left[ki] = self.sample_wy_left[ki-1] + w * y_
+            self.sample_wy2_left[ki] = self.sample_wy2_left[ki-1] + w * y_ * y_
         
         self.reset()
+        return 0
 
     cdef int reset(self) nogil except -1:
         """
@@ -178,41 +174,34 @@ cdef class SimpleRegressorCriterionFast(Criterion):
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:
         """
-        Computes mean square error.
+        Computes the mean of *y* between *start* and *end*.
         """
         if start == end:
+            mean[0] = 0.
             return
         cdef DOUBLE_t m = self.sample_wy_left[end-1] - (self.sample_wy_left[start-1] if start > 0 else 0)
         cdef DOUBLE_t w = self.sample_w_left[end-1] - (self.sample_w_left[start-1] if start > 0 else 0)
         weight[0] = w
-        if w == 0.:
-            mean[0] = 0.
-        else:
-            mean[0] = m / w
+        mean[0] = 0. if w == 0. else m / w
 
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
         """
-        Computes mean square error.
+        Computes mean square error between *start* and *end*
+        assuming corresponding points are approximated by a constant.
         """
         if start == end:
             return 0.
         cdef DOUBLE_t squ = self.sample_wy2_left[end-1] - (self.sample_wy2_left[start-1] if start > 0 else 0)
-        if weight == 0.:
-            return 0.
-        else:
-            # This formula only holds if mean is computed on the same interval.
-            # Otherwise, it is squ / weight - true_mean ** 2 + (mean - true_mean) ** 2.
-            return squ / weight - mean ** 2
+        # This formula only holds if mean is computed on the same interval.
+        # Otherwise, it is squ / weight - true_mean ** 2 + (mean - true_mean) ** 2.
+        return 0. if weight == 0. else squ / weight - mean ** 2
             
     cdef void children_impurity_weights(self, double* impurity_left,
                                         double* impurity_right,
                                         double* weight_left,
                                         double* weight_right) nogil:
         """
-        Placeholder for calculating the impurity of children.
-        Placeholder for a method which evaluates the impurity in
-        children nodes, i.e. the impurity of ``samples[start:pos]``
-        the impurity of ``samples[pos:end]``.
+        Calculates the impurity of children.
 
         Parameters
         ----------
@@ -241,10 +230,7 @@ cdef class SimpleRegressorCriterionFast(Criterion):
 
     cdef double node_impurity(self) nogil:
         """
-        Placeholder for calculating the impurity of the node.
-        Placeholder for a method which will evaluate the impurity of
-        the current node, i.e. the impurity of ``samples[start:end]``.
-        This is the primary function of the criterion class.
+        Calculates the impurity of the node.
         """
         cdef DOUBLE_t mean, weight
         self._mean(self.start, self.end, &mean, &weight)
@@ -253,10 +239,7 @@ cdef class SimpleRegressorCriterionFast(Criterion):
     cdef void children_impurity(self, double* impurity_left,
                                 double* impurity_right) nogil:
         """
-        Placeholder for calculating the impurity of children.
-        Placeholder for a method which evaluates the impurity in
-        children nodes, i.e. the impurity of ``samples[start:pos]``
-        the impurity of ``samples[pos:end]``.
+        Calculates the impurity of children.
         
         Parameters
         ----------
@@ -272,9 +255,9 @@ cdef class SimpleRegressorCriterionFast(Criterion):
 
     cdef void node_value(self, double* dest) nogil:
         """
-        Placeholder for storing the node value.
-        Placeholder for a method which will compute the node value
-        of ``samples[start:end]`` and save the value into dest.
+        Computes the node value, usually the prediction
+        the tree would make at this node.
+
         Parameters
         ----------
         dest : double pointer
