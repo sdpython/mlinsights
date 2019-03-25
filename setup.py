@@ -167,7 +167,7 @@ if not r:
     if compare_module_version(sklearn.__version__, "0.21") >= 0:
         # The C API will change in 0.21.
         ext_modules = []
-        for name in ["piecewise_tree_regression_criterion_linear",
+        for name in [#"piecewise_tree_regression_criterion_linear",
                      "piecewise_tree_regression_criterion",
                      "piecewise_tree_regression_criterion_fast",
                      ]:
