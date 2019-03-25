@@ -1,0 +1,65 @@
+
+.. blogpost::
+    :title: Nogil, numpy, cython
+    :keywords: nogil, numpy, blas, lapack
+    :date: 2019-03-25
+    :categories: cython
+
+    I had to implement a custom criterion to optimize
+    a decision tree and I wanted to leverage :epkg:`scikit-learn`
+    instead of rewriting my own. Version 0.21 of :epkg:`scikit-learn`
+    introduced some changed in the API which make possible
+    to overload an existing criterion and replace some of the logic
+    by another one: `_criterion.pyx
+    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
+    The purpose was to show that a fast implementation requires
+    some tricks (see :ref:`piecewiselinearregressioncriterionrst`) and
+    `piecewise_tree_regression_criterion.pyx
+    <https://github.com/sdpython/mlinsights/blob/master/src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx>`_,
+    `piecewise_tree_regression_criterion_fast.pyx
+    <https://github.com/sdpython/mlinsights/blob/master/src/mlinsights/mlmodel/piecewise_tree_regression_criterion_fast.pyx>`_
+    for the code. Other than that, every function to overlaod is marked as
+    :epkg:`nogil`. Every function or method marked as *nogil* cannot
+    go through the :epkg:`GIL` (see also :epkg:`PEP-0311`),
+    which no :epkg:`python` object can be created in that method.
+    In fact, no :epkg:`python` can be called inside a :epkg:`Cython`
+    method protected with *nogil*. The issue with that is that
+    any :epkg:`numpy` method cannot be called.
+
+    My goal was to replace the implemention of the decision tree
+    criterion by something optimizing a linear regression, basically
+    something close to function :epkg:`numpy:linalg:lstsq` but that's
+    inside :epkg:`numpy` so unavailable in a *nogil* method.
+    I needed to use the inner API from :epkg:`BLAS` or :epkg:`LAPACK`
+    and available in :epkg:`cython` through
+    `cython_blas <https://docs.scipy.org/doc/scipy/reference/linalg.cython_blas.html>`_
+    (matrix operations)
+    `cython_lapack <https://docs.scipy.org/doc/scipy/reference/linalg.cython_lapack.html>`_
+    (complex matrix operations).
+    It is fast but not really well documented...
+    I needed to use function `dgelss
+    <http://www.netlib.org/lapack/explore-html/d9/d4e/dgelss_8f.html>`_
+    (same from scipy `scipy.linalg.lapack.dgelss
+    <https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.lapack.dgelss.html>`_).
+    which documentation is available through :epkg:`Lapack documentation`.
+    Its signature can be found at `cython_lapack_signatures.txt
+    <https://github.com/scipy/scipy/blob/master/scipy/linalg/cython_lapack_signatures.txt>`_
+    and is the following:
+
+    ::
+
+        cdef void dgelss(int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb,
+                         double *s, double *rcond, int *rank,
+                         double *work, int *lwork, int *info) nogil
+
+    I tried and it failed many times before getting it correctly.
+    Most of the time, :epkg:`python` just crashes without telling me
+    what the issue is. I had to use many ``printf`` in the :epkg:`cython`
+    code to get it right (remember no python call, so no *print* function).
+    These function do not do any allocation, every needed buffer
+    must be allocated first. The documentation gives some recommendations
+    about the optimal buffer size. The function usually modifies the inputs,
+    they must be copied first if the user wants to reuse them later.
+    I finally implemented :func:`dgelss <mlinsights.mlmodel.direct_blas_lapack.dgless>` or
+    on github: `direct_blas_lapack.pyx
+    <https://github.com/sdpython/mlinsights/blob/master/src/mlinsights/mlmodel/direct_blas_lapack.pyx>`_.

@@ -8,3 +8,4 @@ API
     metrics
     mlmodel
     search_rank
+    blaslapack

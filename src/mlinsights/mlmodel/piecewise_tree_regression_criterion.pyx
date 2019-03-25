@@ -85,6 +85,8 @@ cdef class SimpleRegressorCriterion(Criterion):
         """
         if y.shape[0] != self.sample_X.shape[0]:
             raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))
+        if y.shape[1] != 1:
+            raise ValueError("This class only works for a single vector.")
         return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
                                 samples, start, end)
 
@@ -116,9 +118,6 @@ cdef class SimpleRegressorCriterion(Criterion):
             The last sample used on this node
         """
         cdef int ki, ks
-
-        if y.shape[1] != 1:
-            raise ValueError("This class only works for a single vector.")
 
         self.start = start
         self.pos = start
