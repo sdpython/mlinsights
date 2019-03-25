@@ -12,7 +12,7 @@ from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
 
-if compare_module_version(sklearn.__version__, "0.21") >= 0:
+if compare_module_version(sklearn.__version__, "0.21") >= 0:  # noqa
     from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0401
     from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init  # pylint: disable=E0401
     from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity  # pylint: disable=E0401
