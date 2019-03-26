@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Implémente une régression linéaire par morceaux en modifiant
-l'algorithme de construction des arbres de décision.
+@brief Implements a kind of piecewise linear regression by modifying
+the criterion used by the algorithm which builds a decision tree.
 """
 import sklearn
 from sklearn.tree import DecisionTreeRegressor
@@ -11,9 +11,13 @@ from pyquickhelper.texthelper import compare_module_version
 
 class DecisionTreeLinearRegressor(DecisionTreeRegressor):
     """
-    Réécrit le critère qui permet d'optimiser
-    la construction de l'arbre.
-    Voir :epkg:`sklearn:tree:DecisionTreeRegressor` pour les paramètres.
+    Implements a kind of piecewise linear regression by modifying
+    the criterion used by the algorithm which builds a decision tree.
+    See :epkg:`sklearn:tree:DecisionTreeRegressor` to get the meaning
+    of the parameters except criterion:
+
+    * ``mselin``: optimizes for a piecewise linear regression
+    * ``simple``: optimizes for a stepwise regression (equivalent to *mse*)
     """
 
     def __init__(self, criterion='mselin', splitter='best', max_depth=None,
@@ -33,19 +37,23 @@ class DecisionTreeLinearRegressor(DecisionTreeRegressor):
     def fit(self, X, y, sample_weight=None, check_input=True,
             X_idx_sorted=None):
         """
-        Réinterprète le paramètre *criterion*.
+        Replaces the string stored in criterion by an instance of a class.
         """
         replace = None
         if isinstance(self.criterion, str):
             if self.criterion == 'mselin':
-                # self.criterion = LinearRegressionCriterion(X, y, sample_weight)
-                replace = self.criterion
-                raise NotImplementedError()
+                if compare_module_version(sklearn.__version__, '0.21') >= 0:
+                    from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611
+                    self.criterion = LinearRegressorCriterion(X)
+                    replace = self.criterion
+                else:
+                    raise ImportError(
+                        "LinearRegressorCriterion only exists for scikit-learn >= 0.21.")
             elif self.criterion == "simple":
                 if compare_module_version(sklearn.__version__, '0.21') >= 0:
-                    from .piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611
+                    from .piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611
                     replace = self.criterion
-                    self.criterion = SimpleRegressorCriterion(X)
+                    self.criterion = SimpleRegressorCriterionFast(X)
                 else:
                     raise ImportError(
                         "SimpleRegressorCriterion only exists for scikit-learn >= 0.21.")

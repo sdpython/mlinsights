@@ -163,7 +163,7 @@ if not r:
     extensions = ["direct_blas_lapack"]
     if compare_module_version(sklearn.__version__, "0.21") >= 0:
         extensions.extend([
-            # "piecewise_tree_regression_criterion_linear",
+            "piecewise_tree_regression_criterion_linear",
             "piecewise_tree_regression_criterion",
             "piecewise_tree_regression_criterion_fast",
         ])
