@@ -123,6 +123,11 @@ class TestDecisionTreeExperimentFast(ExtTestCase):
             p2 = _test_criterion_impurity_improvement(c2, 0.)
             self.assertGreater(p1, p2 - 1.)
 
+            dest = numpy.empty((2, ))
+            c2.node_beta(dest)
+            self.assertGreater(dest[0], 0)
+            self.assertGreater(dest[1], 0)
+
     @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
                      reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion(self):

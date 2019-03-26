@@ -4,6 +4,7 @@
 """
 from libc.stdlib cimport calloc, free
 from libc.stdio cimport printf
+from libc.string cimport memcpy
 from libc.math cimport NAN
 
 import numpy
@@ -14,16 +15,6 @@ cimport scipy.linalg.cython_lapack as cython_lapack
 
 from sklearn.tree._criterion cimport Criterion
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
-
-# From scikit-learn.
-cpdef enum BLAS_Order:
-    RowMajor  # C contiguous
-    ColMajor  # Fortran contiguous
-
-
-cpdef enum BLAS_Trans:
-    NoTrans = 110  # correspond to 'n'
-    Trans = 116    # correspond to 't'
 
 
 cdef class LinearRegressorCriterion(Criterion):
@@ -239,16 +230,13 @@ cdef class LinearRegressorCriterion(Criterion):
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
             
-    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
+    cdef double _reglin(self, SIZE_t start, SIZE_t end) nogil:
         """
-        Computes mean square error between *start* and *end*
+        Solves the linear regression between *start* and *end*
         assuming corresponding points are approximated by a line.
         *mean* is unused but could be if the inverse does not exist.
+        The solution is the vector ``self.sample_pC[:self.nbvar]``.
         """
-        if end - start <= self.nbvar:
-            # More coefficients than the number of observations.
-            return 0.
-        
         cdef int i, j, idx, pos
         cdef DOUBLE_t w
         cdef DOUBLE_t* sample_f_buffer = self.sample_f_buffer
@@ -279,6 +267,21 @@ cdef class LinearRegressorCriterion(Criterion):
                              sample_f_buffer, &lda, pC, &ldb,   # 4-7
                              self.sample_pS, &rcond, &rank,     # 8-10
                              self.sample_work, &work, &info)    # 11-13
+                             
+    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
+        """
+        Computes mean square error between *start* and *end*
+        assuming corresponding points are approximated by a line.
+        *mean* is unused but could be if the inverse does not exist.
+        """
+        if end - start <= self.nbvar:
+            # More coefficients than the number of observations.
+            return 0.
+        
+        self._reglin(start, end)
+        
+        cdef double* pC = self.sample_pC
+        cdef int j, idx
         
         # replaces what follows by gemm
         cdef DOUBLE_t squ = 0.
@@ -299,9 +302,8 @@ cdef class LinearRegressorCriterion(Criterion):
                                         double* weight_left,
                                         double* weight_right) nogil:
         """
-        Placeholder for calculating the impurity of children.
-        Placeholder for a method which evaluates the impurity in
-        children nodes, i.e. the impurity of ``samples[start:pos]``
+        Calculates the impurity of children, 
+        the impurity of ``samples[start:pos]``
         the impurity of ``samples[pos:end]``.
 
         Parameters
@@ -331,10 +333,7 @@ cdef class LinearRegressorCriterion(Criterion):
 
     cdef double node_impurity(self) nogil:
         """
-        Placeholder for calculating the impurity of the node.
-        Placeholder for a method which will evaluate the impurity of
-        the current node, i.e. the impurity of ``samples[start:end]``.
-        This is the primary function of the criterion class.
+        Calculates the impurity of the node.
         """
         cdef DOUBLE_t mean, weight
         self._mean(self.start, self.end, &mean, &weight)
@@ -343,9 +342,8 @@ cdef class LinearRegressorCriterion(Criterion):
     cdef void children_impurity(self, double* impurity_left,
                                 double* impurity_right) nogil:
         """
-        Placeholder for calculating the impurity of children.
-        Placeholder for a method which evaluates the impurity in
-        children nodes, i.e. the impurity of ``samples[start:pos]``
+        Calculating the impurity of children, 
+        the impurity of ``samples[start:pos]``
         the impurity of ``samples[pos:end]``.
         
         Parameters
@@ -362,9 +360,11 @@ cdef class LinearRegressorCriterion(Criterion):
 
     cdef void node_value(self, double* dest) nogil:
         """
-        Placeholder for storing the node value.
-        Placeholder for a method which will compute the node value
-        of ``samples[start:end]`` and save the value into dest.
+        Stores the node value.
+        of ``samples[start:end]``. It returns
+        the mean as it cannot do better without
+        knowing *X*.
+        
         Parameters
         ----------
         dest : double pointer
@@ -372,6 +372,31 @@ cdef class LinearRegressorCriterion(Criterion):
         """
         cdef DOUBLE_t weight
         self._mean(self.start, self.end, dest, &weight)
+        
+    cdef void _node_beta(self, double* dest) nogil:
+        """
+        Stores the results of the linear regression
+        in an allocated numpy array.
+        
+        Parameters
+        ----------
+        dest : allocated double pointer
+        """
+        self._reglin(self.start, self.end)
+        memcpy(dest, self.sample_pC, self.nbvar * sizeof(double))
+
+    def node_beta(self, double[::1] dest):
+        """
+        Stores the results of the linear regression
+        in an allocated numpy array.
+        
+        Parameters
+        ----------
+        dest : allocated array
+        """
+        if dest.shape[0] < self.nbvar:
+            raise ValueError("dest must be at least (%d, )" % self.nbvar)
+        self._node_beta(&dest[0])
 
     cdef double proxy_impurity_improvement(self) nogil:
         """

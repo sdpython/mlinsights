@@ -5,7 +5,14 @@
 History
 =======
 
-current - 2019-03-05 - 0.00Mb
+current - 2019-03-26 - 0.00Mb
+=============================
+
+* `39`: implements a custom criterion for decision tree (2019-03-26)
+* `41`: implements a direct call to a lapack function from cython (2019-03-25)
+* `38`: better implementation of a regression criterion (2019-03-25)
+
+0.1.199 - 2019-03-05 - 0.05Mb
 =============================
 
 * `37`: implements interaction_only for polynomial features (2019-02-26)
