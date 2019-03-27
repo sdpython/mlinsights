@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
-from mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
+from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 
 if compare_module_version(sklearn.__version__, "0.21") >= 0:  # noqa
     from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401
@@ -173,7 +173,7 @@ class TestDecisionTreeExperimentFast(ExtTestCase):
         clr1 = DecisionTreeRegressor()
         clr1.fit(X, y)
         p1 = clr1.predict(X)
-        clr2 = DecisionTreeLinearRegressor(criterion='simple')
+        clr2 = PiecewiseTreeRegressor(criterion='simple')
         clr2.fit(X, y)
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])

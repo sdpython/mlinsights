@@ -8,9 +8,10 @@ import sklearn
 from sklearn.tree._criterion import MSE  # pylint: disable=E0611
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
+from sklearn.model_selection import train_test_split
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
-from mlinsights.mlmodel.piecewise_tree_regression import DecisionTreeLinearRegressor
+from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 
 if compare_module_version(sklearn.__version__, "0.21") >= 0:  # noqa
     from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611, E0401
@@ -23,7 +24,7 @@ if compare_module_version(sklearn.__version__, "0.21") >= 0:  # noqa
     from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement  # pylint: disable=E0401
 
 
-class TestDecisionTreeExperimentFast(ExtTestCase):
+class TestDecisionTreeExperimentLinear(ExtTestCase):
 
     @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
                      reason="Only implemented for Criterion API from sklearn >= 0.21")
@@ -165,10 +166,34 @@ class TestDecisionTreeExperimentFast(ExtTestCase):
         clr1 = DecisionTreeRegressor()
         clr1.fit(X, y)
         p1 = clr1.predict(X)
-        clr2 = DecisionTreeLinearRegressor(criterion='mselin')
+        clr2 = PiecewiseTreeRegressor(criterion='mselin')
         clr2.fit(X, y)
         p2 = clr2.predict(X)
         self.assertEqual(p1.shape, p2.shape)
+        self.assertTrue(hasattr(clr2, 'betas_'))
+        self.assertTrue(hasattr(clr2, 'leaves_mapping_'))
+        sc1 = clr1.score(X, y)
+        sc2 = clr2.score(X, y)
+        self.assertGreater(sc1, sc2)
+
+    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
+                     reason="Only implemented for Criterion API from sklearn >= 0.21")
+    def test_decision_tree_criterion_iris_dtc_traintest(self):
+        iris = datasets.load_iris()
+        X, y = iris.data, iris.target
+        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        clr1 = DecisionTreeRegressor()
+        clr1.fit(X_train, y_train)
+        p1 = clr1.predict(X_train)
+        clr2 = PiecewiseTreeRegressor(criterion='mselin')
+        clr2.fit(X_train, y_train)
+        p2 = clr2.predict(X_train)
+        self.assertEqual(p1.shape, p2.shape)
+        self.assertTrue(hasattr(clr2, 'betas_'))
+        self.assertTrue(hasattr(clr2, 'leaves_mapping_'))
+        sc1 = clr1.score(X_test, y_test)
+        sc2 = clr2.score(X_test, y_test)
+        self.assertGreater(sc1, sc2)
 
 
 if __name__ == "__main__":

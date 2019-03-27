@@ -116,6 +116,34 @@ cdef class LinearRegressorCriterion(Criterion):
         if self.sample_pS == NULL:
             self.sample_pS = <DOUBLE_t*> calloc(self.nbvar, sizeof(DOUBLE_t))
 
+    @staticmethod
+    def create(DOUBLE_t[:, ::1] X, DOUBLE_t[:, ::1] y, DOUBLE_t[::1] sample_weight=None):
+        """
+        Initializes the criterion.
+        
+        :param X: features
+        :param y: target
+        :param sample_weight: sample weight
+        :return: an instance of :class:`LinearRegressorCriterion`
+        """
+        cdef SIZE_t i
+        cdef DOUBLE_t* ws
+        cdef double sum
+        cdef SIZE_t* parr = <SIZE_t*> calloc(y.shape[0], sizeof(SIZE_t))
+        for i in range(0, y.shape[0]):
+            parr[i] = i
+        if sample_weight is None:
+            sum = <DOUBLE_t>y.shape[0]
+            ws = NULL
+        else:
+            sum = sample_weight.sum()
+            ws = &sample_weight[0]
+
+        obj = LinearRegressorCriterion(X)
+        obj.init(y, ws, sum, parr, 0, y.shape[0])            
+        free(parr)
+        return obj
+
     cdef int init(self, const DOUBLE_t[:, ::1] y,
                   DOUBLE_t* sample_weight,
                   double weighted_n_samples, SIZE_t* samples, 
@@ -230,7 +258,7 @@ cdef class LinearRegressorCriterion(Criterion):
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
             
-    cdef double _reglin(self, SIZE_t start, SIZE_t end) nogil:
+    cdef double _reglin(self, SIZE_t start, SIZE_t end, int low_rank) nogil:
         """
         Solves the linear regression between *start* and *end*
         assuming corresponding points are approximated by a line.
@@ -263,6 +291,11 @@ cdef class LinearRegressorCriterion(Criterion):
         cdef int rank        
         cdef int work = self.work
         
+        if row < col:
+            if low_rank:
+                ldb = col
+            else:
+                raise RuntimeError("The function cannot return any return when row < col.")
         cython_lapack.dgelss(&row, &col, &nrhs,                 # 1-3
                              sample_f_buffer, &lda, pC, &ldb,   # 4-7
                              self.sample_pS, &rcond, &rank,     # 8-10
@@ -278,7 +311,7 @@ cdef class LinearRegressorCriterion(Criterion):
             # More coefficients than the number of observations.
             return 0.
         
-        self._reglin(start, end)
+        self._reglin(start, end, 0)
         
         cdef double* pC = self.sample_pC
         cdef int j, idx
@@ -380,9 +413,9 @@ cdef class LinearRegressorCriterion(Criterion):
         
         Parameters
         ----------
-        dest : allocated double pointer
+        dest : allocated double pointer, size must be *>= self.nbvar*
         """
-        self._reglin(self.start, self.end)
+        self._reglin(self.start, self.end, 1)
         memcpy(dest, self.sample_pC, self.nbvar * sizeof(double))
 
     def node_beta(self, double[::1] dest):
