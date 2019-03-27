@@ -110,7 +110,7 @@ cdef class LinearRegressorCriterion(Criterion):
         if self.sample_f_buffer == NULL:
             self.sample_f_buffer = <DOUBLE_t*> calloc(X.shape[0] * self.nbvar, sizeof(DOUBLE_t))
         if self.sample_pC == NULL:
-            self.sample_pC = <DOUBLE_t*> calloc(self.nbrows, sizeof(DOUBLE_t))
+            self.sample_pC = <DOUBLE_t*> calloc(max(self.nbrows, self.nbvar), sizeof(DOUBLE_t))
         if self.sample_work == NULL:
             self.sample_work = <DOUBLE_t*> calloc(self.work, sizeof(DOUBLE_t))
         if self.sample_pS == NULL:
@@ -258,7 +258,7 @@ cdef class LinearRegressorCriterion(Criterion):
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
             
-    cdef double _reglin(self, SIZE_t start, SIZE_t end, int low_rank) nogil:
+    cdef void _reglin(self, SIZE_t start, SIZE_t end, int low_rank) nogil:
         """
         Solves the linear regression between *start* and *end*
         assuming corresponding points are approximated by a line.

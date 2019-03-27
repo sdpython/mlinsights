@@ -125,9 +125,12 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         tree = self.tree_
         self.leaves_index_ = [i for i in range(len(tree.children_left))
                               if tree.children_left[i] <= i and tree.children_right[i] <= i]
+        if tree.n_leaves != len(self.leaves_index_):
+            raise RuntimeError("Unexpected number of leaves %d != %d".format(
+                tree.n_leaves, len(self.leaves_index_)))
         pred_leaves = self.predict_leaves(X)
         self.leaves_mapping_ = {k: i for i, k in enumerate(pred_leaves)}
-        self.betas_ = numpy.empty((len(pred_leaves), X.shape[1] + 1))
+        self.betas_ = numpy.empty((len(self.leaves_index_), X.shape[1] + 1))
         for i, _ in enumerate(self.leaves_index_):
             ind = pred_leaves == i
             xs = X[ind, :].copy()
@@ -146,7 +149,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         *mse*, *mae*, *simple*. Computes the predictions
         from linear regression if the criterion is *mselin*.
         """
-        if self.criterion == 'mseline':
+        if self.criterion == 'mselin':
             return self._predict_reglin(X, check_input=check_input)
         return DecisionTreeRegressor.predict(self, X, check_input=check_input)
 
@@ -177,4 +180,4 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         for i in range(0, X.shape[0]):
             li = leaves[i]
             pred[i] = numpy.dot(Xone[i, :], self.betas_[li, :])
-        return pred
+        return pred.ravel()

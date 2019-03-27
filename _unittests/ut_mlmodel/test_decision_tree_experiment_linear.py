@@ -131,6 +131,16 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
 
     @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
                      reason="Only implemented for Criterion API from sklearn >= 0.21")
+    def test_criterions_check_value(self):
+        X = numpy.array([[10., 12., 13.]]).T
+        y = numpy.array([[20., 22., 23.]]).T
+        c2 = LinearRegressorCriterion.create(X, y)
+        coef = numpy.empty((3, ))
+        c2.node_beta(coef)
+        self.assertEqual(coef[:2], numpy.array([1, 10]))
+
+    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
+                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion(self):
         X = numpy.array([[1., 2., 10., 11.]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
@@ -172,6 +182,10 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         self.assertEqual(p1.shape, p2.shape)
         self.assertTrue(hasattr(clr2, 'betas_'))
         self.assertTrue(hasattr(clr2, 'leaves_mapping_'))
+        self.assertEqual(len(clr2.leaves_index_), clr2.tree_.n_leaves)
+        self.assertEqual(len(clr2.leaves_mapping_), clr2.tree_.n_leaves)
+        self.assertEqual(clr2.betas_.shape[1], X.shape[1] + 1)
+        self.assertEqual(clr2.betas_.shape[0], clr2.tree_.n_leaves)
         sc1 = clr1.score(X, y)
         sc2 = clr2.score(X, y)
         self.assertGreater(sc1, sc2)
@@ -191,6 +205,10 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         self.assertEqual(p1.shape, p2.shape)
         self.assertTrue(hasattr(clr2, 'betas_'))
         self.assertTrue(hasattr(clr2, 'leaves_mapping_'))
+        self.assertEqual(len(clr2.leaves_index_), clr2.tree_.n_leaves)
+        self.assertEqual(len(clr2.leaves_mapping_), clr2.tree_.n_leaves)
+        self.assertEqual(clr2.betas_.shape[1], X.shape[1] + 1)
+        self.assertEqual(clr2.betas_.shape[0], clr2.tree_.n_leaves)
         sc1 = clr1.score(X_test, y_test)
         sc2 = clr2.score(X_test, y_test)
         self.assertGreater(sc1, sc2)
