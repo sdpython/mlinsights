@@ -126,7 +126,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         self.leaves_index_ = [i for i in range(len(tree.children_left))
                               if tree.children_left[i] <= i and tree.children_right[i] <= i]
         if tree.n_leaves != len(self.leaves_index_):
-            raise RuntimeError("Unexpected number of leaves %d != %d".format(
+            raise RuntimeError("Unexpected number of leaves {} != {}".format(
                 tree.n_leaves, len(self.leaves_index_)))
         pred_leaves = self.predict_leaves(X)
         self.leaves_mapping_ = {k: i for i, k in enumerate(pred_leaves)}
