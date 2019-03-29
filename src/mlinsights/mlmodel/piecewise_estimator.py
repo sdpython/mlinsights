@@ -313,7 +313,7 @@ class PiecewiseEstimator(BaseEstimator):
         return pred
 
 
-class PiecewiseRegression(PiecewiseEstimator, RegressorMixin):
+class PiecewiseRegressor(PiecewiseEstimator, RegressorMixin):
     """
     Uses a :epkg:`decision tree` to split the space of features
     into buckets and trains a linear regression (default) on each of them.
