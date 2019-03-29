@@ -170,7 +170,8 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
     trained with norm :epkg:`L1`. This class inherits from
     :epkg:`sklearn:neural_networks:MLPRegressor`.
     This model optimizes the absolute-loss using LBFGS or stochastic gradient
-    descent.
+    descent. See @see cl CustomizedMultilayerPerceptron and
+    @see fn absolute_loss.
 
     Parameters
     ----------
@@ -180,18 +181,18 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
     activation : {'identity', 'logistic', 'tanh', 'relu'}, default 'relu'
         Activation function for the hidden layer.
         - 'identity', no-op activation, useful to implement linear bottleneck,
-          returns f(x) = x
+          returns :math:`f(x) = x`
         - 'logistic', the logistic sigmoid function,
-          returns f(x) = 1 / (1 + exp(-x)).
+          returns :math:`f(x) = 1 / (1 + exp(-x))`.
         - 'tanh', the hyperbolic tan function,
-          returns f(x) = tanh(x).
+          returns :math:`f(x) = tanh(x)`.
         - 'relu', the rectified linear unit function,
-          returns f(x) = max(0, x)
-    solver : {'lbfgs', 'sgd', 'adam'}, default 'adam'
+          returns :math:`f(x) = \\max(0, x)`.
+    solver : ``{'lbfgs', 'sgd', 'adam'}``, default 'adam'
         The solver for weight optimization.
-        - 'lbfgs' is an optimizer in the family of quasi-Newton methods.
-        - 'sgd' refers to stochastic gradient descent.
-        - 'adam' refers to a stochastic gradient-based optimizer proposed by
+        - *'lbfgs'* is an optimizer in the family of quasi-Newton methods.
+        - *'sgd'* refers to stochastic gradient descent.
+        - *'adam'* refers to a stochastic gradient-based optimizer proposed by
           Kingma, Diederik, and Jimmy Ba
         Note: The default solver 'adam' works pretty well on relatively
         large datasets (with thousands of training samples or more) in terms of
@@ -320,7 +321,8 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         optimization." arXiv preprint arXiv:1412.6980 (2014).
     """
 
-    def __init__(self, hidden_layer_sizes=(100,), activation="relu",
+    def __init__(self,
+                 hidden_layer_sizes=(100,), activation="relu",
                  solver='adam', alpha=0.0001,
                  batch_size='auto', learning_rate="constant",
                  learning_rate_init=0.001,
@@ -333,9 +335,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         """
         Parameters
         ----------
-        loss: loss function, by default ``'absolute_loss'``
-
-        kwargs: see :epkg:`sklearn:neural_networks:MLPRegressor`
+        See :epkg:`sklearn:neural_networks:MLPRegressor`
         """
         sup = super(QuantileMLPRegressor, self)
         sup.__init__(hidden_layer_sizes=hidden_layer_sizes,
