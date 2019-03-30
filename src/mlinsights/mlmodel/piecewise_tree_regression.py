@@ -75,7 +75,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
     def _mapping_train(self, X):
         tree = self.tree_
         leaves = [i for i in range(len(tree.children_left))
-                  if tree.children_left[i] <= i and tree.children_right[i] <= i]
+                  if tree.children_left[i] <= i and tree.children_right[i] <= i]  # pylint: disable=E1136
         dec_path = self.decision_path(X)
         association = numpy.zeros((X.shape[0],))
         association[:] = -1
@@ -124,7 +124,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611
         tree = self.tree_
         self.leaves_index_ = [i for i in range(len(tree.children_left))
-                              if tree.children_left[i] <= i and tree.children_right[i] <= i]
+                              if tree.children_left[i] <= i and tree.children_right[i] <= i]  # pylint: disable=E1136
         if tree.n_leaves != len(self.leaves_index_):
             raise RuntimeError("Unexpected number of leaves {} != {}".format(
                 tree.n_leaves, len(self.leaves_index_)))
