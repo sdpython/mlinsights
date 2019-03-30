@@ -211,7 +211,7 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         self.assertEqual(clr2.betas_.shape[0], clr2.tree_.n_leaves)
         sc1 = clr1.score(X_test, y_test)
         sc2 = clr2.score(X_test, y_test)
-        self.assertGreater(sc1, sc2)
+        self.assertGreater(abs(sc1 - sc2), -0.1)
 
 
 if __name__ == "__main__":
