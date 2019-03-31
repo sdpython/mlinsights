@@ -172,7 +172,7 @@ if not r:
             print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
 
     ext_modules = []
-    if '--inplace' in sys.args:
+    if '--inplace' in sys.argv:
         pattern = "src.mlinsights.mlmodel.%s"
     else:
         pattern = "mlinsights.mlmodel.%s"
