@@ -172,8 +172,12 @@ if not r:
             print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
 
     ext_modules = []
+    if '--inplace' in sys.args:
+        pattern = "src.mlinsights.mlmodel.%s"
+    else:
+        pattern = "mlinsights.mlmodel.%s"
     for name in extensions:
-        m = Extension('src.mlinsights.mlmodel.%s' % name,
+        m = Extension(pattern % name,
                       ['src/mlinsights/mlmodel/%s.pyx' % name],
                       include_dirs=[numpy.get_include()],
                       extra_compile_args=["-O3"])
