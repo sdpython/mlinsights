@@ -160,6 +160,11 @@ if not r:
 
     from pyquickhelper.texthelper import compare_module_version
     import sklearn
+
+    ext_modules = []
+
+    # mlmodel
+
     extensions = ["direct_blas_lapack"]
     if compare_module_version(sklearn.__version__, "0.21") >= 0:
         extensions.extend([
@@ -171,22 +176,25 @@ if not r:
         if verbose:
             print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
 
-    ext_modules = []
     if '--inplace' in sys.argv:
-        pattern = "src.mlinsights.mlmodel.%s"
+        pattern1 = "src.mlinsights.mlmodel.%s"
     else:
-        pattern = "mlinsights.mlmodel.%s"
+        pattern1 = "mlinsights.mlmodel.%s"
     for name in extensions:
-        m = Extension(pattern % name,
+        m = Extension(pattern1 % name,
                       ['src/mlinsights/mlmodel/%s.pyx' % name],
                       include_dirs=[numpy.get_include()],
                       extra_compile_args=["-O3"])
         ext_modules.append(m)
 
+    # cythonize
+
     opts = dict(boundscheck=False, cdivision=True,
                 wraparound=False, language_level=3,
                 cdivision_warnings=True)
     ext_modules = cythonize(ext_modules, compiler_directives=opts)
+
+    # setup
 
     setup(
         name=project_var_name,

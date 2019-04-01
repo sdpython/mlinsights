@@ -105,10 +105,6 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         leaves = leaves[:, self.leaves_index_]
         mat = numpy.argmax(leaves, 1)
         res = numpy.asarray(mat).ravel()
-        mx = res.max()
-        if mx + 1 != len(self.leaves_index_):
-            raise RuntimeError(
-                "One of the leave was not associated to any example of the training set.")
         return res
 
     def _fit_reglin(self, X, y, sample_weight):
