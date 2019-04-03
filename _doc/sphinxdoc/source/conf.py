@@ -60,11 +60,13 @@ imgmath_latex_preamble += custom_preamble
 latex_elements['preamble'] += custom_preamble
 
 epkg_dictionary.update({
+    'BLAS': 'http://www.netlib.org/blas/explore-html',
     'decision tree': 'https://en.wikipedia.org/wiki/Decision_tree',
     'DOT': 'https://en.wikipedia.org/wiki/DOT_(graph_description_language)',
     'GIL': 'https://wiki.python.org/moin/GlobalInterpreterLock',
     'PEP-0311': 'https://www.python.org/dev/peps/pep-0311/',
     'Iris': 'http://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html',
+    'LAPACK': 'http://www.netlib.org/lapack/explore-html',
     'Lapack documentation': 'http://www.netlib.org/lapack/explore-html',
     'L1': 'https://en.wikipedia.org/wiki/Norm_(mathematics)#Absolute-value_norm',
     'L2': 'https://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm',
@@ -82,6 +84,7 @@ epkg_dictionary.update({
                 ('http://scikit-learn.org/stable/modules/generated/{0}.html', 1),
                 ('http://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),
     't-SNE': 'https://lvdmaaten.github.io/tsne/',
+    'torch': 'https://pytorch.org/',
     'tqdm': 'https://github.com/tqdm/tqdm',
     'TSNE': 'https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html',
 })

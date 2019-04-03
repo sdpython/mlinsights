@@ -15,11 +15,13 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
 
-.. autosignature:: mlinsights.mlmodel.quantile_regression.IntervalRegressor
+.. autosignature:: mlinsights.mlmodel.interval_regressor.IntervalRegressor
 
-.. autosignature:: mlinsights.mlmodel.interval_regressor.PiecewiseClassifier
+.. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseClassifier
 
 .. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseRegressor
+
+.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression.PiecewiseTreeRegressor
 
 .. autosignature:: mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor
 

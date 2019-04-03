@@ -8,6 +8,7 @@ from sklearn import datasets
 from sklearn.tree import DecisionTreeClassifier
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mltree import tree_leave_index, tree_node_range, tree_leave_neighbors
+from mlinsights.mltree.tree_structure import tree_find_common_node
 
 
 class TestTreeStructure(ExtTestCase):
@@ -39,6 +40,8 @@ class TestTreeStructure(ExtTestCase):
             if am in exp:
                 self.assertEqualArray(ra, exp[am])
         self.assertNotEmpty(leaves)
+        common = tree_find_common_node(clr, 0, 1)
+        self.assertEqual(common, (0, [], [1]))
 
     def test_tree_leave_neighbors(self):
         X = numpy.array([[0, 0], [0, 1], [0, 2],
@@ -69,8 +72,6 @@ class TestTreeStructure(ExtTestCase):
         clr = DecisionTreeClassifier(max_depth=4)
         clr.fit(X, y)
         nei = tree_leave_neighbors(clr)
-        import pprint
-        pprint.pprint(nei)
         self.assertEqual(len(nei), 12)
         self.assertIsInstance(nei, dict)
         for k, v in nei.items():

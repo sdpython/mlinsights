@@ -60,7 +60,7 @@ def tree_find_common_node(tree, i, j, parents=None):
     @param      i           node index (``tree.nodes[i]``)
     @param      j           node index (``tree.nodes[j]``)
     @param      parents     precomputed parents (None -> calls @see fn tree_node_range)
-    @return                 one array of size *(D, 2)* where *D* is the number of dimensions
+    @return                 common root, remaining path to *i*, remaining path to *j*
     """
     tree = _get_tree(tree)
     if parents is None:
