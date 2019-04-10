@@ -34,8 +34,8 @@
 
 .. _l-README:
 
-mlsinsights
-===========
+mlinsights - extensions to scikit-learn
+=======================================
 
 *mlinsights* extends *scikit-learn* with a couple of new models,
 transformers, metrics, plotting. It provides new trainers such as
