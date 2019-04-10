@@ -7,7 +7,7 @@ mlinsights: tricky scikit-learn
 
 **Links:** `github <https://github.com/sdpython/mlinsights/>`_,
 `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
-:ref:`l-README`,
+:ref:`README <l-README>`,
 :ref:`blog <ap-main-0>`
 
 .. image:: https://travis-ci.org/sdpython/mlinsights.svg?branch=master
