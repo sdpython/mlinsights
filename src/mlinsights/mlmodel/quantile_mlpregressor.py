@@ -47,7 +47,7 @@ DERIVATIVE_LOSS_FUNCTIONS = {'absolute_loss': np.vectorize(float_sign)}
 
 class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
     """
-    Customized MLP Percetion based on
+    Customized MLP Perceptron based on
     `BaseMultilayerPerceptron
     <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/neural_network/multilayer_perceptron.py#L40>`_.
     """
@@ -112,6 +112,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         intercept_grads : list, length = n_layers - 1
             The ith element contains the amount of change used to update the
             intercept parameters of the ith layer in an iteration.
+
         Returns
         -------
         loss : float
@@ -299,7 +300,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         Name of the output activation function.
     Notes
     -----
-    QuantiileMLPRegressor trains iteratively since at each time step
+    *QuantileMLPRegressor* trains iteratively since at each time step
     the partial derivatives of the loss function with respect to the model
     parameters are computed to update the parameters.
     It can also have a regularization term added to the loss function

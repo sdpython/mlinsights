@@ -4,7 +4,7 @@
 """
 import numpy
 import numpy.random
-from sklearn.base import RegressorMixin, clone
+from sklearn.base import RegressorMixin, clone, BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 from sklearn.utils._joblib import Parallel, delayed
 from sklearn.utils.fixes import _joblib_parallel_args
@@ -14,26 +14,34 @@ except ImportError:
     pass
 
 
-class IntervalRegressor(RegressorMixin):
+class IntervalRegressor(BaseEstimator, RegressorMixin):
     """
     Trains multiple regressors to provide a confidence
     interval on prediction. It only works for
-    single regression.
+    single regression. Every training is made with a new
+    sample of the training data, parameter *alpha*
+    let the user choose the size of this sample.
+    A smaller *alpha* increases the variance
+    of the predictions.
     """
 
-    def __init__(self, n_estimators=10, estimator=None, n_jobs=None, verbose=False):
+    def __init__(self, estimator=None, n_estimators=10, n_jobs=None,
+                 alpha=1., verbose=False):
         """
-        @param      n_estimators        number of estimators to train
         @param      estimator           predictor trained on every bucket
+        @param      n_estimators        number of estimators to train
         @param      n_jobs              number of parallel jobs (for training and predicting)
+        @param      alpha               proportion of samples resampled for each training
         @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
                                         to fit the estimators
         """
+        BaseEstimator.__init__(self)
         RegressorMixin.__init__(self)
         if estimator is None:
             raise ValueError("estimator cannot be null.")
         self.estimator = estimator
         self.n_jobs = n_jobs
+        self.alpha = alpha
         self.verbose = verbose
         self.n_estimators = n_estimators
 
@@ -85,8 +93,9 @@ class IntervalRegressor(RegressorMixin):
                     ) if self.verbose == 'tqdm' else range(len(estimators))
         verbose = 1 if self.verbose == 'tqdm' else (1 if self.verbose else 0)
 
-        def _fit_piecewise_estimator(i, est, X, y, sample_weight):
-            rnd = numpy.random.randint(0, X.shape[0] - 1, X.shape[0])
+        def _fit_piecewise_estimator(i, est, X, y, sample_weight, alpha):
+            new_size = int(X.shape[0] * alpha + 0.5)
+            rnd = numpy.random.randint(0, X.shape[0] - 1, new_size)
             Xr = X[rnd]
             yr = y[rnd]
             sr = sample_weight[rnd] if sample_weight else None
@@ -96,7 +105,7 @@ class IntervalRegressor(RegressorMixin):
             Parallel(n_jobs=self.n_jobs, verbose=verbose,
                      **_joblib_parallel_args(prefer='threads'))(
                 delayed(_fit_piecewise_estimator)(
-                    i, estimators[i], X, y, sample_weight)
+                    i, estimators[i], X, y, sample_weight, self.alpha)
                 for i in loop)
 
         return self
