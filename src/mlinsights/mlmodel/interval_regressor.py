@@ -22,7 +22,10 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
     sample of the training data, parameter *alpha*
     let the user choose the size of this sample.
     A smaller *alpha* increases the variance
-    of the predictions.
+    of the predictions. The current implementation
+    draws sample by random but keeps the weight associated
+    to each of them. Another way could be to draw
+    a weighted sample but give them uniform weights.
     """
 
     def __init__(self, estimator=None, n_estimators=10, n_jobs=None,
