@@ -1,7 +1,4 @@
 
-.. |gitlogo| image:: _static/git_logo.png
-             :height: 20
-
 mlinsights: tricky scikit-learn
 ===============================
 
