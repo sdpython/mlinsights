@@ -240,7 +240,7 @@ class PiecewiseEstimator(BaseEstimator):
             self.binner_ = binner.fit(X, y)
         else:
             self.binner_ = binner.fit(X, y, sample_weight=sample_weight)
-        self.estimators_ = {}
+
         association, self.mapping_, self.leaves_ = self._mapping_train(
             X, self.binner_)
 
