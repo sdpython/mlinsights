@@ -13,14 +13,14 @@ from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 
 if compare_module_version(sklearn.__version__, "0.21") >= 0:  # noqa
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_init  # pylint: disable=E0401
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_node_impurity  # pylint: disable=E0401
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_node_impurity_children  # pylint: disable=E0401
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_update  # pylint: disable=E0401
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_node_value  # pylint: disable=E0401
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_proxy_impurity_improvement  # pylint: disable=E0401
+    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_impurity_improvement  # pylint: disable=E0401
     from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_init  # pylint: disable=E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity  # pylint: disable=E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_impurity_children  # pylint: disable=E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_update  # pylint: disable=E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_node_value  # pylint: disable=E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_proxy_impurity_improvement  # pylint: disable=E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion import _test_criterion_impurity_improvement  # pylint: disable=E0401
 
 
 class TestDecisionTreeExperimentFast(ExtTestCase):
