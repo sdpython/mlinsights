@@ -10,7 +10,9 @@ from libc.math cimport NAN
 import numpy
 cimport numpy
 cimport cython
+
 numpy.import_array()
+
 cimport scipy.linalg.cython_lapack as cython_lapack
 
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t

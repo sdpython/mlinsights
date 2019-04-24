@@ -7,13 +7,15 @@ from libc.math cimport NAN
 
 import numpy
 cimport numpy
+cimport cython
+
 numpy.import_array()
 
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 from _piecewise_tree_regression_common cimport CommonRegressorCriterion
 
 
-cdef class SimpleRegressorCriterionFast(Criterion):
+cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
     """
     Criterion which computes the mean square error
     assuming points falling into one node are approximated
