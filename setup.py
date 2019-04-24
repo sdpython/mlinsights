@@ -33,9 +33,9 @@ CLASSIFIERS = [
 # data
 #######
 
-packages = find_packages('src', exclude='src')
-package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
-package_data = {}
+here = os.path.dirname(__file__)
+packages = find_packages(where=here)
+package_dir = {k: os.path.join(here, k.replace(".", "/")) for k in packages}
 
 ############
 # functions
@@ -177,16 +177,14 @@ if not r:
         if verbose:
             print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
 
-    if '--inplace' in sys.argv:
-        pattern1 = "src.mlinsights.mlmodel.%s"
-    else:
-        pattern1 = "mlinsights.mlmodel.%s"
+    pattern1 = "mlinsights.mlmodel.%s"
     for name in extensions:
         m = Extension(pattern1 % name,
-                      ['src/mlinsights/mlmodel/%s.pyx' % name],
-                      include_dirs=[numpy.get_include(),
-                                    'src/mlinsights/mlmodel'],
-                      extra_compile_args=["-O3"])
+                      ['mlinsights/mlmodel/%s.pyx' % name],
+                      include_dirs=[numpy.get_include()],
+                      extra_compile_args=["-O3"],
+                      language_level=3,
+                      language='c++')
         ext_modules.append(m)
 
     # cythonize

@@ -12,7 +12,7 @@ class TestCodeStyle(ExtTestCase):
 
     def test_style_src(self):
         thi = os.path.abspath(os.path.dirname(__file__))
-        src_ = os.path.normpath(os.path.join(thi, "..", "..", "src"))
+        src_ = os.path.normpath(os.path.join(thi, "..", ".."))
         check_pep8(src_, fLOG=fLOG,
                    pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
                                   'W0201', 'W0221', 'E0632', 'R1702', 'W0212', 'W0223',
@@ -28,13 +28,7 @@ class TestCodeStyle(ExtTestCase):
         check_pep8(test, fLOG=fLOG, neg_pattern="temp_.*",
                    pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
                                   'C0111', 'W0107'),
-                   skip=["src' imported but unused",
-                         "skip_' imported but unused",
-                         "skip__' imported but unused",
-                         "skip___' imported but unused",
-                         "Unused variable 'skip_'",
-                         "imported as skip_",
-                         "Instance of 'tuple' has no",
+                   skip=["Instance of 'tuple' has no",
                          "[E402] module level import",
                          "R1720",
                          "E0611: No name '_test_criterion_",

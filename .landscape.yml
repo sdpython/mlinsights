@@ -8,7 +8,6 @@ requirements:
 ignore-paths:
     - _unittests
     - _doc
-    - src
     - dist
     - build
 ignore-patterns:

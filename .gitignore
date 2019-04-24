@@ -278,6 +278,6 @@ _doc/notebooks/data/dog-cat-pixabay
 _doc/notebooks/graph*.dot*
 _doc/notebooks/sklearn/graph*.png
 _doc/notebooks/sklearn/graph*.dot
-src/mlinsights/mlmodel/piecewise_tree_regression_criterion*.c
-src/mlinsights/mlmodel/direct*.c
-src/mlinsights/mlmodel/_*.c
+mlinsights/mlmodel/piecewise_tree_regression_criterion*.c
+mlinsights/mlmodel/direct*.c
+mlinsights/mlmodel/_*.c

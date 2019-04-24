@@ -2,21 +2,20 @@
 @file
 @brief Implements a custom criterion to train a decision tree.
 """
+cimport cython
+import numpy
+cimport numpy
+
+numpy.import_array()
+
 from libc.stdlib cimport calloc, free
 from libc.stdio cimport printf
 from libc.string cimport memcpy
 from libc.math cimport NAN
 
-import numpy
-cimport numpy
-cimport cython
-
-numpy.import_array()
-
 cimport scipy.linalg.cython_lapack as cython_lapack
-
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
-from _piecewise_tree_regression_common cimport CommonRegressorCriterion
+from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
 
 
 cdef class LinearRegressorCriterion(CommonRegressorCriterion):

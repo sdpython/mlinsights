@@ -15,9 +15,9 @@
     The purpose was to show that a fast implementation requires
     some tricks (see :ref:`piecewiselinearregressioncriterionrst`) and
     `piecewise_tree_regression_criterion.pyx
-    <https://github.com/sdpython/mlinsights/blob/master/src/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx>`_,
+    <https://github.com/sdpython/mlinsights/blob/master/mlinsights/mlmodel/piecewise_tree_regression_criterion.pyx>`_,
     `piecewise_tree_regression_criterion_fast.pyx
-    <https://github.com/sdpython/mlinsights/blob/master/src/mlinsights/mlmodel/piecewise_tree_regression_criterion_fast.pyx>`_
+    <https://github.com/sdpython/mlinsights/blob/master/mlinsights/mlmodel/piecewise_tree_regression_criterion_fast.pyx>`_
     for the code. Other than that, every function to overlaod is marked as
     :epkg:`nogil`. Every function or method marked as *nogil* cannot
     go through the :epkg:`GIL` (see also :epkg:`PEP-0311`),

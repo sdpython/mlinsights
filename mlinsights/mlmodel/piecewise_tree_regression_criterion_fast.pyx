@@ -2,17 +2,17 @@
 @file
 @brief Implements a custom criterion to train a decision tree.
 """
-from libc.stdlib cimport calloc, free
-from libc.math cimport NAN
-
+cimport cython
 import numpy
 cimport numpy
-cimport cython
 
 numpy.import_array()
 
+from libc.stdlib cimport calloc, free
+from libc.math cimport NAN
+
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
-from _piecewise_tree_regression_common cimport CommonRegressorCriterion
+from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
 
 
 cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):

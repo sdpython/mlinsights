@@ -2,7 +2,7 @@
 language: python
 
 python:
-  - { PATH: "{{replace(Python37, '\\', '\\\\')}}", VERSION: 3.7, DIST: std, PYTHONPATH: src }
+  - { PATH: "{{replace(Python37, '\\', '\\\\')}}", VERSION: 3.7, DIST: std }
   
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
