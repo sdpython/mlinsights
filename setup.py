@@ -168,8 +168,9 @@ if not r:
     extensions = ["direct_blas_lapack"]
     if compare_module_version(sklearn.__version__, "0.21") >= 0:
         extensions.extend([
-            "piecewise_tree_regression_criterion_linear",
+            "_piecewise_tree_regression_common",
             "piecewise_tree_regression_criterion",
+            "piecewise_tree_regression_criterion_linear",
             "piecewise_tree_regression_criterion_fast",
         ])
     else:
@@ -183,7 +184,8 @@ if not r:
     for name in extensions:
         m = Extension(pattern1 % name,
                       ['src/mlinsights/mlmodel/%s.pyx' % name],
-                      include_dirs=[numpy.get_include()],
+                      include_dirs=[numpy.get_include(),
+                                    'src/mlinsights/mlmodel'],
                       extra_compile_args=["-O3"])
         ext_modules.append(m)
 

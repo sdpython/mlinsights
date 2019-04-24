@@ -12,7 +12,6 @@ if not exist %pythonexe% set pythonexe="c:\Python366_x64\python.exe"
 if not exist %pythonexe% set pythonexe="c:\Python365_x64\python.exe"
 if not exist %pythonexe% set pythonexe="c:\Python364_x64\python.exe"
 if not exist %pythonexe% set pythonexe="c:\Python363_x64\python.exe"
-if not exist %pythonexe% set pythonexe="c:\Python36_x64\python.exe"
 %pythonexe% -u %root%\setup.py build_ext --inplace --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo Done Compile.
