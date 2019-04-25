@@ -19,7 +19,7 @@ before_script:
 script:
   - { CMD: "python -u setup.py unittests", NAME: "UT" }
 after_script:
-  - python setup.py bdist_wheel
+  - python .\setup.py bdist_wheel
   - if [ ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
 documentation:
   - if [ ${NAME} == "UT" ] then python -u setup.py build_sphinx fi

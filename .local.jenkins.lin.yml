@@ -22,7 +22,7 @@ script:
   - { CMD: "$PYINT -u setup.py unittests", NAME: "UT" }
 
 after_script:
-  - $PYINT -u setup.py bdist_wheel
+  - $PYINT -u ./setup.py bdist_wheel
   - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
 
 documentation:

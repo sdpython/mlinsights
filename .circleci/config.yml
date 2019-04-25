@@ -126,7 +126,7 @@ jobs:
           name: wheel
           command: |
             . venv/bin/activate
-            python setup.py bdist_wheel
+            python ./setup.py bdist_wheel
             mkdir -p test-reports/dist
             cp dist/*.whl test-reports/dist
             mkdir -p test-reports

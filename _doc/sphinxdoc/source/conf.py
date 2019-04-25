@@ -65,6 +65,8 @@ latex_elements['preamble'] += custom_preamble
 
 epkg_dictionary.update({
     'BLAS': 'http://www.netlib.org/blas/explore-html',
+    'bootstrap': 'https://en.wikipedia.org/wiki/Bootstrapping_(statistics)',
+    'cython': 'https://cython.org/',
     'decision tree': 'https://en.wikipedia.org/wiki/Decision_tree',
     'DOT': 'https://en.wikipedia.org/wiki/DOT_(graph_description_language)',
     'GIL': 'https://wiki.python.org/moin/GlobalInterpreterLock',
@@ -87,6 +89,7 @@ epkg_dictionary.update({
     'sklearn': ('http://scikit-learn.org/stable/',
                 ('http://scikit-learn.org/stable/modules/generated/{0}.html', 1),
                 ('http://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),
+    'statsmodels': 'https://www.statsmodels.org/stable/index.html',
     't-SNE': 'https://lvdmaaten.github.io/tsne/',
     'torch': 'https://pytorch.org/',
     'tqdm': 'https://github.com/tqdm/tqdm',
