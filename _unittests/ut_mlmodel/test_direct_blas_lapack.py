@@ -6,7 +6,7 @@ import unittest
 import numpy
 from scipy.linalg.lapack import dgelss as scipy_dgelss  # pylint: disable=E0611
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.mlmodel.direct_blas_lapack import dgelss  # pylint: disable=E0611
+from mlinsights.mlmodel.direct_blas_lapack import dgelss  # pylint: disable=E0611, E0401
 
 
 class TestDirectBlasLapack(ExtTestCase):

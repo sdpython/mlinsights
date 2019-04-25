@@ -12,7 +12,7 @@ class TestCodeStyle(ExtTestCase):
 
     def test_style_src(self):
         thi = os.path.abspath(os.path.dirname(__file__))
-        src_ = os.path.normpath(os.path.join(thi, "..", ".."))
+        src_ = os.path.normpath(os.path.join(thi, "..", "..", "mlinsights"))
         check_pep8(src_, fLOG=fLOG,
                    pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
                                   'W0201', 'W0221', 'E0632', 'R1702', 'W0212', 'W0223',
@@ -20,6 +20,7 @@ class TestCodeStyle(ExtTestCase):
                    skip=["categories_to_integers.py:174: W0640",
                          "R1720",
                          "E0401: Unable to import 'mlinsights.mlmodel.piecewise_tree_regression_criterion",
+                         "setup.py:",
                          ])
 
     def test_style_test(self):
@@ -27,7 +28,7 @@ class TestCodeStyle(ExtTestCase):
         test = os.path.normpath(os.path.join(thi, "..", ))
         check_pep8(test, fLOG=fLOG, neg_pattern="temp_.*",
                    pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
-                                  'C0111', 'W0107'),
+                                  'C0111', 'W0107', 'C0111'),
                    skip=["Instance of 'tuple' has no",
                          "[E402] module level import",
                          "R1720",

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Configuration for the documntation.
+"""
 import sys
 import os
 import sphinx_readable_theme
@@ -40,7 +43,9 @@ custom_preamble = """\n
 \\newcommand{\\fleche}[1]{\\overrightarrow{ #1 }}
 \\newcommand{\\intervalle}[2]{\\left\\{#1,\\cdots,#2\\right\\}}
 \\newcommand{\\loinormale}[2]{{\\cal N}\\pa{#1,#2}}
-\\newcommand{\\independant}[0]{\\;\\makebox[3ex]{\\makebox[0ex]{\\rule[-0.2ex]{3ex}{.1ex}}\\!\\!\\!\\!\\makebox[.5ex][l]{\\rule[-.2ex]{.1ex}{2ex}}\\makebox[.5ex][l]{\\rule[-.2ex]{.1ex}{2ex}}} \\,\\,}
+\\newcommand{\\independant}[0]{\\;\\makebox[3ex]
+{\\makebox[0ex]{\\rule[-0.2ex]{3ex}{.1ex}}\\!\\!\\!\\!\\makebox[.5ex][l]
+{\\rule[-.2ex]{.1ex}{2ex}}\\makebox[.5ex][l]{\\rule[-.2ex]{.1ex}{2ex}}} \\,\\,}
 \\newcommand{\\esp}{\\mathbb{E}}
 \\newcommand{\\pr}[1]{\\mathbb{P}\\pa{#1}}
 \\newcommand{\\loi}[0]{{\\cal L}}

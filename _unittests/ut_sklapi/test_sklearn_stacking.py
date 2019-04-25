@@ -20,11 +20,12 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
 from sklearn.preprocessing import Normalizer, MinMaxScaler
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", DeprecationWarning)
-    from sklearn.ensemble import RandomForestClassifier
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.sklapi import SkBaseTransformStacking
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", DeprecationWarning)
+    from sklearn.ensemble import RandomForestClassifier  # pylint: disable=C0412
 
 
 def load_wines_dataset(shuffle=False):

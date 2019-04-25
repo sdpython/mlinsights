@@ -58,7 +58,6 @@ def verbose():
     print("---------------------------------")
     print("package_dir =", package_dir)
     print("packages    =", packages)
-    print("package_data=", package_data)
     print("current     =", os.path.abspath(os.getcwd()))
     print("---------------------------------")
 
@@ -183,8 +182,7 @@ if not r:
                       ['mlinsights/mlmodel/%s.pyx' % name],
                       include_dirs=[numpy.get_include()],
                       extra_compile_args=["-O3"],
-                      language_level=3,
-                      language='c++')
+                      language='c')
         ext_modules.append(m)
 
     # cythonize
@@ -210,7 +208,6 @@ if not r:
         classifiers=CLASSIFIERS,
         packages=packages,
         package_dir=package_dir,
-        package_data=package_data,
         setup_requires=["pyquickhelper"],
         install_requires=['Cython', 'scikit-learn', 'pandas',
                           'matplotlib', 'pandas_streaming'],

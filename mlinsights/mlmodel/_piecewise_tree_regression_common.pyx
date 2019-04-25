@@ -30,8 +30,6 @@ cdef class CommonRegressorCriterion(Criterion):
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
     """
-    cdef const DOUBLE_t[:, ::1] sample_X
-
     def __getstate__(self):
         return {}
 
