@@ -79,7 +79,7 @@ class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
         import numpy
         from sklearn.feature_extraction.text import CountVectorizer
         from mlinsights.mlmodel.sklearn_text import TraceableCountVectorizer
-        import pprint
+        from pprint import pformat
 
         corpus = numpy.array([
             "This is the first document.",
@@ -92,14 +92,14 @@ class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
         print('CountVectorizer from scikit-learn')
         mod1 = CountVectorizer(ngram_range=(1, 2))
         mod1.fit(corpus)
-        print(mod1.transform(corpus).todense())
-        pprint(mod1.vocabulary_)
+        print(mod1.transform(corpus).todense()[:2])
+        print(pformat(mod1.vocabulary_)[:100])
 
         print('TraceableCountVectorizer from scikit-learn')
         mod2 = TraceableCountVectorizer(ngram_range=(1, 2))
         mod2.fit(corpus)
-        print(mod2.transform(corpus).todense())
-        pprint(mod2.vocabulary_)
+        print(mod2.transform(corpus).todense()[:2])
+        print(pformat(mod2.vocabulary_)[:100])
 
     A weirder example with
     @see cl TraceableTfidfVectorizer shows more differences.
@@ -122,7 +122,7 @@ class TraceableTfidfVectorizer(TfidfVectorizer, NGramsMixin):
         import numpy
         from sklearn.feature_extraction.text import TfidfVectorizer
         from mlinsights.mlmodel.sklearn_text import TraceableTfidfVectorizer
-        import pprint
+        from pprint import pprint
 
         corpus = numpy.array([
             "This is the first document.",
@@ -136,15 +136,15 @@ class TraceableTfidfVectorizer(TfidfVectorizer, NGramsMixin):
         mod1 = TfidfVectorizer(ngram_range=(1, 2),
                                token_pattern="[a-zA-Z ]{1,4}")
         mod1.fit(corpus)
-        print(mod1.transform(corpus).todense())
-        pprint(mod1.vocabulary_)
+        print(mod1.transform(corpus).todense()[:2])
+        print(pformat(mod1.vocabulary_)[:100])
 
         print('TraceableTfidfVectorizer from scikit-learn')
         mod2 = TraceableTfidfVectorizer(ngram_range=(1, 2),
                                        token_pattern="[a-zA-Z ]{1,4}")
         mod2.fit(corpus)
-        print(mod2.transform(corpus).todense())
-        pprint(mod2.vocabulary_)
+        print(mod2.transform(corpus).todense()[:2])
+        print(pformat(mod2.vocabulary_)[:100])
     """
 
     def _word_ngrams(self, tokens, stop_words=None):
