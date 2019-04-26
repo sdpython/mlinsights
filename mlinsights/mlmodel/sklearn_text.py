@@ -84,10 +84,9 @@ class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
         corpus = numpy.array([
             "This is the first document.",
             "This document is the second document.",
-            "And this is the third one.",
             "Is this the first document?",
             "",
-        ]).reshape((5, ))
+        ]).reshape((4, ))
 
         print('CountVectorizer from scikit-learn')
         mod1 = CountVectorizer(ngram_range=(1, 2))
@@ -122,15 +121,14 @@ class TraceableTfidfVectorizer(TfidfVectorizer, NGramsMixin):
         import numpy
         from sklearn.feature_extraction.text import TfidfVectorizer
         from mlinsights.mlmodel.sklearn_text import TraceableTfidfVectorizer
-        from pprint import pprint
+        from pprint import pformat
 
         corpus = numpy.array([
             "This is the first document.",
             "This document is the second document.",
-            "And this is the third one.",
             "Is this the first document?",
             "",
-        ]).reshape((5, ))
+        ]).reshape((4, ))
 
         print('TfidfVectorizer from scikit-learn')
         mod1 = TfidfVectorizer(ngram_range=(1, 2),
