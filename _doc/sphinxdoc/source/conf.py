@@ -66,6 +66,7 @@ latex_elements['preamble'] += custom_preamble
 epkg_dictionary.update({
     'BLAS': 'http://www.netlib.org/blas/explore-html',
     'bootstrap': 'https://en.wikipedia.org/wiki/Bootstrapping_(statistics)',
+    'CountVectorizer': 'https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html',
     'cython': 'https://cython.org/',
     'decision tree': 'https://en.wikipedia.org/wiki/Decision_tree',
     'DOT': 'https://en.wikipedia.org/wiki/DOT_(graph_description_language)',
@@ -91,6 +92,7 @@ epkg_dictionary.update({
                 ('http://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),
     'statsmodels': 'https://www.statsmodels.org/stable/index.html',
     't-SNE': 'https://lvdmaaten.github.io/tsne/',
+    'TfidfVectorizer': 'https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html',
     'torch': 'https://pytorch.org/',
     'tqdm': 'https://github.com/tqdm/tqdm',
     'TSNE': 'https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html',

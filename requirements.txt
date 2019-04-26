@@ -7,7 +7,7 @@ memory_profiler
 git+https://github.com/sdpython/nbconvert.git@fixes
 pandas_streaming
 pybind11
-pyquickhelper>=1.9.3069
+pyquickhelper>=1.9.3118
 sphinx>=1.8
 sphinx_readable_theme
 torchvision

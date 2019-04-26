@@ -38,6 +38,10 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.transfer_transformer.TransferTransformer
 
+.. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableCountVectorizer
+
+.. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableTfidfVectorizer
+
 Exploration
 +++++++++++
 
