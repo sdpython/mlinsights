@@ -55,11 +55,10 @@ which trains a multi-layer perceptron with :epkg:`L1` norm...
 
     tutorial/index
     api/index
-    i_index
     i_ex
     all_notebooks
     blog/blogindex
-    index_modules
+    i_index
 
 Short example:
 
