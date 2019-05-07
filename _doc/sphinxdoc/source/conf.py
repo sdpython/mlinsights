@@ -97,3 +97,7 @@ epkg_dictionary.update({
     'tqdm': 'https://github.com/tqdm/tqdm',
     'TSNE': 'https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html',
 })
+
+nblinks = {
+    'alter_pipeline_for_debugging': 'http://www.xavierdupre.fr/app/mlinsights/helpsphinx/mlinsights/helpers/pipeline.html#mlinsights.helpers.pipeline.alter_pipeline_for_debugging',
+}

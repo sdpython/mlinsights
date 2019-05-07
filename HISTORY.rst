@@ -5,9 +5,14 @@
 History
 =======
 
-current - 2019-03-26 - 0.00Mb
+current - 2019-05-07 - 0.00Mb
 =============================
 
+* `53`: implements a function to extract intermediate model outputs within a pipeline (2019-05-07)
+* `51`: Implements a tfidfvectorizer which keeps more information about n-grams (2019-04-26)
+* `46`: implements a way to determine close leaves in a decision tree (2019-04-01)
+* `44`: implements a model which produces confidence intervals based on bootstrapping (2019-03-29)
+* `40`: implements a custom criterion for a decision tree optimizing for a linear regression (2019-03-28)
 * `39`: implements a custom criterion for decision tree (2019-03-26)
 * `41`: implements a direct call to a lapack function from cython (2019-03-25)
 * `38`: better implementation of a regression criterion (2019-03-25)
