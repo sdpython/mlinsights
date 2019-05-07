@@ -7,6 +7,7 @@ import pandas
 from sklearn.base import TransformerMixin, ClassifierMixin, RegressorMixin
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
+from ..helpers.pipeline import enumerate_pipeline_models
 
 
 def _pipeline_info(pipe, data, context):
@@ -211,3 +212,55 @@ def pipeline2dot(pipe, data, **params):
 
     exp.append('}')
     return "\n".join(exp)
+
+
+def pipeline2str(pipe, indent=3):
+    """
+    Exports a *scikit-learn* pipeline to text.
+
+    @param      pipe        *scikit-learn* pipeline
+    @return                 str
+
+    .. runpython::
+        :showcode:
+
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.impute import SimpleImputer
+        from sklearn.preprocessing import OneHotEncoder
+        from sklearn.preprocessing import StandardScaler, MinMaxScaler
+        from sklearn.compose import ColumnTransformer
+        from sklearn.pipeline import Pipeline
+
+        from mlinsights.plotting import pipeline2str
+
+        numeric_features = ['age', 'fare']
+        numeric_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler())])
+
+        categorical_features = ['embarked', 'sex', 'pclass']
+        categorical_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+            ('onehot', OneHotEncoder(handle_unknown='ignore'))])
+
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, numeric_features),
+                ('cat', categorical_transformer, categorical_features),
+            ])
+
+        clf = Pipeline(steps=[('preprocessor', preprocessor),
+                              ('classifier', LogisticRegression(solver='lbfgs'))])
+        text = pipeline2str(clf)
+        print(text)
+    """
+    rows = []
+    for coor, model, vs in enumerate_pipeline_models(pipe):
+        spaces = " " * indent * (len(coor) - 1)
+        if vs is None:
+            msg = "{}{}".format(spaces, model.__class__.__name__)
+        else:
+            v = ','.join(vars)
+            msg = "{}{}({})".format(spaces, model.__class__.__name__, v)
+        rows.append(msg)
+    return "\n".join(rows)

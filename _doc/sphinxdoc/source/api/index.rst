@@ -5,6 +5,7 @@ API
 .. toctree::
 
     plotting
+    helpers
     metrics
     mlmodel
     tree
