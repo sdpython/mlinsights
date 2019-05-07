@@ -260,7 +260,7 @@ def pipeline2str(pipe, indent=3):
         if vs is None:
             msg = "{}{}".format(spaces, model.__class__.__name__)
         else:
-            v = ','.join(vars)
+            v = ','.join(vs)
             msg = "{}{}({})".format(spaces, model.__class__.__name__, v)
         rows.append(msg)
     return "\n".join(rows)
