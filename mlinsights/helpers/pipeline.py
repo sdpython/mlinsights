@@ -87,11 +87,11 @@ class BaseEstimatorDebugInformation:
             self.methods["predict"] = lambda model, X: model._debug_predict(X)
         if hasattr(model, "predict_proba") and callable(model.predict_proba):
             model._debug_predict_proba = model.predict_proba
-            self.methods["predict_proba"] = lambda model, X: model._predict_proba(
+            self.methods["predict_proba"] = lambda model, X: model._debug_predict_proba(
                 X)
         if hasattr(model, "decision_function") and callable(model.decision_function):
             model._debug_decision_function = model.decision_function
-            self.methods["decision_function"] = lambda model, X: model._decision_function(
+            self.methods["decision_function"] = lambda model, X: model._debug_decision_function(
                 X)
 
     def __repr__(self):
