@@ -209,7 +209,7 @@ if not r:
         packages=packages,
         package_dir=package_dir,
         setup_requires=["pyquickhelper"],
-        install_requires=['Cython', 'scikit-learn', 'pandas',
+        install_requires=['Cython', 'scikit-learn>=0.21', 'pandas',
                           'matplotlib', 'pandas_streaming'],
         ext_modules=ext_modules,  # cythonize(ext_modules),
     )
