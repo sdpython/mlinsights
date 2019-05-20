@@ -282,3 +282,4 @@ mlinsights/mlmodel/piecewise_tree_regression_criterion*.c
 mlinsights/mlmodel/direct*.c
 mlinsights/mlmodel/_*.c
 _unittests/unittests.out
+_doc/notebooks/explore/simages/*

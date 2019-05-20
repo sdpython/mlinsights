@@ -2,10 +2,10 @@
 @file
 @brief Correlations.
 """
+import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
 from sklearn import clone
-import numpy
 
 
 def non_linear_correlations(df, model, draws=5, minmax=False):
