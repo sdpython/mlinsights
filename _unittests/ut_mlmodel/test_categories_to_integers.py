@@ -6,7 +6,7 @@ import unittest
 import pandas
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import SimpleImputer as Imputer
+from sklearn.impute import SimpleImputer as Imputer
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import CategoriesToIntegers
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
