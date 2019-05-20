@@ -151,9 +151,13 @@ if not r:
     if len(sys.argv) in (1, 2) and sys.argv[-1] in ("--help-commands",):
         from pyquickhelper.pycode import process_standard_options_for_setup_help
         process_standard_options_for_setup_help(sys.argv)
-    from pyquickhelper.pycode import clean_readme
     from mlinsights import __version__ as sversion
-    long_description = clean_readme(long_description)
+
+    try:
+        from pyquickhelper.pycode import clean_readme
+        long_description = clean_readme(long_description)
+    except ImportError:
+        long_description = ""
     root = os.path.abspath(os.path.dirname(__file__))
     if sys.platform.startswith("win"):
         extra_compile_args = None
