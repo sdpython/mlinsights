@@ -73,6 +73,11 @@ class MLCache:
         for k, v in sorted(params.items()):
             if isinstance(v, (int, float, str)):
                 sv = str(v)
+            elif isinstance(v, tuple):
+                if not all(map(lambda e: isinstance(e, (int, float, str)), v)):
+                    raise TypeError(
+                        "Unable to create a key with value '{0}':{1}".format(k, v))
+                return str(v)
             elif isinstance(v, numpy.ndarray):
                 # id(v) may have been better but
                 # it does not play well with joblib.
