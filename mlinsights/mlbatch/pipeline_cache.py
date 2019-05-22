@@ -83,9 +83,10 @@ class PipelineCache(Pipeline):
                     message_clsname='PipelineCache',
                     message=self._log_message(step_idx),
                     **fit_params_steps[name])
-                self.cache_.cache(params, (Xt, fitted_transformer))
+                self.cache_.cache(params, fitted_transformer)
             else:
-                Xt, fitted_transformer = cached
+                fitted_transformer = cached
+                Xt = fitted_transformer.transform(Xt)
 
             self.steps[step_idx] = (name, fitted_transformer)
         if self._final_estimator == 'passthrough':
