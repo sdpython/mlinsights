@@ -65,7 +65,6 @@ class PipelineCache(Pipeline):
             self.cache_ = MLCache.create_cache(self.cache_name)
         else:
             self.cache_ = MLCache.get_cache(self.cache_name)
-
         Xt = X
         for (step_idx, name, transformer) in self._iter(with_final=False, filter_passthrough=False):
             if (transformer is None or transformer == 'passthrough'):
@@ -73,7 +72,8 @@ class PipelineCache(Pipeline):
                     continue
 
             params = transformer.get_params()
-            params['X'] = X
+            params['__class__'] = transformer.__class__.__name__
+            params['X'] = Xt
             params['y'] = y
             cached = self.cache_.get(params)
             if cached is None:
@@ -83,9 +83,9 @@ class PipelineCache(Pipeline):
                     message_clsname='PipelineCache',
                     message=self._log_message(step_idx),
                     **fit_params_steps[name])
-                self.cache_.cache(params, fitted_transformer)
+                self.cache_.cache(params, (Xt, fitted_transformer))
             else:
-                fitted_transformer = cached
+                Xt, fitted_transformer = cached
 
             self.steps[step_idx] = (name, fitted_transformer)
         if self._final_estimator == 'passthrough':

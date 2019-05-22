@@ -19,6 +19,7 @@ class MLCache:
         """
         self.name = name
         self.cached = {}
+        self.count_ = {}
 
     def cache(self, params, value):
         """
@@ -31,6 +32,7 @@ class MLCache:
         if key in self.cached:
             raise KeyError("Key {0} already exists".format(params))
         self.cached[key] = value
+        self.count_[key] = 0
 
     def get(self, params, default=None):
         """
@@ -41,7 +43,21 @@ class MLCache:
         @return             value or None if it does not exists
         """
         key = MLCache.as_key(params)
-        return self.cached.get(key, default)
+        res = self.cached.get(key, default)
+        if res != default:
+            self.count_[key] += 1
+        return res
+
+    def count(self, params):
+        """
+        Retrieves the number of times
+        an elements was retrieved from the cache.
+
+        @param      params  dictionary of parameters
+        @return             int
+        """
+        key = MLCache.as_key(params)
+        return self.count_.get(key, 0)
 
     @staticmethod
     def as_key(params):
@@ -51,12 +67,16 @@ class MLCache:
         @param      params      dictionary
         @return                 key as a string
         """
+        if isinstance(params, str):
+            return params
         els = []
         for k, v in sorted(params.items()):
             if isinstance(v, (int, float, str)):
                 sv = str(v)
             elif isinstance(v, numpy.ndarray):
-                sv = str(id(v))
+                # id(v) may have been better but
+                # it does not play well with joblib.
+                sv = hash(v.tostring())
             elif v is None:
                 sv = ""
             else:
