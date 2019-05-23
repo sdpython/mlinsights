@@ -7,6 +7,7 @@ API
     plotting
     helpers
     metrics
+    batch
     mlmodel
     tree
     search_rank

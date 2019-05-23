@@ -75,7 +75,7 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
     for every coefficient. The returned matrix is not
     necessarily symmetric.
 
-    ..exref::
+    .. exref::
         :title: Compute non linear correlations
 
         The following example compute non linear correlations
@@ -84,6 +84,7 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
 
         .. runpython::
             :showcode:
+            :warningout: FutureWarning
 
             import pandas
             from sklearn import datasets

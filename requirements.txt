@@ -1,7 +1,8 @@
 chardet
 coverage
-cpyquickhelper>=0.1.187
+cpyquickhelper>=0.2
 Cython
+joblib
 jyquickhelper
 memory_profiler
 git+https://github.com/sdpython/nbconvert.git@fixes
