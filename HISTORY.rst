@@ -5,7 +5,13 @@
 History
 =======
 
-current - 2019-05-07 - 0.00Mb
+current - 2019-05-23 - 0.00Mb
+=============================
+
+* `55`: Explore caching for gridsearchCV (2019-05-22)
+* `56`: Fixes #55, explore caching for scikit-learn pipeline (2019-05-22)
+
+0.2.269 - 2019-05-20 - 0.41Mb
 =============================
 
 * `53`: implements a function to extract intermediate model outputs within a pipeline (2019-05-07)
@@ -29,17 +35,9 @@ current - 2019-05-07 - 0.00Mb
 * `29`: explore different implementation of polynomialfeatures (2019-02-15)
 * `28`: implement PiecewiseLinearRegression (2019-02-10)
 * `27`: implement TransferTransformer (2019-02-04)
-
-0.1.138 - 2019-02-01 - 0.05Mb
-=============================
-
 * `26`: add function to convert a scikit-learn pipeline into a graph (2019-02-01)
 * `25`: implements kind of trainable t-SNE (2019-01-31)
 * `6`: use keras and pytorch (2019-01-03)
-
-0.1.116 - 2018-11-12 - 0.04Mb
-=============================
-
 * `22`: modifies plot gallery to impose coordinates (2018-11-10)
 * `20`: implements a QuantileMLPRegressor (quantile regression with MLP) (2018-10-22)
 * `19`: fix issues introduced with changes in keras 2.2.4 (2018-10-06)
@@ -57,8 +55,4 @@ current - 2019-05-07 - 0.00Mb
 * `7`: add quantile regression (2018-05-07)
 * `5`: replace flake8 by code style (2018-04-14)
 * `1`: change background for cells in notebooks converted into rst then in html, highlight-ipython3 (2018-01-05)
-
-0.1.38 - 2017-12-06 - 0.01Mb
-============================
-
 * `2`: save features and metadatas for the search engine and retrieves them (2017-12-03)
