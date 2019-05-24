@@ -3,9 +3,9 @@
 @brief      test log(time=2s)
 """
 import unittest
+import warnings
 import numpy
 import pandas
-import warnings
 from sklearn.linear_model import LogisticRegression
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
