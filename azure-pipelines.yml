@@ -1,0 +1,102 @@
+jobs:
+- job: 'TestLinux'
+  pool:
+    vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python37-Linux:
+        python.version: '3.7'
+    maxParallel: 3
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: sudo apt-get update
+    displayName: 'AptGet Update'
+  - script: sudo apt-get install -y pandoc
+    displayName: 'Install Pandoc'
+  - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
+    displayName: 'Install Latex'
+  - script: sudo apt-get install -y p7zip-full
+    displayName: 'Install 7z, rar'
+  - script: sudo apt-get install -y inkscape
+    displayName: 'Install Inkscape'
+  - script: sudo apt-get install -y graphviz
+    displayName: 'Install Graphviz'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: |
+      python -u setup.py build_ext --inplace
+    displayName: 'Runs Unit Tests'
+  - script: |
+      python -u setup.py unittests
+    displayName: 'Runs Unit Tests'
+  - script: |
+      python -u setup.py bdist_wheel
+    displayName: 'Build Package'
+  - script: |
+      python -u setup.py build_sphinx
+    displayName: 'Builds Documentation'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-linux-$(python.version)'
+      targetPath: 'dist'
+
+- job: 'TestMac'
+  pool:
+    vmImage: 'macOS-10.13' # other options: 'ubuntu-16.04', 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python37-Mac:
+        python.version: '3.7'
+    maxParallel: 3
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: gcc --version
+    displayName: 'gcc version'
+  - script: |
+          brew update
+    displayName: 'brew update'
+  - script: export
+    displayName: 'export'
+  - script: gcc --version
+    displayName: 'gcc version'
+  - script: brew install llvm
+    displayName: 'install llvm'
+  - script: brew install p7zip
+    displayName: 'Install p7zip'
+  - script: brew install pandoc
+    displayName: 'Install Pandoc'
+  - script: brew install graphviz
+    displayName: 'Install Graphviz'
+  - script: brew cask install mactex
+    displayName: 'Install latex'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: brew install pybind11
+    displayName: 'Install pybind11'
+  - script: pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: |
+          export MACOSX_DEPLOYMENT_TARGET=10.13
+          python setup.py build_ext --inplace
+    displayName: 'Build package'
+  - script: |
+      python -u setup.py unittests
+    displayName: 'Runs Unit Tests'
+  - script: |
+      python -u setup.py bdist_wheel
+    displayName: 'Build Package'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-mac-$(python.version)'
+      targetPath: 'dist'
+

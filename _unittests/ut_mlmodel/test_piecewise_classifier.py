@@ -3,7 +3,6 @@
 @brief      test log(time=2s)
 """
 import unittest
-import warnings
 import numpy
 import pandas
 from sklearn.linear_model import LogisticRegression
@@ -134,7 +133,7 @@ class TestPiecewiseClassifier(ExtTestCase):
         self.assertEqual(pred1, pred2)
 
     def test_piecewise_classifier_pandas(self):
-        X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
+        X = pandas.DataFrame(numpy.array([[0.1, 0.2], [-0.2, 0.3]]))
         Y = numpy.array([0, 1])
         clq = PiecewiseClassifier()
         clq.fit(X, Y)
@@ -142,17 +141,13 @@ class TestPiecewiseClassifier(ExtTestCase):
         self.assertEqual(numpy.array([0, 1]), pred2)
 
     def test_logistic_regression_check(self):
-        X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
+        X = pandas.DataFrame(numpy.array([[0.1, 0.2], [-0.2, 0.3]]))
         Y = numpy.array([0, 1])
-        clq = LogisticRegression(fit_intercept=False)
+        clq = LogisticRegression(fit_intercept=False, solver='liblinear',
+                                 random_state=42)
         clq.fit(X, Y)
         pred2 = clq.predict(X)
-        if pred2[0] != 0 or pred2[1] != 1:
-            warnings.warn("test_logistic_regression_check FAILS {0}".format(
-                clq.predict_proba(X)))
-        else:
-            warnings.warn("test_logistic_regression_check SUCCEEDS {0}".format(
-                clq.predict_proba(X)))
+        self.assertEqual(numpy.array([0, 1]), pred2)
 
     def test_piecewise_classifier_list(self):
         X = [[0.1, 0.2], [0.2, 0.3]]
