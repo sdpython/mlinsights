@@ -4,8 +4,6 @@ import sys
 import os
 from setuptools import setup, Extension
 from setuptools import find_packages
-from Cython.Build import cythonize
-import numpy
 
 #########
 # settings
@@ -194,6 +192,7 @@ if not r:
             print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
 
     pattern1 = "mlinsights.mlmodel.%s"
+    import numpy
     for name in extensions:
         m = Extension(pattern1 % name,
                       ['mlinsights/mlmodel/%s.pyx' % name],
@@ -203,7 +202,7 @@ if not r:
         ext_modules.append(m)
 
     # cythonize
-
+    from Cython.Build import cythonize
     opts = dict(boundscheck=False, cdivision=True,
                 wraparound=False, language_level=3,
                 cdivision_warnings=True)

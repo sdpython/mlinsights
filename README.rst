@@ -10,6 +10,9 @@
 .. image:: https://circleci.com/gh/sdpython/mlinsights/tree/master.svg?style=svg
     :target: https://circleci.com/gh/sdpython/mlinsights/tree/master
 
+.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights
+    :target: https://dev.azure.com/xavierdupre3/mlinsights/
+
 .. image:: https://badge.fury.io/py/mlinsights.svg
     :target: http://badge.fury.io/py/mlinsights
 
