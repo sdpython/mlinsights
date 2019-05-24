@@ -5,6 +5,7 @@
 import unittest
 import numpy
 import pandas
+import warnings
 from sklearn.linear_model import LogisticRegression
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
@@ -135,13 +136,23 @@ class TestPiecewiseClassifier(ExtTestCase):
     def test_piecewise_classifier_pandas(self):
         X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
         Y = numpy.array([0, 1])
-        clr = LogisticRegression(fit_intercept=False)
-        clr.fit(X, Y)
         clq = PiecewiseClassifier()
         clq.fit(X, Y)
-        pred1 = clr.predict(X)
         pred2 = clq.predict(X)
-        self.assertEqual(pred1, pred2)
+        self.assertEqual(numpy.array([0, 1]), pred2)
+
+    def test_logistic_regression_check(self):
+        X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
+        Y = numpy.array([0, 1])
+        clq = LogisticRegression(fit_intercept=False)
+        clq.fit(X, Y)
+        pred2 = clq.predict(X)
+        if pred2[0] != 0 or pred2[1] != 1:
+            warnings.warn("test_logistic_regression_check FAILS {0}".format(
+                clq.predict_proba(X)))
+        else:
+            warnings.warn("test_logistic_regression_check SUCCEEDS {0}".format(
+                clq.predict_proba(X)))
 
     def test_piecewise_classifier_list(self):
         X = [[0.1, 0.2], [0.2, 0.3]]

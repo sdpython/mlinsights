@@ -71,7 +71,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
         clk = ClassifierAfterKMeans(c_n_clusters=6, c_random_state=state)
         clk.fit(X, Y)
         score = clk.score(X, Y)
-        self.assertGreater(score, 0.97)
+        self.assertGreater(score, 0.95)
 
 
 if __name__ == "__main__":

@@ -39,7 +39,14 @@ class TestSearchPredictions(ExtTestCase):
 
         se = SearchEnginePredictions(clf, n_neighbors=5)
         r = repr(se)
+        self.maxDiff = None
         if compare_module_version(sklearn.__version__, '0.21.0') < 0:
+            self.assertEqual(r.replace("\n", "").replace(" ", ""),
+                             "SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False," +
+                             "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='warn',n_jobs=None," +
+                             "penalty='l2',random_state=None,solver='warn',tol=0.0001,verbose=0,warm_start=False)," +
+                             "fct_params=None,n_neighbors=5)")
+        elif compare_module_version(sklearn.__version__, '0.21.0') < 0:
             self.assertEqual(r.replace("\n", "").replace(" ", ""),
                              "SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False," +
                              "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='warn',n_jobs=None," +
@@ -47,10 +54,10 @@ class TestSearchPredictions(ExtTestCase):
                              "fct_params=None,n_neighbors=5)")
         else:
             self.assertEqual(r.replace("\n", "").replace(" ", ""),
-                             "SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False," +
-                             "fit_intercept=True,intercept_scaling=1,l1_ratio=None,max_iter=100,multi_class='warn',n_jobs=None," +
-                             "penalty='l2',random_state=None,solver='warn',tol=0.0001,verbose=0,warm_start=False)," +
-                             "fct_params=None,n_neighbors=5)")
+                             "SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False,"
+                             "fit_intercept=True,intercept_scaling=1,l1_ratio=None,max_iter=100,multi_class='warn',"
+                             "n_jobs=None,penalty='l2',random_state=None,solver='lbfgs',tol=0.0001,verbose=0,"
+                             "warm_start=False),fct_params=None,n_neighbors=5)")
 
         se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
