@@ -34,8 +34,11 @@ CLASSIFIERS = [
 #######
 
 here = os.path.dirname(__file__)
-packages = find_packages(where=here)
+packages = find_packages()
 package_dir = {k: os.path.join(here, k.replace(".", "/")) for k in packages}
+package_data = {
+    project_var_name + ".mlmodel": ["*.pyx"],
+}
 
 ############
 # functions
@@ -59,9 +62,10 @@ def is_local():
 
 def verbose():
     print("---------------------------------")
-    print("package_dir =", package_dir)
-    print("packages    =", packages)
-    print("current     =", os.path.abspath(os.getcwd()))
+    print("package_dir  =", package_dir)
+    print("packages     =", packages)
+    print("package_data =", package_data)
+    print("current      =", os.path.abspath(os.getcwd()))
     print("---------------------------------")
 
 ##########
@@ -74,17 +78,23 @@ if is_local() and not ask_help():
         from pyquickhelper.pycode import write_version_for_setup
         return write_version_for_setup(__file__)
 
-    write_version()
+    try:
+        write_version()
+        subversion = None
+    except Exception:
+        subversion = ""
 
-    versiontxt = os.path.join(os.path.dirname(__file__), "version.txt")
-    if os.path.exists(versiontxt):
-        with open(versiontxt, "r") as f:
-            lines = f.readlines()
-        subversion = "." + lines[0].strip("\r\n ")
-        if subversion == ".0":
-            raise Exception("Git version is wrong: '{0}'.".format(subversion))
-    else:
-        raise FileNotFoundError(versiontxt)
+    if subversion is None:
+        versiontxt = os.path.join(os.path.dirname(__file__), "version.txt")
+        if os.path.exists(versiontxt):
+            with open(versiontxt, "r") as f:
+                lines = f.readlines()
+            subversion = "." + lines[0].strip("\r\n ")
+            if subversion == ".0":
+                raise Exception(
+                    "Git version is wrong: '{0}'.".format(subversion))
+        else:
+            raise FileNotFoundError(versiontxt)
 else:
     # when the module is installed, no commit number is displayed
     subversion = ""
@@ -215,6 +225,7 @@ if not r:
         classifiers=CLASSIFIERS,
         packages=packages,
         package_dir=package_dir,
+        package_data=package_data,
         setup_requires=["pyquickhelper"],
         install_requires=['Cython', 'scikit-learn>=0.21', 'pandas',
                           'matplotlib', 'pandas_streaming'],

@@ -1,6 +1,6 @@
 chardet
 coverage
-cpyquickhelper>=0.2.222
+cpyquickhelper>=0.2.223
 Cython
 joblib
 jyquickhelper
