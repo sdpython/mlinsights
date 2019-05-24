@@ -27,6 +27,8 @@ jobs:
     displayName: 'Install Graphviz'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
+  - script: pip install numpy
+    displayName: 'Install numpy'
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
   - script: |
@@ -83,6 +85,8 @@ jobs:
     displayName: 'Install tools'
   - script: brew install pybind11
     displayName: 'Install pybind11'
+  - script: pip install numpy
+    displayName: 'Install numpy'
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
   - script: |
