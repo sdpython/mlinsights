@@ -172,24 +172,17 @@ if not r:
     else:
         extra_compile_args = ['-std=c++11']
 
-    from pyquickhelper.texthelper import compare_module_version
-    import sklearn
-
     ext_modules = []
 
     # mlmodel
 
     extensions = ["direct_blas_lapack"]
-    if compare_module_version(sklearn.__version__, "0.21") >= 0:
-        extensions.extend([
-            "_piecewise_tree_regression_common",
-            "piecewise_tree_regression_criterion",
-            "piecewise_tree_regression_criterion_linear",
-            "piecewise_tree_regression_criterion_fast",
-        ])
-    else:
-        if verbose:
-            print("Cannot build all cython extensions or upgrade scikit-learn to 0.21.")
+    extensions.extend([
+        "_piecewise_tree_regression_common",
+        "piecewise_tree_regression_criterion",
+        "piecewise_tree_regression_criterion_linear",
+        "piecewise_tree_regression_criterion_fast",
+    ])
 
     pattern1 = "mlinsights.mlmodel.%s"
     import numpy
