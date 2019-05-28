@@ -35,7 +35,7 @@ here = os.path.dirname(__file__)
 packages = find_packages()
 package_dir = {k: os.path.join(here, k.replace(".", "/")) for k in packages}
 package_data = {
-    project_var_name + ".mlmodel": ["*.pyx", "*.pyd"],
+    project_var_name + ".mlmodel": ["*.pyx", "*.pxd"],
 }
 
 ############
@@ -220,6 +220,6 @@ if not r:
         package_data=package_data,
         setup_requires=["pyquickhelper"],
         install_requires=['Cython', 'scikit-learn>=0.21', 'pandas',
-                          'matplotlib', 'pandas_streaming'],
+                          'matplotlib', 'pandas_streaming', 'numpy>=1.16'],
         ext_modules=ext_modules,  # cythonize(ext_modules),
     )
