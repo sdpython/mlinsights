@@ -35,7 +35,7 @@ here = os.path.dirname(__file__)
 packages = find_packages()
 package_dir = {k: os.path.join(here, k.replace(".", "/")) for k in packages}
 package_data = {
-    project_var_name + ".mlmodel": ["*.pyx", "*.pxd"],
+    project_var_name + ".mlmodel": ["*.pxd", "*.pyx"],
 }
 
 ############
