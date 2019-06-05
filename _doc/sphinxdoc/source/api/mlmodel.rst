@@ -17,6 +17,8 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.interval_regressor.IntervalRegressor
 
+.. autosignature:: mlinsights.mlmodel.nmf_predictor.NMFPredictor
+
 .. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseClassifier
 
 .. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseRegressor
