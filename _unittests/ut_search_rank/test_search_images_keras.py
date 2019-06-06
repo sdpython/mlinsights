@@ -27,13 +27,13 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
         # We delay the import as keras backend is not necessarily available.
         with redirect_stderr(StringIO()):
             try:
-                from keras.applications.mobilenet import MobileNet
+                from keras.applications.mobilenet import MobileNet  # pylint: disable=E0401
             except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn(
                     "tensorflow is probably not available yet on python 3.7: {0}".format(e))
                 return
-            from keras.preprocessing.image import ImageDataGenerator
-            from keras.preprocessing.image import img_to_array, load_img
+            from keras.preprocessing.image import ImageDataGenerator  # pylint: disable=E0401
+            from keras.preprocessing.image import img_to_array, load_img  # pylint: disable=E0401
 
         # deep learning model
         model = MobileNet(input_shape=None, alpha=1.0, depth_multiplier=1, dropout=1e-3, include_top=True,
