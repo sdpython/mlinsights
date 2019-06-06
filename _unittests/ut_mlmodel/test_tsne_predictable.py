@@ -25,6 +25,7 @@ class TestPredictableTSNE(ExtTestCase):
         pred = clr.transform(X)
         self.assertIsInstance(clr.estimator_, MLPRegressor)
         self.assertGreater(clr.loss_, 0)
+        self.assertNotEmpty(pred)
 
     def test_predictable_tsne_knn(self):
         iris = datasets.load_iris()
