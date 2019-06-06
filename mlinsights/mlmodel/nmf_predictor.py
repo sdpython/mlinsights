@@ -33,7 +33,7 @@ class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
 
         model = ApproximateNMFPredictor(n_components=2,
                                         force_positive=True)
-        model .fit(mat)
+        model .fit(train)
 
         test = numpy.array([[1, 1, 1, 0]], dtype=numpy.float64)
         pred = model.predict(test)
