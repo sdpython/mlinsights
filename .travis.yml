@@ -13,7 +13,7 @@ before_install:
   - sudo apt-get install graphviz
 install:
   - sudo apt-get install -qq gcc-6 g++-6
-  - pip install pyquickhelper cython
+  - pip install pyquickhelper cython scipy
   - pip3 install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp37-cp37m-linux_x86_64.whl
   - pip3 install https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp37-cp37m-linux_x86_64.whl
   - pip install -r requirements.txt

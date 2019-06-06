@@ -98,6 +98,7 @@ class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
         proj = self.estimator_svd_.transform(X)
         pred = self.estimator_svd_.inverse_transform(proj)
         if self.force_positive:
-            zeros = numpy.zeros((1, pred.shape[1]), dtype=pred.dtype)
-            pred = numpy.maximum(pred, zeros)
+            zeros = numpy.zeros(
+                (1, pred.shape[1]), dtype=pred.dtype)  # pylint: disable=E1101
+            pred = numpy.maximum(pred, zeros)  # pylint: disable=E1111
         return pred
