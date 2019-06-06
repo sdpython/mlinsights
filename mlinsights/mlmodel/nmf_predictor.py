@@ -7,7 +7,7 @@ from sklearn.base import BaseEstimator, RegressorMixin, MultiOutputMixin
 from sklearn.decomposition import NMF, TruncatedSVD
 
 
-class NMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
+class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
     """
     Converts :epkg:`sklearn:decomposition:NMF` into
     a predictor so that the prediction does not involve
@@ -17,9 +17,27 @@ class NMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
     The prediction projects the test data into
     the components vector space and retrieves them back
     into their original space. The issue is it does not
-    necessarily produces results with only positive
+    necessarily produce results with only positive
     results as the :epkg:`sklearn:decomposition:NMF`
-    would do.
+    would do unless parameter *force_positive* is True.
+
+    .. runpython::
+        :showcode:
+
+        import numpy
+        from mlinsights.mlmodel.nmf_predictor import ApproximateNMFPredictor
+
+        train = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
+                           [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
+        train[:train.shape[1], :] += numpy.identity(train.shape[1])
+
+        model = ApproximateNMFPredictor(n_components=2,
+                                        force_positive=True)
+        model .fit(mat)
+
+        test = numpy.array([[1, 1, 1, 0]], dtype=numpy.float64)
+        pred = model.predict(test)
+        print(pred)
     """
 
     def __init__(self, force_positive=False, **kwargs):
@@ -67,13 +85,15 @@ class NMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
             del params['force_positive']
         self.estimator_nmf_ = NMF(**params)
         self.estimator_nmf_.fit(X)
-        self.estimator_svd_ = TruncatedSVD(n_components=self.estimator_nmf_.n_components_)
+        self.estimator_svd_ = TruncatedSVD(
+            n_components=self.estimator_nmf_.n_components_)
         self.estimator_svd_.fit(self.estimator_nmf_.components_)
         return self
 
     def predict(self, X):
         """
         Predicts based on the multi-output regressor.
+        The output has the same dimension as *X*.
         """
         proj = self.estimator_svd_.transform(X)
         pred = self.estimator_svd_.inverse_transform(proj)

@@ -22,7 +22,7 @@ install:
   - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
   - "%PYTHON%\\Scripts\\pip install git+https://github.com/sdpython/nbconvert.git@fixes"
   - "%PYTHON%\\Scripts\\pip install pyquickhelper --no-deps"
-  - "%PYTHON%\\Scripts\\pip install wcwidth sphinx_rtd_theme  backcall absl-py"
+  - "%PYTHON%\\Scripts\\pip install cython"
   - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy tensorflow protobuf h5py"
   - "%PYTHON%\\Scripts\\pip install keras pandas_streaming kiwisolver"
   - "%PYTHON%\\Scripts\\pip install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp37-cp37m-win_amd64.whl"

@@ -2,6 +2,7 @@
 from __future__ import print_function
 import sys
 import os
+import warnings
 from setuptools import setup, Extension
 from setuptools import find_packages
 
@@ -195,11 +196,17 @@ if not r:
         ext_modules.append(m)
 
     # cythonize
-    from Cython.Build import cythonize
-    opts = dict(boundscheck=False, cdivision=True,
-                wraparound=False, language_level=3,
-                cdivision_warnings=True)
-    ext_modules = cythonize(ext_modules, compiler_directives=opts)
+    try:
+        from Cython.Build import cythonize
+        opts = dict(boundscheck=False, cdivision=True,
+                    wraparound=False, language_level=3,
+                    cdivision_warnings=True)
+        ext_modules = cythonize(ext_modules, compiler_directives=opts)
+    except ImportError:
+        # Cython is not installed.
+        warnings.warn(
+            "cython is not installed. Only pure python subpckages will be available.")
+        ext_modules = None
 
     # setup
 

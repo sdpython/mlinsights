@@ -7,17 +7,17 @@ import numpy
 from scipy.sparse import csr_matrix
 from sklearn.metrics import mean_squared_error
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.mlmodel.nmf_predictor import NMFPredictor
+from mlinsights.mlmodel.nmf_predictor import ApproximateNMFPredictor
 
 
-class TestNMFPredictor(ExtTestCase):
+class TestApproximateNMFPredictor(ExtTestCase):
 
     def test_nmf_predictor(self):
         mat = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
 
-        mod = NMFPredictor(n_components=2)
+        mod = ApproximateNMFPredictor(n_components=2)
         mod.fit(mat)
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
@@ -40,7 +40,7 @@ class TestNMFPredictor(ExtTestCase):
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
         mat = csr_matrix(mat)
 
-        mod = NMFPredictor(n_components=2)
+        mod = ApproximateNMFPredictor(n_components=2)
         mod.fit(mat)
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
@@ -63,7 +63,7 @@ class TestNMFPredictor(ExtTestCase):
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
         mat = csr_matrix(mat)
 
-        mod = NMFPredictor(n_components=2)
+        mod = ApproximateNMFPredictor(n_components=2)
         mod.fit(mat)
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
@@ -86,7 +86,7 @@ class TestNMFPredictor(ExtTestCase):
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
 
-        mod = NMFPredictor(n_components=2, force_positive=True)
+        mod = ApproximateNMFPredictor(n_components=2, force_positive=True)
         mod.fit(mat)
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
@@ -113,7 +113,7 @@ class TestNMFPredictor(ExtTestCase):
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
         mat = csr_matrix(mat)
 
-        mod = NMFPredictor(n_components=2, force_positive=True)
+        mod = ApproximateNMFPredictor(n_components=2, force_positive=True)
         mod.fit(mat)
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))

@@ -7,7 +7,7 @@ from .classification_kmeans import ClassifierAfterKMeans
 from .extended_features import ExtendedFeatures
 from .interval_regressor import IntervalRegressor
 from .ml_featurizer import model_featurizer
-from .nmf_predictor import NMFPredictor
+from .nmf_predictor import ApproximateNMFPredictor
 from .piecewise_estimator import PiecewiseRegressor, PiecewiseClassifier
 from .predictable_tsne import PredictableTSNE
 from .quantile_mlpregressor import QuantileMLPRegressor
