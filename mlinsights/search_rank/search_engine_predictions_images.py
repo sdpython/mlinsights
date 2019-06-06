@@ -47,8 +47,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             self.module_ = "keras"
             iter_images = data
             # We delay the import as keras backend is not necessarily installed.
-            from keras.preprocessing.image import Iterator
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
+            from keras.preprocessing.image import Iterator  # pylint: disable=E0401
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(
                     "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
@@ -131,8 +131,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                     "Keras object but {0} was used to train the KNN.".format(self.module_))
             # We delay the import as keras backend is not necessarily installed.
             # keras, it expects an iterator.
-            from keras.preprocessing.image import Iterator
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator
+            from keras.preprocessing.image import Iterator  # pylint: disable=E0401
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(
                     "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
