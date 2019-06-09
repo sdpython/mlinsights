@@ -41,7 +41,7 @@ class TestSearchPredictions(ExtTestCase):
         exp = exp.replace("solver='warn',", "").replace("solver='lbfgs',", "")
         exp = exp.replace("l1_ratio=None,", "")
         # 0.22
-        exp = exp.replace("multi_class='warn'", "multi_class='auto'")
+        r = r.replace("multi_class='warn'", "multi_class='auto'")
         self.assertEqual(r.replace("\n", "").replace(" ", ""), exp)
 
         se.fit(data=None, features=df[["f1", "f2"]].values,
