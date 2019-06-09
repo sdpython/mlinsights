@@ -45,7 +45,7 @@ class TestPipelineCache(ExtTestCase):
 
         grid.fit(X, y)
         cache = MLCache.get_cache('cache__2')
-        self.assertEqual(len(cache), 13)
+        self.assertEqual(len(cache), 21)
         key = list(cache.keys())[0]
         self.assertIn("[('X',", key)
         self.assertIn("('copy', 'True')", key)
@@ -69,7 +69,7 @@ class TestPipelineCache(ExtTestCase):
 
         grid.fit(X, y)
         cache = MLCache.get_cache('cache__1')
-        self.assertEqual(len(cache), 13)
+        self.assertEqual(len(cache), 21)
         key = list(cache.keys())[0]
         self.assertIn("[('X',", key)
         self.assertIn("('copy', 'True')", key)
@@ -92,7 +92,7 @@ class TestPipelineCache(ExtTestCase):
 
         grid.fit(X, y)
         cache = MLCache.get_cache('cache__3')
-        self.assertEqual(len(cache), 7)
+        self.assertEqual(len(cache), 11)
         key = list(cache.keys())[0]
         self.assertIn("[('X',", key)
         self.assertIn("('copy', 'True')", key)

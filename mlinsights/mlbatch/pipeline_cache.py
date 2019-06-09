@@ -74,7 +74,9 @@ class PipelineCache(Pipeline):
             params = transformer.get_params()
             params['__class__'] = transformer.__class__.__name__
             params['X'] = Xt
-            params['y'] = y
+            if ((hasattr(transformer, 'is_classifier') and transformer.is_classifier()) or
+                    (hasattr(transformer, 'is_regressor') and transformer.is_regressor())):
+                params['y'] = y
             cached = self.cache_.get(params)
             if cached is None:
                 cloned_transformer = clone(transformer)

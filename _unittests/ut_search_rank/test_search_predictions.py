@@ -8,7 +8,6 @@ import numpy
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.search_rank import SearchEnginePredictions
 
@@ -16,11 +15,6 @@ from mlinsights.search_rank import SearchEnginePredictions
 class TestSearchPredictions(ExtTestCase):
 
     def test_search_predictions_lr(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :2]
         y = iris.target
@@ -41,7 +35,7 @@ class TestSearchPredictions(ExtTestCase):
         r = r.replace("solver='warn',", "").replace("solver='lbfgs',", "")
         r = r.replace("l1_ratio=None,", "")
         exp = ("SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False,"
-               "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='warn',n_jobs=None,"
+               "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='auto',n_jobs=None,"
                "penalty='l2',random_state=None,solver='warn',tol=0.0001,verbose=0,warm_start=False),"
                "fct_params=None,n_neighbors=5)")
         exp = exp.replace("solver='warn',", "").replace("solver='lbfgs',", "")
@@ -93,11 +87,6 @@ class TestSearchPredictions(ExtTestCase):
         self.assertTrue(meta is None)
 
     def test_search_predictions_rfc(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :2]
         y = iris.target
