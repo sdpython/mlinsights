@@ -115,7 +115,7 @@ class TestSklearnConvert(ExtTestCase):
 
         parameters = {
             'skbasetransformlearner__model__fit_intercept': [False, True]}
-        clf = GridSearchCV(model, parameters)
+        clf = GridSearchCV(model, parameters, cv=3)
         clf.fit(X, y)
 
         pred = clf.predict(X)
