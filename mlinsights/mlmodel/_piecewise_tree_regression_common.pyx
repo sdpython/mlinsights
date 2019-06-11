@@ -259,6 +259,7 @@ def _test_criterion_printf(Criterion crit):
     "Test purposes. Methods cannot be directly called from python."    
     printf("start=%d pos=%d end=%d\n", crit.start, crit.pos, crit.end)
     cdef DOUBLE_t left, right, value
+    cdef int i;
     crit.children_impurity(&left, &right)
     crit.node_value(&value)
     printf("value: %f total=%f left=%f right=%f\n", value, 
