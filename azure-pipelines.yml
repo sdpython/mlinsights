@@ -79,8 +79,6 @@ jobs:
     displayName: 'Install Pandoc'
   - script: brew install graphviz
     displayName: 'Install Graphviz'
-  - script: brew cask install mactex
-    displayName: 'Install latex'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
   - script: pip install numpy scipy cython

@@ -284,4 +284,4 @@ mlinsights/mlmodel/_*.c
 _unittests/unittests.out
 _doc/notebooks/explore/simages/*
 _unittests/ut_mlbatch/cache__2/
-
+_doc/sphinxdoc/source/_temp_custom_run_script*

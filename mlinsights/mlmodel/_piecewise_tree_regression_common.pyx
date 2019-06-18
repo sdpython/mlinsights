@@ -264,6 +264,6 @@ def _test_criterion_printf(Criterion crit):
     crit.node_value(&value)
     printf("value: %f total=%f left=%f right=%f\n", value, 
            crit.node_impurity(), left, right)
-    n = crit.y.shape[0]
+    cdef int n = crit.y.shape[0]
     for i in range(0, n):
         printf("-- %d: y=%f\n", i, crit.y[i, 0])
