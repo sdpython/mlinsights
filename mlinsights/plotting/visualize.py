@@ -110,6 +110,16 @@ def _pipeline_info(pipe, data, context):
                      'type': 'transform'}, info]
         return info
 
+    elif isinstance(pipe, str):
+        if pipe == "passthrough":
+            info = {'name': 'Identity', 'type': 'transform'}
+            info['outputs'] = data
+            info['inputs'] = data
+            info = [info]
+        else:
+            raise NotImplementedError(
+                "Not yet implemented for keyword '{}'.".format(type(pipe)))
+        return info
     else:
         raise NotImplementedError(
             "Not yet implemented for {}.".format(type(pipe)))

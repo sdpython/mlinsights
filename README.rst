@@ -53,3 +53,12 @@ which partitions the data before fitting a model on each bucket.
 * `GitHub/mlinsights <https://github.com/sdpython/mlinsights/>`_
 * `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_
 * `Blog <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/blog/main_0000.html#ap-main-0>`_
+
+Function ``pipeline2dot`` converts a pipeline into a graph:
+
+::
+
+    from mlinsights.plotting import pipeline2dot
+    dot = pipeline2dot(clf, df)
+
+.. image:: https://github.com/sdpython/mlinsights/raw/master/_doc/pipeline.png
