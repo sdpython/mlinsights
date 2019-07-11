@@ -5,15 +5,18 @@
 History
 =======
 
-current - 2019-05-23 - 0.00Mb
+current - 2019-07-11 - 0.00Mb
 =============================
 
-* `55`: Explore caching for gridsearchCV (2019-05-22)
+* `61`: Fix bug in pipeline2dot when keyword "passthrough is used" (2019-07-11)
+* `60`: Fix visualisation of pipeline which contains string "passthrough" (2019-07-09)
+* `58`: Explores a way to compute recommandations without training (2019-06-05)
+
+0.2.288 - 2019-05-28 - 0.66Mb
+=============================
+
 * `56`: Fixes #55, explore caching for scikit-learn pipeline (2019-05-22)
-
-0.2.269 - 2019-05-20 - 0.41Mb
-=============================
-
+* `55`: Explore caching for gridsearchCV (2019-05-22)
 * `53`: implements a function to extract intermediate model outputs within a pipeline (2019-05-07)
 * `51`: Implements a tfidfvectorizer which keeps more information about n-grams (2019-04-26)
 * `46`: implements a way to determine close leaves in a decision tree (2019-04-01)
