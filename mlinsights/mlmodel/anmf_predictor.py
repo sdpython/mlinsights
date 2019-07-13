@@ -25,7 +25,7 @@ class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
         :showcode:
 
         import numpy
-        from mlinsights.mlmodel.nmf_predictor import ApproximateNMFPredictor
+        from mlinsights.mlmodel.anmf_predictor import ApproximateNMFPredictor
 
         train = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
