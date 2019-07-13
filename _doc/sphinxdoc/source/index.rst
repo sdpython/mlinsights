@@ -49,7 +49,8 @@ data in a single pipeline. It implements
 :class:`QuantileLinearRegression <mlinsights.mlmodel.quantile_regression.QuantileLinearRegression>`
 which trains a linear regression with :epkg:`L1` norm
 non-linear correlation based on decision trees,
-:class:`QuantileMLPRegressor <mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor>`
+:class:`QuantileMLPRegressor
+<mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor>`
 which is a modification of *scikit-learn's* :epkg:`MLPRegressor`
 which trains a multi-layer perceptron with :epkg:`L1` norm...
 

@@ -7,12 +7,12 @@ import numpy
 from scipy.sparse import csr_matrix
 from sklearn.metrics import mean_squared_error
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.mlmodel.nmf_predictor import ApproximateNMFPredictor
+from mlinsights.mlmodel.anmf_predictor import ApproximateNMFPredictor
 
 
 class TestApproximateNMFPredictor(ExtTestCase):
 
-    def test_nmf_predictor(self):
+    def test_anmf_predictor(self):
         mat = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
@@ -34,7 +34,7 @@ class TestApproximateNMFPredictor(ExtTestCase):
         sc2 = mean_squared_error(mat2, got2)
         self.assertGreater(sc1, sc2)
 
-    def test_nmf_predictor_sparse(self):
+    def test_anmf_predictor_sparse(self):
         mat = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
@@ -57,7 +57,7 @@ class TestApproximateNMFPredictor(ExtTestCase):
         sc2 = mean_squared_error(mat2, got2)
         self.assertGreater(sc1, sc2)
 
-    def test_nmf_predictor_sparse_sparse(self):
+    def test_anmf_predictor_sparse_sparse(self):
         mat = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
@@ -81,7 +81,7 @@ class TestApproximateNMFPredictor(ExtTestCase):
         sc2 = mean_squared_error(mat2.todense(), got2)
         self.assertGreater(sc1, sc2)
 
-    def test_nmf_predictor_positive(self):
+    def test_anmf_predictor_positive(self):
         mat = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
@@ -107,7 +107,7 @@ class TestApproximateNMFPredictor(ExtTestCase):
         mx = numpy.min(got2)
         self.assertGreater(mx, 0)
 
-    def test_nmf_predictor_positive_sparse(self):
+    def test_anmf_predictor_positive_sparse(self):
         mat = numpy.array([[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0],
                            [1, 0, 0, 0], [1, 0, 0, 0]], dtype=numpy.float64)
         mat[:mat.shape[1], :] += numpy.identity(mat.shape[1])
