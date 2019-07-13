@@ -3,7 +3,7 @@ coverage
 cpyquickhelper>=0.2.229
 Cython
 joblib
-jupyer_sphinx==0.1.4
+jupyter_sphinx==0.1.4
 jyquickhelper
 memory_profiler
 git+https://github.com/sdpython/nbconvert.git@fixes
