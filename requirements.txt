@@ -9,7 +9,7 @@ memory_profiler
 git+https://github.com/sdpython/nbconvert.git@fixes
 pandas_streaming
 pybind11
-pyquickhelper>=1.9.3141
+pyquickhelper>=1.9.3179
 scikit-learn>=0.21.0
 scipy
 seaborn
