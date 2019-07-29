@@ -4,6 +4,7 @@
 """
 import unittest
 import numpy
+from numpy.random import random
 import pandas
 from sklearn.linear_model import LinearRegression
 from pyquickhelper.pycode import ExtTestCase
@@ -118,9 +119,9 @@ class TestPiecewiseRegressor(ExtTestCase):
         self.assertRaise(lambda: clq.fit(X, Y), TypeError)
 
     def test_piecewise_regressor_pickle(self):
-        X = numpy.random.random(100)
-        eps1 = (numpy.random.random(90) - 0.5) * 0.1
-        eps2 = numpy.random.random(10) * 2
+        X = random(100)
+        eps1 = (random(90) - 0.5) * 0.1
+        eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
@@ -131,9 +132,9 @@ class TestPiecewiseRegressor(ExtTestCase):
         test_sklearn_clone(lambda: PiecewiseRegressor(verbose=True))
 
     def test_piecewise_regressor_grid_search(self):
-        X = numpy.random.random(100)
-        eps1 = (numpy.random.random(90) - 0.5) * 0.1
-        eps2 = numpy.random.random(10) * 2
+        X = random(100)
+        eps1 = (random(90) - 0.5) * 0.1
+        eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps

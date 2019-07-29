@@ -84,7 +84,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         self.assertIsInstance(meta, (numpy.ndarray, pandas.DataFrame))
         self.assertEqual(meta.shape, (5, 2))
         self.assertEndsWith('simages/cat-1151519__480.jpg',
-                            meta.iloc[0, 1].replace('\\', '/'))
+                            meta.loc[0, "name"].replace('\\', '/'))
 
         # neighbors 2
         score, ind, meta = se.kneighbors(imgs)

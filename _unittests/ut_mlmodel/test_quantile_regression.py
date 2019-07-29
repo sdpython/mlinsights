@@ -4,6 +4,7 @@
 """
 import unittest
 import numpy
+from numpy.random import random
 import pandas
 from sklearn.linear_model import LinearRegression
 from pyquickhelper.pycode import ExtTestCase
@@ -83,9 +84,9 @@ class TestQuantileRegression(ExtTestCase):
         self.assertRaise(lambda: clq.fit(X, Y), TypeError)
 
     def test_quantile_regression_list2(self):
-        X = numpy.random.random(1000)
-        eps1 = (numpy.random.random(900) - 0.5) * 0.1
-        eps2 = numpy.random.random(100) * 2
+        X = random(1000)
+        eps1 = (random(900) - 0.5) * 0.1
+        eps2 = random(100) * 2
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((1000, 1))  # pylint: disable=E1101
         Y = X * 3.4 + 5.6 + eps
@@ -112,9 +113,9 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqual(pr.shape, pq.shape)
 
     def test_quantile_regression_pickle(self):
-        X = numpy.random.random(100)
-        eps1 = (numpy.random.random(90) - 0.5) * 0.1
-        eps2 = numpy.random.random(10) * 2
+        X = random(100)
+        eps1 = (random(90) - 0.5) * 0.1
+        eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
@@ -125,9 +126,9 @@ class TestQuantileRegression(ExtTestCase):
         test_sklearn_clone(lambda: QuantileLinearRegression(delta=0.001))
 
     def test_quantile_regression_grid_search(self):
-        X = numpy.random.random(100)
-        eps1 = (numpy.random.random(90) - 0.5) * 0.1
-        eps2 = numpy.random.random(10) * 2
+        X = random(100)
+        eps1 = (random(90) - 0.5) * 0.1
+        eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps

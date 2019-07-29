@@ -4,6 +4,7 @@
 """
 import unittest
 import numpy
+from numpy.random import random
 import pandas
 from sklearn.linear_model import LogisticRegression
 from pyquickhelper.pycode import ExtTestCase
@@ -156,7 +157,7 @@ class TestPiecewiseClassifier(ExtTestCase):
         self.assertRaise(lambda: clq.fit(X, Y), TypeError)
 
     def test_piecewise_classifier_pickle(self):
-        X = numpy.random.random(100)
+        X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
         test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
@@ -166,7 +167,7 @@ class TestPiecewiseClassifier(ExtTestCase):
         test_sklearn_clone(lambda: PiecewiseClassifier(verbose=True))
 
     def test_piecewise_classifier_grid_search(self):
-        X = numpy.random.random(100)
+        X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
