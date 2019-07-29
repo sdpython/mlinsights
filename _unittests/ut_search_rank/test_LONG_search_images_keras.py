@@ -78,7 +78,7 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
 
         self.assertIsInstance(meta, (numpy.ndarray, pandas.DataFrame))
         self.assertEqual(meta.shape, (5, 2))
-        self.assertEqual(meta.iloc[0, 1].replace('\\', '/'),
+        self.assertEqual(meta.loc[0, 'name'].replace('\\', '/'),
                          'simages/cat-1151519__480.jpg')
 
         # neighbors 2
