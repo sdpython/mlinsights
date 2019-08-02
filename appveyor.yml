@@ -25,6 +25,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install cython"
   - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy protobuf h5py"
   - "%PYTHON%\\Scripts\\pip install keras pandas_streaming kiwisolver"
+  - "%PYTHON%\\Scripts\\pymy_install3 pytorch"
   - "%PYTHON%\\Scripts\\pip install -r requirements.txt"
   - "%PYTHON%\\Scripts\\pip install cpyquickhelper"
   - "%PYTHON%\\Scripts\\pip install seaborn"
