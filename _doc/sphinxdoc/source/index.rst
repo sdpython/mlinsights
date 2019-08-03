@@ -43,6 +43,18 @@ mlinsights: tricky scikit-learn
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
+.. image:: https://pepy.tech/badge/mlinsights
+    :target: https://pypi.org/project/mlinsights/
+    :alt: Downloads
+
+.. image:: https://img.shields.io/github/forks/sdpython/mlinsights.svg
+    :target: https://github.com/sdpython/mlinsights/
+    :alt: Forks
+
+.. image:: https://img.shields.io/github/stars/sdpython/mlinsights.svg
+    :target: https://github.com/sdpython/mlinsights/
+    :alt: Stars
+
 *mlinsights* implements functions to get insights on machine learned
 models or various kind of transforms to help manipulating
 data in a single pipeline. It implements

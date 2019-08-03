@@ -35,6 +35,18 @@
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
+.. image:: https://pepy.tech/badge/mlinsights
+    :target: https://pypi.org/project/mlinsights/
+    :alt: Downloads
+
+.. image:: https://img.shields.io/github/forks/sdpython/mlinsights.svg
+    :target: https://github.com/sdpython/mlinsights/
+    :alt: Forks
+
+.. image:: https://img.shields.io/github/stars/sdpython/mlinsights.svg
+    :target: https://github.com/sdpython/mlinsights/
+    :alt: Stars
+
 .. _l-README:
 
 mlinsights - extensions to scikit-learn
