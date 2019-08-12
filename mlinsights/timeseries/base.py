@@ -110,14 +110,15 @@ class BaseTimeSeries(BaseEstimator):
             print('ny=', ny)
         """
         if self.use_all_past:
-            ncol = X.shape[1]
+            ncol = X.shape[1] if X is not None else 0
             nrow = y.shape[0] - self.delay2 - self.past + 2
             new_X = numpy.empty(
                 (nrow, ncol * self.past + self.past), dtype=y.dtype)
-            for i in range(0, self.past):
-                begin = i * ncol
-                end = begin + ncol
-                new_X[:, begin:end] = X[i: i + nrow]
+            if X is not None:
+                for i in range(0, self.past):
+                    begin = i * ncol
+                    end = begin + ncol
+                    new_X[:, begin:end] = X[i: i + nrow]
             for i in range(0, self.past):
                 end = y.shape[0] + i + self.delay1 - 1 - self.delay2
                 new_X[:, i + ncol * self.past] = y[i: end]
@@ -128,11 +129,12 @@ class BaseTimeSeries(BaseEstimator):
             new_weights = (None if weights is None
                            else weights[self.past - 1:self.past - 1 + nrow])
         else:
-            ncol = X.shape[1]
+            ncol = X.shape[1] if X is not None else 0
             nrow = y.shape[0] - self.delay2 - self.past + 2
             new_X = numpy.empty((nrow, ncol + self.past), dtype=y.dtype)
-            new_X[:, :X.shape[1]] = X[self.past -
-                                      1: X.shape[0] - self.delay2 + 1]
+            if X is not None:
+                new_X[:, :X.shape[1]] = X[self.past -
+                                          1: X.shape[0] - self.delay2 + 1]
             for i in range(self.past):
                 end = y.shape[0] + i + self.delay1 - 1 - self.delay2
                 new_X[:, i + ncol] = y[i: end]
