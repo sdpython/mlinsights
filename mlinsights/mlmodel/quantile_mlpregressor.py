@@ -63,7 +63,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
             args = [15000]
         else:
             args = []
-        BaseMultilayerPerceptron.__init__(
+        BaseMultilayerPerceptron.__init__(  # pylint: disable=E1121
             self, hidden_layer_sizes, activation, solver, alpha, batch_size,
             learning_rate, learning_rate_init, power_t, max_iter, loss,
             shuffle, random_state, tol, verbose, warm_start, momentum,
