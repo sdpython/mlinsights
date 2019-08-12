@@ -12,3 +12,4 @@ API
     tree
     search_rank
     blaslapack
+    timeseries
