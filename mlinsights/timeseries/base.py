@@ -68,27 +68,78 @@ class BaseTimeSeries(BaseEstimator):
 
         Returns
         -------
-        X: array of features [n_features + past, n_obs - delay2 + 1]
-        y: array of targets [n_obs - delay2 + 1]
-        weights: None or array [n_obs - delay2  + 1]
+        X: array of features [nrows, n_features + past]
+            where `nrows = n_obs + self.delay2 - self.past + 2`
+        y: array of targets [nrows]
+        weights: None or array [nrows]
 
-        self
+        A few examples.
+
+        .. runpython::
+            :showcode:
+
+            import numpy
+            from mlinsights.timeseries.base import BaseTimeSeries
+
+            X = numpy.arange(10).reshape(5, 2)
+            y = numpy.arange(5) * 100
+            weights = numpy.arange(5) * 1000
+            bs = BaseTimeSeries(past=2)
+            nx, ny, nw = bs.build_X_y(X, y, weights)
+            print('X=', X)
+            print('y=', y)
+            print('nx=', nx)
+            print('ny=', ny)
+
+        With ``use_all_past=True``:
+
+        .. runpython::
+            :showcode:
+
+            import numpy
+            from mlinsights.timeseries.base import BaseTimeSeries
+
+            X = numpy.arange(10).reshape(5, 2)
+            y = numpy.arange(5) * 100
+            weights = numpy.arange(5) * 1000
+            bs = BaseTimeSeries(past=2, use_all_past=True)
+            nx, ny, nw = bs.build_X_y(X, y, weights)
+            print('X=', X)
+            print('y=', y)
+            print('nx=', nx)
+            print('ny=', ny)
         """
         if self.use_all_past:
-            pass
+            ncol = X.shape[1]
+            nrow = y.shape[0] - self.delay2 - self.past + 2
+            new_X = numpy.empty(
+                (nrow, ncol * self.past + self.past), dtype=y.dtype)
+            for i in range(0, self.past):
+                begin = i * ncol
+                end = begin + ncol
+                new_X[:, begin:end] = X[i: i + nrow]
+            for i in range(0, self.past):
+                end = y.shape[0] + i + self.delay1 - 1 - self.delay2
+                new_X[:, i + ncol * self.past] = y[i: end]
+            new_y = numpy.empty(
+                (nrow, self.delay2 - self.delay1), dtype=y.dtype)
+            for i in range(self.delay1, self.delay2):
+                new_y[:, i - self.delay1] = y[i + 1:i + nrow + 1]
+            new_weights = (None if weights is None
+                           else weights[self.past - 1:self.past - 1 + nrow])
         else:
             ncol = X.shape[1]
             nrow = y.shape[0] - self.delay2 - self.past + 2
             new_X = numpy.empty((nrow, ncol + self.past), dtype=y.dtype)
             new_X[:, :X.shape[1]] = X[self.past -
                                       1: X.shape[0] - self.delay2 + 1]
-            for ni, i in enumerate(range(0, self.past)):
+            for i in range(self.past):
                 end = y.shape[0] + i + self.delay1 - 1 - self.delay2
-                new_X[:, ni + ncol] = y[i: end]
+                new_X[:, i + ncol] = y[i: end]
             new_y = numpy.empty(
                 (nrow, self.delay2 - self.delay1), dtype=y.dtype)
             for i in range(self.delay1, self.delay2):
                 new_y[:, i - self.delay1] = y[i + 1:i + nrow + 1]
-            new_weights = None if weights is None else weights[self.past -
-                                                               1:self.past - 1 + nrow]
+            new_weights = (None if weights is None
+                           else weights[self.past - 1:self.past - 1 + nrow])
         return new_X, new_y, new_weights
