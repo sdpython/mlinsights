@@ -1,12 +1,14 @@
 """
 @file
-@brief Base class for timeseries.
+@brief Timeseries manipulations.
 """
 import numpy
+from numpy.testing import assert_array_equal
+from sklearn import get_config
 from .base import BaseTimeSeries
 
 
-def build_X_y(model, X, y, weights=None):
+def build_ts_X_y(model, X, y, weights=None):
     """
     Builds standard *X, y* based in the given one.
 
@@ -93,12 +95,35 @@ def build_X_y(model, X, y, weights=None):
             new_X[:, :X.shape[1]] = X[model.past -
                                       1: X.shape[0] - model.delay2 + 1]
         for i in range(model.past):
-            end = y.shape[0] + i + model.delay1 - 1 - model.delay2
+            end = y.shape[0] + i + model.delay1 - \
+                1 - model.delay2 - model.past + 2
             new_X[:, i + ncol] = y[i: end]
         new_y = numpy.empty(
             (nrow, model.delay2 - model.delay1), dtype=y.dtype)
         for i in range(model.delay1, model.delay2):
-            new_y[:, i - model.delay1] = y[i + 1:i + nrow + 1]
+            dec = model.past - 1
+            new_y[:, i - model.delay1] = y[i + dec:i + nrow + dec]
         new_weights = (None if weights is None
                        else weights[model.past - 1:model.past - 1 + nrow])
     return new_X, new_y, new_weights
+
+
+def check_ts_X_y(model, X, y):
+    """
+    Checks that datasets *(X, y)* was built with function
+    @see fn build_ts_X_y.
+    """
+    cfg = get_config()
+    if not cfg.get('assume_finite', True):
+        return
+    if y is None:
+        if model.past >= 2:
+            pass
+        return
+    if y.shape[0] != X.shape[0]:
+        raise AssertionError("X and y must have the same number of rows {} != {}.".format(
+            X.shape[0], y.shape[0]))
+    if len(y.shape) > 1 and y.shape[1] != 1:
+        raise AssertionError(
+            "y must be 1-dimensional not has shape {}.".format(y.shape))
+    assert_array_equal(X[:, -1], y[1: -1])
