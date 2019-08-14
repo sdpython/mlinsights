@@ -4,6 +4,7 @@
 import unittest
 import numpy
 from pyquickhelper.pycode import ExtTestCase
+from mlinsights.timeseries import build_X_y
 from mlinsights.timeseries.base import BaseTimeSeries
 
 
@@ -14,7 +15,7 @@ class TestBaseTimeSeries(ExtTestCase):
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2)
-        nx, ny, nw = bs.build_X_y(X, y, weights)
+        nx, ny, nw = build_X_y(bs, X, y, weights)
         self.assertEqualArray(y[0:-2], nx[:, 0])
         self.assertEqualArray(y[1:-1], nx[:, 1])
         self.assertEqualArray(y[2:].reshape((3, 1)), ny)
@@ -25,7 +26,7 @@ class TestBaseTimeSeries(ExtTestCase):
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2)
-        nx, ny, nw = bs.build_X_y(X, y, weights)
+        nx, ny, nw = build_X_y(bs, X, y, weights)
         self.assertEqualArray(X[1:-1], nx[:, :2])
         self.assertEqualArray(y[0:-2], nx[:, 2])
         self.assertEqualArray(y[1:-1], nx[:, 3])
@@ -37,7 +38,7 @@ class TestBaseTimeSeries(ExtTestCase):
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2, delay2=3)
-        nx, ny, nw = bs.build_X_y(X, y, weights)
+        nx, ny, nw = build_X_y(bs, X, y, weights)
         self.assertEqualArray(X[1:-2], nx[:, :2])
         self.assertEqualArray(y[0:-3], nx[:, 2])
         self.assertEqualArray(y[1:-2], nx[:, 3])
@@ -49,7 +50,7 @@ class TestBaseTimeSeries(ExtTestCase):
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2, use_all_past=True)
-        nx, ny, nw = bs.build_X_y(X, y, weights)
+        nx, ny, nw = build_X_y(bs, X, y, weights)
         self.assertEqualArray(y[0:-2], nx[:, 0])
         self.assertEqualArray(y[1:-1], nx[:, 1])
         self.assertEqualArray(y[2:].reshape((3, 1)), ny)
@@ -60,7 +61,7 @@ class TestBaseTimeSeries(ExtTestCase):
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2, use_all_past=True)
-        nx, ny, nw = bs.build_X_y(X, y, weights)
+        nx, ny, nw = build_X_y(bs, X, y, weights)
         self.assertEqualArray(X[0:-2], nx[:, :2])
         self.assertEqualArray(X[1:-1], nx[:, 2:4])
         self.assertEqualArray(y[0:-2], nx[:, 4])
@@ -73,7 +74,7 @@ class TestBaseTimeSeries(ExtTestCase):
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2, delay2=3, use_all_past=True)
-        nx, ny, nw = bs.build_X_y(X, y, weights)
+        nx, ny, nw = build_X_y(bs, X, y, weights)
         self.assertEqualArray(X[0:-3], nx[:, :2])
         self.assertEqualArray(X[1:-2], nx[:, 2:4])
         self.assertEqualArray(y[0:-3], nx[:, 4])
