@@ -2,13 +2,12 @@
 @file
 @brief Auto-regressor for timeseries.
 """
-from sklearn.base import RegressorMixin
-from .base import BaseTimeSeries
+from .base import BaseTimeSeries, TimeSeriesRegressorMixin
 from .selection import check_ts_X_y
 from .dummies import DummyTimeSeriesRegressor
 
 
-class ARTimeSeriesRegressor(BaseTimeSeries, RegressorMixin):
+class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
     """
     Base class to build a regressor on timeseries.
     The class computes one or several predictions at each time,
@@ -31,7 +30,7 @@ class ARTimeSeriesRegressor(BaseTimeSeries, RegressorMixin):
                                     *time=t + delay2* excluded
         @param      use_all_past    use all past features, not only the timeseries
         """
-        RegressorMixin.__init__(self)
+        TimeSeriesRegressorMixin.__init__(self)
         BaseTimeSeries.__init__(self, past=past, delay1=delay1, delay2=delay2,
                                 use_all_past=use_all_past)
         if estimator == "dummy":

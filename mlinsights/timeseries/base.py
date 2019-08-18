@@ -2,7 +2,8 @@
 @file
 @brief Base class for timeseries.
 """
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, RegressorMixin
+from .metrics import ts_mape
 
 
 class BaseTimeSeries(BaseEstimator):
@@ -34,3 +35,22 @@ class BaseTimeSeries(BaseEstimator):
             raise ValueError("delay2 must be >= 1")
         if self.past < 0:
             raise ValueError("past must be > 0")
+
+
+class TimeSeriesRegressorMixin(RegressorMixin):
+    """
+    Addition to :epkg:`sklearn:base:RegressorMixin`.
+    """
+
+    def score(self, X, y, sample_weight=None):
+        """
+        Scores the prediction using
+        @see fn ts_mape
+
+        :param X: features
+        :param y: expected values
+        :param sample_weight: sample weight
+        :return: see @see fn ts_mape
+        """
+        pred = self.predict(X)
+        return ts_mape(y, pred, sample_weight=sample_weight)

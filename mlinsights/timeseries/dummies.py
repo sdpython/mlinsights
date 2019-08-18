@@ -3,12 +3,11 @@
 @brief Dummy auto-regressor which takes past values as predictions.
 """
 import numpy
-from sklearn.base import RegressorMixin
-from .base import BaseTimeSeries
+from .base import BaseTimeSeries, TimeSeriesRegressorMixin
 from .selection import check_ts_X_y
 
 
-class DummyTimeSeriesRegressor(BaseTimeSeries, RegressorMixin):
+class DummyTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
     """
     Dummy regressor for time series. Use past values as prediction.
     """
@@ -26,7 +25,7 @@ class DummyTimeSeriesRegressor(BaseTimeSeries, RegressorMixin):
                                     *time=t + delay2* excluded
         @param      use_all_past    use all past features, not only the timeseries
         """
-        RegressorMixin.__init__(self)
+        TimeSeriesRegressorMixin.__init__(self)
         BaseTimeSeries.__init__(self, past=past, delay1=delay1, delay2=delay2,
                                 use_all_past=use_all_past)
 

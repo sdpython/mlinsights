@@ -17,3 +17,9 @@ The first regressor is an auto-regressor. It can be estimated
 with any regressor implemented in :epkg:`scikit-learn`.
 
 .. autosignature:: mlinsights.timeseries.ar.ARTimeSeriesRegressor
+
+The library implements one scoring function which compares
+the prediction to what a dummy predictor would do
+by using the previous day as a prediction.
+
+.. autosignature:: mlinsights.timeseries.metrics.ts_mape
