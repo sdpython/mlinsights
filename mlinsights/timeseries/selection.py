@@ -1,6 +1,6 @@
 """
 @file
-@brief Timeseries manipulations.
+@brief Timeseries data manipulations.
 """
 import numpy
 from numpy.testing import assert_array_equal

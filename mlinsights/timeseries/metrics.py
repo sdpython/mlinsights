@@ -1,6 +1,6 @@
 """
 @file
-@brief Timeseries manipulations.
+@brief Timeseries metrics.
 """
 import numpy
 
