@@ -1,4 +1,12 @@
 
+.. image:: https://github.com/sdpython/mlinsights/blob/master/_doc/sphinxdoc/source/phdoc_static/project_ico.png?raw=true
+    :target: https://github.com/sdpython/mlinsights/
+
+.. _l-README:
+
+mlinsights - extensions to scikit-learn
+=======================================
+
 .. image:: https://travis-ci.org/sdpython/mlinsights.svg?branch=master
     :target: https://travis-ci.org/sdpython/mlinsights
     :alt: Build status
@@ -46,11 +54,6 @@
 .. image:: https://img.shields.io/github/stars/sdpython/mlinsights.svg
     :target: https://github.com/sdpython/mlinsights/
     :alt: Stars
-
-.. _l-README:
-
-mlinsights - extensions to scikit-learn
-=======================================
 
 *mlinsights* extends *scikit-learn* with a couple of new models,
 transformers, metrics, plotting. It provides new trainers such as

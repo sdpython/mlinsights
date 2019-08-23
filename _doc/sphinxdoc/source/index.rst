@@ -2,6 +2,9 @@
 mlinsights: tricky scikit-learn
 ===============================
 
+.. image:: https://github.com/sdpython/mlinsights/blob/master/_doc/sphinxdoc/source/phdoc_static/project_ico.png?raw=true
+    :target: https://github.com/sdpython/mlinsights/
+
 **Links:** `github <https://github.com/sdpython/mlinsights/>`_,
 `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_,
 :ref:`README <l-README>`,
