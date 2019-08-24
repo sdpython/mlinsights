@@ -11,10 +11,11 @@ from .sklearn_transform_inv import BaseReciprocalTransformer
 from .sklearn_transform_inv_fct import FunctionReciprocalTransformer, PermutationReciprocalTransformer
 
 
-def _common_get_transform(transformer):
+def _common_get_transform(transformer, is_regression):
     if isinstance(transformer, str):
+        closest = is_regression
         if transformer == 'rnd':
-            return PermutationReciprocalTransformer()
+            return PermutationReciprocalTransformer(closest=closest)
         else:
             return FunctionReciprocalTransformer(transformer)
     elif isinstance(transformer, BaseReciprocalTransformer):
@@ -85,7 +86,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         -------
         self : object
         """
-        self.transformer_ = _common_get_transform(self.transformer)
+        self.transformer_ = _common_get_transform(self.transformer, True)
         self.transformer_.fit(X, y, sample_weight=sample_weight)
         X_trans, y_trans = self.transformer_.transform(X, y)
 
@@ -202,7 +203,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         -------
         self : object
         """
-        self.transformer_ = _common_get_transform(self.transformer)
+        self.transformer_ = _common_get_transform(self.transformer, False)
         self.transformer_.fit(X, y, sample_weight=sample_weight)
         X_trans, y_trans = self.transformer_.transform(X, y)
 

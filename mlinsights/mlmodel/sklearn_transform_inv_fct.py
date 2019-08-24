@@ -5,6 +5,7 @@ and applies the reverse transformation on the target.
 """
 import numpy
 from sklearn.exceptions import NotFittedError
+from sklearn.neighbors import NearestNeighbors
 from .sklearn_transform_inv import BaseReciprocalTransformer
 
 
@@ -100,12 +101,14 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
     track of the permutation to apply.
     """
 
-    def __init__(self, random_state=None):
+    def __init__(self, random_state=None, closest=False):
         """
         @param      random_state    random state
+        @param      closest         if True, finds the closest permuted element
         """
         BaseReciprocalTransformer.__init__(self)
         self.random_state = random_state
+        self.closest = closest
 
     def fit(self, X=None, y=None, sample_weight=None):
         """
@@ -146,9 +149,25 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         after a predictor.
         """
         self._check_is_fitted()
-        res = PermutationReciprocalTransformer(self.random_state)
+        res = PermutationReciprocalTransformer(
+            self.random_state, closest=self.closest)
         res.permutation_ = {v: k for k, v in self.permutation_.items()}
         return res
+
+    def _find_closest(self, cl):
+        if not hasattr(self, 'knn_'):
+            self.knn_ = NearestNeighbors(n_neighbors=1, algorithm='kd_tree')
+            self.knn_perm_ = numpy.array(list(self.permutation_))
+            self.knn_perm_ = self.knn_perm_.reshape((len(self.knn_perm_), 1))
+            self.knn_.fit(self.knn_perm_)
+        ind = self.knn_.kneighbors([[cl]], return_distance=False)
+        res = self.knn_perm_[ind, 0]
+        if self.knn_perm_.dtype in (numpy.float32, numpy.float64):
+            return float(res)
+        if self.knn_perm_.dtype in (numpy.int32, numpy.int64):
+            return int(res)
+        raise NotImplementedError("The function does not work for type {}.".format(
+            self.knn_perm_.dtype))
 
     def transform(self, X, y):
         """
@@ -167,7 +186,15 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             for i in range(len(yp)):  # pylint: disable=C0200
                 if num and numpy.isnan(yp[i]):
                     continue
-                yp[i] = self.permutation_[yp[i]]
+                if yp[i] not in self.permutation_:
+                    if self.closest:
+                        cl = self._find_closest(yp[i])
+                    else:
+                        raise RuntimeError("Unable to find key '{}' in {}.".format(
+                            yp[i], list(sorted(self.permutation_))))
+                else:
+                    cl = yp[i]
+                yp[i] = self.permutation_[cl]
             return X, yp.reshape(y.shape)
         else:
             # y is probababilies or raw score

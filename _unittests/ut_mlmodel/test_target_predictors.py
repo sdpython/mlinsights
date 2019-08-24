@@ -22,7 +22,18 @@ class TestTargetPredictors(ExtTestCase):
         yp = tt.predict(X)
         self.assertEqual(yp.shape, (4, ))
         sc = tt.score(X, y)
-        self.assertEqual(sc, 1.)
+        self.assertLesser(sc, 1.)
+
+    def test_target_regressor_rnd(self):
+        tt = TransformedTargetRegressor2(regressor=None, transformer='rnd')
+        X = numpy.arange(4).reshape(-1, 1)
+        y = numpy.exp(2 * X).ravel()
+        tt.fit(X, y)
+        self.assertIn("TransformedTargetRegressor2", str(tt))
+        yp = tt.predict(X)
+        self.assertEqual(yp.shape, (4, ))
+        sc = tt.score(X, y)
+        self.assertLesser(sc, 1.)
 
     def test_target_classifier(self):
         tt = TransformedTargetClassifier2(classifier=None, transformer='rnd')
@@ -35,7 +46,7 @@ class TestTargetPredictors(ExtTestCase):
         yp = tt.predict(X)
         self.assertEqual(yp.shape, (4, ))
         sc = tt.score(X, y)
-        self.assertEqual(sc, 1.)
+        self.assertLesser(sc, 1.)
 
     def test_target_classifier_proba(self):
         tt = TransformedTargetClassifier2(classifier=None, transformer='rnd')
@@ -61,7 +72,7 @@ class TestTargetPredictors(ExtTestCase):
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 0, 1, 1], dtype=int)
         tt.fit(X, y)
-        self.assertRaise(lambda: tt.decision_function(X), KeyError)
+        self.assertRaise(lambda: tt.decision_function(X), RuntimeError)
 
     def test_target_regressor_err(self):
         tt = TransformedTargetRegressor2(regressor=None, transformer=None)
@@ -87,7 +98,7 @@ class TestTargetPredictors(ExtTestCase):
         yp = tt.predict(X)
         self.assertEqual(yp.shape, (4, ))
         sc = tt.score(X, y)
-        self.assertEqual(sc, 1.)
+        self.assertLesser(sc, 1.)
 
     def test_target_classifier_any(self):
         trans = FunctionReciprocalTransformer('log')
