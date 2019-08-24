@@ -59,7 +59,7 @@ class TestSklearnTransformInv(ExtTestCase):
     def test_permutation_reciprocal_transformer(self):
         X = numpy.array([[0.1, 0.2], [-0.2, -0.3],
                          [0.2, 0.35], [-0.2, -0.36]], dtype=float)
-        Y = numpy.array([0, 1, 0, 1], dtype=float) + 1
+        Y = numpy.array([0, 1, 0, 1], dtype=int) + 1
         p = PermutationReciprocalTransformer(0)
         p.fit(X, Y)
         self.assertTrue(hasattr(p, "permutation_"))

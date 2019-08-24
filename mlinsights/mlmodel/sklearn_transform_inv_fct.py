@@ -160,7 +160,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         if y is None:
             return X, None
         self._check_is_fitted()
-        if y.dtype in (numpy.str, numpy.int32, numpy.int64):
+        if len(y.shape) == 1 or y.dtype in (numpy.str, numpy.int32, numpy.int64):
             # permutes classes
             yp = y.copy().ravel()
             num = numpy.issubdtype(y.dtype, numpy.floating)

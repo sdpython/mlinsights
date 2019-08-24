@@ -61,7 +61,7 @@ class TestTargetPredictors(ExtTestCase):
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 0, 1, 1], dtype=int)
         tt.fit(X, y)
-        self.assertRaise(lambda: tt.decision_function(X), RuntimeError)
+        self.assertRaise(lambda: tt.decision_function(X), KeyError)
 
     def test_target_regressor_err(self):
         tt = TransformedTargetRegressor2(regressor=None, transformer=None)
