@@ -17,7 +17,7 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
         :showcode:
 
         import pprint
-        from mlinsight.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
+        from mlinsights.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
         pprint.pprint(FunctionReciprocalTransformer.available_fcts())
     """
 
@@ -82,5 +82,9 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
         """
         Transforms *X* and *y*.
         Returns transformed *X* and *y*.
+        If *y* is None, the returned value for *y*
+        is None as well.
         """
+        if y is None:
+            return X, None
         return X, self.fct_(y)

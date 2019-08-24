@@ -15,4 +15,5 @@ from .quantile_regression import QuantileLinearRegression
 from .sklearn_testing import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 from .sklearn_text import TraceableTfidfVectorizer, TraceableCountVectorizer
 from .sklearn_transform_inv_fct import FunctionReciprocalTransformer
+from .target_predictors import TransformedTargetRegressor2
 from .transfer_transformer import TransferTransformer

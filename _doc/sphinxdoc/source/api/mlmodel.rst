@@ -29,6 +29,8 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.quantile_regression.QuantileLinearRegression
 
+.. autosignature:: mlinsights.mlmodel.target_predictors.TransformedTargetRegressor2
+
 Transforms
 ++++++++++
 
