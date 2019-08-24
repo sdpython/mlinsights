@@ -39,7 +39,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
 
         import numpy
         from sklearn.linear_model import LinearRegression
-        from sklearn.compose import TransformedTargetRegressor
+        from mlinsights.mlmodel import TransformedTargetRegressor2
 
         tt = TransformedTargetRegressor2(regressor=LinearRegression(),
                                          transformer='log')
@@ -110,8 +110,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         y_hat : array, shape = (n_samples,)
             Predicted values.
         """
-        check_is_fitted(self, "regressor_")
-        check_is_fitted(self, "transformer_")
+        check_is_fitted(self)
         X_trans, _ = self.transformer_.transform(X, None)
         pred = self.regressor_.predict(X_trans)
 
