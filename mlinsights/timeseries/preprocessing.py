@@ -15,6 +15,7 @@ class TimeSeriesDifference(BaseReciprocalTransformer):
         """
         @param      degree      number of differences
         """
+        BaseReciprocalTransformer.__init__(self)
         self.degree = degree
 
     def fit(self, X, y, sample_weight=None):
@@ -53,6 +54,7 @@ class TimeSeriesDifferenceInv(BaseReciprocalTransformer):
         """
         @param      estimator   of type @see cl TimeSeriesDifference
         """
+        BaseReciprocalTransformer.__init__(self)
         if not isinstance(estimator, TimeSeriesDifference):
             raise TypeError("estimator must be of type TimeSeriesDifference not {}"
                             "".format(type(estimator)))

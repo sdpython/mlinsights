@@ -1,6 +1,7 @@
 """
 @file
-@brief Overloads :epkg:`TfidfVectorizer` and :epkg:`CountVectorizer`.
+@brief Implements a base class which defines a pair of transforms
+applied around a predictor to modify the target as well.
 """
 from sklearn.base import TransformerMixin, BaseEstimator
 
@@ -9,8 +10,13 @@ class BaseReciprocalTransformer(BaseEstimator, TransformerMixin):
     """
     Base for transform which transforms the features
     and the targets at the same time. It must also
-    return
+    return another transform which transforms the target
+    back to what it was.
     """
+
+    def __init__(self):
+        BaseEstimator.__init__(self)
+        TransformerMixin.__init__(self)
 
     def get_fct_inv(self):
         """

@@ -44,6 +44,8 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableTfidfVectorizer
 
+.. autosignature:: mlinsights.mlmodel.sklearn_transform_inv_fct.FunctionReciprocalTransformer
+
 Exploration
 +++++++++++
 
