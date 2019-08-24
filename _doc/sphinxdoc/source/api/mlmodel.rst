@@ -29,6 +29,8 @@ Trainers
 
 .. autosignature:: mlinsights.mlmodel.quantile_regression.QuantileLinearRegression
 
+.. autosignature:: mlinsights.mlmodel.target_predictors.TransformedTargetClassifier2
+
 .. autosignature:: mlinsights.mlmodel.target_predictors.TransformedTargetRegressor2
 
 Transforms
@@ -38,6 +40,10 @@ Transforms
 
 .. autosignature:: mlinsights.mlmodel.extended_features.ExtendedFeatures
 
+.. autosignature:: mlinsights.mlmodel.sklearn_transform_inv_fct.FunctionReciprocalTransformer
+
+.. autosignature:: mlinsights.mlmodel.sklearn_transform_inv_fct.PermutationReciprocalTransformer
+
 .. autosignature:: mlinsights.mlmodel.predictable_tsne.PredictableTSNE
 
 .. autosignature:: mlinsights.mlmodel.transfer_transformer.TransferTransformer
@@ -45,8 +51,6 @@ Transforms
 .. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableCountVectorizer
 
 .. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableTfidfVectorizer
-
-.. autosignature:: mlinsights.mlmodel.sklearn_transform_inv_fct.FunctionReciprocalTransformer
 
 Exploration
 +++++++++++

@@ -5,7 +5,7 @@
 import unittest
 import numpy
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.mlmodel import FunctionReciprocalTransformer
+from mlinsights.mlmodel import FunctionReciprocalTransformer, PermutationReciprocalTransformer
 
 
 class TestSklearnTransformInv(ExtTestCase):
@@ -55,6 +55,42 @@ class TestSklearnTransformInv(ExtTestCase):
         x2, y2 = inv.transform(x1, y1)
         self.assertEqualArray(X, x2)
         self.assertEqualArray(Y, y2)
+
+    def test_permutation_reciprocal_transformer(self):
+        X = numpy.array([[0.1, 0.2], [-0.2, -0.3],
+                         [0.2, 0.35], [-0.2, -0.36]], dtype=float)
+        Y = numpy.array([0, 1, 0, 1], dtype=float) + 1
+        p = PermutationReciprocalTransformer(0)
+        p.fit(X, Y)
+        self.assertTrue(hasattr(p, "permutation_"))
+        self.assertIsInstance(p.permutation_, dict)
+        self.assertEqual(len(p.permutation_), 2)
+        _, y1 = p.transform(X, Y)
+        self.assertEqual(Y.shape, y1.shape)
+
+        inv = p.get_fct_inv()
+        _, y2 = inv.transform(X, y1)
+        self.assertEqual(Y.shape, y2.shape)
+        self.assertEqualArray(Y, y2)
+
+    def test_permutation_reciprocal_transformer_nan(self):
+        X = numpy.array([[0.1, 0.2], [-0.2, -0.3],
+                         [0.2, 0.35], [-0.2, -0.36]], dtype=float)
+        Y = numpy.array([0, 1, 0, numpy.nan], dtype=float) + 1
+        p = PermutationReciprocalTransformer(0)
+        p.fit(X, Y)
+        self.assertTrue(hasattr(p, "permutation_"))
+        self.assertIsInstance(p.permutation_, dict)
+        self.assertEqual(len(p.permutation_), 2)
+        _, y1 = p.transform(X, Y)
+        self.assertEqual(Y.shape, y1.shape)
+
+        inv = p.get_fct_inv()
+        _, y2 = inv.transform(X, y1)
+        self.assertEqual(Y.shape, y2.shape)
+        self.assertEqualArray(Y, y2)
+        self.assertTrue(numpy.isnan(y1[-1]))
+        self.assertTrue(numpy.isnan(y2[-1]))
 
 
 if __name__ == "__main__":
