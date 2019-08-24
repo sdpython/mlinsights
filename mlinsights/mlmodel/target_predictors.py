@@ -4,9 +4,9 @@
 version of the :epkg:`sklearn:compose:TransformedTargetRegressor`.
 """
 from sklearn.base import BaseEstimator, RegressorMixin, clone
+from sklearn.exceptions import NotFittedError
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from sklearn.utils.validation import check_is_fitted
 from .sklearn_transform_inv import BaseReciprocalTransformer
 from .sklearn_transform_inv_fct import FunctionReciprocalTransformer
 
@@ -110,7 +110,11 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         y_hat : array, shape = (n_samples,)
             Predicted values.
         """
-        check_is_fitted(self)
+        if not hasattr(self, 'regressor_'):
+            raise NotFittedError(
+                "This instance {} is not fitted yet. Call 'fit' with "
+                "appropriate arguments before using this method.".format(
+                    type(self)))
         X_trans, _ = self.transformer_.transform(X, None)
         pred = self.regressor_.predict(X_trans)
 
