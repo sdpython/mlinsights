@@ -32,7 +32,9 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
             'log': (numpy.log, 'exp'),
             'exp': (numpy.exp, 'log'),
             'log(1+x)': (lambda x: numpy.log(x + 1), 'exp(x)-1'),
+            'log1p': (numpy.log1p, 'expm1'),
             'exp(x)-1': (lambda x: numpy.exp(x) - 1, 'log'),
+            'expm1': (numpy.expm1, 'log1p'),
         }
 
     def __init__(self, fct, fct_inv=None):

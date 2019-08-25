@@ -14,7 +14,7 @@ from .sklearn_transform_inv_fct import FunctionReciprocalTransformer, Permutatio
 def _common_get_transform(transformer, is_regression):
     if isinstance(transformer, str):
         closest = is_regression
-        if transformer == 'rnd':
+        if transformer == 'permute':
             return PermutationReciprocalTransformer(closest=closest)
         else:
             return FunctionReciprocalTransformer(transformer)
@@ -61,6 +61,8 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         print(tt.fit(X, y))
         print(tt.score(X, y))
         print(tt.regressor_.coef_)
+
+    See notebook :ref:`sklearntransformedtargetrst` for a more complete example.
     """
 
     def __init__(self, regressor=None, transformer=None):
@@ -178,6 +180,8 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         print(tt.fit(X, y))
         print(tt.score(X, y))
         print(tt.classifier_.coef_)
+
+    See notebook :ref:`sklearntransformedtargetrst` for a more complete example.
     """
 
     def __init__(self, classifier=None, transformer=None):
