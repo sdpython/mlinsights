@@ -174,7 +174,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         from mlinsights.mlmodel import TransformedTargetClassifier2
 
         tt = TransformedTargetClassifier2(classifier=LogisticRegression(),
-                                         transformer='rnd')
+                                         transformer='permute')
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 1, 0, 1])
         print(tt.fit(X, y))
