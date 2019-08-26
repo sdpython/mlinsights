@@ -43,8 +43,8 @@ mlinsights - extensions to scikit-learn
     :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
-.. image:: https://pepy.tech/badge/mlinsights
-    :target: https://pypi.org/project/mlinsights/
+.. image:: https://pepy.tech/badge/mlinsights/month
+    :target: https://pepy.tech/project/mlinsights/month
     :alt: Downloads
 
 .. image:: https://img.shields.io/github/forks/sdpython/mlinsights.svg
