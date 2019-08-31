@@ -21,6 +21,17 @@ class TestBaseTimeSeries(ExtTestCase):
         self.assertEqualArray(y[2:].reshape((3, 1)), ny)
         self.assertEqualArray(weights[1:-1], nw)
 
+    def test_base_parameters_split0_all(self):
+        X = None
+        y = numpy.arange(5).astype(numpy.float64) * 100
+        weights = numpy.arange(5).astype(numpy.float64) * 1000
+        bs = BaseTimeSeries(past=2)
+        nx, ny, nw = build_ts_X_y(bs, X, y, weights, same_rows=True)
+        self.assertEqualArray(y[0:-2], nx[2:, 0])
+        self.assertEqualArray(y[1:-1], nx[2:, 1])
+        self.assertEqualArray(y[2:].reshape((3, 1)), ny[2:])
+        self.assertEqualArray(weights, nw)
+
     def test_base_parameters_split0_1(self):
         X = None
         y = numpy.arange(5) * 100
@@ -66,6 +77,17 @@ class TestBaseTimeSeries(ExtTestCase):
         self.assertEqualArray(y[1:-1], nx[:, 1])
         self.assertEqualArray(y[2:].reshape((3, 1)), ny)
         self.assertEqualArray(weights[1:-1], nw)
+
+    def test_base_parameters_split_all_0_same(self):
+        X = None
+        y = numpy.arange(5).astype(numpy.float64) * 100
+        weights = numpy.arange(5).astype(numpy.float64) * 1000
+        bs = BaseTimeSeries(past=2, use_all_past=True)
+        nx, ny, nw = build_ts_X_y(bs, X, y, weights, same_rows=True)
+        self.assertEqualArray(y[0:-2], nx[2:, 0])
+        self.assertEqualArray(y[1:-1], nx[1:-1, 1])
+        self.assertEqualArray(y[2:].reshape((3, 1)), ny[2:])
+        self.assertEqualArray(weights, nw)
 
     def test_base_parameters_split_all_1(self):
         X = numpy.arange(10).reshape(5, 2)

@@ -3,10 +3,10 @@
 @brief Timeseries preprocessing.
 """
 import numpy
-from ..mlmodel.sklearn_transform_inv import BaseReciprocalTransformer
+from .base import BaseReciprocalTimeSeriesTransformer
 
 
-class TimeSeriesDifference(BaseReciprocalTransformer):
+class TimeSeriesDifference(BaseReciprocalTimeSeriesTransformer):
     """
     Computes timeseries differences.
     """
@@ -15,8 +15,14 @@ class TimeSeriesDifference(BaseReciprocalTransformer):
         """
         @param      degree      number of differences
         """
-        BaseReciprocalTransformer.__init__(self)
-        self.degree = degree
+        BaseReciprocalTimeSeriesTransformer.__init__(self, degree)
+
+    @property
+    def degree(self):
+        """
+        Returns the degree.
+        """
+        return self.context_length
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -28,15 +34,19 @@ class TimeSeriesDifference(BaseReciprocalTransformer):
             self.y_[n:] -= self.y_[n - 1:-1]
         return self
 
-    def transform(self, X, y):
+    def transform(self, X, y, sample_weight=None):
         """
         Transforms both *X* and *y*.
-        Returns *X* and *y*.
+        Returns *X* and *y*, returns
+        *sample_weight* as well if not None.
         """
         for _ in range(self.degree):
             y = y[1:] - y[:-1]
             X = X[1:]
-        return X, y
+        if sample_weight is None:
+            return X, y
+        else:
+            return X, y, sample_weight[1:]
 
     def get_fct_inv(self):
         """
@@ -45,7 +55,7 @@ class TimeSeriesDifference(BaseReciprocalTransformer):
         return TimeSeriesDifferenceInv(self).fit()
 
 
-class TimeSeriesDifferenceInv(BaseReciprocalTransformer):
+class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
     """
     Computes the reverse of @see cl TimeSeriesDifference.
     """
@@ -54,7 +64,8 @@ class TimeSeriesDifferenceInv(BaseReciprocalTransformer):
         """
         @param      estimator   of type @see cl TimeSeriesDifference
         """
-        BaseReciprocalTransformer.__init__(self)
+        BaseReciprocalTimeSeriesTransformer.__init__(
+            self, estimator.context_length)
         if not isinstance(estimator, TimeSeriesDifference):
             raise TypeError("estimator must be of type TimeSeriesDifference not {}"
                             "".format(type(estimator)))
@@ -69,10 +80,11 @@ class TimeSeriesDifferenceInv(BaseReciprocalTransformer):
         self.estimator_ = self.estimator
         return self
 
-    def transform(self, X, y):
+    def transform(self, X, y, sample_weight=None):
         """
         Transforms both *X* and *y*.
-        Returns *X* and *y*.
+        Returns *X* and *y*, returns
+        *sample_weight* as well if not None.
         """
         if len(y.shape) == 1:
             y = y.reshape((y.shape[0], 1))
@@ -97,4 +109,10 @@ class TimeSeriesDifferenceInv(BaseReciprocalTransformer):
             numpy.cumsum(ny[r0 - i - 1:, :], axis=0, out=ny[r0 - i - 1:, :])
         if squeeze:
             ny = numpy.squeeze(ny)
-        return nx, ny
+        if sample_weight is None:
+            return nx, ny
+        else:
+            nw = numpy.zeros(ny.shape[0])
+            de = nw.shape[0] - sample_weight.shape[0]
+            nw[de:] = sample_weight
+            return nx, ny, nw
