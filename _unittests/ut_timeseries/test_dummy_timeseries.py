@@ -4,7 +4,6 @@
 import unittest
 import numpy
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.timeseries import build_ts_X_y, ARTimeSeriesRegressor
 from mlinsights.timeseries.preprocessing import TimeSeriesDifference
 from mlinsights.timeseries.dummies import DummyTimeSeriesRegressor
 
@@ -51,8 +50,8 @@ class TestDummyTimeSeries(ExtTestCase):
         self.assertRaise(lambda: bs.predict(X), RuntimeError)
         for i in range(y.shape[0]):
             if i >= y.shape[0] - 2:
-                self.assertRaise(lambda: bs.predict(
-                    None, y[i:]), AssertionError)
+                self.assertRaise(lambda ii=i: bs.predict(
+                    None, y[ii:]), AssertionError)
             else:
                 np = bs.predict(None, y[i:])
                 self.assertEqual(np.shape[0] + 1, y[i:].shape[0])

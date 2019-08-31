@@ -3,7 +3,6 @@
 @brief Timeseries data manipulations.
 """
 import numpy
-from numpy.testing import assert_array_equal
 from sklearn import get_config
 
 
@@ -66,10 +65,9 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
         print('nx=', nx)
         print('ny=', ny)
     """
-    from .base import BaseTimeSeries
-    if not isinstance(model, BaseTimeSeries):
+    if not hasattr(model, "use_all_past") or not hasattr(model, "past"):
         raise TypeError(
-            "model must be of type NaseTimeSeries not {}".format(type(model)))
+            "model must be of type BaseTimeSeries not {}".format(type(model)))
     if same_rows:
         if model.use_all_past:
             ncol = X.shape[1] if X is not None else 0

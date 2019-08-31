@@ -2,7 +2,6 @@
 @file
 @brief Base class for timeseries.
 """
-import numpy
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from ..mlmodel.sklearn_transform_inv import BaseReciprocalTransformer
 from .metrics import ts_mape
@@ -163,6 +162,7 @@ class BaseTimeSeries(BaseEstimator):
         """
         if self.has_preprocessing():
             inv = self.preprocessing_.get_fct_inv()
+            X, y, sample_weight = inv.transform(X, y, sample_weight)
 
         return X, y, sample_weight
 

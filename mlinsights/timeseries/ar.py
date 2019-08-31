@@ -62,7 +62,7 @@ class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
 
         self
         """
-        X, y, sample_weight = self._base_fit(X, y, sample_weight)
+        X, y, sample_weight = self._base_fit_predict(X, y, sample_weight)
         self.estimator_ = (self.estimator.fit(X, y)
                            if sample_weight is None
                            else self.estimator.fit(X, y, sample_weight=sample_weight))
