@@ -27,14 +27,14 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
         :showcode:
 
         import numpy
-        from mlinsights.timeseries import build_X_y
+        from mlinsights.timeseries import build_ts_X_y
         from mlinsights.timeseries.base import BaseTimeSeries
 
         X = numpy.arange(10).reshape(5, 2)
         y = numpy.arange(5) * 100
         weights = numpy.arange(5) * 1000
         bs = BaseTimeSeries(past=2)
-        nx, ny, nw = build_X_y(bs, X, y, weights)
+        nx, ny, nw = build_ts_X_y(bs, X, y, weights)
         print('X=', X)
         print('y=', y)
         print('nx=', nx)
