@@ -28,6 +28,7 @@ def plot_week_timeseries(time, value, normalise=True,
 
     .. plot::
 
+        import datetime
         import matplotlib.pyplot as plt
         from mlinsights.timeseries.datasets import artificial_data
         from mlinsights.timeseries.agg import aggregate_timeseries

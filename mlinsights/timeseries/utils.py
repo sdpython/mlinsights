@@ -10,25 +10,18 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
     """
     Builds standard *X, y* based in the given one.
 
-    Parameters
-    ----------
-
-    model: a timeseries model (@see cl BaseTimeSeries)
-    X: other times series, used as features, [n_obs, n_features],
-        X may be empty (None)
-    y: timeseries (one single vector),  [n_obs]
-    weights: weights None or array [n_obs]
-    same_rows: keep the same number of rows
-        as the original datasets
-
-    Returns
-    -------
-    X: array of features [nrows, n_features + past]
-        where `nrows = n_obs + model.delay2 - model.past + 2`
-    y: array of targets [nrows]
-    weights: None or array [nrows]
-
-    A few examples.
+    @param      model       a timeseries model (@see cl BaseTimeSeries)
+    @param      X           times series, used as features, [n_obs, n_features],
+                            X may be empty (None)
+    @param      y           timeseries (one single vector),  [n_obs]
+    @param      weights     weights None or array [n_obs]
+    @param      same_rows   keep the same number of rows
+                            as the original datasets, use nan when no value is
+                            available
+    @return                 *(X, y, weights)*:  X is array of features [nrows, n_features + past]
+                            where `nrows = n_obs + model.delay2 - model.past + 2`,
+                            y is an array of targets [nrows],
+                            weights is None or array [nrows]
 
     .. runpython::
         :showcode:

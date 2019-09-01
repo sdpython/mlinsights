@@ -51,9 +51,9 @@ class BaseTimeSeries(BaseEstimator):
     Base class to build a predictor on timeseries.
     The class computes one or several predictions at each time,
     between *delay1* and *delay2*. It computes:
-    :math:`\\hat{Y_{t+d} = f(Y_{t-1}, ..., Y_{t-p})`
+    :math:`\\hat{Y_{t+d} = f(Y_{t-1}, ..., Y_{t-p})}`
     with *d* in *[delay1, delay2[* and
-    :math:`1 \\legslant p \\legslant past`.
+    :math:`1 \\leqslant p \\leqslant past`.
     """
 
     def __init__(self, past=1, delay1=1, delay2=2,

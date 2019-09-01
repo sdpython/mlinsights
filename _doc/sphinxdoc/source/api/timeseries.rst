@@ -2,6 +2,27 @@
 Timeseries
 ==========
 
+.. contents::
+    :local:
+
+Datasets
+++++++++
+
+.. autosignature:: mlinsights.timeseries.datasets.artificial_data
+
+Manipulation
+++++++++++++
+
+.. autosignature:: mlinsights.timeseries.agg.aggregate_timeseries
+
+Plotting
+++++++++
+
+.. autosignature:: mlinsights.timeseries.plotting.plot_week_timeseries
+
+Prediction
+++++++++++
+
 The following function builds a regular dataset from
 a timeseries so that it can be used by machine learning models.
 
@@ -12,6 +33,11 @@ estimators. It deals with a timeseries ine one dimension
 and additional features.
 
 .. autosignature:: mlinsights.timeseries.base.BaseTimeSeries
+
+the first predictor is a dummy one: it uses the current value to
+predict the future.
+
+.. autosignature:: mlinsights.timeseries.dummies.DummyTimeSeriesRegressor
 
 The first regressor is an auto-regressor. It can be estimated
 with any regressor implemented in :epkg:`scikit-learn`.
