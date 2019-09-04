@@ -42,9 +42,9 @@ jobs:
   - script: |
       python -u setup.py bdist_wheel
     displayName: 'Build Package'
-  - script: |
-      python -u setup.py build_sphinx
-    displayName: 'Builds Documentation'
+#  - script: |
+#      python -u setup.py build_sphinx
+#    displayName: 'Builds Documentation'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-linux-$(python.version)'
