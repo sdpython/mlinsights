@@ -42,7 +42,7 @@ def aggregate_timeseries(df, index='time', values='y',
             df = pandas.DataFrame(dict(time=index))
             for i in range(values.shape[1]):
                 df['y%d' % i] = values[:, i]
-            values = list(df.columns[1:])
+            values = list(df.columns)[1:]
         index = 'time'
 
     def round_(serie, freq, per):
