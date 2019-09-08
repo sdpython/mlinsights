@@ -10,6 +10,11 @@ Datasets
 
 .. autosignature:: mlinsights.timeseries.datasets.artificial_data
 
+Experimentation
++++++++++++++++
+
+.. autosignature:: mlinsights.timeseries.patterns.find_ts_group_pattern
+
 Manipulation
 ++++++++++++
 

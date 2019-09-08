@@ -34,6 +34,16 @@ def aggregate_timeseries(df, index='time', values='y',
     @param      per     second aggregation, per week...
     @return             aggregated values
     """
+    if df is None:
+        if len(values.shape) == 1:
+            df = pandas.DataFrame(dict(time=index, y=values))
+            values = 'y'
+        else:
+            df = pandas.DataFrame(dict(time=index))
+            for i in range(values.shape[1]):
+                df['y%d' % i] = values[:, i]
+            values = list(df.columns[1:])
+        index = 'time'
 
     def round_(serie, freq, per):
         fr = to_offset(freq)
@@ -68,7 +78,7 @@ def aggregate_timeseries(df, index='time', values='y',
     if agg == 'sum':
         gr = df[[agg_name] + values].groupby(agg_name, as_index=False).sum()
         agg_name = _get_column_name(gr, 'week' + index)
-        gr.columns = [agg_name, gr.columns[1]]
+        gr.columns = [agg_name] + list(gr.columns[1:])
     else:
         raise ValueError("Unknown aggregation '{}'.".format(agg))
     return gr.sort_values(agg_name).reset_index(drop=True)

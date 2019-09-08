@@ -106,6 +106,7 @@ def plot_week_timeseries(time, value, normalise=True,
     if daynames is None:
         daynames = list(calendar.day_name)
 
+    maxx = [(maxx[0] // 7) * 7, maxx[1]]
     new_ymin = maxy[0] - (maxy[1] * 0.025 + maxy[0] * 0.975 - maxy[0])
     for i in range(int(maxx[0]), int(maxx[1] + 0.1)):
         x1i = maxx[0] + input_maxy * i
@@ -152,6 +153,7 @@ def plot_week_timeseries(time, value, normalise=True,
         ax.set_xticklabels([xfmt % x for x in xlabels])
     else:
         ax.set_xticklabels(xlabels)
+
     ax.tick_params(axis='x', rotation=30)
 
     # value2
