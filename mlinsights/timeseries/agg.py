@@ -79,6 +79,15 @@ def aggregate_timeseries(df, index='time', values='y',
         gr = df[[agg_name] + values].groupby(agg_name, as_index=False).sum()
         agg_name = _get_column_name(gr, 'week' + index)
         gr.columns = [agg_name] + list(gr.columns[1:])
+    elif agg == 'norm':
+        gr = df[[agg_name] + values].groupby(agg_name, as_index=False).sum()
+        agg_name = _get_column_name(gr, 'week' + index)
+        agg_cols = list(gr.columns[1:])
+        gr.columns = [agg_name] + agg_cols
+        for c in agg_cols:
+            su = gr[c].sum()
+            if su != 0:
+                gr[c] /= su
     else:
         raise ValueError("Unknown aggregation '{}'.".format(agg))
     return gr.sort_values(agg_name).reset_index(drop=True)

@@ -10,7 +10,7 @@ from .agg import aggregate_timeseries
 
 def find_ts_group_pattern(ttime, values, names, name_subset=None,
                           per='week', unit='half-hour', agg='sum',
-                          estimator=None):
+                          estimator=None, fLOG=None):
     """
     Clusters times series to find similar patterns.
 
@@ -22,12 +22,18 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     @param      estimator       estimator used to find pattern,
                                 :epkg:`sklearn:cluster:KMeans` and
                                 10 groups
+    @param      fLOG            logging function
     @return                     found clusters, distances
     """
+    for var, na in zip([ttime, values, names], ['ttime', 'values', 'names']):
+        if not isinstance(var, numpy.ndarray):
+            raise TypeError("'{}' must an array not {}".format(na, type(var)))
     # builds features
     set_names = set(names)
     if name_subset is not None:
         set_names &= set(name_subset)
+    if fLOG:
+        fLOG('[find_ts_group_pattern] build features, {} groups'.format(len(set_names)))
     gr_names = []
     to_merge = []
     for name in set_names:
@@ -40,6 +46,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
         gr_names.append(name)
         to_merge.append(gr)
 
+    if fLOG:
+        fLOG('[find_ts_group_pattern] merge features')
     all_merged = pandas.concat(to_merge, axis=1)
     all_merged.fillna(0, inplace=True)
     ncol = all_merged.shape[1] // len(gr_names)
@@ -51,21 +59,29 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     gr_feats = numpy.vstack(gr_feats)
 
     # cluster
+    if fLOG:
+        fLOG('[find_ts_group_pattern] clustering, shape={}'.format(gr_feats.shape))
     if estimator is None:
-        estimator = KMeans(n_clusters=10)
+        estimator = KMeans()
     estimator.fit(gr_feats)
 
     # predicted clusters
     pred = estimator.predict(gr_feats)
     dist = estimator.transform(gr_feats)
+    if fLOG:
+        fLOG('[find_ts_group_pattern] number of clusters: {}'.format(len(set(pred))))
 
     row_name = {n: i for i, n in enumerate(gr_names)}
     clusters = numpy.empty(ttime.shape[0], dtype=pred.dtype)
     dists = numpy.empty((ttime.shape[0], dist.shape[1]), dtype=dist.dtype)
 
     for i in range(ttime.shape[0]):
-        index = row_name[names[i]]
-        clusters[i] = pred[index]
-        dists[i, :] = dist[index, :]
+        if names[i] in row_name:
+            index = row_name[names[i]]
+            clusters[i] = pred[index]
+            dists[i, :] = dist[index, :]
+        else:
+            clusters[i] = -1
+            dists[i, :] = numpy.nan
 
     return clusters, dists
