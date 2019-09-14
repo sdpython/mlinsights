@@ -5,6 +5,7 @@
 import unittest
 from io import StringIO
 from textwrap import dedent
+import warnings
 import pandas
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression, LinearRegression
@@ -15,7 +16,7 @@ from sklearn.pipeline import Pipeline, FeatureUnion, make_pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.plotting import pipeline2dot
+from mlinsights.plotting import pipeline2dot, pipeline2str
 
 
 class TestDot(ExtTestCase):
@@ -138,6 +139,66 @@ class TestDot(ExtTestCase):
         model.fit(df, df[train_cols])
         dot = pipeline2dot(model, df)
         self.assertIn('label="Identity"', dot)
+
+    def test_pipeline_tr(self):
+
+        buffer = """
+            fixed_acidity,volatile_acidity,citric_acid,residual_sugar,chlorides,free_sulfur_dioxide,total_sulfur_dioxide,density,pH,sulphates,alcohol,quality,color
+            7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5,red
+            7.8,0.88,0.0,2.6,0.098,25.0,67.0,0.9968,3.2,0.68,9.8,5,red
+            7.8,0.76,0.04,2.3,0.092,15.0,54.0,0.997,3.26,0.65,9.8,5,red
+            11.2,0.28,0.56,1.9,0.075,17.0,60.0,0.998,3.16,0.58,9.8,6,white
+            7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5,red
+            """.replace("            ", "")
+        X_train = pandas.read_csv(StringIO(buffer)).drop("quality", axis=1)
+
+        numeric_features = [c for c in X_train if c != 'color']
+
+        pipe = Pipeline([
+            ("prep", ColumnTransformer([
+                ("color", Pipeline([
+                    ('one', OneHotEncoder()),
+                    ('select', ColumnTransformer(
+                        [('sel1', 'passthrough', [0])]))
+                ]), ['color']),
+                ("others", "passthrough", numeric_features)
+            ])),
+        ])
+
+        pipe.fit(X_train)
+        # pred = pipe.transform(X_train)
+        dot = pipeline2dot(pipe, X_train)
+        self.assertIn("OneHotEncoder", dot)
+        dots = pipeline2str(pipe)
+        self.assertIn("OneHotEncoder", dots)
+        self.assertIn('PassThrough(0)', dots)
+
+    def test_pipeline_tr_small(self):
+
+        buffer = """
+            fixed_acidity,volatile_acidity,citric_acid,residual_sugar,chlorides,free_sulfur_dioxide,total_sulfur_dioxide,density,pH,sulphates,alcohol,quality,color
+            7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5,red
+            7.8,0.88,0.0,2.6,0.098,25.0,67.0,0.9968,3.2,0.68,9.8,5,red
+            7.8,0.76,0.04,2.3,0.092,15.0,54.0,0.997,3.26,0.65,9.8,5,red
+            11.2,0.28,0.56,1.9,0.075,17.0,60.0,0.998,3.16,0.58,9.8,6,white
+            7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5,red
+            """.replace("            ", "")
+        X_train = pandas.read_csv(StringIO(buffer)).drop("quality", axis=1)
+
+        pipe = Pipeline([
+            ("prep", ColumnTransformer([
+                ("color", Pipeline([
+                    ('one', "passthrough"),
+                    ('select', ColumnTransformer(
+                        [('sel1', 'passthrough', [0])]))
+                ]), ['color']),
+            ])),
+        ])
+
+        pipe.fit(X_train)
+        dot = pipeline2dot(pipe, X_train)
+        if "i -> node2;" in dot:
+            warnings.warn("Bug")
 
 
 if __name__ == "__main__":

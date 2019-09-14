@@ -2,6 +2,7 @@
 @file
 @brief Helpers to visualize a pipeline.
 """
+from collections import OrderedDict
 import numpy
 import pandas
 from sklearn.base import TransformerMixin, ClassifierMixin, RegressorMixin
@@ -175,7 +176,7 @@ def pipeline2dot(pipe, data, **params):
     fontsize = 8
     info = [dict(schema_after=data)]
     info.extend(_pipeline_info(pipe, data, context=dict(n=0, names=set(data))))
-    columns = {}
+    columns = OrderedDict()
 
     for i, line in enumerate(info):
         if i == 0:
@@ -203,7 +204,10 @@ def pipeline2dot(pipe, data, **params):
             exp.append(node)
 
             for inp in line['inputs']:
-                nc = columns[inp]
+                if isinstance(inp, int):
+                    nc = list(columns)[inp][1]
+                else:
+                    nc = columns[inp]
                 edge = '  {0} -> node{1};'.format(nc, i)
                 exp.append(edge)
 
@@ -270,7 +274,7 @@ def pipeline2str(pipe, indent=3):
         if vs is None:
             msg = "{}{}".format(spaces, model.__class__.__name__)
         else:
-            v = ','.join(vs)
+            v = ','.join(map(str, vs))
             msg = "{}{}({})".format(spaces, model.__class__.__name__, v)
         rows.append(msg)
     return "\n".join(rows)

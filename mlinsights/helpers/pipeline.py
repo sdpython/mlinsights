@@ -23,47 +23,53 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
     """
     if coor is None:
         coor = (0,)
-    yield coor, pipe, vs
-    if hasattr(pipe, 'transformer_and_mapper_list') and len(pipe.transformer_and_mapper_list):
-        # azureml DataTransformer
-        raise NotImplementedError("Unable to handle this specific case.")
-    elif hasattr(pipe, 'mapper') and pipe.mapper:
-        # azureml DataTransformer
-        for couple in enumerate_pipeline_models(pipe.mapper, coor + (0,)):
-            yield couple
-    elif hasattr(pipe, 'built_features'):
-        # sklearn_pandas.dataframe_mapper.DataFrameMapper
-        for i, (columns, transformers, _) in enumerate(pipe.built_features):
-            if isinstance(columns, str):
-                columns = (columns,)
-            if transformers is None:
-                yield (coor + (i,)), None, columns
-            else:
-                for couple in enumerate_pipeline_models(transformers, coor + (i,), columns):
-                    yield couple
-    elif isinstance(pipe, Pipeline):
-        for i, (_, model) in enumerate(pipe.steps):
-            for couple in enumerate_pipeline_models(model, coor + (i,)):
-                yield couple
-    elif isinstance(pipe, ColumnTransformer):
-        for i, (_, fitted_transformer, column) in enumerate(pipe.transformers):
-            for couple in enumerate_pipeline_models(
-                    fitted_transformer, coor + (i,), column):
-                yield couple
-    elif isinstance(pipe, FeatureUnion):
-        for i, (_, model) in enumerate(pipe.transformer_list):
-            for couple in enumerate_pipeline_models(model, coor + (i,)):
-                yield couple
-    elif isinstance(pipe, TransformedTargetRegressor):
-        raise NotImplementedError(
-            "Not yet implemented for TransformedTargetRegressor.")
-    elif isinstance(pipe, (TransformerMixin, ClassifierMixin, RegressorMixin)):
-        pass
-    elif isinstance(pipe, BaseEstimator):
-        pass
+    if pipe == "passthrough":
+        class PassThrough:
+            "dummy class to help display"
+            pass
+        yield coor, PassThrough(), vs
     else:
-        raise TypeError(
-            "pipe is not a scikit-learn object: {}\n{}".format(type(pipe), pipe))
+        yield coor, pipe, vs
+        if hasattr(pipe, 'transformer_and_mapper_list') and len(pipe.transformer_and_mapper_list):
+            # azureml DataTransformer
+            raise NotImplementedError("Unable to handle this specific case.")
+        elif hasattr(pipe, 'mapper') and pipe.mapper:
+            # azureml DataTransformer
+            for couple in enumerate_pipeline_models(pipe.mapper, coor + (0,)):
+                yield couple
+        elif hasattr(pipe, 'built_features'):
+            # sklearn_pandas.dataframe_mapper.DataFrameMapper
+            for i, (columns, transformers, _) in enumerate(pipe.built_features):
+                if isinstance(columns, str):
+                    columns = (columns,)
+                if transformers is None:
+                    yield (coor + (i,)), None, columns
+                else:
+                    for couple in enumerate_pipeline_models(transformers, coor + (i,), columns):
+                        yield couple
+        elif isinstance(pipe, Pipeline):
+            for i, (_, model) in enumerate(pipe.steps):
+                for couple in enumerate_pipeline_models(model, coor + (i,)):
+                    yield couple
+        elif isinstance(pipe, ColumnTransformer):
+            for i, (_, fitted_transformer, column) in enumerate(pipe.transformers):
+                for couple in enumerate_pipeline_models(
+                        fitted_transformer, coor + (i,), column):
+                    yield couple
+        elif isinstance(pipe, FeatureUnion):
+            for i, (_, model) in enumerate(pipe.transformer_list):
+                for couple in enumerate_pipeline_models(model, coor + (i,)):
+                    yield couple
+        elif isinstance(pipe, TransformedTargetRegressor):
+            raise NotImplementedError(
+                "Not yet implemented for TransformedTargetRegressor.")
+        elif isinstance(pipe, (TransformerMixin, ClassifierMixin, RegressorMixin)):
+            pass
+        elif isinstance(pipe, BaseEstimator):
+            pass
+        else:
+            raise TypeError(
+                "pipe is not a scikit-learn object: {}\n{}".format(type(pipe), pipe))
 
 
 class BaseEstimatorDebugInformation:
