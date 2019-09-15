@@ -5,7 +5,17 @@
 History
 =======
 
-current - 2019-07-11 - 0.00Mb
+current - 2019-09-15 - 0.00Mb
+=============================
+
+* `66`: Fix visualisation graph: does not work when column index is an integer in ColumnTransformer (2019-09-15)
+* `59`: Add GaussianProcesses to the notebook about confidence interval and regression (2019-09-15)
+* `65`: Implements a TargetTransformClassifier similar to TargetTransformRegressor (2019-08-24)
+* `64`: Implements a different version of TargetTransformRegressor which includes predefined functions (2019-08-24)
+* `63`: Add a transform which transform the target and applies the inverse function of the prediction before scoring (2019-08-24)
+* `49`: fix menu in documentation (2019-08-24)
+
+0.2.312 - 2019-07-13 - 0.66Mb
 =============================
 
 * `61`: Fix bug in pipeline2dot when keyword "passthrough is used" (2019-07-11)
