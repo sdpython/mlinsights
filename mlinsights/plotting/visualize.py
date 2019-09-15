@@ -11,18 +11,35 @@ from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
 from ..helpers.pipeline import enumerate_pipeline_models
 
 
-def _pipeline_info(pipe, data, context):
+def _pipeline_info(pipe, data, context, former_data=None):
     """
     Internal function to convert a pipeline into
     some graph.
     """
-    def _get_name(context, prefix='-v-'):
+    def _get_name(context, prefix='-v-', info=None, data=None):
+        if info is None:
+            raise RuntimeError("info should not be None")
+        if isinstance(prefix, list):
+            return [_get_name(context, el, info, data) for el in prefix]
+        if isinstance(prefix, int):
+            prefix = former_data[prefix]
+        if isinstance(prefix, int):
+            raise TypeError("prefix must be a string.\ninfo={}".format(info))
         sug = "%s%d" % (prefix, context['n'])
         while sug in context['names']:
             context['n'] += 1
             sug = "%s%d" % (prefix, context['n'])
-        context['names'].add(sug)
+        context['names'][sug] = info
         return sug
+
+    def _get_name_simple(name, data):
+        if isinstance(name, str):
+            return name
+        res = data[name]
+        if isinstance(res, int):
+            raise RuntimeError("Column name is still a number and not a name: {} and {}."
+                               "".format(name, data))
+        return res
 
     if isinstance(pipe, Pipeline):
         infos = []
@@ -36,17 +53,19 @@ def _pipeline_info(pipe, data, context):
         infos = []
         outputs = []
         for _, model, vs in pipe.transformers:
-            info = _pipeline_info(model, vs, context)
-            new_outputs = []
-            for o in info[-1]['outputs']:
-                add = _get_name(context, prefix=o)
-                outputs.append(add)
-                new_outputs.append(add)
-            info[-1]['outputs'] = new_outputs
+            info = _pipeline_info(model, vs, context, former_data=data)
+            #new_outputs = []
+            # for o in info[-1]['outputs']:
+            #    add = _get_name(context, prefix=o, info=info)
+            #    outputs.append(add)
+            #    new_outputs.append(add)
+            #info[-1]['outputs'] = new_outputs
+            outputs.extend(info[-1]['outputs'])
             infos.extend(info)
         if len(pipe.transformers) > 1:
-            infos.append({'name': 'union', 'outputs': [_get_name(context)],
-                          'inputs': outputs, 'type': 'transform'})
+            info = {'name': 'union', 'inputs': outputs, 'type': 'transform'}
+            info['outputs'] = [_get_name(context, info=info)]
+            infos.append(info)
         return infos
 
     elif isinstance(pipe, FeatureUnion):
@@ -56,14 +75,15 @@ def _pipeline_info(pipe, data, context):
             info = _pipeline_info(model, data, context)
             new_outputs = []
             for o in info[-1]['outputs']:
-                add = _get_name(context, prefix=o)
+                add = _get_name(context, prefix=o, info=info)
                 outputs.append(add)
                 new_outputs.append(add)
             info[-1]['outputs'] = new_outputs
             infos.extend(info)
         if len(pipe.transformer_list) > 1:
-            infos.append({'name': 'union', 'outputs': [_get_name(context)],
-                          'inputs': outputs, 'type': 'transform'})
+            info = {'name': 'union', 'inputs': outputs, 'type': 'transform'}
+            info['outputs'] = [_get_name(context, info=info)]
+            infos.append(info)
         return infos
 
     elif isinstance(pipe, TransformedTargetRegressor):
@@ -77,8 +97,8 @@ def _pipeline_info(pipe, data, context):
             info['inputs'] = data
             info = [info]
         else:
-            info['inputs'] = [_get_name(context)]
-            info['outputs'] = [_get_name(context)]
+            info['inputs'] = [_get_name(context, info=info)]
+            info['outputs'] = [_get_name(context, info=info)]
             info = [{'name': 'union', 'outputs': info['inputs'],
                      'inputs': data, 'type': 'transform'}, info]
         return info
@@ -92,7 +112,7 @@ def _pipeline_info(pipe, data, context):
             info = [info]
         else:
             info['outputs'] = exp
-            info['inputs'] = [_get_name(context)]
+            info['inputs'] = [_get_name(context, info=info)]
             info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
                      'type': 'transform'}, info]
         return info
@@ -106,7 +126,7 @@ def _pipeline_info(pipe, data, context):
             info = [info]
         else:
             info['outputs'] = exp
-            info['inputs'] = [_get_name(context)]
+            info['inputs'] = [_get_name(context, info=info)]
             info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
                      'type': 'transform'}, info]
         return info
@@ -114,8 +134,8 @@ def _pipeline_info(pipe, data, context):
     elif isinstance(pipe, str):
         if pipe == "passthrough":
             info = {'name': 'Identity', 'type': 'transform'}
-            info['outputs'] = data
-            info['inputs'] = data
+            info['inputs'] = [_get_name_simple(n, former_data) for n in data]
+            info['outputs'] = _get_name(context, data, info)
             info = [info]
         else:
             raise NotImplementedError(
@@ -175,7 +195,10 @@ def pipeline2dot(pipe, data, **params):
             exp.append("  {}={};".format(opt, options[opt]))
     fontsize = 8
     info = [dict(schema_after=data)]
-    info.extend(_pipeline_info(pipe, data, context=dict(n=0, names=set(data))))
+    names = OrderedDict()
+    for d in data:
+        names[d] = info
+    info.extend(_pipeline_info(pipe, data, context=dict(n=0, names=names)))
     columns = OrderedDict()
 
     for i, line in enumerate(info):
