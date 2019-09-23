@@ -72,7 +72,11 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
                 # url
                 with urllib.request.urlopen(img) as response:
                     content = response.read()
-                im = Image.open(io.BytesIO(content))
+                try:
+                    im = Image.open(io.BytesIO(content))
+                except OSError as e:
+                    raise RuntimeError(
+                        "Unable to read image '{}'.".format(img)) from e
             else:
                 # local file
                 if folder_image is not None:
