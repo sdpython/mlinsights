@@ -34,7 +34,7 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
     use the same coordinates.
     """
     if "plt" not in sys.modules:
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # pylint: disable=C0415
 
     if hasattr(imgs, 'shape') and len(imgs.shape) == 2:
         height, width = imgs.shape

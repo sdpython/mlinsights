@@ -29,7 +29,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         # We delay the import as keras backend is not necessarily available.
         with redirect_stderr(StringIO()):
             try:
-                import torchvision.models as tmodels  # pylint: disable=E0401
+                import torchvision.models as tmodels  # pylint: disable=E0401,C0415
             except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn(
                     "torch is not available: {0}".format(e))

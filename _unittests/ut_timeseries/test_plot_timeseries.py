@@ -12,7 +12,7 @@ from mlinsights.timeseries.plotting import plot_week_timeseries
 class TestPlotTimeSeries(ExtTestCase):
 
     def test_plot_data(self):
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # pylint: disable=C0415
         dt1 = datetime.datetime(2019, 8, 1)
         dt2 = datetime.datetime(2019, 8, 15)
         data = artificial_data(dt1, dt2, minutes=15)
