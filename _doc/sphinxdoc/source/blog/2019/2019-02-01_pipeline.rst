@@ -8,9 +8,12 @@
     :epkg:`scikit-learn` introduced nice feature to
     be able to process mixed type column in a single
     pipeline which follows :epkg:`scikit-learn` API:
-    :epkg:`sklearn:compose:ColumnTransformer` or
-    :epkg:`sklearn:pipeline:FeatureUnion` and
-    :epkg:`sklearn:pipeline:Pipeline`. Ideas are not
+    `ColumnTransformer <https://scikit-learn.org/stable/
+    modules/generated/sklearn.compose.ColumnTransformer.html>`_
+    `FeatureUnion <https://scikit-learn.org/stable/modules/
+    generated/sklearn.pipeline.FeatureUnion.html>`_ and
+    `Pipeline <https://scikit-learn.org/stable/modules/
+    generated/sklearn.pipeline.Pipeline.html>`_. Ideas are not
     new but it is finally taking place in
     :epkg:`scikit-learn`.
 
