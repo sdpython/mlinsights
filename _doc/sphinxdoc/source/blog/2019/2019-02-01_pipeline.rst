@@ -22,5 +22,6 @@
     :ref:`pipeline2dot <mlinsights.plotting.visualize.pipeline2dot>`
     which converts a pipeline into :epkg:`DOT` language
     as :epkg:`scikit-learn` does for a decision tree with
-    :epkg:`sklearn:tree:export_graphviz`. I created the
-    notebook :ref:`visualizepipelinerst`.
+    `export_graphviz <https://scikit-learn.org/stable/
+    modules/generated/sklearn.tree.export_graphviz.html>`_.
+    I created the notebook :ref:`visualizepipelinerst`.
