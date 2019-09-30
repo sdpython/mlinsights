@@ -53,7 +53,24 @@ def _pipeline_info(pipe, data, context, former_data=None):
         infos = []
         outputs = []
         for _, model, vs in pipe.transformers:
-            info = _pipeline_info(model, vs, context, former_data=data)
+            if all(map(lambda o: isinstance(o, int), vs)):
+                new_data = []
+                if isinstance(data, OrderedDict):
+                    new_data = [_[1] for _ in data.items()]
+                else:
+                    mx = max(vs)
+                    while len(new_data) < mx:
+                        if len(data) > len(new_data):
+                            new_data.append(data[len(new_data)])
+                        else:
+                            new_data.append(data[-1])
+            else:
+                new_data = OrderedDict()
+                for v in vs:
+                    new_data[v] = data.get(v, v)
+
+            info = _pipeline_info(
+                model, new_data, context, former_data=new_data)
             #new_outputs = []
             # for o in info[-1]['outputs']:
             #    add = _get_name(context, prefix=o, info=info)
@@ -170,15 +187,19 @@ def pipeline2dot(pipe, data, **params):
             'height': '0.1',
         }
     """
-    if isinstance(data, pandas.DataFrame):
-        data = list(data.columns)
-    elif isinstance(data, numpy.ndarray):
-        if len(data.shape) != 2:
+    raw_data = data
+    data = OrderedDict()
+    if isinstance(raw_data, pandas.DataFrame):
+        for k, c in enumerate(raw_data.columns):
+            data[c] = 'sch0:f%d' % k
+    elif isinstance(raw_data, numpy.ndarray):
+        if len(raw_data.shape) != 2:
             raise NotImplementedError(
                 "Unexpected training data dimension: {}.".format(data.shape))
-        data = ['X[0-{}]'.format(data.shape[1])]
-    elif not isinstance(data, list):
-        raise TypeError("Unexpected data type: {}.".format(type(data)))
+        for i in range(raw_data.shape[1]):
+            data['X%d' % i] = 'sch0:f%d' % i
+    elif not isinstance(raw_data, list):
+        raise TypeError("Unexpected data type: {}.".format(type(raw_data)))
 
     options = {
         'orientation': 'portrait',
@@ -211,7 +232,6 @@ def pipeline2dot(pipe, data, **params):
             node = '  sch0[label="{0}",shape=record,fontsize={1}];'.format(
                 "|".join(labs), params.get('fontsize', fontsize))
             exp.append(node)
-
         else:
             exp.append('')
             if line['type'] == 'transform':
@@ -228,9 +248,12 @@ def pipeline2dot(pipe, data, **params):
 
             for inp in line['inputs']:
                 if isinstance(inp, int):
-                    nc = list(columns)[inp][1]
+                    import pprint  # pylint: disable=C0415
+                    raise IndexError(
+                        "Unable to guess columns {} in\n{}\n---\n{}".format(
+                            inp, pprint.pformat(columns), '\n'.join(exp)))
                 else:
-                    nc = columns[inp]
+                    nc = columns.get(inp, inp)
                 edge = '  {0} -> node{1};'.format(nc, i)
                 exp.append(edge)
 
