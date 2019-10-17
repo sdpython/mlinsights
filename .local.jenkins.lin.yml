@@ -8,12 +8,12 @@ virtualenv:
   - path: {{ospathjoin(root_path, pickname("$NAME_JENKINS", project_name + "_$VERSION_$DIST_$NAME"), "_venv")}}
   
 install:
-  - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper cpyquickhelper pandas_streaming --extra-index-url=https://pypi.python.org/simple/\".split())"
-  - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ scikit-learn>=0.21 --extra-index-url=https://pypi.python.org/simple/\".split())"
-  - $PYINT -c "from pip._internal import main;main(\"install -r requirements_conda-3.7.txt\".split())"
-  - $PYINT -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
+  - $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper cpyquickhelper pandas_streaming --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ scikit-learn>=0.21 --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install -r requirements_conda-3.7.txt
+  - $PYINT -m pip install -r requirements.txt
   - $PYINT --version
-  - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
+  - $PYINT -m pip freeze
 
 before_script:
   - $PYINT -u setup.py build_ext --inplace
