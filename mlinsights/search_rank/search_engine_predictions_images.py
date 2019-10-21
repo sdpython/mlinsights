@@ -36,7 +36,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         """
         if "torch" in str(type(data)):
             self.module_ = "torch"
-            from torch.utils.data import DataLoader  # pylint: disable=E0401
+            from torch.utils.data import DataLoader  # pylint: disable=E0401,C0415
             dataloader = DataLoader(
                 data, batch_size=1, shuffle=False, num_workers=0)
             self.iter_images_ = iter_images = iter(
@@ -47,8 +47,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             self.module_ = "keras"
             iter_images = data
             # We delay the import as keras backend is not necessarily installed.
-            from keras.preprocessing.image import Iterator  # pylint: disable=E0401
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401
+            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(
                     "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))
@@ -119,7 +119,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             if self.module_ == "keras":
                 raise NotImplementedError("Not yet implemented or Keras.")
             elif self.module_ == "torch":
-                from torch import from_numpy  # pylint: disable=E0611, E0401
+                from torch import from_numpy  # pylint: disable=E0611,E0401,C0415
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
             else:
@@ -131,8 +131,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                     "Keras object but {0} was used to train the KNN.".format(self.module_))
             # We delay the import as keras backend is not necessarily installed.
             # keras, it expects an iterator.
-            from keras.preprocessing.image import Iterator  # pylint: disable=E0401
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401
+            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(
                     "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))

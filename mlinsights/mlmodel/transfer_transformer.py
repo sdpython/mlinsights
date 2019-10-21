@@ -71,7 +71,7 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
         """
         if self.copy_estimator:
             self.estimator_ = clone_with_fitted_parameters(self.estimator)
-            from .sklearn_testing import assert_estimator_equal
+            from .sklearn_testing import assert_estimator_equal  # pylint: disable=C0415
             assert_estimator_equal(self.estimator_, self.estimator)
         else:
             self.estimator_ = self.estimator
