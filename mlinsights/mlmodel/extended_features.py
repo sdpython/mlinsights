@@ -79,7 +79,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         Returns feature names for output features for
         the polynomial features.
         """
-        check_is_fitted(self, ['n_input_features_'])
+        check_is_fitted(self)
         if input_features is None:
             input_features = ["x%d" %
                               i for i in range(0, self.n_input_features_)]
@@ -165,7 +165,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             The matrix of features, where NP is the number of polynomial
             features generated from the combination of inputs.
         """
-        check_is_fitted(self, ['n_input_features_', 'n_output_features_'])
+        check_is_fitted(self)
         n_features = X.shape[1]
         if n_features != self.n_input_features_:
             raise ValueError("X shape does not match training shape")

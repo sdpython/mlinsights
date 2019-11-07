@@ -54,7 +54,7 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         Returns the number of estimators = the number of buckets
         the data was split in.
         """
-        check_is_fitted(self, 'estimators_')
+        check_is_fitted(self)
         return len(self.estimators_)
 
     def fit(self, X, y, sample_weight=None):
@@ -126,7 +126,7 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
 
         predictions
         """
-        check_is_fitted(self, "estimators_")
+        check_is_fitted(self)
         container = numpy.empty((X.shape[0], len(self.estimators_)))
         for i, est in enumerate(self.estimators_):
             pred = est.predict(X)

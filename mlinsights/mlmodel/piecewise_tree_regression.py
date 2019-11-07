@@ -99,7 +99,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         :return: array
             leaves index in ``self.leaves_index_``
         """
-        check_is_fitted(self, 'leaves_index_')
+        check_is_fitted(self)
         # The creation of the sparse matrix could be avoided.
         leaves = self.decision_path(X)
         leaves = leaves[:, self.leaves_index_]
@@ -169,7 +169,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         y : array of shape = [n_samples] or [n_samples, n_outputs]
             The predicted classes, or the predict values.
         """
-        check_is_fitted(self, 'betas_')
+        check_is_fitted(self)
         leaves = self.predict_leaves(X)
         pred = numpy.ones((X.shape[0], 1))
         Xone = numpy.hstack([X, pred])

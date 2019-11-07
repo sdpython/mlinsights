@@ -121,7 +121,7 @@ class PiecewiseEstimator(BaseEstimator):
         Returns the number of estimators = the number of buckets
         the data was split in.
         """
-        check_is_fitted(self, 'estimators_')
+        check_is_fitted(self)
         return len(self.estimators_)
 
     def _mapping_train(self, X, binner):
@@ -172,7 +172,7 @@ class PiecewiseEstimator(BaseEstimator):
         """
         Maps every row to a tree in *self.estimators_*.
         """
-        check_is_fitted(self, 'mapping_')
+        check_is_fitted(self)
         binner = self.binner_
         if hasattr(binner, "tree_"):
             dec_path = self.binner_.decision_path(X)
@@ -277,7 +277,7 @@ class PiecewiseEstimator(BaseEstimator):
         Generic *predict* method, works for *predict_proba* and
         *decision_function* as well.
         """
-        check_is_fitted(self, 'estimators_')
+        check_is_fitted(self)
         if len(self.estimators_) == 0:
             raise RuntimeError(
                 "Estimator was apparently fitted but contains no estimator.")
