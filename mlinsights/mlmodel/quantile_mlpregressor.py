@@ -8,7 +8,6 @@ import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.utils import check_X_y, column_or_1d
 from sklearn.utils.extmath import safe_sparse_dot
-from sklearn.utils.validation import check_is_fitted
 from sklearn.neural_network._base import DERIVATIVES, LOSS_FUNCTIONS
 try:
     from sklearn.neural_network._multilayer_perceptron import BaseMultilayerPerceptron
@@ -380,7 +379,6 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         y : array-like, shape (n_samples, n_outputs)
             The predicted values.
         """
-        check_is_fitted(self)
         y_pred = self._predict(X)
         if y_pred.shape[1] == 1:
             return y_pred.ravel()

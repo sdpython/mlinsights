@@ -6,7 +6,6 @@ import numpy
 from scipy import sparse
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_array
-from sklearn.utils.validation import check_is_fitted
 from ._extended_features_polynomial import _transform_iall, _transform_ionly, _combinations_poly
 
 
@@ -79,7 +78,6 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         Returns feature names for output features for
         the polynomial features.
         """
-        check_is_fitted(self)
         if input_features is None:
             input_features = ["x%d" %
                               i for i in range(0, self.n_input_features_)]
@@ -165,7 +163,6 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             The matrix of features, where NP is the number of polynomial
             features generated from the combination of inputs.
         """
-        check_is_fitted(self)
         n_features = X.shape[1]
         if n_features != self.n_input_features_:
             raise ValueError("X shape does not match training shape")
