@@ -6,7 +6,6 @@ joblib
 jupyter_sphinx>=0.2
 jyquickhelper
 memory_profiler>=0.55
-git+https://github.com/sdpython/nbconvert.git@fixes
 pandas_streaming
 pybind11
 pyquickhelper>=1.9.3240
