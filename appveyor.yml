@@ -20,7 +20,6 @@ install:
   - "%PYTHON%\\Scripts\\pip install pymyinstall"
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
   - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
-  - "%PYTHON%\\Scripts\\pip install git+https://github.com/sdpython/nbconvert.git@fixes"
   - "%PYTHON%\\Scripts\\pip install pyquickhelper --no-deps"
   - "%PYTHON%\\Scripts\\pip install cython"
   - "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy protobuf h5py"
