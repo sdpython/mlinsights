@@ -10,7 +10,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.utils.testing import ignore_warnings
+try:
+    from sklearn.utils._testing import ignore_warnings
+except ImportError:
+    from sklearn.utils.testing import ignore_warnings
 from mlinsights.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
 from mlinsights.mlmodel import TransformedTargetClassifier2, TransformedTargetRegressor2
 
