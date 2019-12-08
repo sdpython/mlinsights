@@ -35,7 +35,7 @@ class TestTreeStructure(ExtTestCase):
         }
         for le in leaves:
             ra = tree_node_range(clr, le)
-            cl = clr.tree_.value[le]
+            cl = clr.tree_.value[le]  # pylint: disable=E1136
             am = numpy.argmax(cl.ravel())
             if am in exp:
                 self.assertEqualArray(ra, exp[am])
