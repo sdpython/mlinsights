@@ -59,22 +59,11 @@ jobs:
             pip install cython
 
       - run:
-          name: Install pyproj (1)
+          name: Install geos, proj for cartopy
           command: |
             sudo apt-get -qq update
             sudo apt-get install -y libproj-dev proj-bin proj-data
-
-      - run:
-          name: Install pyproj (2)
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            # pip install git+https://github.com/jswhit/pyproj.git
-            pip install pyproj
-
-      - run:
-          name: Install pyproj (3) - optional
-          command: |
+            sudo apt-get install -y python-pyproj
             sudo apt-get install -y libc6
             sudo apt-get install libgeos-dev
             sudo apt-get install python-gdal gdal-bin
