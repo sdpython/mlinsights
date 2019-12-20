@@ -95,7 +95,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py unittests
+            python setup.py unittests -d 9
 
       - run:
           name: wheel

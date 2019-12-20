@@ -4,7 +4,6 @@
 """
 import unittest
 import numpy
-from pyquickhelper.pycode import ExtTestCase
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
@@ -14,6 +13,7 @@ try:
     from sklearn.utils._testing import ignore_warnings
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
+from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
 from mlinsights.mlmodel import TransformedTargetClassifier2, TransformedTargetRegressor2
 
