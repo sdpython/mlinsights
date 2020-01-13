@@ -10,6 +10,11 @@ Helpers
 
 .. autosignature:: mlinsights.mlmodel.ml_featurizer.model_featurizer
 
+Clustering
+++++++++++
+
+.. autosignature:: mlinsights.mlmodel.kmeans_l1.KMeansL1L2
+
 Trainers
 ++++++++
 
