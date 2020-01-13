@@ -6,6 +6,7 @@ from .categories_to_integers import CategoriesToIntegers
 from .classification_kmeans import ClassifierAfterKMeans
 from .extended_features import ExtendedFeatures
 from .interval_regressor import IntervalRegressor
+from .kmeans_l1 import KMeansL1L2
 from .ml_featurizer import model_featurizer
 from .anmf_predictor import ApproximateNMFPredictor
 from .piecewise_estimator import PiecewiseRegressor, PiecewiseClassifier
