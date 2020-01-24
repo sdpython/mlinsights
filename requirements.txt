@@ -15,6 +15,6 @@ scipy
 seaborn
 sphinx>=2.1
 sphinx_readable_theme
-torchvision
+torchvision>=0.5.0
 tqdm
 wheel
