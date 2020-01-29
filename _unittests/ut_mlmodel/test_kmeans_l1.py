@@ -4,7 +4,6 @@
 """
 import unittest
 import numpy
-from numpy.random import RandomState
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import KMeansL1L2

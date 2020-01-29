@@ -20,6 +20,7 @@ class TestCodeStyle(ExtTestCase):
                    skip=["categories_to_integers.py:174: W0640",
                          "E0401: Unable to import 'mlinsights.mlmodel.piecewise_tree_regression_criterion",
                          "setup.py:",
+                         "[E731]",
                          ])
 
     def test_style_test(self):

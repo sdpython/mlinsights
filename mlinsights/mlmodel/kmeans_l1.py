@@ -3,6 +3,7 @@
 @file
 @brief Implements k-means with norms L1 and L2.
 """
+import warnings
 import numpy
 from scipy.sparse import issparse
 from joblib import Parallel, delayed, effective_n_jobs
@@ -13,6 +14,7 @@ from sklearn.cluster._kmeans import (
     _check_normalize_sample_weight,
     _validate_center_shape
 )
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.metrics.pairwise import (
     euclidean_distances,
     manhattan_distances,
@@ -30,7 +32,7 @@ def _tolerance(norm, X, tol):
     if norm == 'l1':
         variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
         return variances.sum()
-    raise NotImplementedError("not implemented for norm '{}'.".format(l1))
+    raise NotImplementedError("not implemented for norm '{}'.".format(norm))
 
 
 def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances):
@@ -120,15 +122,13 @@ def _labels_inertia(norm, X, sample_weight, centers,
     """
     if norm == 'l2':
         return _labels_inertia_skl(
-            X, sample_weight=sample_weight, x_squared_norms=x_squared_norms,
-            centers=centers, precompute_distances=precompute_distances,
-            distances=distances)
+            X, sample_weight=sample_weight, centers=centers,
+            precompute_distances=precompute_distances,
+            distances=distances, x_squared_norms=None)
 
-    n_samples = X.shape[0]
     sample_weight = _check_normalize_sample_weight(sample_weight, X)
     # set the default value of centers to -1 to be able to detect any anomaly
     # easily
-    labels = numpy.full(n_samples, -1, numpy.int32)
     if distances is None:
         distances = numpy.zeros(shape=(0,), dtype=X.dtype)
     # distances will be changed in-place
@@ -214,7 +214,6 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
         rand_vals = random_state.random_sample(n_local_trials) * current_pot
         candidate_ids = numpy.searchsorted(stable_cumsum(closest_dist_sq),
                                            rand_vals)
-        # XXX: numerical imprecision can result in a candidate_id out of range
         numpy.clip(candidate_ids, None, closest_dist_sq.size - 1,
                    out=candidate_ids)
 
@@ -275,9 +274,6 @@ def _init_centroids(norm, X, k, init, random_state=None,
     random_state = check_random_state(random_state)
     n_samples = X.shape[0]
 
-    if norm == 'l2':
-        x_squared_norms = row_norms(X, squared=True)
-
     if init_size is not None and init_size < n_samples:
         if init_size < k:
             warnings.warn(
@@ -287,7 +283,6 @@ def _init_centroids(norm, X, k, init, random_state=None,
             init_size = 3 * k
         init_indices = random_state.randint(0, n_samples, init_size)
         X = X[init_indices]
-        x_squared_norms = x_squared_norms[init_indices]
         n_samples = X.shape[0]
     elif n_samples < k:
         raise ValueError(
@@ -364,7 +359,6 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances,
         far_from_centers = distances.argsort()[::-1]
 
         for i, cluster_id in enumerate(empty_clusters):
-            # XXX two relocated clusters could be close to each other
             far_index = far_from_centers[i]
             new_center = X[far_index] * sample_weight[far_index]
             centers[cluster_id] = new_center
@@ -655,7 +649,7 @@ class KMeansL1L2(KMeans):
         elif self.norm == 'l1':
             self._fit_l1(X=X, y=y, sample_weight=sample_weight)
         else:
-            raise NotImplemntedError(
+            raise NotImplementedError(
                 "Norm is not L1 or L2 but '{}'.".format(self.norm))
         return self
 
@@ -775,7 +769,6 @@ class KMeansL1L2(KMeans):
                     max_iter=self.max_iter, init=init,
                     verbose=self.verbose, tol=tol,
                     precompute_distances=precompute_distances,
-                    x_squared_norms=x_squared_norms,
                     # Change seed to ensure variety
                     random_state=seed
                 )
@@ -794,8 +787,7 @@ class KMeansL1L2(KMeans):
                 "Number of distinct clusters ({}) found smaller than "
                 "n_clusters ({}). Possibly due to duplicate points "
                 "in X.".format(distinct_clusters, self.n_clusters),
-                ConvergenceWarning, stacklevel=2
-            )
+                ConvergenceWarning, stacklevel=2)
 
         self.cluster_centers_ = best_centers
         self.labels_ = best_labels
@@ -825,7 +817,7 @@ class KMeansL1L2(KMeans):
             return KMeans.transform(self, X)
         if self.norm == 'l1':
             return self._transform_l1(X)
-        raise NotImplemntedError(
+        raise NotImplementedError(
             "Norm is not L1 or L2 but '{}'.".format(self.norm))
 
     def _transform_l1(self, X):
@@ -863,7 +855,7 @@ class KMeansL1L2(KMeans):
             return KMeans.predict(self, X)
         if self.norm == 'l1':
             return self._predict_l1(X, sample_weight=sample_weight)
-        raise NotImplemntedError(
+        raise NotImplementedError(
             "Norm is not L1 or L2 but '{}'.".format(self.norm))
 
     def _predict_l1(self, X, sample_weight=None, return_distances=False):
@@ -876,8 +868,6 @@ class KMeansL1L2(KMeans):
         :param return_distances: returns distances as well
         :return: labels or `labels, distances`
         """
-        n_samples = X.shape[0]
-
         labels, mindist = pairwise_distances_argmin_min(
             X=X, Y=self.cluster_centers_, metric='manhattan')
         labels = labels.astype(numpy.int32, copy=False)
