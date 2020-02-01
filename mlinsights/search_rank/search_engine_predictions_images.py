@@ -36,7 +36,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         """
         if "torch" in str(type(data)):
             self.module_ = "torch"
-            from torch.utils.data import DataLoader  # pylint: disable=E0401,C0415
+            from torch.utils.data import DataLoader  # pylint: disable=E0401,C0415,E0611
             dataloader = DataLoader(
                 data, batch_size=1, shuffle=False, num_workers=0)
             self.iter_images_ = iter_images = iter(
@@ -122,17 +122,16 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                 from torch import from_numpy  # pylint: disable=E0611,E0401,C0415
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
-            else:
-                raise RuntimeError(
-                    "Unknown module '{0}'.".format(self.module_))
+            raise RuntimeError(
+                "Unknown module '{0}'.".format(self.module_))
         elif "keras" in str(iter_images):
             if self.module_ != "keras":
                 raise RuntimeError(
                     "Keras object but {0} was used to train the KNN.".format(self.module_))
             # We delay the import as keras backend is not necessarily installed.
             # keras, it expects an iterator.
-            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415
+            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415,E0611
+            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415,E0611
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(
                     "iter_images must be a keras Iterator. No option implemented for type {0}.".format(type(iter_images)))

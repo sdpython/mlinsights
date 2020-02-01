@@ -490,7 +490,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
         if center_shift_total <= tol:
             if verbose:
                 print("Converged at iteration %d: "
-                      "center shift %e within tolerance %e"
+                      "center shift %r within tolerance %r"
                       % (i, center_shift_total, tol))
             break
 
