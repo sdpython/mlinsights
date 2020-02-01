@@ -26,7 +26,7 @@ class TestNotebookSearchKeras(unittest.TestCase):
 
         with redirect_stderr(StringIO()):
             try:
-                from keras.applications.mobilenet import MobileNet  # pylint: disable=E0401
+                from keras.applications.mobilenet import MobileNet  # pylint: disable=E0401,E0611
                 assert MobileNet is not None
             except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn(
