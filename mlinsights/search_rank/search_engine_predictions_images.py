@@ -47,7 +47,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             self.module_ = "keras"
             iter_images = data
             # We delay the import as keras backend is not necessarily installed.
-            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415
+            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415,E0611
             from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(
