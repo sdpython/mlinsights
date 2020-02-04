@@ -9,8 +9,7 @@ from sklearn import datasets
 from sklearn.utils._testing import (
     assert_array_equal, assert_array_almost_equal,
     assert_allclose, assert_almost_equal, assert_warns,
-    assert_warns_message, if_safe_multiprocessing_with_blas,
-    assert_raise_message
+    assert_warns_message, assert_raise_message
 )
 from sklearn.base import clone
 from sklearn.exceptions import ConvergenceWarning
