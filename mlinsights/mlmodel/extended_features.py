@@ -69,9 +69,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             return self._get_feature_names_poly(input_features)
         elif self.kind == 'poly-slow':
             return self._get_feature_names_poly(input_features)
-        else:
-            raise ValueError(
-                "Unknown extended features '{}'.".format(self.kind))
+        raise ValueError(
+            "Unknown extended features '{}'.".format(self.kind))
 
     def _get_feature_names_poly(self, input_features=None):
         """
@@ -138,9 +137,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             return self._fit_poly(X, y)
         elif self.kind == 'poly-slow':
             return self._fit_poly(X, y)
-        else:
-            raise ValueError(
-                "Unknown extended features '{}'.".format(self.kind))
+        raise ValueError(
+            "Unknown extended features '{}'.".format(self.kind))
 
     def _fit_poly(self, X, y=None):
         """
@@ -170,9 +168,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             return self._transform_poly(X)
         elif self.kind == 'poly-slow':
             return self._transform_poly_slow(X)
-        else:
-            raise ValueError(
-                "Unknown extended features '{}'.".format(self.kind))
+        raise ValueError(
+            "Unknown extended features '{}'.".format(self.kind))
 
     def _transform_poly(self, X):
         """
@@ -180,22 +177,21 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         if sparse.isspmatrix(X):
             raise NotImplementedError("Not implemented for sparse matrices.")
-        else:
-            XP = numpy.empty(
-                (X.shape[0], self.n_output_features_), dtype=X.dtype)
 
-            def multiply(A, B, C):
-                return numpy.multiply(A, B, out=C)
+        XP = numpy.empty(
+            (X.shape[0], self.n_output_features_), dtype=X.dtype)
 
-            def final(X):
-                return X
+        def multiply(A, B, C):
+            return numpy.multiply(A, B, out=C)
+
+        def final(X):
+            return X
 
         if self.poly_interaction_only:
             return _transform_ionly(self.poly_degree, self.poly_include_bias,
                                     XP, X, multiply, final)
-        else:
-            return _transform_iall(self.poly_degree, self.poly_include_bias,
-                                   XP, X, multiply, final)
+        return _transform_iall(self.poly_degree, self.poly_include_bias,
+                               XP, X, multiply, final)
 
     def _transform_poly_slow(self, X):
         """
@@ -203,12 +199,12 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         if sparse.isspmatrix(X):
             raise NotImplementedError("Not implemented for sparse matrices.")
-        else:
-            comb = _combinations_poly(X.shape[1], self.poly_degree, self.poly_interaction_only,
-                                      include_bias=self.poly_include_bias)
-            order = 'C'  # how to get order from X.
-            XP = numpy.empty((X.shape[0], self.n_output_features_),
-                             dtype=X.dtype, order=order)
-            for i, comb in enumerate(comb):
-                XP[:, i] = X[:, comb].prod(1)
-            return XP
+
+        comb = _combinations_poly(X.shape[1], self.poly_degree, self.poly_interaction_only,
+                                  include_bias=self.poly_include_bias)
+        order = 'C'  # how to get order from X.
+        XP = numpy.empty((X.shape[0], self.n_output_features_),
+                         dtype=X.dtype, order=order)
+        for i, comb in enumerate(comb):
+            XP[:, i] = X[:, comb].prod(1)
+        return XP

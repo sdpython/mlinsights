@@ -7,7 +7,9 @@ the criterion used by the algorithm which builds a decision tree.
 import numpy
 import sklearn
 from sklearn.tree import DecisionTreeRegressor
-from pyquickhelper.texthelper import compare_module_version
+from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611,C0415
+from .piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611,C0415
+from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611,C0415
 
 
 class PiecewiseTreeRegressor(DecisionTreeRegressor):
@@ -43,21 +45,11 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         replace = None
         if isinstance(self.criterion, str):
             if self.criterion == 'mselin':
-                if compare_module_version(sklearn.__version__, '0.21') >= 0:
-                    from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611,C0415
-                    replace = self.criterion
-                    self.criterion = LinearRegressorCriterion(X)
-                else:
-                    raise ImportError(
-                        "LinearRegressorCriterion only exists for scikit-learn >= 0.21.")
+                replace = self.criterion
+                self.criterion = LinearRegressorCriterion(X)
             elif self.criterion == "simple":
-                if compare_module_version(sklearn.__version__, '0.21') >= 0:
-                    from .piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611,C0415
-                    replace = self.criterion
-                    self.criterion = SimpleRegressorCriterionFast(X)
-                else:
-                    raise ImportError(
-                        "SimpleRegressorCriterion only exists for scikit-learn >= 0.21.")
+                replace = self.criterion
+                self.criterion = SimpleRegressorCriterionFast(X)
         else:
             replace = None
 
@@ -89,6 +81,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             mapping[j] = ntree
             association[ind] = ntree
             ntree += 1
+        return mapping
 
     def predict_leaves(self, X):
         """
@@ -115,7 +108,6 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         points mapped a specific leave. ``leaves_index_`` keeps
         in memory a set of leaves.
         """
-        from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611,C0415
         tree = self.tree_
         self.leaves_index_ = [i for i in range(len(tree.children_left))
                               if tree.children_left[i] <= i and tree.children_right[i] <= i]  # pylint: disable=E1136

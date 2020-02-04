@@ -81,6 +81,10 @@ class PiecewiseEstimator(BaseEstimator):
     for a regression or :epkg:`sklearn:linear_model:LogisticRegression`
     for a classifier. It can also be :epkg:`sklearn:dummy:DummyRegressor`
     :epkg:`sklearn:dummy:DummyClassifier` to just get the average on each bucket.
+    When the buckets are defined by a decision tree and the
+    estimator is linear, @see cl PiecewiseTreeRegressor optimizes
+    the buckets based on the results of a linear regression.
+    The accuracy is usually better.
     """
 
     def __init__(self, binner=None, estimator=None, n_jobs=None, verbose=False):

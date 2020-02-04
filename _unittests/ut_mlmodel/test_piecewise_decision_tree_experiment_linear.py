@@ -12,22 +12,20 @@ from sklearn.model_selection import train_test_split
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
+from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611, E0401
+    _test_criterion_init, _test_criterion_node_impurity,
+    _test_criterion_node_impurity_children, _test_criterion_update,
+    _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
+    _test_criterion_impurity_improvement
+)
+from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_impurity_improvement  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611, E0401
 
-if compare_module_version(sklearn.__version__, "0.21") >= 0:  # noqa
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_init  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_node_impurity  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_node_impurity_children  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_update  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_node_value  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_proxy_impurity_improvement  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_impurity_improvement  # pylint: disable=E0611, E0401
-    from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611, E0401
 
+class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
 
-class TestDecisionTreeExperimentLinear(ExtTestCase):
-
-    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
-                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_criterions(self):
         X = numpy.array([[10., 12., 13.]]).T
         y = numpy.array([20., 22., 23.])
@@ -129,8 +127,6 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
             self.assertGreater(dest[0], 0)
             self.assertGreater(dest[1], 0)
 
-    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
-                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_criterions_check_value(self):
         X = numpy.array([[10., 12., 13.]]).T
         y = numpy.array([[20., 22., 23.]]).T
@@ -139,8 +135,6 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         c2.node_beta(coef)
         self.assertEqual(coef[:2], numpy.array([1, 10]))
 
-    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
-                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion(self):
         X = numpy.array([[1., 2., 10., 11.]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
@@ -155,8 +149,6 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)
 
-    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
-                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion_iris(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -168,8 +160,6 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         p2 = clr2.predict(X)
         self.assertEqual(p1.shape, p2.shape)
 
-    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
-                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion_iris_dtc(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -189,9 +179,10 @@ class TestDecisionTreeExperimentLinear(ExtTestCase):
         sc1 = clr1.score(X, y)
         sc2 = clr2.score(X, y)
         self.assertGreater(sc1, sc2)
+        mp = clr2._mapping_train(X)
+        self.assertIsInstance(mp, dict)
+        self.assertGreater(len(mp), 2)
 
-    @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
-                     reason="Only implemented for Criterion API from sklearn >= 0.21")
     def test_decision_tree_criterion_iris_dtc_traintest(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
