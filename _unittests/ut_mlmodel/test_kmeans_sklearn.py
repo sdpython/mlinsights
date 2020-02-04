@@ -5,21 +5,13 @@
 import unittest
 import numpy as np
 from scipy import sparse as sp
-from sklearn import datasets
 from sklearn.utils._testing import (
     assert_array_equal, assert_array_almost_equal,
-    assert_allclose, assert_almost_equal, assert_warns,
-    assert_warns_message, assert_raise_message
+    assert_almost_equal,
+    assert_raise_message
 )
-from sklearn.base import clone
-from sklearn.exceptions import ConvergenceWarning
-from sklearn.utils.extmath import row_norms
 from sklearn.metrics.cluster import v_measure_score
-from sklearn.cluster._kmeans import _labels_inertia
-from sklearn.cluster._kmeans import _mini_batch_step
 from sklearn.datasets import make_blobs
-from io import StringIO
-from sklearn.metrics.cluster import homogeneity_score
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import KMeansL1L2
 
@@ -33,7 +25,7 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
         [1.0, 0.0, 0.0, 5.0, 1.0],
     ])
     n_samples = 100
-    n_clusters, n_features = centers.shape
+    n_clusters, n_features = centers.shape  # pylint: disable=E0633
     X, true_labels = make_blobs(n_samples=n_samples, centers=centers,
                                 cluster_std=1., random_state=42)
     X_csr = sp.csr_matrix(X)

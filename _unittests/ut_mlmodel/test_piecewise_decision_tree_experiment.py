@@ -4,12 +4,10 @@
 """
 import unittest
 import numpy
-import sklearn
 from sklearn.tree._criterion import MSE  # pylint: disable=E0611
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611, E0401
     _test_criterion_init, _test_criterion_node_impurity,
@@ -18,7 +16,6 @@ from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: di
     _test_criterion_impurity_improvement
 )
 from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401
 
 
 class TestPiecewiseDecisionTreeExperiment(ExtTestCase):

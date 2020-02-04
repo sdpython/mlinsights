@@ -5,9 +5,7 @@
 the criterion used by the algorithm which builds a decision tree.
 """
 import numpy
-import sklearn
 from sklearn.tree import DecisionTreeRegressor
-from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611,C0415
 from .piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611,C0415
 from .piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611,C0415
 

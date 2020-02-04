@@ -131,7 +131,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         if self.random_state is None:
             lin = numpy.random.permutation(lin)
         else:
-            rs = numpy.random.RandomState(
+            rs = numpy.random.RandomState(  # pylint: disable=E1101
                 self.random_state)  # pylint: disable=E1101
             lin = rs.permutation(lin)
 

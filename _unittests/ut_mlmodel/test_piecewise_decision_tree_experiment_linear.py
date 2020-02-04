@@ -4,13 +4,11 @@
 """
 import unittest
 import numpy
-import sklearn
 from sklearn.tree._criterion import MSE  # pylint: disable=E0611
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611, E0401
     _test_criterion_init, _test_criterion_node_impurity,
@@ -18,9 +16,6 @@ from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: di
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
     _test_criterion_impurity_improvement
 )
-from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401
-from mlinsights.mlmodel._piecewise_tree_regression_common import _test_criterion_impurity_improvement  # pylint: disable=E0611, E0401
 from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import LinearRegressorCriterion  # pylint: disable=E0611, E0401
 
 
@@ -179,7 +174,7 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         sc1 = clr1.score(X, y)
         sc2 = clr2.score(X, y)
         self.assertGreater(sc1, sc2)
-        mp = clr2._mapping_train(X)
+        mp = clr2._mapping_train(X)  # pylint: disable=W0212
         self.assertIsInstance(mp, dict)
         self.assertGreater(len(mp), 2)
 

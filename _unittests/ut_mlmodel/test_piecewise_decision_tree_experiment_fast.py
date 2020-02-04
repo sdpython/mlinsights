@@ -17,8 +17,7 @@ from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: di
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
     _test_criterion_impurity_improvement
 )
-from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import SimpleRegressorCriterionFast  # pylint: disable=E0611, E0401, E0602
 
 
 class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
