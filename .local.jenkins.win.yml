@@ -8,6 +8,7 @@ virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
   
 install:
+  - pip install --upgrade pip
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyquickhelper --extra-index-url=https://pypi.python.org/simple/
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ cpyquickhelper --extra-index-url=https://pypi.python.org/simple/
