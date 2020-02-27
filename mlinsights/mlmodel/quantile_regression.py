@@ -82,6 +82,16 @@ class QuantileLinearRegression(LinearRegression):
         """
         Fits a linear model with :epkg:`L1` norm which
         is equivalent to a quantile regression.
+        The implementation is not the most efficient
+        as it calls multiple times method fit
+        from :epkg:`sklearn:linear_models:LinearRegression`.
+        Data gets checked and rescaled each time.
+        The optimization follows the algorithm
+        `Iteratively reweighted least squares
+        <https://en.wikipedia.org/wiki/Iteratively_reweighted_least_squares>`_.
+        It is described in French at
+        `Régression quantile
+        <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td_note_2017_2.html>`_.
 
         Parameters
         ----------
@@ -97,17 +107,6 @@ class QuantileLinearRegression(LinearRegression):
         Returns
         -------
         self : returns an instance of self.
-
-        The training produces the following attributes
-        as results of the training.
-        The implementation is not the most efficient
-        as it calls multiple times method fit
-        from :epkg:`sklearn:linear_models:LinearRegression`.
-        Data gets checked and rescaled each time.
-        The optimization follows the algorithm
-        `Iteratively reweighted least squares <https://en.wikipedia.org/wiki/Iteratively_reweighted_least_squares>`_.
-        It is described in French at
-        `Régression quantile <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td_note_2017_2.html>`_.
 
         Attributes
         ----------
