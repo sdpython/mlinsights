@@ -5,6 +5,7 @@
 from .anmf_predictor import ApproximateNMFPredictor
 from .categories_to_integers import CategoriesToIntegers
 from .classification_kmeans import ClassifierAfterKMeans
+from .decision_tree_logreg import DecisionTreeLogisticRegression
 from .extended_features import ExtendedFeatures
 from .interval_regressor import IntervalRegressor
 from .kmeans_l1 import KMeansL1L2
