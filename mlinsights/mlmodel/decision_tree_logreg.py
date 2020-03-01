@@ -2,7 +2,6 @@
 @file
 @brief Builds a tree of logistic regressions.
 """
-import inspect
 import numpy
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
