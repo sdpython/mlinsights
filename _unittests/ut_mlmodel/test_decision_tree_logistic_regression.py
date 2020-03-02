@@ -29,7 +29,7 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         dtlr.fit(X, Y)
         prob = dtlr.predict_proba(X)
         self.assertEqual(prob.shape, (4, 2))
-        dtlr.fit(X, Y, sample_weight=[1, 1, 1, 1])
+        dtlr.fit(X, Y, sample_weight=numpy.array([1, 1, 1, 1]))
 
     def test_pandas(self):
         X = pandas.DataFrame(numpy.array([[0.1, 0.2], [-0.2, 0.3]]))

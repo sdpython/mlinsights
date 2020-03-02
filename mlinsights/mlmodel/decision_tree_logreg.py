@@ -11,9 +11,10 @@ class _DecisionTreeLogisticRegressionNode:
     """
     Describes the tree structure hold by class
     @see cl DecisionTreeLogisticRegression.
+    See also notebook :ref:`decisiontreelogregrst`.
     """
 
-    def __init__(self, estimator, threshold=0.5, depth=0):
+    def __init__(self, estimator, threshold=0.5, depth=1):
         """
         constructor
 
@@ -54,7 +55,9 @@ class _DecisionTreeLogisticRegressionNode:
         """
         Fits every example followin
         """
-        if self.depth >= dtlr.max_depth:
+        self.estimator.fit(X, y, sample_weight=sample_weight)
+
+        if self.depth + 1 >= dtlr.max_depth:
             return
         if X.shape[0] < dtlr.min_samples_split:
             return
@@ -72,7 +75,6 @@ class _DecisionTreeLogisticRegressionNode:
                 n_above < X.shape[0]):
             estimator = clone(dtlr.estimator)
             sw = sample_weight[above] if sample_weight is not None else None
-            estimator.fit(X[above], y[above], sample_weight=sw)
             self.above = _DecisionTreeLogisticRegressionNode(
                 estimator, self.threshold, depth=self.depth + 1)
             self.above.fit(X[above], y[above], sw, dtlr)
@@ -82,7 +84,6 @@ class _DecisionTreeLogisticRegressionNode:
                 n_below < X.shape[0]):
             estimator = clone(dtlr.estimator)
             sw = sample_weight[below] if sample_weight is not None else None
-            estimator.fit(X[below], y[below], sample_weight=sw)
             self.below = _DecisionTreeLogisticRegressionNode(
                 estimator, self.threshold, depth=self.depth + 1)
             self.below.fit(X[below], y[below], sw, dtlr)
@@ -157,9 +158,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
     """
 
     def __init__(self, estimator=None,
-                 # tree
-                 max_depth=10, min_samples_split=10,
-                 min_samples_leaf=10, min_weight_fraction_leaf=0.0):
+                 max_depth=20, min_samples_split=2,
+                 min_samples_leaf=2, min_weight_fraction_leaf=0.0):
         "constructor"
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -208,6 +208,9 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
                 X = X.values
         if not isinstance(X, numpy.ndarray):
             raise TypeError("'X' must be an array.")
+        if (sample_weight is not None and
+                not isinstance(sample_weight, numpy.ndarray)):
+            raise TypeError("'sample_weight' must be an array.")
         self.classes_ = numpy.array(sorted(set(y)))
         if len(self.classes_) != 2:
             raise RuntimeError(
@@ -215,7 +218,6 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
                 "{}.".format(self.classes_))
         cls = (y == self.classes_[1]).astype(numpy.int32)
         estimator = clone(self.estimator)
-        estimator.fit(X, cls, sample_weight=sample_weight)
         self.tree_ = _DecisionTreeLogisticRegressionNode(estimator, 0.5)
         self.tree_.fit(X, cls, sample_weight, self)
         return self
