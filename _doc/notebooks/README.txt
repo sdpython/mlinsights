@@ -1,6 +1,3 @@
 =================
 Notebooks Gallery
 =================
-
-.. contents::
-    :local:

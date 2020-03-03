@@ -5,6 +5,23 @@
 import numpy
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
+from sklearn.linear_model._base import LinearClassifierMixin
+
+
+def logistic(x):
+    """
+    Computes :math:`\\frac{1}{1 + e^{-x}}`.
+    """
+    return 1. / (1. + numpy.exp(-x))
+
+
+def likelihood(x, y, theta=1., th=0.):
+    """
+    Computes :math:`\\sum_i y_i f(\\theta (x_i - x_0)) + (1 - y_i) (1 - f(\\theta (x_i - x_0)))`
+    where :math:`f(x_i)` is :math:`\\frac{1}{1 + e^{-x}}`.
+    """
+    lr = logistic((x - th) * theta)
+    return y * lr + (1. - y) * (1 - lr)
 
 
 class _DecisionTreeLogisticRegressionNode:
@@ -51,18 +68,28 @@ class _DecisionTreeLogisticRegressionNode:
             prob[below] = prob_below
         return prob
 
-    def fit(self, X, y, sample_weight, dtlr):
+    def fit(self, X, y, sample_weight, dtlr, total_N):
         """
-        Fits every example followin
+        Fits a logistic regression, then splits the sample into
+        positive and negative examples, finally tries to fit
+        logistic regressions on both subsamples. This method only
+        works on a linear classifier.
+
+        @param      X               features
+        @param      y               binary labels
+        @param      sample_weight   weights of every sample
+        @param      dtlr            @see cl DecisionTreeLogisticRegression
+        @param      total_N         total number of observation
         """
         self.estimator.fit(X, y, sample_weight=sample_weight)
+        prob = self.fit_improve(dtlr, total_N, X, y,
+                                sample_weight=sample_weight)
 
         if self.depth + 1 >= dtlr.max_depth:
             return
         if X.shape[0] < dtlr.min_samples_split:
             return
 
-        prob = self.estimator.predict_proba(X)
         above = prob[:, 1] > self.threshold
         below = ~ above
         n_above = above.sum()
@@ -70,23 +97,22 @@ class _DecisionTreeLogisticRegressionNode:
         y_above = set(y[above])
         y_below = set(y[below])
 
-        if (len(y_above) > 1 and above.shape[0] > dtlr.min_samples_leaf and
-                float(n_above) / X.shape[0] >= dtlr.min_weight_fraction_leaf and
-                n_above < X.shape[0]):
-            estimator = clone(dtlr.estimator)
-            sw = sample_weight[above] if sample_weight is not None else None
-            self.above = _DecisionTreeLogisticRegressionNode(
-                estimator, self.threshold, depth=self.depth + 1)
-            self.above.fit(X[above], y[above], sw, dtlr)
+        def _fit_side(y_above_below, above_below, n_above_below):
+            if (len(y_above_below) > 1 and
+                    above_below.shape[0] > dtlr.min_samples_leaf * 2 and
+                    (float(n_above_below) / total_N >=
+                        dtlr.min_weight_fraction_leaf * 2) and
+                    n_above_below < total_N):
+                estimator = clone(dtlr.estimator)
+                sw = sample_weight[above_below] if sample_weight is not None else None
+                node = _DecisionTreeLogisticRegressionNode(
+                    estimator, self.threshold, depth=self.depth + 1)
+                node.fit(X[above_below], y[above_below], sw, dtlr, total_N)
+                return node
+            return None
 
-        if (len(y_below) > 1 and below.shape[0] > dtlr.min_samples_leaf and
-                float(n_below) / X.shape[0] >= dtlr.min_weight_fraction_leaf and
-                n_below < X.shape[0]):
-            estimator = clone(dtlr.estimator)
-            sw = sample_weight[below] if sample_weight is not None else None
-            self.below = _DecisionTreeLogisticRegressionNode(
-                estimator, self.threshold, depth=self.depth + 1)
-            self.below.fit(X[below], y[below], sw, dtlr)
+        self.above = _fit_side(y_above, above, n_above)
+        self.below = _fit_side(y_below, below, n_below)
 
     @property
     def tree_depth_(self):
@@ -99,6 +125,73 @@ class _DecisionTreeLogisticRegressionNode:
         if self.below is not None:
             dt = max(dt, self.below.tree_depth_)
         return dt
+
+    def fit_improve(self, dtlr, total_N, X, y, sample_weight):
+        """
+        The method only works on a linear classifier, it changes
+        the intercept in order to be within the constraints
+        imposed by the *min_samples_leaf* and *min_weight_fraction_leaf*.
+        The algorithm has a significant cost as it sorts every observation
+        and chooses the best intercept.
+
+        @param      dtlr            @see cl DecisionTreeLogisticRegression
+        @param      total_N         total number of observations
+        @param      X               features
+        @param      y               labels
+        @param      sample_weight   sample weight
+        @return                     probabilities
+        """
+        if self.estimator is None:
+            raise RuntimeError("Estimator was not trained.")
+        prob = self.estimator.predict_proba(X)
+        if dtlr.fit_improve_algo in (None, 'none'):
+            return prob
+
+        if not isinstance(self.estimator, LinearClassifierMixin):
+            # The classifier is not linear and cannot be improved.
+            if self.fit_improve_algo == 'intercept_sort_always':
+                raise RuntimeError(
+                    "The model is not linear ({}), "
+                    "intercept cannot be improved.".format(self.estimator.__class__.__name__))
+            return prob
+
+        above = prob[:, 1] > self.threshold
+        below = ~ above
+        n_above = above.sum()
+        n_below = below.sum()
+        n_min = min(n_above, n_below)
+        if ((n_min >= dtlr.min_samples_leaf or
+                float(n_min) / total_N >= dtlr.min_weight_fraction_leaf) and
+                dtlr.fit_improve_algo != 'intercept_sort_always'):
+            return prob
+
+        coef = self.estimator.coef_
+        intercept = self.estimator.intercept_
+        decision_function = (X @ coef.T).ravel()
+        order = numpy.argsort(decision_function, axis=0)
+        begin = dtlr.min_samples_leaf
+
+        sorted_df = decision_function[order]
+        sorted_y = decision_function[order]
+        N = sorted_y.shape[0]
+
+        best = None
+        besti = None
+        beta_best = None
+        for i in range(begin, N - begin):
+            beta = - sorted_df[i]
+            like = numpy.sum(likelihood(decision_function + beta, y)) / N
+            w = float(i * (N - i)) / N**2
+            like += w * dtlr.gamma
+            if besti is None or like > best:
+                best = like
+                besti = i
+                beta_best = beta
+
+        if beta_best is not None:
+            self.estimator.intercept_ = beta_best
+            prob = self.estimator.predict_proba(X)
+        return prob
 
 
 class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
@@ -147,6 +240,26 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         the input samples) required to be at a leaf node. Samples have
         equal weight when sample_weight is not provided.
 
+    fit_improve_algo: string, one of the following value:
+        - `'auto'`: chooses the best option below, '`none'` for
+          every non linear model, `'intercept_sort'` for linear models
+        - '`none'`: does not nothing once the binary classifier is fit
+        - `'intercept_sort'`: if one side of the classifier is too small,
+          the method changes the best intercept possible verifying
+          the constraints
+        - `'intercept_sort_always'`: always chooses the best intercept
+          possible
+
+    gamma: weight before the coefficient :math:`p (1-p)`.
+        When the model tries to improve the linear classifier,
+        it looks a better intercept which maximizes the
+        likelihood and verifies the constraints.
+        In order to force the classifier to choose a value
+        which splits the dataset into 2 almost equal folds,
+        the function maximimes :math:`likelihood + \\gamma p (1 - p)`
+        where *p* is the proportion of samples falling in the first
+        fold.
+
     Attributes
     ----------
     classes_ : ndarray of shape (n_classes,) or list of ndarray
@@ -157,9 +270,13 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         The underlying Tree object.
     """
 
+    _fit_improve_algo_values = (
+        None, 'none', 'auto', 'intercept_sort', 'intercept_sort_always')
+
     def __init__(self, estimator=None,
                  max_depth=20, min_samples_split=2,
-                 min_samples_leaf=2, min_weight_fraction_leaf=0.0):
+                 min_samples_leaf=2, min_weight_fraction_leaf=0.0,
+                 fit_improve_algo='auto', gamma=1.):
         "constructor"
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -176,6 +293,13 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
         self.min_weight_fraction_leaf = min_weight_fraction_leaf
+        self.fit_improve_algo = fit_improve_algo
+        self.gamma = gamma
+
+        if self.fit_improve_algo not in DecisionTreeLogisticRegression._fit_improve_algo_values:
+            raise ValueError(
+                "fit_improve_algo='{}' not in {}".format(
+                    self.fit_improve_algo, DecisionTreeLogisticRegression._fit_improve_algo_values))
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -219,7 +343,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         cls = (y == self.classes_[1]).astype(numpy.int32)
         estimator = clone(self.estimator)
         self.tree_ = _DecisionTreeLogisticRegressionNode(estimator, 0.5)
-        self.tree_.fit(X, cls, sample_weight, self)
+        self.tree_.fit(X, cls, sample_weight, self, X.shape[0])
         return self
 
     def predict(self, X):
