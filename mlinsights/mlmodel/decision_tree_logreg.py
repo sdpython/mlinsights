@@ -60,10 +60,12 @@ class _DecisionTreeLogisticRegressionNode:
         prob = self.estimator.predict_proba(X)
         above = prob[:, 1] > self.threshold
         below = ~ above
-        if self.above is not None:
+        n_above = above.sum()
+        n_below = below.sum()
+        if self.above is not None and n_above > 0:
             prob_above = self.above.predict_proba(X[above])
             prob[above] = prob_above
-        if self.below is not None:
+        if self.below is not None and n_below > 0:
             prob_below = self.below.predict_proba(X[below])
             prob[below] = prob_below
         return prob
@@ -82,6 +84,9 @@ class _DecisionTreeLogisticRegressionNode:
         @param      total_N         total number of observation
         """
         self.estimator.fit(X, y, sample_weight=sample_weight)
+        if dtlr.verbose >= 1:
+            print("[DTLR ] %s trained acc %1.2f N=%d" % (
+                " " * self.depth, self.estimator.score(X, y), X.shape[0]))
         prob = self.fit_improve(dtlr, total_N, X, y,
                                 sample_weight=sample_weight)
 
@@ -97,7 +102,12 @@ class _DecisionTreeLogisticRegressionNode:
         y_above = set(y[above])
         y_below = set(y[below])
 
-        def _fit_side(y_above_below, above_below, n_above_below):
+        def _fit_side(y_above_below, above_below, n_above_below, side):
+            if dtlr.verbose >= 1:
+                print("[DTLR*] %s%s: n_class=%d N=%d - %d/%d" % (
+                    " " * self.depth, side,
+                    len(y_above_below), above_below.shape[0],
+                    n_above_below, total_N))
             if (len(y_above_below) > 1 and
                     above_below.shape[0] > dtlr.min_samples_leaf * 2 and
                     (float(n_above_below) / total_N >=
@@ -111,8 +121,8 @@ class _DecisionTreeLogisticRegressionNode:
                 return node
             return None
 
-        self.above = _fit_side(y_above, above, n_above)
-        self.below = _fit_side(y_below, below, n_below)
+        self.above = _fit_side(y_above, above, n_above, "above")
+        self.below = _fit_side(y_below, below, n_below, "below")
 
     @property
     def tree_depth_(self):
@@ -149,7 +159,7 @@ class _DecisionTreeLogisticRegressionNode:
 
         if not isinstance(self.estimator, LinearClassifierMixin):
             # The classifier is not linear and cannot be improved.
-            if self.fit_improve_algo == 'intercept_sort_always':
+            if dtlr.fit_improve_algo == 'intercept_sort_always':
                 raise RuntimeError(
                     "The model is not linear ({}), "
                     "intercept cannot be improved.".format(self.estimator.__class__.__name__))
@@ -160,13 +170,18 @@ class _DecisionTreeLogisticRegressionNode:
         n_above = above.sum()
         n_below = below.sum()
         n_min = min(n_above, n_below)
-        if ((n_min >= dtlr.min_samples_leaf or
-                float(n_min) / total_N >= dtlr.min_weight_fraction_leaf) and
+        p1p2 = float(n_above * n_below) / X.shape[0] ** 2
+        if dtlr.verbose >= 2:
+            print("[DTLRI] %s imp %d <> %d, p1p2=%1.3f <> %1.3f" % (
+                " " * self.depth, n_min, dtlr.min_samples_leaf,
+                p1p2, dtlr.p1p2))
+        if (n_min >= dtlr.min_samples_leaf and
+                float(n_min) / total_N >= dtlr.min_weight_fraction_leaf and
+                p1p2 > dtlr.p1p2 and
                 dtlr.fit_improve_algo != 'intercept_sort_always'):
             return prob
 
         coef = self.estimator.coef_
-        intercept = self.estimator.intercept_
         decision_function = (X @ coef.T).ravel()
         order = numpy.argsort(decision_function, axis=0)
         begin = dtlr.min_samples_leaf
@@ -189,6 +204,9 @@ class _DecisionTreeLogisticRegressionNode:
                 beta_best = beta
 
         if beta_best is not None:
+            if dtlr.verbose >= 1:
+                print("[DTLRI] %s change intercept %f --> %f" % (
+                    " " * self.depth, self.estimator.intercept_, beta_best))
             self.estimator.intercept_ = beta_best
             prob = self.estimator.predict_proba(X)
         return prob
@@ -250,6 +268,12 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         - `'intercept_sort_always'`: always chooses the best intercept
           possible
 
+    p1p2: threshold in [0, 1]
+        for every split, we can define probabilities :math:`p_1 p_2`
+        which define the ratio of samples in both splits,
+        if :math:`p_1 p_2` is below the threshold,
+        method *fit_improve* is called
+
     gamma: weight before the coefficient :math:`p (1-p)`.
         When the model tries to improve the linear classifier,
         it looks a better intercept which maximizes the
@@ -259,6 +283,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         the function maximimes :math:`likelihood + \\gamma p (1 - p)`
         where *p* is the proportion of samples falling in the first
         fold.
+
+    verbose: prints out information about the training
 
     Attributes
     ----------
@@ -276,7 +302,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
     def __init__(self, estimator=None,
                  max_depth=20, min_samples_split=2,
                  min_samples_leaf=2, min_weight_fraction_leaf=0.0,
-                 fit_improve_algo='auto', gamma=1.):
+                 fit_improve_algo='auto', p1p2=0.09,
+                 gamma=1., verbose=0):
         "constructor"
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -294,7 +321,9 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         self.min_samples_leaf = min_samples_leaf
         self.min_weight_fraction_leaf = min_weight_fraction_leaf
         self.fit_improve_algo = fit_improve_algo
+        self.p1p2 = p1p2
         self.gamma = gamma
+        self.verbose = verbose
 
         if self.fit_improve_algo not in DecisionTreeLogisticRegression._fit_improve_algo_values:
             raise ValueError(
