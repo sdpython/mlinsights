@@ -3,6 +3,7 @@
 @brief Builds a tree of logistic regressions.
 """
 import numpy
+import scipy.sparse as sparse
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.linear_model._base import LinearClassifierMixin
@@ -31,12 +32,13 @@ class _DecisionTreeLogisticRegressionNode:
     See also notebook :ref:`decisiontreelogregrst`.
     """
 
-    def __init__(self, estimator, threshold=0.5, depth=1):
+    def __init__(self, estimator, threshold=0.5, depth=1, index=0):
         """
         constructor
 
         @param      estimator       binary estimator
         """
+        self.index = index
         self.estimator = estimator
         self.above = None
         self.below = None
@@ -70,6 +72,26 @@ class _DecisionTreeLogisticRegressionNode:
             prob[below] = prob_below
         return prob
 
+    def decision_path(self, X, mat, indices):
+        """
+        Returns the classification probabilities.
+
+        @param          X       features
+        @param          mat     decision path (allocated matrix)
+        """
+        mat[indices, self.index] = 1
+        prob = self.estimator.predict_proba(X)
+        above = prob[:, 1] > self.threshold
+        below = ~ above
+        n_above = above.sum()
+        n_below = below.sum()
+        indices_above = indices[above]
+        indices_below = indices[below]
+        if self.above is not None and n_above > 0:
+            self.above.decision_path(X[above], mat, indices_above)
+        if self.below is not None and n_below > 0:
+            self.below.decision_path(X[below], mat, indices_below)
+
     def fit(self, X, y, sample_weight, dtlr, total_N):
         """
         Fits a logistic regression, then splits the sample into
@@ -82,6 +104,7 @@ class _DecisionTreeLogisticRegressionNode:
         @param      sample_weight   weights of every sample
         @param      dtlr            @see cl DecisionTreeLogisticRegression
         @param      total_N         total number of observation
+        @return                     last index
         """
         self.estimator.fit(X, y, sample_weight=sample_weight)
         if dtlr.verbose >= 1:
@@ -90,10 +113,10 @@ class _DecisionTreeLogisticRegressionNode:
         prob = self.fit_improve(dtlr, total_N, X, y,
                                 sample_weight=sample_weight)
 
-        if self.depth + 1 >= dtlr.max_depth:
-            return
+        if self.depth + 1 > dtlr.max_depth:
+            return self.index
         if X.shape[0] < dtlr.min_samples_split:
-            return
+            return self.index
 
         above = prob[:, 1] > self.threshold
         below = ~ above
@@ -102,7 +125,7 @@ class _DecisionTreeLogisticRegressionNode:
         y_above = set(y[above])
         y_below = set(y[below])
 
-        def _fit_side(y_above_below, above_below, n_above_below, side):
+        def _fit_side(index, y_above_below, above_below, n_above_below, side):
             if dtlr.verbose >= 1:
                 print("[DTLR*] %s%s: n_class=%d N=%d - %d/%d" % (
                     " " * self.depth, side,
@@ -116,13 +139,17 @@ class _DecisionTreeLogisticRegressionNode:
                 estimator = clone(dtlr.estimator)
                 sw = sample_weight[above_below] if sample_weight is not None else None
                 node = _DecisionTreeLogisticRegressionNode(
-                    estimator, self.threshold, depth=self.depth + 1)
-                node.fit(X[above_below], y[above_below], sw, dtlr, total_N)
-                return node
-            return None
+                    estimator, self.threshold, depth=self.depth + 1, index=index)
+                last_index = node.fit(
+                    X[above_below], y[above_below], sw, dtlr, total_N)
+                return node, last_index
+            return None, index
 
-        self.above = _fit_side(y_above, above, n_above, "above")
-        self.below = _fit_side(y_below, below, n_below, "below")
+        self.above, last = _fit_side(
+            self.index + 1, y_above, above, n_above, "above")
+        self.below, last = _fit_side(
+            last + 1, y_below, below, n_below, "below")
+        return last
 
     @property
     def tree_depth_(self):
@@ -205,11 +232,25 @@ class _DecisionTreeLogisticRegressionNode:
 
         if beta_best is not None:
             if dtlr.verbose >= 1:
-                print("[DTLRI] %s change intercept %f --> %f" % (
-                    " " * self.depth, self.estimator.intercept_, beta_best))
+                print("[DTLRI] %s change intercept %f --> %f in [%f, %f]" % (
+                    " " * self.depth, self.estimator.intercept_, beta_best,
+                    - sorted_df[-1], - sorted_df[0]))
             self.estimator.intercept_ = beta_best
             prob = self.estimator.predict_proba(X)
         return prob
+
+    def enumerate_leaves_index(self):
+        """
+        Returns the leaves index.
+        """
+        if self.above is None or self.below is None:
+            yield self.index
+        if self.above is not None:
+            for index in self.above.enumerate_leaves_index():
+                yield index
+        if self.below is not None:
+            for index in self.below.enumerate_leaves_index():
+                yield index
 
 
 class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
@@ -354,7 +395,9 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
 
         classes_: classes
 
-        tree_: see @see cl _DecisionTreeLogisticRegressionNode
+        tree_: tree structure, see @see cl _DecisionTreeLogisticRegressionNode
+
+        n_nodes_: number of nodes
         """
         if not isinstance(X, numpy.ndarray):
             if hasattr(X, 'values'):
@@ -372,7 +415,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         cls = (y == self.classes_[1]).astype(numpy.int32)
         estimator = clone(self.estimator)
         self.tree_ = _DecisionTreeLogisticRegressionNode(estimator, 0.5)
-        self.tree_.fit(X, cls, sample_weight, self, X.shape[0])
+        self.n_nodes_ = self.tree_.fit(
+            X, cls, sample_weight, self, X.shape[0]) + 1
         return self
 
     def predict(self, X):
@@ -400,4 +444,23 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         Returns the maximum depth of the tree.
         """
-        return self.tree_.tree_depth_ + 1
+        return self.tree_.tree_depth_
+
+    def decision_path(self, X, check_input=True):
+        """
+        Returns the decision path.
+
+        @param      X               inputs
+        @param      check_input     unused
+        @return                     sparse matrix
+        """
+        mat = sparse.lil_matrix((X.shape[0], self.n_nodes_), dtype=numpy.int32)
+        self.tree_.decision_path(X, mat, numpy.arange(X.shape[0]))
+        return sparse.csr_matrix(mat)
+
+    def get_leaves_index(self):
+        """
+        Returns the index of every leave.
+        """
+        indices = self.tree_.enumerate_leaves_index()
+        return numpy.array(sorted(indices))

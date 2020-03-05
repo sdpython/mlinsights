@@ -160,8 +160,11 @@ def predict_leaves(model, X):
     @param      X           observations
     @return                 array of leaves
     """
-    leaves_index = [i for i in range(len(model.tree_.children_left))
-                    if model.tree_.children_left[i] == TREE_LEAF]
+    if hasattr(model, 'get_leaves_index'):
+        leaves_index = model.get_leaves_index()
+    else:
+        leaves_index = [i for i in range(len(model.tree_.children_left))
+                        if model.tree_.children_left[i] == TREE_LEAF]
     leaves = model.decision_path(X)
     leaves = leaves[:, leaves_index]
     mat = numpy.argmax(leaves, 1)

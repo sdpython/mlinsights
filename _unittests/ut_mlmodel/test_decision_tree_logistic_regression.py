@@ -15,6 +15,7 @@ from mlinsights.mlmodel import (
     test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv,
     DecisionTreeLogisticRegression
 )
+from mlinsights.mltree import predict_leaves
 
 
 class TestDecisionTreeLogisticRegression(ExtTestCase):
@@ -128,6 +129,22 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         sc3 = dt.score(X_train, y_train)
         self.assertGreater(sc, sc2)
         self.assertGreater(sc3, sc2)
+
+    def test_decision_path(self):
+        data = load_iris()
+        X, y = data.data, data.target
+        y = y % 2
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, random_state=11)
+        dtlr = DecisionTreeLogisticRegression()
+        dtlr.fit(X_train, y_train)
+        path = dtlr.decision_path(X_test)
+        self.assertEqual(path.shape[0], X_test.shape[0])
+        self.assertGreater(path.shape[1], X_test.shape[1])
+        indices = dtlr.get_leaves_index()
+        self.assertGreater(indices.shape[0], 3)
+        leaves = predict_leaves(dtlr, X_test)
+        self.assertEqual(leaves.shape[0], X_test.shape[0])
 
 
 if __name__ == "__main__":
