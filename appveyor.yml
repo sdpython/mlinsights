@@ -17,7 +17,7 @@ init:
 
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
-  - "%PYTHON%\\Scripts\\pip install pymyinstall cython"
+  - "%PYTHON%\\Scripts\\pip install pymyinstall cython numpy"
   #- "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
   #- "%PYTHON%\\Scripts\\pip install pyquickhelper --no-deps"
   #- "%PYTHON%\\Scripts\\pymy_install3 scikit-learn scipy protobuf h5py"
