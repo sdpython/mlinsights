@@ -1,7 +1,7 @@
 jobs:
 # - job: 'TestLinux'
 #   pool:
-#     vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
+#     vmImage: 'ubuntu-latest'
 #   strategy:
 #     matrix:
 #       Python37-Linux:
@@ -52,7 +52,7 @@ jobs:
 
 - job: 'TestMac'
   pool:
-    vmImage: 'macOS-10.13' # other options: 'ubuntu-16.04', 'vs2017-win2016'
+    vmImage: 'macOS-latest'
   strategy:
     matrix:
       Python37-Mac:
