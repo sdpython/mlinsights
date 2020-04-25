@@ -30,24 +30,21 @@ def model_featurizer(model, **params):
     tried = []
     if isinstance(model, LogisticRegression):
         return model_featurizer_lr(model, **params)
-    else:
-        tried.append(LogisticRegression)
+    tried.append(LogisticRegression)
     if isinstance(model, RandomForestClassifier):
         return model_featurizer_rfc(model, **params)
-    else:
-        tried.append(RandomForestClassifier)
+    tried.append(RandomForestClassifier)
     if hasattr(model, "layers"):
         # It should be a keras model.
         return model_featurizer_keras(model, **params)
-    else:
-        tried.append("Keras")
+    tried.append("Keras")
     if hasattr(model, "forward"):
         # It should be a torch model.
         return model_featurizer_torch(model, **params)
-    else:
-        tried.append("torch")
-    raise FeaturizerTypeError("Unable to process type '{0}', allowed:\n{1}".format(
-        type(model), "\n".join(sorted(str(_) for _ in tried))))
+    tried.append("torch")
+    raise FeaturizerTypeError(  # pragma no cover
+        "Unable to process type '{0}', allowed:\n{1}".format(
+            type(model), "\n".join(sorted(str(_) for _ in tried))))
 
 
 def is_vector(X):
@@ -60,19 +57,16 @@ def is_vector(X):
     if isinstance(X, list):
         if len(X) == 0 or isinstance(X[0], (list, tuple)):
             return False
-        else:
-            return True
+        return True
     if isinstance(X, numpy.ndarray):
         if len(X.shape) > 1 and X.shape[0] != 1:
             return False
-        else:
-            return True
+        return True
     if isinstance(X, pandas.DataFrame):
         if len(X.shape) > 1 and X.shape[0] != 1:
             return False
-        else:
-            return True
-    raise TypeError(
+        return True
+    raise TypeError(  # pragma no cover
         "Unable to guess if X is a vector, type(X)={0}".format(type(X)))
 
 
@@ -131,12 +125,12 @@ def model_featurizer_rfc(model, output=True):
             return wrap_predict_sklearn(X, model.predict_proba, many)
 
         return lambda X, many, model=model: feat(X, model, many)
-    else:
-        def feat(X, model, many):
-            "wraps sklearn"
-            return wrap_predict_sklearn(X, model.apply, many)
 
-        return lambda X, many, model=model: feat(X, model, many)
+    def feat(X, model, many):
+        "wraps sklearn"
+        return wrap_predict_sklearn(X, model.apply, many)
+
+    return lambda X, many, model=model: feat(X, model, many)
 
 
 def wrap_predict_keras(X, fct, many, shapes):
@@ -154,12 +148,10 @@ def wrap_predict_keras(X, fct, many, shapes):
     if many:
         y = [fct(X[i]).ravel() for i in range(X.shape[0])]
         return numpy.stack(y)
-    else:
-        if len(X.shape) == len(shapes):
-            return fct(X).ravel()
-        else:
-            x = X[numpy.newaxis, :, :, :]
-            return fct(x).ravel()
+    if len(X.shape) == len(shapes):
+        return fct(X).ravel()
+    x = X[numpy.newaxis, :, :, :]
+    return fct(x).ravel()
 
 
 def model_featurizer_keras(model, layer=None):
@@ -200,15 +192,14 @@ def wrap_predict_torch(X, fct, many, shapes):
     if many:
         y = [fct(X[i]).ravel() for i in range(X.shape[0])]
         return numpy.stack(y)
+    if shapes is None or len(X.shape) == len(shapes):
+        t = fct(X)
+        nt = t.detach().numpy().ravel()
     else:
-        if shapes is None or len(X.shape) == len(shapes):
-            t = fct(X)
-            nt = t.detach().numpy().ravel()
-        else:
-            x = X[numpy.newaxis, :, :, :]
-            t = fct(x)
-            nt = t.detach().numpy().ravel()
-        return nt
+        x = X[numpy.newaxis, :, :, :]
+        t = fct(x)
+        nt = t.detach().numpy().ravel()
+    return nt
 
 
 def model_featurizer_torch(model, layer=None):

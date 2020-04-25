@@ -32,7 +32,8 @@ def _tolerance(norm, X, tol):
     if norm == 'l1':
         variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
         return variances.sum()
-    raise NotImplementedError("not implemented for norm '{}'.".format(norm))
+    raise NotImplementedError(  # pragma no cover
+        "not implemented for norm '{}'.".format(norm))
 
 
 def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances):
@@ -72,7 +73,7 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
     elif norm == 'l1':
         labels, mindist = pairwise_distances_argmin_min(
             X=X, Y=centers, metric='manhattan')
-    else:
+    else:  # pragma no cover
         raise NotImplementedError(
             "Not implemented for norm '{}'.".format(norm))
     # cython k-means code assumes int32 inputs
@@ -133,11 +134,11 @@ def _labels_inertia(norm, X, sample_weight, centers,
         distances = numpy.zeros(shape=(0,), dtype=X.dtype)
     # distances will be changed in-place
     if issparse(X):
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma no cover
             "Sparse matrix is not implemented for norm 'l1'.")
     elif precompute_distances:
         return _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
-    raise NotImplementedError(
+    raise NotImplementedError(  # pragma no cover
         "precompute_distances is False, not implemented for norm 'l1'.")
 
 
@@ -201,7 +202,7 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
     elif norm.lower() == 'l1':
         dist_fct = lambda x, y: manhattan_distances(x, y)
     else:
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma no cover
             "norm must be 'l1' or 'l2' not '{}'.".format(norm))
 
     closest_dist_sq = dist_fct(centers[0, numpy.newaxis], X)
@@ -456,7 +457,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
     # init
     centers = _init_centroids(
         norm, X, n_clusters, init, random_state=random_state)
-    if verbose:
+    if verbose:  # pragma no cover
         print("Initialization complete")
 
     # Allocate memory to store the distances for each sample to its
@@ -477,7 +478,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
         centers = _centers_dense(X, sample_weight, labels, n_clusters, distances,
                                  X_sort_index)
 
-        if verbose:
+        if verbose:  # pragma no cover
             print("Iteration %2d, inertia %.3f" % (i, inertia))
 
         if best_inertia is None or inertia < best_inertia:
@@ -488,7 +489,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
         center_shift_total = numpy.sum(
             numpy.abs(centers_old - centers).ravel())
         if center_shift_total <= tol:
-            if verbose:
+            if verbose:  # pragma no cover
                 print("Converged at iteration %d: "
                       "center shift %r within tolerance %r"
                       % (i, center_shift_total, tol))
@@ -618,7 +619,7 @@ class KMeansL1L2(KMeans):
                         copy_x=copy_x, n_jobs=n_jobs, algorithm=algorithm)
         self.norm = norm.lower()
         if self.norm == 'l1' and self.algorithm != 'full':
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma no cover
                 "Only algorithm 'full' is implemented with norm 'l1'.")
 
     def fit(self, X, y=None, sample_weight=None):
@@ -649,7 +650,7 @@ class KMeansL1L2(KMeans):
         elif self.norm == 'l1':
             self._fit_l1(X=X, y=y, sample_weight=sample_weight)
         else:
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma no cover
                 "Norm is not L1 or L2 but '{}'.".format(self.norm))
         return self
 
@@ -680,11 +681,12 @@ class KMeansL1L2(KMeans):
 
         n_init = self.n_init
         if n_init <= 0:
-            raise ValueError("Invalid number of initializations."
-                             " n_init=%d must be bigger than zero." % n_init)
+            raise ValueError(  # pragma no cover
+                "Invalid number of initializations."
+                " n_init=%d must be bigger than zero." % n_init)
 
         if self.max_iter <= 0:
-            raise ValueError(
+            raise ValueError(  # pragma no cover
                 'Number of iterations should be a positive number,'
                 ' got %d instead' % self.max_iter
             )
@@ -695,8 +697,9 @@ class KMeansL1L2(KMeans):
                         order=order, copy=self.copy_x)
         # verify that the number of samples given is larger than k
         if _num_samples(X) < self.n_clusters:
-            raise ValueError("n_samples=%d should be >= n_clusters=%d" % (
-                _num_samples(X), self.n_clusters))
+            raise ValueError(  # pragma no cover
+                "n_samples=%d should be >= n_clusters=%d" % (
+                    _num_samples(X), self.n_clusters))
 
         tol = _tolerance(self.norm, X, self.tol)
 
@@ -712,7 +715,7 @@ class KMeansL1L2(KMeans):
         elif isinstance(precompute_distances, bool):
             pass
         else:
-            raise ValueError(
+            raise ValueError(  # pragma no cover
                 "precompute_distances should be 'auto' or True/False"
                 ", but a value of %r was passed" % precompute_distances)
 
@@ -740,8 +743,9 @@ class KMeansL1L2(KMeans):
         if algorithm == "full":
             kmeans_single = _kmeans_single_lloyd
         else:
-            raise ValueError("Algorithm must be 'auto', 'full' or 'elkan', got"
-                             " %s" % str(algorithm))
+            raise ValueError(  # pragma no cover
+                "Algorithm must be 'auto', 'full' or 'elkan', got"
+                " %s" % str(algorithm))
 
         seeds = random_state.randint(numpy.iinfo(numpy.int32).max, size=n_init)
         if effective_n_jobs(self.n_jobs) == 1:
@@ -783,7 +787,7 @@ class KMeansL1L2(KMeans):
 
         distinct_clusters = len(set(best_labels))
         if distinct_clusters < self.n_clusters:
-            warnings.warn(
+            warnings.warn(  # pragma no cover
                 "Number of distinct clusters ({}) found smaller than "
                 "n_clusters ({}). Possibly due to duplicate points "
                 "in X.".format(distinct_clusters, self.n_clusters),
@@ -817,7 +821,7 @@ class KMeansL1L2(KMeans):
             return KMeans.transform(self, X)
         if self.norm == 'l1':
             return self._transform_l1(X)
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma no cover
             "Norm is not L1 or L2 but '{}'.".format(self.norm))
 
     def _transform_l1(self, X):
@@ -855,7 +859,7 @@ class KMeansL1L2(KMeans):
             return KMeans.predict(self, X)
         if self.norm == 'l1':
             return self._predict_l1(X, sample_weight=sample_weight)
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma no cover
             "Norm is not L1 or L2 but '{}'.".format(self.norm))
 
     def _predict_l1(self, X, sample_weight=None, return_distances=False):
