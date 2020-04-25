@@ -55,9 +55,8 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python37-Mac:
-        python.version: '3.7'
-    maxParallel: 3
+      Python37:
+        python.version: "3.7"
 
   steps:
   - task: UsePythonVersion@0
@@ -66,6 +65,7 @@ jobs:
       architecture: 'x64'
   - script: gcc --version
     displayName: 'gcc version'
+
   - script: |
           brew update
     displayName: 'brew update'
@@ -75,16 +75,30 @@ jobs:
     displayName: 'gcc version'
   - script: brew install llvm
     displayName: 'install llvm'
+  - script: brew install libomp
+    displayName: 'Install omp'
   - script: brew install p7zip
     displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
   - script: brew install graphviz
     displayName: 'Install Graphviz'
-  - script: python -m pip install --upgrade pip setuptools wheel
-    displayName: 'Install tools'
-  - script: pip install numpy scipy cython
-    displayName: 'Install numpy scipy cython'
+  - script: brew install pybind11
+    displayName: 'Install pybind11'
+
+  - bash: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH.
+  - bash: sudo chown -R $USER $CONDA
+    displayName: Take ownership of conda installation
+  - bash: conda update conda --yes --quiet
+    displayName: Update conda.
+  - bash: conda info -a
+  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
+    displayName: Create Anaconda environment.
+  - bash: conda list
+  - bash: |
+      source activate pyenv
+
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
   - script: |
