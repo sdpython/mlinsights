@@ -125,7 +125,7 @@ def model_featurizer_rfc(model, output=True):
             return wrap_predict_sklearn(X, model.predict_proba, many)
 
         return lambda X, many, model=model: feat1(X, model, many)
-    
+
     def feat2(X, model, many):
         "wraps sklearn"
         return wrap_predict_sklearn(X, model.apply, many)
