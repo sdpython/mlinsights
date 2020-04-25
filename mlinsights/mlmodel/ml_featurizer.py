@@ -120,17 +120,17 @@ def model_featurizer_rfc(model, output=True):
     @return                 function
     """
     if output:
-        def feat(X, model, many):
+        def feat1(X, model, many):
             "wraps sklearn"
             return wrap_predict_sklearn(X, model.predict_proba, many)
 
-        return lambda X, many, model=model: feat(X, model, many)
-
-    def feat(X, model, many):
+        return lambda X, many, model=model: feat1(X, model, many)
+    
+    def feat2(X, model, many):
         "wraps sklearn"
         return wrap_predict_sklearn(X, model.apply, many)
 
-    return lambda X, many, model=model: feat(X, model, many)
+    return lambda X, many, model=model: feat2(X, model, many)
 
 
 def wrap_predict_keras(X, fct, many, shapes):
