@@ -56,8 +56,7 @@ class SkLearnParameters:
             "formatting function"
             if isinstance(v, str):
                 return "'{0}'".format(v)
-            else:
-                return repr(v)
+            return repr(v)
         text = ", ".join("{0}={1}".format(k, fmt(getattr(self, k)))
                          for k in sorted(self.Keys))
         return "\n".join(textwrap.wrap(text, subsequent_indent="    "))

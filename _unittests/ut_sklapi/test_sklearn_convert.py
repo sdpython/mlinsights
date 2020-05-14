@@ -32,7 +32,7 @@ class TestSklearnConvert(ExtTestCase):
         self.assertEqual(score, score2)
         rp = repr(conv)
         self.assertStartsWith(
-            'SkBaseTransformLearner(model=LogisticRegression(C=1.0,', rp)
+            'SkBaseTransformLearner(model=LogisticRegression(', rp)
 
     def test_pipeline_with_callable(self):
         data = load_iris()
@@ -49,7 +49,7 @@ class TestSklearnConvert(ExtTestCase):
         self.assertEqualFloat(score, score2, precision=1e-5)
         rp = repr(conv)
         self.assertStartsWith(
-            'SkBaseTransformLearner(model=LogisticRegression(C=1.0,', rp)
+            'SkBaseTransformLearner(model=LogisticRegression(', rp)
 
     def test_pipeline_with_two_regressors(self):
         data = load_iris()
@@ -65,7 +65,7 @@ class TestSklearnConvert(ExtTestCase):
         self.assertEqualFloat(score, score2, precision=1e-5)
         rp = repr(conv)
         self.assertStartsWith(
-            'SkBaseTransformLearner(model=LinearRegression(copy_X=True,', rp)
+            'SkBaseTransformLearner(model=LinearRegression(', rp)
 
     def test_pipeline_with_params(self):
         conv = SkBaseTransformLearner(LinearRegression(normalize=True))
