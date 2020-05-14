@@ -2,6 +2,7 @@
 @file
 @brief Combines a *k-means* followed by a predictor.
 """
+import textwrap
 import inspect
 import numpy
 from sklearn.linear_model import LogisticRegression
@@ -134,7 +135,8 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         @param      deep        unused here
         @return                 dict
 
-        :meth:`set_params <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`
+        :meth:`set_params <mlinsights.mlmodel.classification_kmeans.
+        ClassifierAfterKMeans.set_params>`
         describes the pattern parameters names follow.
         """
         res = {}
@@ -164,3 +166,14 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
                 raise ValueError("Unexpected parameter name '{0}'".format(k))
         self.clus.set_params(**pc)
         self.estimator.set_params(**pe)
+
+    def __repr__(self):
+        """
+        Overloads `repr` as *scikit-learn* now relies
+        on the constructor signature.
+        """
+        el = ', '.join(['%s=%r' % (k, v)
+                        for k, v in self.get_params().items()])
+        text = "%s(%s)" % (self.__class__.__name__, el)
+        lines = textwrap.wrap(text, subsequent_indent='    ')
+        return "\n".join(lines)

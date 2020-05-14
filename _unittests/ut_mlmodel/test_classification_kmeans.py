@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=2s)
+@brief      test log(time=20s)
 """
 import unittest
 import numpy
 from numpy.random import RandomState
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
-from mlinsights.mlmodel import ClassifierAfterKMeans
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import (
+    ClassifierAfterKMeans, test_sklearn_pickle, test_sklearn_clone,
+    test_sklearn_grid_search_cv
+)
 
 
 class TestClassifierAfterKMeans(ExtTestCase):
@@ -72,6 +74,16 @@ class TestClassifierAfterKMeans(ExtTestCase):
         clk.fit(X, Y)
         score = clk.score(X, Y)
         self.assertGreater(score, 0.95)
+
+    def test_issue(self):
+        X, labels_true = datasets.make_blobs(
+            n_samples=750, centers=6, cluster_std=0.4)
+        labels_true = labels_true % 3
+        clcl = ClassifierAfterKMeans(e_max_iter=1000)
+        clcl.fit(X, labels_true)
+        r = repr(clcl)
+        self.assertIn('ClassifierAfterKMeans(', r)
+        self.assertIn("c_init='k-means++'", r)
 
 
 if __name__ == "__main__":
