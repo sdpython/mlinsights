@@ -83,8 +83,10 @@ class TestCategoriesToIntegers(ExtTestCase):
         newdf2 = trans.fit_transform(df)
         self.assertEqual(newdf, newdf2)
         rep = repr(trans)
-        self.assertEqual("CategoriesToIntegers(columns=None,remove=None,single=True,skip_errors=False)",
-                         rep.replace(" ", "").replace("\n", ""))
+        self.assertStartsWith("CategoriesToIntegers(",
+                              rep.replace(" ", "").replace("\n", ""))
+        self.assertIn("single=True",
+                      rep.replace(" ", "").replace("\n", ""))
 
     def test_categories_to_integers_pickle(self):
         data = os.path.join(os.path.abspath(
