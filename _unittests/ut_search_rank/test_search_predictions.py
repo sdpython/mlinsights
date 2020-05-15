@@ -31,18 +31,8 @@ class TestSearchPredictions(ExtTestCase):
 
         se = SearchEnginePredictions(clf, n_neighbors=5)
         r = repr(se)
-        self.maxDiff = None
-        r = r.replace("solver='warn',", "").replace("solver='lbfgs',", "")
-        r = r.replace("l1_ratio=None,", "")
-        exp = ("SearchEnginePredictions(fct=LogisticRegression(C=1.0,class_weight=None,dual=False,"
-               "fit_intercept=True,intercept_scaling=1,max_iter=100,multi_class='auto',n_jobs=None,"
-               "penalty='l2',random_state=None,solver='warn',tol=0.0001,verbose=0,warm_start=False),"
-               "fct_params=None,n_neighbors=5)")
-        exp = exp.replace("solver='warn',", "").replace("solver='lbfgs',", "")
-        exp = exp.replace("l1_ratio=None,", "")
-        # 0.22
-        r = r.replace("multi_class='warn'", "multi_class='auto'")
-        self.assertEqual(r.replace("\n", "").replace(" ", ""), exp)
+        exp = "SearchEnginePredictions(fct=LogisticRegression("
+        self.assertStartsWith(exp, r)
 
         se.fit(data=None, features=df[["f1", "f2"]].values,
                metadata=df[["ind", "meta1", "meta2"]])
