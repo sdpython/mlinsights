@@ -11,6 +11,7 @@ from .cache_model import MLCache
 
 
 def isskl023():
+    "Tells if :epkg:`scikit-learn` is more recent than 0.23."
     v1 = ".".join(skl_version.split('.')[:2])
     return StrictVersion(v1) >= StrictVersion('0.23')
 
