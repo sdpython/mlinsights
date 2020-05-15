@@ -2,10 +2,17 @@
 @file
 @brief Caches training.
 """
+from distutils.version import StrictVersion
+from sklearn import __version__ as skl_version
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline, _fit_transform_one
 from sklearn.utils import _print_elapsed_time
 from .cache_model import MLCache
+
+
+def isskl023():
+    v1 = ".".join(skl_version.split('.')[:2])
+    return StrictVersion(v1) >= StrictVersion('0.23')
 
 
 class PipelineCache(Pipeline):
@@ -46,14 +53,19 @@ class PipelineCache(Pipeline):
 
         for pname, pval in fit_params.items():
             if '__' not in pname:
-                raise ValueError(
-                    "Pipeline.fit does not accept the {} parameter. "
-                    "You can pass parameters to specific steps of your "
-                    "pipeline using the stepname__parameter format, e.g. "
-                    "`Pipeline.fit(X, y, logisticregression__sample_weight"
-                    "=sample_weight)`.".format(pname))
-            step, param = pname.split('__', 1)
-            fit_params_steps[step][param] = pval
+                if not isinstance(pval, dict):
+                    raise ValueError(
+                        "For scikit-learn < 0.23, "
+                        "Pipeline.fit does not accept the {} parameter. "
+                        "You can pass parameters to specific steps of your "
+                        "pipeline using the stepname__parameter format, e.g. "
+                        "`Pipeline.fit(X, y, logisticregression__sample_weight"
+                        "=sample_weight)`.".format(pname))
+                else:
+                    fit_params_steps[pname].update(pval)
+            else:
+                step, param = pname.split('__', 1)
+                fit_params_steps[step][param] = pval
         return fit_params_steps
 
     def _fit(self, X, y=None, **fit_params):
@@ -66,7 +78,8 @@ class PipelineCache(Pipeline):
         else:
             self.cache_ = MLCache.get_cache(self.cache_name)
         Xt = X
-        for (step_idx, name, transformer) in self._iter(with_final=False, filter_passthrough=False):
+        for (step_idx, name, transformer) in self._iter(
+                with_final=False, filter_passthrough=False):
             if (transformer is None or transformer == 'passthrough'):
                 with _print_elapsed_time('Pipeline', self._log_message(step_idx)):
                     continue
@@ -91,6 +104,8 @@ class PipelineCache(Pipeline):
                 Xt = fitted_transformer.transform(Xt)
 
             self.steps[step_idx] = (name, fitted_transformer)
+        if isskl023():
+            return Xt
         if self._final_estimator == 'passthrough':
             return Xt, {}
         return Xt, fit_params_steps[self.steps[-1][0]]
