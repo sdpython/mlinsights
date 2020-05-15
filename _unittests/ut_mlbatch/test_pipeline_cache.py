@@ -19,12 +19,13 @@ class TestPipelineCache(ExtTestCase):
         X, y = make_classification(random_state=42)
 
         pipe0 = Pipeline([('pca', PCA(2)), ('lr', LogisticRegression())])
-        pars0 = pipe0._check_fit_params()
-
         pipe = PipelineCache(
             [('pca', PCA(2)), ('lr', LogisticRegression())], 'cache__')
-        pars1 = pipe._check_fit_params()
-        self.assertEqual(pars0, pars1)
+
+        if hasattr(pipe0, '_check_fit_params'):
+            pars0 = pipe0._check_fit_params()  # pylint: disable=W0212,E1101
+            pars1 = pipe._check_fit_params()  # pylint: disable=W0212,E1101
+            self.assertEqual(pars0, pars1)
 
         pipe0.fit(X, y)
         pipe.fit(X, y)

@@ -57,7 +57,7 @@ class TestSklearnStacking(ExtTestCase):
         self.assertEqual(score, score2)
         rp = repr(conv)
         self.assertStartsWith(
-            'SkBaseTransformStacking([LogisticRegression(C=1.0, class_weight=None,', rp)
+            'SkBaseTransformStacking([LogisticRegression(', rp)
 
     def test_pipeline_with_two_transforms(self):
         data = load_iris()
@@ -74,7 +74,7 @@ class TestSklearnStacking(ExtTestCase):
         self.assertEqual(score, score2)
         rp = repr(conv)
         self.assertStartsWith(
-            "SkBaseTransformStacking([Normalizer(copy=True, norm='l2'),", rp)
+            "SkBaseTransformStacking([Normalizer(", rp)
 
     def test_pipeline_with_params(self):
         conv = SkBaseTransformStacking([LinearRegression(normalize=True),
