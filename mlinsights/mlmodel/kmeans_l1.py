@@ -9,7 +9,6 @@ from scipy.sparse import issparse
 from joblib import Parallel, delayed, effective_n_jobs
 from sklearn.cluster import KMeans
 from sklearn.cluster._kmeans import (
-    _labels_inertia as _labels_inertia_skl,
     _tolerance as _tolerance_skl,
     _check_normalize_sample_weight,
     _validate_center_shape
@@ -85,8 +84,59 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
     return labels, inertia
 
 
+def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
+                        precompute_distances=True, distances=None):
+    """E step of the K-means EM algorithm.
+    Compute the labels and the inertia of the given samples and centers.
+    This will compute the distances in-place.
+    Parameters
+    ----------
+    X : float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
+        The input samples to assign to the labels.
+    sample_weight : array-like, shape (n_samples,)
+        The weights for each observation in X.
+    x_squared_norms : array, shape (n_samples,)
+        Precomputed squared euclidean norm of each data point, to speed up
+        computations.
+    centers : float array, shape (k, n_features)
+        The cluster centers.
+    precompute_distances : boolean, default: True
+        Precompute distances (faster but takes more memory).
+    distances : float array, shape (n_samples,)
+        Pre-allocated array to be filled in with each sample's distance
+        to the closest center.
+    Returns
+    -------
+    labels : int array of shape(n)
+        The resulting assignment
+    inertia : float
+        Sum of squared distances of samples to their closest cluster center.
+    """
+    n_samples = X.shape[0]
+    sample_weight = _check_normalize_sample_weight(sample_weight, X)
+    # set the default value of centers to -1 to be able to detect any anomaly
+    # easily
+    labels = np.full(n_samples, -1, np.int32)
+    if distances is None:
+        distances = np.zeros(shape=(0,), dtype=X.dtype)
+    # distances will be changed in-place
+    if sp.issparse(X):
+        inertia = _k_means._assign_labels_csr(
+            X, sample_weight, x_squared_norms, centers, labels,
+            distances=distances)
+    else:
+        if precompute_distances:
+            return _labels_inertia_precompute_dense(X, sample_weight,
+                                                    x_squared_norms, centers,
+                                                    distances)
+        inertia = _k_means._assign_labels_array(
+            X, sample_weight, x_squared_norms, centers, labels,
+            distances=distances)
+    return labels, inertia
+
+
 def _labels_inertia(norm, X, sample_weight, centers,
-                    precompute_distances=True):
+                    precompute_distances=True, distances=None):
     """
     E step of the K-means EM algorithm.
 
