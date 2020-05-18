@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=C0302
 """
 @file
 @brief Implements k-means with norms L1 and L2.
 """
 import warnings
 import numpy
-import scipy.sparse as sp
 from scipy.sparse import issparse
 from joblib import Parallel, delayed, effective_n_jobs
 from sklearn.cluster import KMeans
@@ -90,18 +89,15 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
     """Compute label assignment and inertia for a CSR input
     Return the inertia (sum of squared distances to the centers).
     """
-    X_indices = X.indices
-    X_indptr = X.indptr
     n_clusters = centers.shape[0]
-    n_features = centers.shape[1]
     n_samples = X.shape[0]
     store_distances = 0
     inertia = 0.0
 
-    if floating is float:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=np.float32)
+    if centers.dtype == numpy.float32:
+        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float32)
     else:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=np.float64)
+        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float64)
 
     if n_samples == distances.shape[0]:
         store_distances = 1
@@ -116,8 +112,7 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
             dist = 0.0
             # hardcoded: minimize euclidean distance to cluster center:
             # ||a - b||^2 = ||a||^2 + ||b||^2 -2 <a, b>
-            for k in range(X_indptr[sample_idx], X_indptr[sample_idx + 1]):
-                dist += centers[center_idx, X_indices[k]] * X[k]
+            dist += centers[center_idx, :] @ X
             dist *= -2
             dist += center_squared_norms[center_idx]
             dist += x_squared_norms[sample_idx]
@@ -127,6 +122,50 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
                 labels[sample_idx] = center_idx
                 if store_distances:
                     distances[sample_idx] = dist
+        inertia += min_dist
+
+    return inertia
+
+
+def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
+                         labels, distances):
+    """Compute label assignment and inertia for a dense array
+    Return the inertia (sum of squared distances to the centers).
+    """
+    n_clusters = centers.shape[0]
+    n_samples = X.shape[0]
+    store_distances = 0
+    inertia = 0.0
+
+    if centers.dtype == numpy.float32:
+        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float32)
+    else:
+        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float64)
+
+    if n_samples == distances.shape[0]:
+        store_distances = 1
+
+    for center_idx in range(n_clusters):
+        center_squared_norms[center_idx] = numpy.dot(
+            centers[center_idx, :], centers[center_idx, :])
+
+    for sample_idx in range(n_samples):
+        min_dist = -1
+        for center_idx in range(n_clusters):
+            dist = 0.0
+            # hardcoded: minimize euclidean distance to cluster center:
+            # ||a - b||^2 = ||a||^2 + ||b||^2 -2 <a, b>
+            dist += numpy.dot(X[sample_idx, :], centers[center_idx, :])
+            dist *= -2
+            dist += center_squared_norms[center_idx]
+            dist += x_squared_norms[sample_idx]
+            dist *= sample_weight[sample_idx]
+            if min_dist == -1 or dist < min_dist:
+                min_dist = dist
+                labels[sample_idx] = center_idx
+
+        if store_distances:
+            distances[sample_idx] = min_dist
         inertia += min_dist
 
     return inertia
@@ -168,8 +207,8 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
     if distances is None:
         distances = numpy.zeros(shape=(0,), dtype=X.dtype)
     # distances will be changed in-place
-    if sp.issparse(X):
-        inertia = _k_means._assign_labels_csr(
+    if issparse(X):
+        inertia = _assign_labels_csr(
             X, sample_weight, x_squared_norms, centers, labels,
             distances=distances)
     else:
@@ -177,7 +216,7 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
             return _labels_inertia_precompute_dense(X, sample_weight,
                                                     x_squared_norms, centers,
                                                     distances)
-        inertia = _k_means._assign_labels_array(
+        inertia = _assign_labels_array(
             X, sample_weight, x_squared_norms, centers, labels,
             distances=distances)
     return labels, inertia
