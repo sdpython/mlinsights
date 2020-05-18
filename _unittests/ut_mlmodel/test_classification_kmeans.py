@@ -77,7 +77,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
 
     def test_issue(self):
         X, labels_true = datasets.make_blobs(
-            n_samples=750, centers=6, cluster_std=0.4)
+            n_samples=750, centers=6, cluster_std=0.4)[:2]
         labels_true = labels_true % 3
         clcl = ClassifierAfterKMeans(e_max_iter=1000)
         clcl.fit(X, labels_true)

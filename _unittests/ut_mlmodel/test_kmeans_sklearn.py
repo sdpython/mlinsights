@@ -27,7 +27,7 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
     n_samples = 100
     n_clusters, n_features = centers.shape  # pylint: disable=E0633
     X, true_labels = make_blobs(n_samples=n_samples, centers=centers,
-                                cluster_std=1., random_state=42)
+                                cluster_std=1., random_state=42)[:2]
     X_csr = sp.csr_matrix(X)
 
     def do_test_kmeans_results(self, representation, algo, dtype):
