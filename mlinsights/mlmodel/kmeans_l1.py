@@ -182,7 +182,8 @@ def _labels_inertia(norm, X, sample_weight, centers,
         raise NotImplementedError(  # pragma no cover
             "Sparse matrix is not implemented for norm 'l1'.")
     if precompute_distances:
-        return _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
+        return _labels_inertia_precompute_dense(
+            norm, X, sample_weight, centers, distances)
     raise NotImplementedError(  # pragma no cover
         "precompute_distances is False, not implemented for norm 'l1'.")
 
