@@ -5,6 +5,7 @@
 """
 import warnings
 import numpy
+import scipy.sparse as sp
 from scipy.sparse import issparse
 from joblib import Parallel, delayed, effective_n_jobs
 from sklearn.cluster import KMeans
@@ -116,9 +117,9 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
     sample_weight = _check_normalize_sample_weight(sample_weight, X)
     # set the default value of centers to -1 to be able to detect any anomaly
     # easily
-    labels = np.full(n_samples, -1, np.int32)
+    labels = numpy.full(n_samples, -1, numpy.int32)
     if distances is None:
-        distances = np.zeros(shape=(0,), dtype=X.dtype)
+        distances = numpy.zeros(shape=(0,), dtype=X.dtype)
     # distances will be changed in-place
     if sp.issparse(X):
         inertia = _k_means._assign_labels_csr(

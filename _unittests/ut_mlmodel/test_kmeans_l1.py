@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=6s)
+@brief      test log(time=10s)
 """
 import unittest
 import numpy
@@ -37,10 +37,18 @@ class TestKMeansL1L2(ExtTestCase):
         cls = set(clr.predict(X))
         self.assertEqual({0, 1, 2, 3}, cls)
 
-    def test_kmeans_l1(self):
+    def test_kmeans_l1_iris(self):
         iris = datasets.load_iris()
         X = iris.data
         clr = KMeansL1L2(4, norm='L1')
+        clr.fit(X)
+        cls = set(clr.predict(X))
+        self.assertEqual({0, 1, 2, 3}, cls)
+
+    def test_kmeans_l2_iris(self):
+        iris = datasets.load_iris()
+        X = iris.data
+        clr = KMeansL1L2(4, norm='L2')
         clr.fit(X)
         cls = set(clr.predict(X))
         self.assertEqual({0, 1, 2, 3}, cls)
