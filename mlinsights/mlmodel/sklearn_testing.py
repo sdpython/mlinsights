@@ -239,7 +239,7 @@ def test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid
     if y_train is None and w_train is None:
         clf.fit(X_train)
     else:
-        clf.fit(X_train, y_train, w_train)
+        clf.fit(X_train, y_train, w_train)  # pylint: disable=E1121
     score = clf.score(X_test, y_test)
     ExtTestCase().assertIsInstance(score, float)
     return dict(model=clf, X_train=X_train, y_train=y_train, w_train=w_train,

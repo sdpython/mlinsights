@@ -86,7 +86,7 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
 
 
 def _labels_inertia(norm, X, sample_weight, centers,
-                    precompute_distances=True, distances=None):
+                    precompute_distances=True):
     """
     E step of the K-means EM algorithm.
 
@@ -109,10 +109,6 @@ def _labels_inertia(norm, X, sample_weight, centers,
     precompute_distances : boolean, default: True
         Precompute distances (faster but takes more memory).
 
-    distances : float array, shape (n_samples,)
-        Pre-allocated array to be filled in with each sample's distance
-        to the closest center.
-
     Returns
     -------
     labels : int array of shape(n)
@@ -125,18 +121,17 @@ def _labels_inertia(norm, X, sample_weight, centers,
         return _labels_inertia_skl(
             X, sample_weight=sample_weight, centers=centers,
             precompute_distances=precompute_distances,
-            distances=distances, x_squared_norms=None)
+            x_squared_norms=None)
 
     sample_weight = _check_normalize_sample_weight(sample_weight, X)
     # set the default value of centers to -1 to be able to detect any anomaly
     # easily
-    if distances is None:
-        distances = numpy.zeros(shape=(0,), dtype=X.dtype)
+    distances = numpy.zeros(shape=(0,), dtype=X.dtype)
     # distances will be changed in-place
     if issparse(X):
         raise NotImplementedError(  # pragma no cover
             "Sparse matrix is not implemented for norm 'l1'.")
-    elif precompute_distances:
+    if precompute_distances:
         return _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
     raise NotImplementedError(  # pragma no cover
         "precompute_distances is False, not implemented for norm 'l1'.")
