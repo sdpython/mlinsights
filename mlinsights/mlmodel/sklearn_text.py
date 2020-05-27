@@ -2,7 +2,12 @@
 @file
 @brief Overloads :epkg:`TfidfVectorizer` and :epkg:`CountVectorizer`.
 """
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer, VectorizerMixin
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+try:
+    from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
+except ImportError:
+    # scikit-learn < 0.23
+    from sklearn.feature_extraction.text import VectorizerMixin
 
 
 class NGramsMixin(VectorizerMixin):

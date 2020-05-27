@@ -22,257 +22,10 @@ from sklearn.metrics.pairwise import (
 from sklearn.utils import check_random_state, check_array
 from sklearn.utils.validation import _num_samples, check_is_fitted
 from sklearn.utils.extmath import stable_cumsum
-
-
-def _tolerance(norm, X, tol):
-    """Return a tolerance which is independent of the dataset"""
-    if norm == 'l2':
-        return _tolerance_skl(X, tol)
-    if norm == 'l1':
-        variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
-        return variances.sum()
-    raise NotImplementedError(  # pragma no cover
-        "not implemented for norm '{}'.".format(norm))
-
-
-def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances):
-    """
-    Computes labels and inertia using a full distance matrix.
-
-    This will overwrite the 'distances' array in-place.
-
-    Parameters
-    ----------
-    norm : 'l1' or 'l2'
-
-    X : numpy array, shape (n_sample, n_features)
-        Input data.
-
-    sample_weight : array-like, shape (n_samples,)
-        The weights for each observation in X.
-
-    centers : numpy array, shape (n_clusters, n_features)
-        Cluster centers which data is assigned to.
-
-    distances : numpy array, shape (n_samples,)
-        Pre-allocated array in which distances are stored.
-
-    Returns
-    -------
-    labels : numpy array, dtype=numpy.int, shape (n_samples,)
-        Indices of clusters that samples are assigned to.
-
-    inertia : float
-        Sum of squared distances of samples to their closest cluster center.
-    """
-    n_samples = X.shape[0]
-    if norm == 'l2':
-        labels, mindist = pairwise_distances_argmin_min(
-            X=X, Y=centers, metric='euclidean', metric_kwargs={'squared': True})
-    elif norm == 'l1':
-        labels, mindist = pairwise_distances_argmin_min(
-            X=X, Y=centers, metric='manhattan')
-    else:  # pragma no cover
-        raise NotImplementedError(
-            "Not implemented for norm '{}'.".format(norm))
-    # cython k-means code assumes int32 inputs
-    labels = labels.astype(numpy.int32, copy=False)
-    if n_samples == distances.shape[0]:
-        # distances will be changed in-place
-        distances[:] = mindist
-    inertia = (mindist * sample_weight).sum()
-    return labels, inertia
-
-
-def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
-                       labels, distances):
-    """Compute label assignment and inertia for a CSR input
-    Return the inertia (sum of squared distances to the centers).
-    """
-    n_clusters = centers.shape[0]
-    n_samples = X.shape[0]
-    store_distances = 0
-    inertia = 0.0
-
-    if centers.dtype == numpy.float32:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float32)
-    else:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float64)
-
-    if n_samples == distances.shape[0]:
-        store_distances = 1
-
-    for center_idx in range(n_clusters):
-        center_squared_norms[center_idx] = numpy.dot(
-            centers[center_idx, :], centers[center_idx, :])
-
-    for sample_idx in range(n_samples):
-        min_dist = -1
-        for center_idx in range(n_clusters):
-            dist = 0.0
-            # hardcoded: minimize euclidean distance to cluster center:
-            # ||a - b||^2 = ||a||^2 + ||b||^2 -2 <a, b>
-            dist += centers[center_idx, :] @ X
-            dist *= -2
-            dist += center_squared_norms[center_idx]
-            dist += x_squared_norms[sample_idx]
-            dist *= sample_weight[sample_idx]
-            if min_dist == -1 or dist < min_dist:
-                min_dist = dist
-                labels[sample_idx] = center_idx
-                if store_distances:
-                    distances[sample_idx] = dist
-        inertia += min_dist
-
-    return inertia
-
-
-def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
-                         labels, distances):
-    """Compute label assignment and inertia for a dense array
-    Return the inertia (sum of squared distances to the centers).
-    """
-    n_clusters = centers.shape[0]
-    n_samples = X.shape[0]
-    store_distances = 0
-    inertia = 0.0
-
-    if centers.dtype == numpy.float32:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float32)
-    else:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float64)
-
-    if n_samples == distances.shape[0]:
-        store_distances = 1
-
-    for center_idx in range(n_clusters):
-        center_squared_norms[center_idx] = numpy.dot(
-            centers[center_idx, :], centers[center_idx, :])
-
-    for sample_idx in range(n_samples):
-        min_dist = -1
-        for center_idx in range(n_clusters):
-            dist = 0.0
-            # hardcoded: minimize euclidean distance to cluster center:
-            # ||a - b||^2 = ||a||^2 + ||b||^2 -2 <a, b>
-            dist += numpy.dot(X[sample_idx, :], centers[center_idx, :])
-            dist *= -2
-            dist += center_squared_norms[center_idx]
-            dist += x_squared_norms[sample_idx]
-            dist *= sample_weight[sample_idx]
-            if min_dist == -1 or dist < min_dist:
-                min_dist = dist
-                labels[sample_idx] = center_idx
-
-        if store_distances:
-            distances[sample_idx] = min_dist
-        inertia += min_dist
-
-    return inertia
-
-
-def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
-                        precompute_distances=True, distances=None):
-    """E step of the K-means EM algorithm.
-    Compute the labels and the inertia of the given samples and centers.
-    This will compute the distances in-place.
-    Parameters
-    ----------
-    X : float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
-        The input samples to assign to the labels.
-    sample_weight : array-like, shape (n_samples,)
-        The weights for each observation in X.
-    x_squared_norms : array, shape (n_samples,)
-        Precomputed squared euclidean norm of each data point, to speed up
-        computations.
-    centers : float array, shape (k, n_features)
-        The cluster centers.
-    precompute_distances : boolean, default: True
-        Precompute distances (faster but takes more memory).
-    distances : float array, shape (n_samples,)
-        Pre-allocated array to be filled in with each sample's distance
-        to the closest center.
-    Returns
-    -------
-    labels : int array of shape(n)
-        The resulting assignment
-    inertia : float
-        Sum of squared distances of samples to their closest cluster center.
-    """
-    n_samples = X.shape[0]
-    sample_weight = _check_normalize_sample_weight(sample_weight, X)
-    # set the default value of centers to -1 to be able to detect any anomaly
-    # easily
-    labels = numpy.full(n_samples, -1, numpy.int32)
-    if distances is None:
-        distances = numpy.zeros(shape=(0,), dtype=X.dtype)
-    # distances will be changed in-place
-    if issparse(X):
-        inertia = _assign_labels_csr(
-            X, sample_weight, x_squared_norms, centers, labels,
-            distances=distances)
-    else:
-        if precompute_distances:
-            return _labels_inertia_precompute_dense(X, sample_weight,
-                                                    x_squared_norms, centers,
-                                                    distances)
-        inertia = _assign_labels_array(
-            X, sample_weight, x_squared_norms, centers, labels,
-            distances=distances)
-    return labels, inertia
-
-
-def _labels_inertia(norm, X, sample_weight, centers,
-                    precompute_distances=True, distances=None):
-    """
-    E step of the K-means EM algorithm.
-
-    Computes the labels and the inertia of the given samples and centers.
-    This will compute the distances in-place.
-
-    Parameters
-    ----------
-    norm : 'l1' or 'l2'
-
-    X : float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
-        The input samples to assign to the labels.
-
-    sample_weight : array-like, shape (n_samples,)
-        The weights for each observation in X.
-
-    centers : float array, shape (k, n_features)
-        The cluster centers.
-
-    precompute_distances : boolean, default: True
-        Precompute distances (faster but takes more memory).
-
-    Returns
-    -------
-    labels : int array of shape(n)
-        The resulting assignment
-
-    inertia : float
-        Sum of squared distances of samples to their closest cluster center.
-    """
-    if norm == 'l2':
-        return _labels_inertia_skl(
-            X, sample_weight=sample_weight, centers=centers,
-            precompute_distances=precompute_distances,
-            x_squared_norms=None)
-
-    sample_weight = _check_normalize_sample_weight(sample_weight, X)
-    # set the default value of centers to -1 to be able to detect any anomaly
-    # easily
-    distances = numpy.zeros(shape=(0,), dtype=X.dtype)
-    # distances will be changed in-place
-    if issparse(X):
-        raise NotImplementedError(  # pragma no cover
-            "Sparse matrix is not implemented for norm 'l1'.")
-    if precompute_distances:
-        return _labels_inertia_precompute_dense(
-            norm, X, sample_weight, centers, distances)
-    raise NotImplementedError(  # pragma no cover
-        "precompute_distances is False, not implemented for norm 'l1'.")
+from ._kmeans_022 import (
+    _labels_inertia_skl,
+    _labels_inertia_precompute_dense,
+)
 
 
 def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
@@ -637,6 +390,74 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
                             distances=distances)
 
     return best_labels, best_inertia, best_centers, i + 1
+
+
+def _labels_inertia(norm, X, sample_weight, centers,
+                    precompute_distances=True, distances=None):
+    """
+    E step of the K-means EM algorithm.
+
+    Computes the labels and the inertia of the given samples and centers.
+    This will compute the distances in-place.
+
+    Parameters
+    ----------
+    norm : 'l1' or 'l2'
+
+    X : float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
+        The input samples to assign to the labels.
+
+    sample_weight : array-like, shape (n_samples,)
+        The weights for each observation in X.
+
+    centers : float array, shape (k, n_features)
+        The cluster centers.
+
+    precompute_distances : boolean, default: True
+        Precompute distances (faster but takes more memory).
+
+    distances: existing distances
+
+    Returns
+    -------
+    labels : int array of shape(n)
+        The resulting assignment
+
+    inertia : float
+        Sum of squared distances of samples to their closest cluster center.
+    """
+    if norm == 'l2':
+        return _labels_inertia_skl(
+            X, sample_weight=sample_weight, centers=centers,
+            precompute_distances=precompute_distances,
+            x_squared_norms=None)
+
+    sample_weight = _check_normalize_sample_weight(sample_weight, X)
+    # set the default value of centers to -1 to be able to detect any anomaly
+    # easily
+    if distances is None:
+        distances = numpy.zeros(shape=(0,), dtype=X.dtype)
+    # distances will be changed in-place
+    if issparse(X):
+        raise NotImplementedError(  # pragma no cover
+            "Sparse matrix is not implemented for norm 'l1'.")
+    if precompute_distances:
+        return _labels_inertia_precompute_dense(
+            norm=norm, X=X, sample_weight=sample_weight,
+            centers=centers, distances=distances)
+    raise NotImplementedError(  # pragma no cover
+        "precompute_distances is False, not implemented for norm 'l1'.")
+
+
+def _tolerance(norm, X, tol):
+    """Return a tolerance which is independent of the dataset"""
+    if norm == 'l2':
+        return _tolerance_skl(X, tol)
+    if norm == 'l1':
+        variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
+        return variances.sum()
+    raise NotImplementedError(  # pragma no cover
+        "not implemented for norm '{}'.".format(norm))
 
 
 class KMeansL1L2(KMeans):

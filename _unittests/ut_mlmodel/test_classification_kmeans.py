@@ -6,15 +6,20 @@ import unittest
 import numpy
 from numpy.random import RandomState
 from sklearn import datasets
+from sklearn.exceptions import ConvergenceWarning
+try:
+    from sklearn.utils._testing import ignore_warnings
+except ImportError:
+    from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import (
     ClassifierAfterKMeans, test_sklearn_pickle, test_sklearn_clone,
-    test_sklearn_grid_search_cv
-)
+    test_sklearn_grid_search_cv)
 
 
 class TestClassifierAfterKMeans(ExtTestCase):
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -27,6 +32,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
         dec = clr.decision_function(X)
         self.assertEqual(prob.shape, dec.shape)
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans_intercept_weights(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -35,6 +41,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans_pickle(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -44,18 +51,21 @@ class TestClassifierAfterKMeans(ExtTestCase):
         self.maxDiff = None
         test_sklearn_clone(lambda: ClassifierAfterKMeans())
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans_grid_search(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: ClassifierAfterKMeans(), X, y), ValueError)
-        res = test_sklearn_grid_search_cv(lambda: ClassifierAfterKMeans(), X, y,
-                                          c_n_clusters=[2, 3])
+        res = test_sklearn_grid_search_cv(
+            lambda: ClassifierAfterKMeans(),
+            X, y, c_n_clusters=[2, 3])
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
         self.assertLesser(res['score'], 1)
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans_relevance(self):
         state = RandomState(seed=0)
         Xs = []
@@ -75,6 +85,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
         score = clk.score(X, Y)
         self.assertGreater(score, 0.95)
 
+    @ignore_warnings(category=ConvergenceWarning)
     def test_issue(self):
         X, labels_true = datasets.make_blobs(
             n_samples=750, centers=6, cluster_std=0.4)[:2]

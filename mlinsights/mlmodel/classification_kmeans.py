@@ -20,13 +20,15 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
 
     def __init__(self, estimator=None, clus=None, **kwargs):
         """
-        @param      estimator       :epkg:`sklearn:linear_model:LogisiticRegression`
-                                    by default
-        @param      clus            clustering applied on each class,
-                                    by default k-means with two classes
-        @param      kwargs          sent to :meth:`set_params
-                                    <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`,
-                                    see its documentation to understand how to specify parameters
+        @param  estimator   :epkg:`sklearn:linear_model:LogisiticRegression`
+                            by default
+        @param  clus        clustering applied on each class,
+                            by default k-means with two classes
+        @param  kwargs      sent to :meth:`set_params
+                            <mlinsights.mlmodel.classification_kmeans.
+                            ClassifierAfterKMeans.set_params>`,
+                            see its documentation to understand how to
+                            specify parameters
         """
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)

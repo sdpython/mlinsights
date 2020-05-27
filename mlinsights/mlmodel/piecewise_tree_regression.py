@@ -25,15 +25,17 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
                  min_samples_split=2, min_samples_leaf=1,
                  min_weight_fraction_leaf=0.0, max_features=None,
                  random_state=None, max_leaf_nodes=None,
-                 min_impurity_decrease=0.0, min_impurity_split=None,
-                 presort=False):
-        DecisionTreeRegressor.__init__(self, criterion=criterion,
-                                       splitter=splitter, max_depth=max_depth,
-                                       min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
-                                       min_weight_fraction_leaf=min_weight_fraction_leaf, max_features=max_features,
-                                       random_state=random_state, max_leaf_nodes=max_leaf_nodes,
-                                       min_impurity_decrease=min_impurity_decrease, min_impurity_split=min_impurity_split,
-                                       presort=presort)
+                 min_impurity_decrease=0.0, min_impurity_split=None):
+        DecisionTreeRegressor.__init__(
+            self, criterion=criterion,
+            splitter=splitter, max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            min_weight_fraction_leaf=min_weight_fraction_leaf,
+            max_features=max_features, random_state=random_state,
+            max_leaf_nodes=max_leaf_nodes,
+            min_impurity_decrease=min_impurity_decrease,
+            min_impurity_split=min_impurity_split)
 
     def fit(self, X, y, sample_weight=None, check_input=True,
             X_idx_sorted=None):

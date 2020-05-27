@@ -13,6 +13,8 @@ Helpers
 Clustering
 ++++++++++
 
+.. autosignature:: mlinsights.mlmodel.kmeans_constraint.ConstraintKMeans
+
 .. autosignature:: mlinsights.mlmodel.kmeans_l1.KMeansL1L2
 
 Trainers
