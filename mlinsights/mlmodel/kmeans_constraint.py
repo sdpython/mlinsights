@@ -24,14 +24,6 @@ class ConstraintKMeans(KMeans):
     over the test set. That implies that the predictions
     for the same observations might change depending
     on the set it belongs to.
-
-    .. runpython::
-        :rst:
-
-        from papierstat.datasets.documentation import list_notebooks_rst_links
-        links = list_notebooks_rst_links('digressions', 'constraint_kmeans')
-        links = ['    * %s' % s for s in links]
-        print('\\n'.join(links))
     """
 
     _strategy_value = {'distance', 'gain'}

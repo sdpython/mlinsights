@@ -21,7 +21,7 @@ try:
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
-from papierstat.mltricks.kmeans_constraint_ import (
+from mlinsights.mlmodel._kmeans_constraint_ import (
     linearize_matrix, _compute_strategy_coefficient,
     _constraint_association_gain)
 from mlinsights.mlmodel import ConstraintKMeans
