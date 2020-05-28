@@ -95,8 +95,8 @@ class ConstraintKMeans(KMeans):
             KMeans.fit(self, X, y, sample_weight=sample_weight)
             state = None
         else:
-            state = numpy.random.RandomState(
-                self.random_state)  # pylint: disable=E1101
+            state = numpy.random.RandomState(  # pylint: disable=E1101
+                self.random_state)
             labels = state.randint(
                 0, self.n_clusters, X.shape[0], dtype=numpy.int32)
             centers = numpy.empty((self.n_clusters, X.shape[1]), dtype=X.dtype)

@@ -5,7 +5,15 @@
 History
 =======
 
-current - 2019-09-15 - 0.00Mb
+current - 2020-05-28 - 0.00Mb
+=============================
+
+* `75`: Moves kmeans with constraint from papierstat. (2020-05-27)
+* `74`: Fix PipelineCache after as scikti-learn 0.23 changed the way parameters is handle in pipelines (2020-05-15)
+* `73`: ClassifierKMeans.__repr__ fails with scikit-learn 0.23 (2020-05-14)
+* `69`: Optimizes k-means with norm L1 (2020-01-13)
+
+0.2.360 - 2019-09-15 - 0.68Mb
 =============================
 
 * `66`: Fix visualisation graph: does not work when column index is an integer in ColumnTransformer (2019-09-15)
