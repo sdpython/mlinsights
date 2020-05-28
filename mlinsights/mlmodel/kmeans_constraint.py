@@ -67,6 +67,7 @@ class ConstraintKMeans(KMeans):
         self.balanced_predictions = balanced_predictions
         self.strategy = strategy
         self.kmeans0 = kmeans0
+        self._n_threads = None
         if strategy not in ConstraintKMeans._strategy_value:
             raise ValueError('strategy must be in {0}'.format(
                 ConstraintKMeans._strategy_value))
