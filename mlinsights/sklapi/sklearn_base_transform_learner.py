@@ -46,7 +46,7 @@ class SkBaseTransformLearner(SkBaseTransform):
                 pipe = make_pipeline(LogisticRegression(),
                                      DecisionTreeClassifier())
             except Exception as e:
-                print("ERREUR:")
+                print("ERROR:")
                 print(e)
                 print('.')
 
@@ -78,13 +78,13 @@ class SkBaseTransformLearner(SkBaseTransform):
         super().__init__(**kwargs)
         self.model = model
         if model is None:
-            raise ValueError("value cannot be None")
+            raise ValueError("value cannot be None")  # pragma: no cover
         if method is None:
             for name in {'predict_proba', 'predict', 'transform'}:
                 if hasattr(model.__class__, name):
                     method = name
             if method is None:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Unable to guess a default method for '{0}'".format(repr(model)))
         self.method = method
         self._set_method(method)
@@ -104,11 +104,12 @@ class SkBaseTransformLearner(SkBaseTransform):
             elif method == 'transform':
                 self.method_ = self.model.transform
             else:
-                raise ValueError("Unexpected method '{0}'".format(method))
+                raise ValueError(  # pragma: no cover
+                    "Unexpected method '{0}'".format(method))
         elif callable(method):
             self.method_ = method
         else:
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "Unable to find the transform method, method={0}".format(method))
 
     def fit(self, X, y=None, **kwargs):
@@ -165,14 +166,15 @@ class SkBaseTransformLearner(SkBaseTransform):
             self.model = values['model']
             del values['model']
         elif not hasattr(self, 'model') or self.model is None:
-            raise KeyError("Missing key '{0}' in [{1}]".format(
-                'model', ', '.join(sorted(values))))
+            raise KeyError(  # pragma: no cover
+                "Missing key '{0}' in [{1}]".format(
+                    'model', ', '.join(sorted(values))))
         if 'method' in values:
             self._set_method(values['method'])
             del values['method']
         for k in values:
             if not k.startswith('model__'):
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Parameter '{0}' must start with 'model__'.".format(k))
         d = len('model__')
         pars = {k[d:]: v for k, v in values.items()}

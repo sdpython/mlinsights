@@ -162,7 +162,7 @@ def _init_centroids(norm, X, k, init, random_state=None,
     n_samples = X.shape[0]
 
     if init_size is not None and init_size < n_samples:
-        if init_size < k:
+        if init_size < k:  # pragma: no cover
             warnings.warn(
                 "init_size=%d should be larger than k=%d. "
                 "Setting it to 3*k" % (init_size, k),
@@ -241,7 +241,7 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances,
         weight_in_cluster[c] += sample_weight[i]
     empty_clusters = numpy.where(weight_in_cluster == 0)[0]
 
-    if len(empty_clusters) > 0:
+    if len(empty_clusters) > 0:  # pragma: no cover
         # find points to reassign empty clusters to
         far_from_centers = distances.argsort()[::-1]
 
@@ -258,7 +258,7 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances,
             med = numpy.median(sub, axis=0)
             centers[i, :] = med
     else:
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "Non uniform weights are not implemented yet as "
             "the cost would be very high. "
             "See https://en.wikipedia.org/wiki/Weighted_median#Algorithm.")
@@ -666,7 +666,7 @@ class KMeansL1L2(KMeans):
         if precompute_distances == 'auto':
             n_samples = X.shape[0]
             precompute_distances = (self.n_clusters * n_samples) < 12e6
-        elif isinstance(precompute_distances, bool):
+        elif isinstance(precompute_distances, bool):  # pragma: no cover
             pass
         else:
             raise ValueError(  # pragma no cover
@@ -675,7 +675,7 @@ class KMeansL1L2(KMeans):
 
         # Validate init array
         init = self.init
-        if hasattr(init, '__array__'):
+        if hasattr(init, '__array__'):  # pragma: no cover
             init = check_array(init, dtype=X.dtype.type, copy=True)
             _validate_center_shape(X, self.n_clusters, init)
 
@@ -691,9 +691,9 @@ class KMeansL1L2(KMeans):
         if self.n_clusters == 1:
             # elkan doesn't make sense for a single cluster, full will produce
             # the right result.
-            algorithm = "full"
+            algorithm = "full"  # pragma: no cover
         if algorithm == "auto":
-            algorithm = "full"
+            algorithm = "full"  # pragma: no cover
         if algorithm == "full":
             kmeans_single = _kmeans_single_lloyd
         else:

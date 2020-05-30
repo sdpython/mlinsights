@@ -32,12 +32,13 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
         yield coor, pipe, vs
         if hasattr(pipe, 'transformer_and_mapper_list') and len(pipe.transformer_and_mapper_list):
             # azureml DataTransformer
-            raise NotImplementedError("Unable to handle this specific case.")
+            raise NotImplementedError(  # pragma: no cover
+                "Unable to handle this specific case.")
         elif hasattr(pipe, 'mapper') and pipe.mapper:
             # azureml DataTransformer
             for couple in enumerate_pipeline_models(pipe.mapper, coor + (0,)):
                 yield couple
-        elif hasattr(pipe, 'built_features'):
+        elif hasattr(pipe, 'built_features'):  # pragma: no cover
             # sklearn_pandas.dataframe_mapper.DataFrameMapper
             for i, (columns, transformers, _) in enumerate(pipe.built_features):
                 if isinstance(columns, str):
@@ -65,10 +66,10 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
                 "Not yet implemented for TransformedTargetRegressor.")
         elif isinstance(pipe, (TransformerMixin, ClassifierMixin, RegressorMixin)):
             pass
-        elif isinstance(pipe, BaseEstimator):
+        elif isinstance(pipe, BaseEstimator):  # pragma: no cover
             pass
         else:
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "pipe is not a scikit-learn object: {}\n{}".format(type(pipe), pipe))
 
 
@@ -123,7 +124,7 @@ class BaseEstimatorDebugInformation:
                     self.display(self.outputs[k], nrows), '   '))
                 rows.append('  )')
             else:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Unable to find output for method '{}'.".format(k))
         return "\n".join(rows)
 
@@ -189,9 +190,10 @@ def alter_pipeline_for_debugging(pipe):
     }
 
     if hasattr(pipe, '_debug'):
-        raise RuntimeError("The same operator cannot be used twice in "
-                           "the same pipeline or this method was called "
-                           "a second time.")
+        raise RuntimeError(  # pragma: no cover
+            "The same operator cannot be used twice in "
+            "the same pipeline or this method was called "
+            "a second time.")
 
     for model_ in enumerate_pipeline_models(pipe):
         model = model_[1]
@@ -199,6 +201,6 @@ def alter_pipeline_for_debugging(pipe):
         for k in model._debug.methods:
             try:
                 setattr(model, k, MethodType(new_methods[k], model))
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 warnings.warn("Unable to overwrite method '{}' for class "
                               "{}.".format(k, type(model)))

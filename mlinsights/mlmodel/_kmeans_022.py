@@ -236,7 +236,7 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances):
     empty_clusters = numpy.where(weight_in_cluster == 0)[0]
     # maybe also relocate small clusters?
 
-    if len(empty_clusters):
+    if distances is not None and len(empty_clusters):
         # find points to reassign empty clusters to
         far_from_centers = distances.argsort()[::-1]
 

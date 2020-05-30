@@ -7,6 +7,7 @@ import bisect
 from pandas import DataFrame
 import numpy
 import scipy.sparse
+from scipy.spatial.distance import cdist
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.utils.extmath import row_norms
 from ._kmeans_022 import (
@@ -46,9 +47,8 @@ def linearize_matrix(mat, *adds):
                 for k, am in enumerate(adds):
                     res[i, k + 3] = am[a, b]
             return res
-        else:
-            raise NotImplementedError(
-                "This kind of sparse matrix is not handled: {0}".format(type(mat)))
+        raise NotImplementedError(
+            "This kind of sparse matrix is not handled: {0}".format(type(mat)))
     else:
         n = mat.shape[0]
         c = mat.shape[1]
@@ -67,100 +67,100 @@ def linearize_matrix(mat, *adds):
 
 def constraint_kmeans(X, labels, sample_weight, centers, inertia,
                       iter, max_iter,  # pylint: disable=W0622
-                      strategy='gain', verbose=0, state=None, fLOG=None):
+                      strategy='gain', verbose=0, state=None,
+                      learning_rate=1., fLOG=None):
     """
-    Completes the constraint *k-means*.
+    Completes the constraint :epkg:`k-means`.
 
-    @param      X                       features
-    @param      labels                  initialized labels (unsued)
-    @param      sample_weight           sample weight
-    @param      centers                 initialized centers
-    @param      inertia                 initialized inertia (unsued)
-    @param      iter                    number of iteration already done
-    @param      max_iter                maximum of number of iteration
-    @param      strategy                strategy used to sort observations before
-                                        mapping them to clusters
-    @param      verbose                 verbose
-    @param      state                   random state
-    @param      fLOG                    logging function (needs to be specified otherwise
-                                        verbose has no effects)
-    @return                             tuple (best_labels, best_centers, best_inertia, iter)
+    @param      X               features
+    @param      labels          initialized labels (unused)
+    @param      sample_weight   sample weight
+    @param      centers         initialized centers
+    @param      inertia         initialized inertia (unused)
+    @param      iter            number of iteration already done
+    @param      max_iter        maximum of number of iteration
+    @param      strategy        strategy used to sort observations before
+                                mapping them to clusters
+    @param      verbose         verbose
+    @param      state           random state
+    @param      learning_rate   used by strategy `'weights'`
+    @param      fLOG            logging function (needs to be specified otherwise
+                                verbose has no effects)
+    @return                     tuple (best_labels, best_centers, best_inertia, iter)
     """
-    if isinstance(X, DataFrame):
-        X = X.values
-    x_squared_norms = row_norms(X, squared=True)
-    counters = numpy.empty((centers.shape[0],), dtype=numpy.int32)
-    limit = X.shape[0] // centers.shape[0]
-    leftover = X.shape[0] - limit * centers.shape[0]
-    leftclose = numpy.empty((centers.shape[0],), dtype=numpy.int32)
-    n_clusters = centers.shape[0]
-    distances_close = numpy.empty((X.shape[0],), dtype=X.dtype)
-    best_inertia = None
-    prev_labels = None
-    best_iter = None
-
     if labels.dtype != numpy.int32:
         raise TypeError(
             "Labels must be an array of int not '{0}'".format(labels.dtype))
 
-    # association
-    _constraint_association(leftover, counters, labels, leftclose, distances_close,
-                            centers, X, x_squared_norms, limit, strategy, state=state)
-
-    if sample_weight is None:
-        sw = numpy.ones((X.shape[0],))
+    if strategy == 'weights':
+        return _constraint_kmeans_weights(
+            X, labels, sample_weight, centers, inertia, iter,
+            max_iter, verbose=verbose, state=state,
+            learning_rate=learning_rate, fLOG=fLOG)
     else:
-        sw = sample_weight
-
-    if scipy.sparse.issparse(X):
-        try:
-            # scikit-learn >= 0.20
-            _centers_fct = _centers_sparse
-        except TypeError:
-            # scikit-learn < 0.20
-            _centers_fct = _centers_sparse
-    else:
-        try:
-            # scikit-learn >= 0.20
-            _centers_fct = _centers_dense
-        except TypeError:
-            # scikit-learn < 0.20
-            _centers_fct = _centers_dense
-
-    while iter < max_iter:
-
-        # compute new clusters
-        centers = _centers_fct(
-            X, sw, labels, n_clusters, distances_close)
+        if isinstance(X, DataFrame):
+            X = X.values
+        x_squared_norms = row_norms(X, squared=True)
+        counters = numpy.empty((centers.shape[0],), dtype=numpy.int32)
+        limit = X.shape[0] // centers.shape[0]
+        leftover = X.shape[0] - limit * centers.shape[0]
+        leftclose = numpy.empty((centers.shape[0],), dtype=numpy.int32)
+        n_clusters = centers.shape[0]
+        distances_close = numpy.empty((X.shape[0],), dtype=X.dtype)
+        best_inertia = None
+        prev_labels = None
+        best_iter = None
 
         # association
         _constraint_association(leftover, counters, labels, leftclose, distances_close,
                                 centers, X, x_squared_norms, limit, strategy, state=state)
 
-        # inertia
-        _, inertia = _labels_inertia_skl(
-            X=X, sample_weight=sw, x_squared_norms=x_squared_norms,
-            centers=centers, distances=distances_close)
+        if sample_weight is None:
+            sw = numpy.ones((X.shape[0],))
+        else:
+            sw = sample_weight
 
-        iter += 1
-        if verbose and fLOG:
-            fLOG("CKMeans %d/%d inertia=%f" % (iter, max_iter, inertia))
+        if scipy.sparse.issparse(X):
+            _centers_fct = _centers_sparse
+        else:
+            _centers_fct = _centers_dense
 
-        # best option so far?
-        if best_inertia is None or inertia < best_inertia:
-            best_inertia = inertia
-            best_centers = centers.copy()
-            best_labels = labels.copy()
-            best_iter = iter
+        while iter < max_iter:
 
-        # early stop
-        if best_inertia is not None and inertia >= best_inertia and iter > best_iter + 5:
-            break
-        if prev_labels is not None and numpy.array_equal(prev_labels, labels):
-            break
-        prev_labels = labels.copy()
+            # compute new clusters
+            centers = _centers_fct(
+                X, sw, labels, n_clusters, distances_close)
 
-    return best_labels, best_centers, best_inertia, iter
+            # association
+            _constraint_association(
+                leftover, counters, labels, leftclose, distances_close,
+                centers, X, x_squared_norms, limit, strategy, state=state)
+
+            # inertia
+            _, inertia = _labels_inertia_skl(
+                X=X, sample_weight=sw, x_squared_norms=x_squared_norms,
+                centers=centers, distances=distances_close)
+
+            iter += 1
+            if verbose and fLOG:
+                fLOG("CKMeans %d/%d inertia=%f" % (iter, max_iter, inertia))
+
+            # best option so far?
+            if best_inertia is None or inertia < best_inertia:
+                best_inertia = inertia
+                best_centers = centers.copy()
+                best_labels = labels.copy()
+                best_iter = iter
+
+            # early stop
+            if (best_inertia is not None and inertia >= best_inertia and
+                    iter > best_iter + 5):
+                break
+            if prev_labels is not None and numpy.array_equal(prev_labels, labels):
+                break
+            prev_labels = labels.copy()
+
+        return best_labels, best_centers, best_inertia, None, iter
 
 
 def constraint_predictions(X, centers, strategy, state=None):
@@ -186,9 +186,10 @@ def constraint_predictions(X, centers, strategy, state=None):
     distances_close = numpy.empty((X.shape[0],), dtype=X.dtype)
     labels = numpy.empty((X.shape[0],), dtype=numpy.int32)
 
-    distances = _constraint_association(leftover, counters, labels, leftclose,
-                                        distances_close, centers, X, x_squared_norms,
-                                        limit, strategy, state=state)
+    distances = _constraint_association(
+        leftover, counters, labels, leftclose,
+        distances_close, centers, X, x_squared_norms,
+        limit, strategy, state=state)
 
     return labels, distances, distances_close
 
@@ -196,10 +197,10 @@ def constraint_predictions(X, centers, strategy, state=None):
 def _constraint_association(leftover, counters, labels, leftclose, distances_close,
                             centers, X, x_squared_norms, limit, strategy, state=None):
     """
-    Completes the constraint *k-means*.
+    Completes the constraint :epkg:`k-means`.
 
     @param      X               features
-    @param      labels          initialized labels (unsued)
+    @param      labels          initialized labels (unused)
     @param      centers         initialized centers
     @param      x_squared_norms norm of *X*
     @param      limit           number of point to associate per cluster
@@ -213,22 +214,25 @@ def _constraint_association(leftover, counters, labels, leftclose, distances_clo
     @param      state           random state
     """
     if strategy in ('distance', 'distance_p'):
-        return _constraint_association_distance(leftover, counters, labels, leftclose, distances_close,
-                                                centers, X, x_squared_norms, limit, strategy, state=state)
-    elif strategy in ('gain', 'gain_p'):
-        return _constraint_association_gain(leftover, counters, labels, leftclose, distances_close,
-                                            centers, X, x_squared_norms, limit, strategy, state=state)
-    else:
-        raise ValueError("Unknwon strategy '{0}'.".format(strategy))
+        return _constraint_association_distance(
+            leftover, counters, labels, leftclose, distances_close,
+            centers, X, x_squared_norms, limit, strategy, state=state)
+    if strategy in ('gain', 'gain_p'):
+        return _constraint_association_gain(
+            leftover, counters, labels, leftclose, distances_close,
+            centers, X, x_squared_norms, limit, strategy, state=state)
+    raise ValueError("Unknwon strategy '{0}'.".format(strategy))
 
 
 def _constraint_association_distance(leftover, counters, labels, leftclose, distances_close,
                                      centers, X, x_squared_norms, limit, strategy, state=None):
     """
-    Completes the constraint *k-means*.
+    Completes the constraint *k-means*,
+    the function sorts points by distance to the closest
+    cluster and associates them into that order.
 
     @param      X               features
-    @param      labels          initialized labels (unsued)
+    @param      labels          initialized labels (unused)
     @param      centers         initialized centers
     @param      x_squared_norms norm of *X*
     @param      limit           number of point to associate per cluster
@@ -285,21 +289,22 @@ def _compute_strategy_coefficient(distances, strategy, labels):
     """
     if strategy in ('distance', 'distance_p'):
         return distances
-    elif strategy in ('gain', 'gain_p'):
+    if strategy in ('gain', 'gain_p'):
         ar = numpy.arange(distances.shape[0])
         dist = distances[ar, labels]
         return distances - dist[:, numpy.newaxis]
-    else:
-        raise ValueError("Unknwon strategy '{0}'.".format(strategy))
+    raise ValueError("Unknwon strategy '{0}'.".format(strategy))
 
 
 def _constraint_association_gain(leftover, counters, labels, leftclose, distances_close,
                                  centers, X, x_squared_norms, limit, strategy, state=None):
     """
     Completes the constraint *k-means*.
+    Follows the method described in `Same-size k-Means Variation
+    <https://elki-project.github.io/tutorial/same-size_k_means>`_.
 
     @param      X               features
-    @param      labels          initialized labels (unsued)
+    @param      labels          initialized labels (unused)
     @param      centers         initialized centers
     @param      x_squared_norms norm of *X*
     @param      limit           number of points to associate per cluster
@@ -375,7 +380,8 @@ def _constraint_association_gain(leftover, counters, labels, leftclose, distance
             continue
         if cur == dest:
             continue
-        if (counters[dest] < ave + leftclose[dest]) and (counters[cur] > ave + leftclose[cur]):
+        if ((counters[dest] < ave + leftclose[dest]) and
+                (counters[cur] > ave + leftclose[cur])):
             labels[ind] = dest
             counters[cur] -= 1
             counters[dest] += 1
@@ -416,3 +422,204 @@ def _constraint_association_gain(leftover, counters, labels, leftclose, distance
             "The algorithm failed, counters={0}".format(counters))
 
     return distances
+
+
+def _constraint_kmeans_weights(X, labels, sample_weight, centers, inertia, iter,
+                               max_iter, verbose=0, state=None, learning_rate=1.,
+                               fLOG=None):
+    """
+    Runs KMeans iterator but weights cluster among them.
+
+    @param      X               features
+    @param      labels          initialized labels (unused)
+    @param      sample_weight   sample weight
+    @param      centers         initialized centers
+    @param      inertia         initialized inertia (unused)
+    @param      iter            number of iteration already done
+    @param      max_iter        maximum of number of iteration
+    @param      verbose         verbose
+    @param      state           random state
+    @param      learning_rate   learning rate
+    @param      fLOG            logging function (needs to be specified otherwise
+                                verbose has no effects)
+    @return                     tuple (best_labels, best_centers, best_inertia, weights, it)
+    """
+    if isinstance(X, DataFrame):
+        X = X.values
+    n_clusters = centers.shape[0]
+    best_inertia = None
+    prev_labels = None
+    best_iter = None
+    weights = numpy.ones(centers.shape[0])
+    if sample_weight is None:
+        sw = numpy.ones((X.shape[0],))
+    else:
+        sw = sample_weight
+
+    if scipy.sparse.issparse(X):
+        _centers_fct = _centers_sparse
+    else:
+        _centers_fct = _centers_dense
+
+    total_inertia = _inertia(X, sw)
+
+    it = 0
+    while it < max_iter:
+
+        # compute new clusters
+        centers = _centers_fct(
+            X, sw, labels, n_clusters, None)
+
+        # association
+        labels = _constraint_association_weights(X, centers, sw, weights)
+        if len(set(labels)) != centers.shape[0]:
+            if verbose and fLOG:
+                if isinstance(verbose, int) and verbose >= 10:
+                    fLOG("CKMeans new weights: w=%r" % weights)
+                else:
+                    fLOG("CKMeans new weights")
+            weights[:] = 1
+            labels = _constraint_association_weights(X, centers, sw, weights)
+
+        # inertia
+        inertia, diff = _labels_inertia_weights(
+            X, centers, sw, weights, labels, total_inertia)
+        if numpy.isnan(inertia):
+            raise RuntimeError(  # pragma: no cover
+                "nanNobs={} Nclus={}\ninertia={}\nweights={}\ndiff={}\nlabels={}".format(
+                    X.shape[0], centers.shape[0], inertia, weights, diff,
+                    set(labels)))
+
+        # best option so far?
+        if best_inertia is None or inertia < best_inertia:
+            best_inertia = inertia
+            best_centers = centers.copy()
+            best_labels = labels.copy()
+            best_weights = weights.copy()
+            best_iter = it
+
+        # moves weights
+        weights, hist = _adjust_weights(X, sw, weights, labels,
+                                        learning_rate / (it + 10))
+
+        it += 1
+        if verbose and fLOG:
+            if isinstance(verbose, int) and verbose >= 10:
+                fLOG("CKMeans %d/%d inertia=%f (%f T=%f) dw=%r w=%r" % (
+                    it, max_iter, inertia, best_inertia, total_inertia,
+                    diff, weights))
+            else:
+                fLOG("CKMeans %d/%d inertia=%f (%f T=%f)" % (
+                    it, max_iter, inertia, best_inertia, total_inertia))
+
+        # early stop
+        if (best_inertia is not None and inertia >= best_inertia and
+                it > best_iter + 5 and numpy.abs(diff).sum() <= weights.shape[0] / 2):
+            break
+        prev_labels = labels.copy()
+
+    return best_labels, best_centers, best_inertia, best_weights, it
+
+
+def _constraint_association_weights(X, centers, sw, weights):
+    """
+    Associates points to clusters.
+
+    @param      X           features
+    @param      centers     centers
+    @param      sw          sample weights
+    @param      weights     cluster weights
+    @return                 labels
+    """
+    dist = cdist(X, centers) * weights.reshape((1, -1))
+    index = numpy.argmin(dist, axis=1)
+    return index
+
+
+def _inertia(X, sw):
+    """
+    Computes total weighted inertia.
+
+    @param      X               features
+    @param      sw              sample weights
+    @return                     inertia
+    """
+    bary = numpy.mean(X, axis=0)
+    diff = X - bary
+    norm = numpy.linalg.norm(diff, axis=1)
+    if sw is not None:
+        norm *= sw
+    return sw.sum()
+
+
+def _labels_inertia_weights(X, centers, sw, weights, labels, total_inertia):
+    """
+    Computes weighted inertia. It also adds a fraction
+    of the whole inertia depending on how balanced the
+    clusters are.
+
+    @param      X               features
+    @param      centers         centers
+    @param      sw              sample weights
+    @param      weights         cluster weights
+    @param      labels          labels
+    @param      total_inertia   total inertia
+    @return                     inertia
+    """
+    www, exp, N = _compute_balance(X, sw, labels, centers.shape[0])
+    www -= exp
+    wwwa = numpy.abs(www)
+    ratio = wwwa.sum() / X.shape[0]
+    dist = cdist(X, centers) * weights.reshape((1, -1)) * sw.reshape((-1, 1))
+    return dist.sum() + ratio * total_inertia, www
+
+
+def _compute_balance(X, sw, labels, nbc=None):
+    """
+    Computes weights difference.
+
+    @param      X           features
+    @param      sw          sample weights
+    @param      labels      known labels
+    @param      nbc         number of clusters
+    @return                 (weights per cluster, expected weight,
+                            total weight)
+    """
+    if nbc is None:
+        nbc = labels.max() + 1
+    N = numpy.float64(nbc)
+    www = numpy.zeros((nbc, ), dtype=numpy.float64)
+    if sw is None:
+        for la in labels:
+            www[la] += 1
+    else:
+        for w, la in zip(sw, labels):
+            www[la] += w
+    exp = www.sum() / N
+    return www, exp, N
+
+
+def _adjust_weights(X, sw, weights, labels, lr):
+    """
+    Changes *weights* mapped to every cluster.
+    *weights < 1* are used for big clusters,
+    *weights > 1* are used for small clusters.
+
+    @param      X           features
+    @param      centers     centers
+    @param      sw          sample weights
+    @param      weights     cluster weights
+    @param      lr          learning rate
+    @param      labels      known labels
+    @return                 labels
+    """
+    www, exp, N = _compute_balance(X, sw, labels, weights.shape[0])
+
+    for i in range(0, weights.shape[0]):
+        w = weights[i]
+        nw = (www[i] - exp) / exp
+        delta = nw * lr
+        weights[i] += delta
+        N += delta
+
+    return weights / N * weights.shape[0], www

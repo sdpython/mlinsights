@@ -75,6 +75,7 @@ which trains a multi-layer perceptron with :epkg:`L1` norm...
     tutorial/index
     api/index
     i_ex
+    gyexamples/index
     all_notebooks
     blog/blogindex
     i_index

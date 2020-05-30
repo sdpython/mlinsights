@@ -73,22 +73,25 @@ class SearchEngineVectors:
         iterate = self._is_iterable(data)
         if iterate:
             if data is None:
-                raise ValueError("iterator is True, data must be specified.")
+                raise ValueError(  # pragma: no cover
+                    "iterator is True, data must be specified.")
             if features is not None:
-                raise ValueError("iterator is True, features must be None.")
+                raise ValueError(  # pragma: no cover
+                    "iterator is True, features must be None.")
             if metadata is not None:
-                raise ValueError("iterator is True, metadata must be None.")
+                raise ValueError(  # pragma: no cover
+                    "iterator is True, metadata must be None.")
             metas = []
             arrays = []
             for row in data:
                 if not isinstance(row, tuple):
                     raise TypeError('data must be an iterator on tuple')
                 if len(row) != 2:
-                    raise ValueError(
+                    raise ValueError(  # pragma: no cover
                         'data must be an iterator on tuple on two elements')
                 arr, meta = row
                 if not isinstance(meta, dict):
-                    raise TypeError(
+                    raise TypeError(  # pragma: no cover
                         'Second element of the tuple must be a dictionary')
                 metas.append(meta)
                 if transform is None:
@@ -97,22 +100,25 @@ class SearchEngineVectors:
                     tradd = transform(arr, False)
                 if not isinstance(tradd, numpy.ndarray):
                     if transform is None:
-                        raise TypeError(
+                        raise TypeError(  # pragma: no cover
                             "feature should be of type numpy.array not {}".format(type(tradd)))
                     else:
-                        raise TypeError("output of method transform ({}) should be of type numpy.array not {}".format(
-                            transform, type(tradd)))
+                        raise TypeError(  # pragma: no cover
+                            "output of method transform ({}) should be of type numpy.array not {}".format(
+                                transform, type(tradd)))
                 arrays.append(tradd)
             self.features_ = numpy.vstack(arrays)
             self.metadata_ = pandas.DataFrame(metas)
         elif data is None:
             if not isinstance(features, numpy.ndarray):
-                raise TypeError("features must be an array if data is None")
+                raise TypeError(  # pragma: no cover
+                    "features must be an array if data is None")
             self.features_ = features
             self.metadata_ = metadata
         else:
             if not isinstance(data, pandas.DataFrame):
-                raise ValueError("data should be a dataframe")
+                raise ValueError(  # pragma: no cover
+                    "data should be a dataframe")
             self.features_ = data[features]
             self.metadata_ = data[metadata] if metadata else None
 
@@ -151,10 +157,12 @@ class SearchEngineVectors:
         """
         if isinstance(X, list):
             if len(X) == 0 or isinstance(X[0], (list, tuple)):
-                raise TypeError("X must be a list or a vector (1)")
+                raise TypeError(  # pragma: no cover
+                    "X must be a list or a vector (1)")
             X = [X]
         if isinstance(X, numpy.ndarray) and (len(X.shape) > 1 and X.shape[0] != 1):
-            raise TypeError("X must be a list or a vector (2)")
+            raise TypeError(  # pragma: no cover
+                "X must be a list or a vector (2)")
         dist, ind = self.knn_.kneighbors(
             X, n_neighbors=n_neighbors, return_distance=True)
         ind = ind.ravel()

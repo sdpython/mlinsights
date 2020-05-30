@@ -78,7 +78,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         self
         """
         if not isinstance(X, pandas.DataFrame):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "this transformer only accept Dataframes, not {0}".format(type(X)))
         if self.columns:
             columns = self.columns
@@ -94,7 +94,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             distinct = set(X[c].dropna())
             nb = len(distinct)
             if nb >= max_cat:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Too many categories ({0}) for one column '{1}' max_cat={2}".format(nb, c, max_cat))
             self._categories[c] = dict((c, i)
                                        for i, c in enumerate(list(sorted(distinct))))
@@ -144,7 +144,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         DataFrame, *X* with categories.
         """
         if not isinstance(X, pandas.DataFrame):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "X is not a dataframe: {0}".format(type(X)))
 
         if self.single:
@@ -163,8 +163,9 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     if len(lv) > 20:
                         lv = lv[:20]
                         lv.append("...")
-                    raise ValueError("Unable to find category value '{0}' type(v)={2} among\n{1}".format(
-                        v, "\n".join(lv), type(v)))
+                    raise ValueError(  # pragma: no cover
+                        "Unable to find category value '{0}' type(v)={2} among\n{1}".format(
+                            v, "\n".join(lv), type(v)))
                 else:
                     return numpy.nan
 
@@ -195,8 +196,9 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                             if len(lv) > 20:
                                 lv = lv[:20]
                                 lv.append("...")
-                            raise ValueError("unable to find category value '{0}': '{1}' type(v)={3} among\n{2}".format(
-                                k, v, "\n".join(lv), type(v)))
+                            raise ValueError(  # pragma: no cover
+                                "unable to find category value '{0}': '{1}' type(v)={3} among\n{2}".format(
+                                    k, v, "\n".join(lv), type(v)))
                     else:
                         p = pos[k] + vec[k][v]
                     res[i, p] = 1.0

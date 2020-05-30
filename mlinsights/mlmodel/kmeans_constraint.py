@@ -13,25 +13,41 @@ class ConstraintKMeans(KMeans):
     """
     Defines a constraint :epkg:`k-means`.
     Clusters are modified to have an equal size.
-    The algorithm is initialized with a regular :epkg:`k-means`
+    The algorithm is initialized with a regular :epkg:`KMeans`
     and continues with a modified version of it.
 
     Computing the predictions offer a choice.
     The first one is to keep the predictions
-    from the regular *k-means* algorithm
-    but with the balanced clusters.
+    from the regular :epkg:`k-means`
+    algorithm but with the balanced clusters.
     The second is to compute balanced predictions
     over the test set. That implies that the predictions
     for the same observations might change depending
     on the set it belongs to.
+
+    The parameter *strategy* determines how
+    obseervations should be assigned to a cluster.
+    The value can be:
+
+    * ``'distance'``: observations are ranked by distance to a cluster,
+      the algorithm assigns first point to the closest center unless it reached
+      the maximum size,
+    * ``'gain'``: follows the algorithm described at
+       see `Same-size k-Means Variation
+       <https://elki-project.github.io/tutorial/same-size_k_means>`_,
+    * ``'weights'``: estimates weights attached to each cluster,
+        it weights the distance to each cluster in order
+        to balance the number of points mapped to every cluster,
+        the strategy uses a learning rate.
     """
 
-    _strategy_value = {'distance', 'gain'}
+    _strategy_value = {'distance', 'gain', 'weights'}
 
-    def __init__(self, n_clusters=8, init='k-means++', n_init=10, max_iter=300,
-                 tol=0.0001, precompute_distances='auto', verbose=0,
+    def __init__(self, n_clusters=8, init='k-means++', n_init=10, max_iter=500,
+                 tol=0.0001, precompute_distances='deprecated', verbose=0,
                  random_state=None, copy_x=True, n_jobs=1, algorithm='auto',
-                 balanced_predictions=False, strategy='gain', kmeans0=True):
+                 balanced_predictions=False, strategy='gain', kmeans0=True,
+                 learning_rate=1.):
         """
         @param      n_clusters              number of clusters
         @param      init                    used by :epkg:`k-means`
@@ -49,16 +65,7 @@ class ConstraintKMeans(KMeans):
         @param      strategy                strategy or algorithm used to abide
                                             by the constraint
         @param      kmeans0                 if True, applies *k-means* algorithm first
-
-        The parameter *strategy* determines how
-        obseervations should be assigned to a cluster.
-        The value can be:
-
-        * ``'distance'``: observations are ranked by distance to a cluster,
-          the algorithm assigns first point to the closest center unless it reached
-          the maximulmsize
-        * ``'gain'``: follows the algorithm described at
-           see `Same-size k-Means Variation <https://elki-project.github.io/tutorial/same-size_k_means>`_
+        @param      learning_rate           learning rate, used by strategy `'weights'`
         """
         KMeans.__init__(self, n_clusters=n_clusters, init=init, n_init=n_init,
                         max_iter=max_iter, tol=tol, precompute_distances=precompute_distances,
@@ -68,6 +75,7 @@ class ConstraintKMeans(KMeans):
         self.strategy = strategy
         self.kmeans0 = kmeans0
         self._n_threads = None
+        self.learning_rate = learning_rate
         if strategy not in ConstraintKMeans._strategy_value:
             raise ValueError('strategy must be in {0}'.format(
                 ConstraintKMeans._strategy_value))
@@ -110,9 +118,11 @@ class ConstraintKMeans(KMeans):
 
         self.max_iter = max_iter
         return self.constraint_kmeans(
-            X, sample_weight=sample_weight, state=state, fLOG=fLOG)
+            X, sample_weight=sample_weight, state=state,
+            learning_rate=self.learning_rate, fLOG=fLOG)
 
-    def constraint_kmeans(self, X, sample_weight=None, state=None, fLOG=None):
+    def constraint_kmeans(self, X, sample_weight=None, state=None,
+                          learning_rate=1., fLOG=None):
         """
         Completes the constraint k-means.
 
@@ -121,15 +131,17 @@ class ConstraintKMeans(KMeans):
         @param      state            state
         @param      fLOG            logging function
         """
-        labels, centers, inertia, iter_ = constraint_kmeans(
+        labels, centers, inertia, weights, iter_ = constraint_kmeans(
             X, self.labels_, sample_weight, self.cluster_centers_,
             inertia=self.inertia_, iter=self.n_iter_,
             max_iter=self.max_iter, verbose=self.verbose,
-            strategy=self.strategy, state=state, fLOG=fLOG)
+            strategy=self.strategy, state=state,
+            learning_rate=learning_rate, fLOG=fLOG)
         self.labels_ = labels
         self.cluster_centers_ = centers
         self.inertia_ = inertia
         self.n_iter_ = iter_
+        self.weights_ = weights
         return self
 
     def predict(self, X, sample_weight=None):
@@ -139,11 +151,16 @@ class ConstraintKMeans(KMeans):
         @param      X       features.
         @return             prediction
         """
-        if self.balanced_predictions:
-            labels, _, __ = constraint_predictions(
-                X, self.cluster_centers_, strategy=self.strategy + '_p')
-            return labels
+        if self.weights_ is None:
+            if self.balanced_predictions:
+                labels, _, __ = constraint_predictions(
+                    X, self.cluster_centers_, strategy=self.strategy + '_p')
+                return labels
+            return KMeans.predict(self, X, sample_weight=sample_weight)
         else:
+            if self.balanced_predictions:
+                raise RuntimeError(  # pragma: no cover
+                    "balanced_predictions and weights_ cannot be used together.")
             return KMeans.predict(self, X, sample_weight=sample_weight)
 
     def transform(self, X):
@@ -153,21 +170,28 @@ class ConstraintKMeans(KMeans):
         @param      X       features.
         @return             prediction
         """
-        if self.balanced_predictions:
-            labels, distances, __ = constraint_predictions(
-                X, self.cluster_centers_, strategy=self.strategy)
-            # We remove small distances than the chosen clusters
-            # due to the constraint, we choose max*2 instead.
-            mx = distances.max() * 2
-            for i, l in enumerate(labels):
-                mi = distances[i, l]
-                mmi = distances[i, :].min()
-                if mi > mmi:
-                    # numpy.nan would be best
-                    distances[i, distances[i, :] < mi] = mx
-            return distances
-        else:
+        if self.weights_ is None:
+            if self.balanced_predictions:
+                labels, distances, __ = constraint_predictions(
+                    X, self.cluster_centers_, strategy=self.strategy)
+                # We remove small distances than the chosen clusters
+                # due to the constraint, we choose max*2 instead.
+                mx = distances.max() * 2
+                for i, l in enumerate(labels):
+                    mi = distances[i, l]
+                    mmi = distances[i, :].min()
+                    if mi > mmi:
+                        # numpy.nan would be best
+                        distances[i, distances[i, :] < mi] = mx
+                return distances
             return KMeans.transform(self, X)
+        else:
+            if self.balanced_predictions:
+                raise RuntimeError(  # pragma: no cover
+                    "balanced_predictions and weights_ cannot be used together.")
+            res = KMeans.transform(self, X)
+            res *= self.weights_.reshape((1, -1))
+            return res
 
     def score(self, X, y=None, sample_weight=None):
         """
@@ -178,9 +202,16 @@ class ConstraintKMeans(KMeans):
         @param      sample_weight   sample weight
         @return                     distances
         """
-        if self.balanced_predictions:
-            _, __, dist_close = constraint_predictions(
-                X, self.cluster_centers_, strategy=self.strategy)
-            return dist_close
+        if self.weights_ is None:
+            if self.balanced_predictions:
+                _, __, dist_close = constraint_predictions(
+                    X, self.cluster_centers_, strategy=self.strategy)
+                return dist_close
+            res = euclidean_distances(self.cluster_centers_, X, squared=True)
         else:
-            return euclidean_distances(self.cluster_centers_, X, squared=True)
+            if self.balanced_predictions:
+                raise RuntimeError(  # pragma: no cover
+                    "balanced_predictions and weights_ cannot be used together.")
+            res = euclidean_distances(X, self.cluster_centers_, squared=True)
+            res *= self.weights_.reshape((1, -1))
+        return res.max(axis=1)

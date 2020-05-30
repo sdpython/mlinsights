@@ -32,7 +32,7 @@ class SkBaseLearner(SkBase):
         @param      sample_weight   weight
         @return                     self
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def predict(self, X):
         """
@@ -41,7 +41,7 @@ class SkBaseLearner(SkBase):
         @param      X   features
         @return         prédictions
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def decision_function(self, X):
         """
@@ -52,7 +52,7 @@ class SkBaseLearner(SkBase):
         @param      X   Samples, {array-like, sparse matrix}, shape = (n_samples, n_features)
         @return         array, shape = (n_samples,.), Returns predicted values.
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def score(self, X, y=None, sample_weight=None):
         """
@@ -63,4 +63,4 @@ class SkBaseLearner(SkBase):
         @param      sample_weight   Weight values, numpy array of shape [n_samples, n_targets] (optional)
         @return                     score : float, Mean accuracy of self.predict(X) wrt. y.
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover

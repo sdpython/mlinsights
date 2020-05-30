@@ -21,6 +21,7 @@ try:
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.loghelper import BufferedPrint
 from mlinsights.mlmodel._kmeans_constraint_ import (
     linearize_matrix, _compute_strategy_coefficient,
     _constraint_association_gain)
@@ -356,6 +357,40 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         pred = km.predict(X)
         diff = numpy.abs(km.labels_ - pred).sum()
         self.assertLesser(diff, 6)
+
+    def test_kmeans_constraint_weights(self):
+        mat = numpy.array([[0, 0], [0.2, 0.2], [-0.1, -0.1], [1, 1]])
+        km = ConstraintKMeans(n_clusters=2, verbose=10, kmeans0=False,
+                              random_state=1, strategy='weights')
+
+        buf = BufferedPrint()
+        km.fit(mat, fLOG=buf.fprint)
+        self.assertEqual(km.cluster_centers_.shape, (2, 2))
+        self.assertLesser(km.inertia_, 4.55)
+        self.assertEqual(km.cluster_centers_, numpy.array(
+            [[0.6, 0.6], [-0.05, -0.05]]))
+        self.assertEqual(km.labels_, numpy.array([1, 0, 1, 0]))
+        pred = km.predict(mat)
+        self.assertEqual(pred, numpy.array([1, 1, 1, 0]))
+        dist = km.transform(mat)
+        self.assertEqual(dist.shape, (4, 2))
+        score = km.score(mat)
+        self.assertEqual(score.shape, (4, ))
+        self.assertIn("CKMeans", str(buf))
+
+    def test_kmeans_constraint_weights_bigger(self):
+        n_samples = 100
+        data = make_blobs(n_samples=n_samples, n_features=2, centers=2, cluster_std=1.0,
+                          center_box=(-10.0, 0.0), shuffle=True, random_state=2)
+        X1 = data[0]
+        data = make_blobs(n_samples=n_samples // 2, n_features=2, centers=2, cluster_std=1.0,
+                          center_box=(0.0, 10.0), shuffle=True, random_state=2)
+        X2 = data[0]
+        X = numpy.vstack([X1, X2])
+        km = ConstraintKMeans(n_clusters=4, strategy='weights')
+        km.fit(X)
+        cl = km.predict(X)
+        self.assertEqual(cl.shape, (X.shape[0], ))
 
 
 if __name__ == "__main__":

@@ -172,15 +172,18 @@ def check_ts_X_y(model, X, y):
         cst += model.preprocessing_.context_length
     if y is None:
         if cst > 0:
-            raise AssertionError("y must be specified to give the model past data to predict, "
-                                 "it requires at least {} observations.".format(cst))
+            raise AssertionError(  # pragma: no cover
+                "y must be specified to give the model past data to predict, "
+                "it requires at least {} observations.".format(cst))
         return
     if y.shape[0] != X.shape[0]:
-        raise AssertionError("X and y must have the same number of rows {} != {}.".format(
-            X.shape[0], y.shape[0]))
+        raise AssertionError(  # pragma: no cover
+            "X and y must have the same number of rows {} != {}.".format(
+                X.shape[0], y.shape[0]))
     if len(y.shape) > 1 and y.shape[1] != 1:
-        raise AssertionError(
+        raise AssertionError(  # pragma: no cover
             "y must be 1-dimensional not has shape {}.".format(y.shape))
     if y.shape[0] < cst:
-        raise AssertionError("y is not enough past data to predict, "
-                             "it requires at least {} observations.".format(cst))
+        raise AssertionError(  # pragma: no cover
+            "y is not enough past data to predict, "
+            "it requires at least {} observations.".format(cst))
