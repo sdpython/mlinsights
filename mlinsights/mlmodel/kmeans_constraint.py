@@ -4,6 +4,7 @@
 @brief Implémente la classe @see cl ConstraintKMeans.
 """
 import numpy
+from scipy.spatial import Delaunay
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import euclidean_distances
 from ._kmeans_constraint_ import constraint_kmeans, constraint_predictions
@@ -31,7 +32,8 @@ class ConstraintKMeans(KMeans):
 
     * ``'distance'``: observations are ranked by distance to a cluster,
       the algorithm assigns first point to the closest center unless it reached
-      the maximum size,
+      the maximum size, it deals first with the further point and maps it to
+      the closest center
     * ``'gain'``: follows the algorithm described at
        see `Same-size k-Means Variation
        <https://elki-project.github.io/tutorial/same-size_k_means>`_,
@@ -47,7 +49,7 @@ class ConstraintKMeans(KMeans):
                  tol=0.0001, precompute_distances='deprecated', verbose=0,
                  random_state=None, copy_x=True, n_jobs=1, algorithm='auto',
                  balanced_predictions=False, strategy='gain', kmeans0=True,
-                 learning_rate=1.):
+                 learning_rate=1., history=False):
         """
         @param      n_clusters              number of clusters
         @param      init                    used by :epkg:`k-means`
@@ -65,6 +67,7 @@ class ConstraintKMeans(KMeans):
         @param      strategy                strategy or algorithm used to abide
                                             by the constraint
         @param      kmeans0                 if True, applies *k-means* algorithm first
+        @param      history                 keeps centers accress iterations
         @param      learning_rate           learning rate, used by strategy `'weights'`
         """
         KMeans.__init__(self, n_clusters=n_clusters, init=init, n_init=n_init,
@@ -74,6 +77,7 @@ class ConstraintKMeans(KMeans):
         self.balanced_predictions = balanced_predictions
         self.strategy = strategy
         self.kmeans0 = kmeans0
+        self.history = history
         self._n_threads = None
         self.learning_rate = learning_rate
         if strategy not in ConstraintKMeans._strategy_value:
@@ -91,9 +95,9 @@ class ConstraintKMeans(KMeans):
             will be converted to C ordering, which will cause a memory
             copy if the given data is not C-contiguous.
 
-        sample_weight : sample weight
-
         y : Ignored
+
+        sample_weight : sample weight
 
         fLOG: logging function
         """
@@ -119,26 +123,31 @@ class ConstraintKMeans(KMeans):
         self.max_iter = max_iter
         return self.constraint_kmeans(
             X, sample_weight=sample_weight, state=state,
-            learning_rate=self.learning_rate, fLOG=fLOG)
+            learning_rate=self.learning_rate,
+            history=self.history, fLOG=fLOG)
 
     def constraint_kmeans(self, X, sample_weight=None, state=None,
-                          learning_rate=1., fLOG=None):
+                          learning_rate=1., history=False, fLOG=None):
         """
         Completes the constraint k-means.
 
         @param      X               features
         @param      sample_weight   sample weight
-        @param      state            state
+        @param      state           state
+        @param      history         keeps evolution of centers
         @param      fLOG            logging function
         """
-        labels, centers, inertia, weights, iter_ = constraint_kmeans(
+        labels, centers, inertia, weights, iter_, all_centers = constraint_kmeans(
             X, self.labels_, sample_weight, self.cluster_centers_,
             inertia=self.inertia_, iter=self.n_iter_,
             max_iter=self.max_iter, verbose=self.verbose,
             strategy=self.strategy, state=state,
-            learning_rate=learning_rate, fLOG=fLOG)
+            learning_rate=learning_rate, history=history,
+            fLOG=fLOG)
         self.labels_ = labels
         self.cluster_centers_ = centers
+        self.cluster_centers_iter_ = (
+            None if len(all_centers) == 0 else numpy.dstack(all_centers))
         self.inertia_ = inertia
         self.n_iter_ = iter_
         self.weights_ = weights
@@ -215,3 +224,27 @@ class ConstraintKMeans(KMeans):
             res = euclidean_distances(X, self.cluster_centers_, squared=True)
             res *= self.weights_.reshape((1, -1))
         return res.max(axis=1)
+
+    def cluster_edges(self):
+        """
+        Computes edges between clusters based on a
+        `Delaunay <https://docs.scipy.org/doc/scipy/reference/
+        generated/scipy.spatial.Delaunay.html>`_
+        graph.
+        """
+        tri = Delaunay(self.cluster_centers_)
+        triangles = tri.simplices
+        edges = set()
+        for row in triangles:
+            for j in range(1, row.shape[-1]):
+                a, b = row[j - 1:j + 1]
+                if a < b:
+                    edges.add((a, b))
+                else:
+                    edges.add((b, a))
+            a, b = row[0], row[-1]
+            if a < b:
+                edges.add((a, b))
+            else:
+                edges.add((b, a))
+        return edges

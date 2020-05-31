@@ -147,9 +147,9 @@ class TestSklearnConstraintKMeans(ExtTestCase):
                 [[0.6, 0.6], [-0.05, -0.05]]))
         pred = km.predict(mat)
         if km.labels_[0] == 0:
-            self.assertEqual(pred, numpy.array([0, 0, 0, 1]))
+            self.assertEqual(pred, numpy.array([0, 1, 0, 1]))
         else:
-            self.assertEqual(pred, numpy.array([1, 1, 1, 0]))
+            self.assertEqual(pred, numpy.array([1, 0, 1, 0]))
 
     def test_kmeans_constraint_constraint(self):
         mat = numpy.array([[0, 0], [0.2, 0.2], [-0.1, -0.1], [1, 1]])
@@ -352,19 +352,26 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         X = numpy.vstack([X1, X2])
         km = ConstraintKMeans(n_clusters=4, verbose=0, kmeans0=False,
                               random_state=2, strategy='gain',
-                              balanced_predictions=True)
+                              balanced_predictions=True,
+                              history=True)
         km.fit(X)
         pred = km.predict(X)
         diff = numpy.abs(km.labels_ - pred).sum()
         self.assertLesser(diff, 6)
+        cls = km.cluster_centers_iter_
+        self.assertEqual(len(cls.shape), 3)
 
     def test_kmeans_constraint_weights(self):
         mat = numpy.array([[0, 0], [0.2, 0.2], [-0.1, -0.1], [1, 1]])
         km = ConstraintKMeans(n_clusters=2, verbose=10, kmeans0=False,
                               random_state=1, strategy='weights')
-
         buf = BufferedPrint()
         km.fit(mat, fLOG=buf.fprint)
+
+        km = ConstraintKMeans(n_clusters=2, verbose=5, kmeans0=False,
+                              random_state=1, strategy='weights')
+        km.fit(mat, fLOG=buf.fprint)
+
         self.assertEqual(km.cluster_centers_.shape, (2, 2))
         self.assertLesser(km.inertia_, 4.55)
         self.assertEqual(km.cluster_centers_, numpy.array(
@@ -387,10 +394,16 @@ class TestSklearnConstraintKMeans(ExtTestCase):
                           center_box=(0.0, 10.0), shuffle=True, random_state=2)
         X2 = data[0]
         X = numpy.vstack([X1, X2])
-        km = ConstraintKMeans(n_clusters=4, strategy='weights')
+        km = ConstraintKMeans(n_clusters=4, strategy='weights', history=True)
         km.fit(X)
         cl = km.predict(X)
         self.assertEqual(cl.shape, (X.shape[0], ))
+        cls = km.cluster_centers_iter_
+        self.assertEqual(len(cls.shape), 3)
+        edges = km.cluster_edges()
+        self.assertIsInstance(edges, set)
+        self.assertEqual(len(edges), 5)
+        self.assertIsInstance(list(edges)[0], tuple)
 
 
 if __name__ == "__main__":
