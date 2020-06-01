@@ -133,7 +133,8 @@ class TestSklearnConstraintKMeans(ExtTestCase):
     @ignore_warnings(category=ConvergenceWarning)
     def test_kmeans_constraint(self):
         mat = numpy.array([[0, 0], [0.2, 0.2], [-0.1, -0.1], [1, 1]])
-        km = ConstraintKMeans(n_clusters=2, verbose=0, strategy='distance')
+        km = ConstraintKMeans(n_clusters=2, verbose=0, strategy='distance',
+                              balanced_predictions=True)
         km.fit(mat)
         self.assertEqual(km.cluster_centers_.shape, (2, 2))
         self.assertEqualFloat(km.inertia_, 0.455)
@@ -289,7 +290,7 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         mat = numpy.array([[0, 0], [0.2, 0.2], [-0.1, -0.1],
                            [1, 1], [1.1, 0.9], [-1.1, 1.]])
         # Choose random_state=2 to get the labels [1 1 0 2 2 0].
-        # This configuration can only modified with a permutation
+        # This configuration can only be modified with a permutation
         # of 3 elements.
         km = ConstraintKMeans(n_clusters=3, verbose=0, kmeans0=False,
                               random_state=1, strategy='gain',
@@ -297,9 +298,9 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         km.fit(mat)
         self.assertEqual(km.cluster_centers_.shape, (3, 2))
         lab = km.labels_
+        self.assertEqual(lab[1], lab[2])
+        self.assertEqual(lab[0], lab[5])
         self.assertEqual(lab[3], lab[4])
-        self.assertEqual(lab[0], lab[2])
-        self.assertEqual(lab[1], lab[5])
         pred = km.predict(mat)
         self.assertEqualArray(pred, lab)
 

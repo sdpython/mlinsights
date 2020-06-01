@@ -255,8 +255,39 @@ def _randomize_index(index, weights):
         w2 = weights[ind2]
         ratio = abs(w2 - w1) / diff * 0.5
         if rand[i] >= ratio + 0.5:
-            index[i - 1], index[i] = index[i], index[i - 1]
-            weights[i - 1], weights[i] = weights[i], weights[i - 1]
+            index[i - 1], index[i] = ind2, ind1
+            weights[i - 1], weights[i] = w2, w1
+
+
+def _switch_clusters(labels, distances):
+    """
+    Tries to switch clusters.
+    Modifies *labels* inplace.
+
+    @param      labels      labels
+    @param      distances   distances
+    """
+    perm = numpy.random.permutation(numpy.arange(0, labels.shape[0]))
+    niter = 0
+    modif = 1
+    while modif > 0 and niter < 10:
+        modif = 0
+        niter += 1
+        for i_ in range(labels.shape[0]):
+            for j_ in range(i_ + 1, labels.shape[0]):
+                i = perm[i_]
+                j = perm[j_]
+                c1 = labels[i]
+                c2 = labels[j]
+                if c1 == c2:
+                    continue
+                d11 = distances[i, c1]
+                d12 = distances[i, c2]
+                d21 = distances[j, c1]
+                d22 = distances[j, c2]
+                if d11**2 + d22**2 > d21**2 + d12**2:
+                    labels[i], labels[j] = c2, c1
+                    modif += 1
 
 
 def _constraint_association_distance(leftover, counters, labels, leftclose, distances_close,
@@ -286,19 +317,19 @@ def _constraint_association_distance(leftover, counters, labels, leftclose, dist
     # initialisation
     counters[:] = 0
     leftclose[:] = -1
-    distances_close[:] = numpy.nan
     labels[:] = -1
 
     # distances
     distances = euclidean_distances(
         centers, X, Y_norm_squared=x_squared_norms, squared=True)
     distances = distances.T
+    distances0 = distances.copy()
     maxi = distances.ravel().max() * 2
     centers_index = numpy.argsort(distances, axis=1)
 
     while labels.min() == -1:
         mini = numpy.min(distances, axis=1)
-        sorted_index = numpy.argsort(mini)[::-1]
+        sorted_index = numpy.argsort(mini)
         _randomize_index(sorted_index, mini)
 
         nover = leftover
@@ -310,7 +341,6 @@ def _constraint_association_distance(leftover, counters, labels, leftclose, dist
                     # The cluster still accepts new points.
                     counters[c] += 1
                     labels[ind] = c
-                    distances_close[ind] = distances[ind, c]
                     distances[ind, c] = maxi
                     break
                 elif nover > 0 and leftclose[c] == -1:
@@ -320,10 +350,12 @@ def _constraint_association_distance(leftover, counters, labels, leftclose, dist
                     labels[ind] = c
                     nover -= 1
                     leftclose[c] = 0
-                    distances_close[ind] = distances[ind, c]
                     distances[ind, c] = maxi
                     break
-    return distances
+
+    _switch_clusters(labels, distances0)
+    distances_close[:] = distances[numpy.arange(X.shape[0]), labels]
+    return distances0
 
 
 def _constraint_association_gain(leftover, counters, labels, leftclose, distances_close,
@@ -444,12 +476,13 @@ def _constraint_association_gain(leftover, counters, labels, leftclose, distance
                 gain = sorted_distances[i, 3]
                 bisect.insort(transfer[cur, dest], (gain, ind))
 
-    distances_close[:] = distances[numpy.arange(X.shape[0]), labels]
-
     neg = (counters < ave).sum()
     if neg > 0:
         raise RuntimeError(
             "The algorithm failed, counters={0}".format(counters))
+
+    _switch_clusters(labels, distances)
+    distances_close[:] = distances[numpy.arange(X.shape[0]), labels]
 
     return distances
 

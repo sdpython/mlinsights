@@ -62,27 +62,40 @@ ax.legend()
 # Constraint KMeans
 # =================
 
-km = ConstraintKMeans(n_clusters=4, balanced_predictions=True)
-km.fit(X)
+km1 = ConstraintKMeans(n_clusters=4, strategy='gain',
+                       balanced_predictions=True)
+km1.fit(X)
 
+km2 = ConstraintKMeans(n_clusters=4, strategy='distance',
+                       balanced_predictions=True)
+km2.fit(X)
 
 ##########################
 # This algorithm tries to exchange points
-# between clusters following
-# `Same-size k-Means Variation
-# <https://elki-project.github.io/tutorial/same-size_k_means>`_.
+# between clusters.
 
-cl = km.predict(X)
-hist = Counter(cl)
+cl1 = km1.predict(X)
+hist1 = Counter(cl1)
 
-fig, ax = plt.subplots(1, 1, figsize=(4, 4))
-for i in range(0, max(cl) + 1):
-    ax.plot(X[cl == i, 0], X[cl == i, 1], colors[i] + '.', label='cl%d' % i)
-    x = [km.cluster_centers_[i, 0], km.cluster_centers_[i, 0]]
-    y = [km.cluster_centers_[i, 1], km.cluster_centers_[i, 1]]
-    ax.plot(x, y, colors[i] + '+')
-ax.set_title('ConstraintKMeans 4 clusters\n%r' % hist)
-ax.legend()
+cl2 = km2.predict(X)
+hist2 = Counter(cl2)
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+for i in range(0, max(cl1) + 1):
+    ax[0].plot(X[cl1 == i, 0], X[cl1 == i, 1],
+               colors[i] + '.', label='cl%d' % i)
+    ax[1].plot(X[cl2 == i, 0], X[cl2 == i, 1],
+               colors[i] + '.', label='cl%d' % i)
+    x = [km1.cluster_centers_[i, 0], km1.cluster_centers_[i, 0]]
+    y = [km1.cluster_centers_[i, 1], km1.cluster_centers_[i, 1]]
+    ax[0].plot(x, y, colors[i] + '+')
+    x = [km2.cluster_centers_[i, 0], km2.cluster_centers_[i, 0]]
+    y = [km2.cluster_centers_[i, 1], km2.cluster_centers_[i, 1]]
+    ax[1].plot(x, y, colors[i] + '+')
+ax[0].set_title('ConstraintKMeans 4 clusters (gains)\n%r' % hist1)
+ax[0].legend()
+ax[1].set_title('ConstraintKMeans 4 clusters (distances)\n%r' % hist2)
+ax[1].legend()
 
 
 ##########################
