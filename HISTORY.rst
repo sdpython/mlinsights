@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2020-06-01 - 0.00Mb
+current - 2020-06-03 - 0.00Mb
 =============================
 
+* `76`: ConstraintKMeans does not produce convex clusters. (2020-06-03)
 * `75`: Moves kmeans with constraint from papierstat. (2020-05-27)
 * `74`: Fix PipelineCache after as scikti-learn 0.23 changed the way parameters is handle in pipelines (2020-05-15)
 * `73`: ClassifierKMeans.__repr__ fails with scikit-learn 0.23 (2020-05-14)
