@@ -5,7 +5,7 @@
 History
 =======
 
-current - 2020-05-28 - 0.00Mb
+current - 2020-06-01 - 0.00Mb
 =============================
 
 * `75`: Moves kmeans with constraint from papierstat. (2020-05-27)

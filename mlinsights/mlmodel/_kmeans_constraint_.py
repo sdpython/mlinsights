@@ -343,7 +343,7 @@ def _constraint_association_distance(leftover, counters, labels, leftclose, dist
                     labels[ind] = c
                     distances[ind, c] = maxi
                     break
-                elif nover > 0 and leftclose[c] == -1:
+                if nover > 0 and leftclose[c] == -1:
                     # The cluster may accept one point if the number
                     # of clusters does not divide the number of points in X.
                     counters[c] += 1

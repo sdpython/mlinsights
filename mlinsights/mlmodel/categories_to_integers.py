@@ -172,7 +172,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             sch, pos, new_vector = self._schema
             X = X.copy()
             for c in self._fit_columns:
-                X[c] = X[c].apply(lambda v: transform(v, new_vector[c]))
+                X[c] = X[c].apply(lambda v, cv=c: transform(v, new_vector[cv]))
             return X
         else:
             dfcat = X[self._fit_columns]

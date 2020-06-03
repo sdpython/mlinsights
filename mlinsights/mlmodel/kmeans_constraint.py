@@ -4,7 +4,7 @@
 @brief Implémente la classe @see cl ConstraintKMeans.
 """
 import numpy
-from scipy.spatial import Delaunay
+from scipy.spatial import Delaunay  # pylint: disable=E0611
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import euclidean_distances
 from ._kmeans_constraint_ import constraint_kmeans, constraint_predictions
