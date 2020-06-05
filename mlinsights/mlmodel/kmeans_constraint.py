@@ -41,6 +41,12 @@ class ConstraintKMeans(KMeans):
         it weights the distance to each cluster in order
         to balance the number of points mapped to every cluster,
         the strategy uses a learning rate.
+
+    The first two strategies cannot reach a good compromise
+    without using function @see fn _switch_clusters which
+    tries every switch between clusters: two points
+    change clusters. It keeps the number of points and checks
+    that the inertia is reduced.
     """
 
     _strategy_value = {'distance', 'gain', 'weights'}
@@ -233,7 +239,7 @@ class ConstraintKMeans(KMeans):
         graph.
         """
         tri = Delaunay(self.cluster_centers_)
-        triangles = tri.simplices
+        triangles = tri.simplices  # pylint: disable=E1101
         edges = set()
         for row in triangles:
             for j in range(1, row.shape[-1]):
