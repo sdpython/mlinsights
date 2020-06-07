@@ -31,6 +31,23 @@ class TestTransferTransformer(ExtTestCase):
         got = pipe.transform(X)
         self.assertEqual(exp, got)
 
+    def test_transfer_transformer_diff_trainable(self):
+        X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
+        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
+        norm = StandardScaler()
+        norm.fit(X)
+        X2 = norm.transform(X)
+
+        clr = LinearRegression()
+        clr.fit(X2, Y)
+        exp = clr.predict(X2)
+
+        pipe = make_pipeline(TransferTransformer(norm, trainable=True),
+                             TransferTransformer(clr, trainable=True))
+        pipe.fit(X, Y)
+        got = pipe.transform(X)
+        self.assertEqual(exp, got)
+
     def test_transfer_transformer_cloned0(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
         norm = StandardScaler()

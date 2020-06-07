@@ -3,6 +3,7 @@
 @brief Implements a transformer which wraps a predictor
 to do transfer learning.
 """
+import inspect
 from sklearn.base import BaseEstimator, TransformerMixin
 from .sklearn_testing import clone_with_fitted_parameters
 
@@ -16,7 +17,8 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
     .. index:: transfer learning, frozen model
     """
 
-    def __init__(self, estimator, method=None, copy_estimator=True):
+    def __init__(self, estimator, method=None, copy_estimator=True,
+                 trainable=False):
         """
         @param      estimator           estimator to wrap in a transformer, it is cloned
                                         with the training data (deep copy) when fitted
@@ -26,11 +28,13 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
                                         *decision_function* if found,
                                         *predict* otherwiser
         @param      copy_estimator      copy the model instead of taking a reference
+        @param      trainable           the transfered model must be trained
         """
         TransformerMixin.__init__(self)
         BaseEstimator.__init__(self)
         self.estimator = estimator
         self.copy_estimator = copy_estimator
+        self.trainable = trainable
         if method is None:
             if hasattr(estimator, "transform"):
                 method = "transform"
@@ -75,6 +79,17 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
             assert_estimator_equal(self.estimator_, self.estimator)
         else:
             self.estimator_ = self.estimator
+        if self.trainable:
+            insp = inspect.signature(self.estimator_.fit)
+            pars = insp.parameters
+            if 'y' in pars and 'sample_weight' in pars:
+                self.estimator_.fit(X, y, sample_weight)
+            elif 'y' in pars:
+                self.estimator_.fit(X, y)
+            elif 'sample_weight' in pars:
+                self.estimator_.fit(X, sample_weight=sample_weight)
+            else:
+                self.estimator_.fit(X)
         return self
 
     def transform(self, X):
