@@ -5,7 +5,12 @@
 History
 =======
 
-current - 2020-06-03 - 0.00Mb
+current - 2020-06-08 - 0.00Mb
+=============================
+
+* `77`: Add parameter trainable to TransferTransformer (2020-06-07)
+
+0.2.447 - 2020-06-03 - 0.83Mb
 =============================
 
 * `76`: ConstraintKMeans does not produce convex clusters. (2020-06-03)
