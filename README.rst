@@ -55,6 +55,10 @@ mlinsights - extensions to scikit-learn
     :target: https://github.com/sdpython/mlinsights/
     :alt: Stars
 
+.. image:: https://img.shields.io/github/repo-size/sdpython/mlinsights
+    :target: https://github.com/sdpython/mlinsights/
+    :alt: size
+
 *mlinsights* extends *scikit-learn* with a couple of new models,
 transformers, metrics, plotting. It provides new trainers such as
 *QuantileLinearRegression* which trains a linear regression with *L1* norm

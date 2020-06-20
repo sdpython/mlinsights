@@ -7,6 +7,14 @@ div.highlight-ipython3 pre {
 	background-color: #f8f8c8;
 }
 
+div.body ul {
+    margin: 0em 0;
+    margin-top: 0em;
+    margin-right: 0px;
+    margin-bottom: 0em;
+    margin-left: 0px;
+}
+
 .wy-nav-top {
 	background-color: #FF0040;
 }

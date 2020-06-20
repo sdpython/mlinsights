@@ -58,6 +58,10 @@ mlinsights: tricky scikit-learn
     :target: https://github.com/sdpython/mlinsights/
     :alt: Stars
 
+.. image:: https://img.shields.io/github/repo-size/sdpython/mlinsights
+    :target: https://github.com/sdpython/mlinsights/
+    :alt: size
+
 *mlinsights* implements functions to get insights on machine learned
 models or various kind of transforms to help manipulating
 data in a single pipeline. It implements
