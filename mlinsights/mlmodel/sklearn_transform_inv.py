@@ -23,11 +23,13 @@ class BaseReciprocalTransformer(BaseEstimator, TransformerMixin):
         Returns a trained transform which reverse the target
         after a predictor.
         """
-        raise NotImplementedError("This must be overwritten.")
+        raise NotImplementedError(
+            "This must be overwritten.")  # pragma: no cover
 
     def transform(self, X, y):
         """
         Transforms *X* and *y*.
         Returns transformed *X* and *y*.
         """
-        raise NotImplementedError("This must be overwritten.")
+        raise NotImplementedError(
+            "This must be overwritten.")  # pragma: no cover

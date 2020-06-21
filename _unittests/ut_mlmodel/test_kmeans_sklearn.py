@@ -7,9 +7,7 @@ import numpy as np
 from scipy import sparse as sp
 from sklearn.utils._testing import (
     assert_array_equal, assert_array_almost_equal,
-    assert_almost_equal,
-    assert_raise_message
-)
+    assert_almost_equal, assert_raise_message)
 from sklearn.metrics.cluster import v_measure_score
 from sklearn.datasets import make_blobs
 from pyquickhelper.pycode import ExtTestCase

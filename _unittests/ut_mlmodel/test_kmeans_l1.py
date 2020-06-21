@@ -4,9 +4,11 @@
 """
 import unittest
 import numpy
+from scipy.spatial.distance import cdist
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import KMeansL1L2
+from mlinsights.mlmodel._kmeans_022 import _assign_labels_array
 
 
 class TestKMeansL1L2(ExtTestCase):
@@ -66,6 +68,18 @@ class TestKMeansL1L2(ExtTestCase):
         self.assertEqual(tr.shape, (X.shape[0], 2))
         tr = clr.transform([[3, 3]])
         self.assertEqualArray(tr.min(), [0])
+
+    def test__assign_labels_array(self):
+        X = numpy.array([[1., 2.], [3.5, 4.]])
+        sample_weight = numpy.array([1., 1.1])
+        centers = X.copy()
+        labels = numpy.array([0, 1])
+        x_squared_norms = numpy.array([5., 3.1])
+        distances = cdist(X, centers)
+        res = _assign_labels_array(
+            X, sample_weight, x_squared_norms, centers,
+            labels, distances)
+        self.assertIsInstance(res, numpy.float64)
 
 
 if __name__ == "__main__":

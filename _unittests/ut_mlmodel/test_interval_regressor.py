@@ -24,6 +24,7 @@ class TestIntervalRegressor(ExtTestCase):
         rnd = preds[:, 0] <= preds[:, 1]
         nb = rnd.sum()
         self.assertEqual(nb, 4)
+        self.assertEqual(clr.n_estimators_, 2)
 
 
 if __name__ == "__main__":

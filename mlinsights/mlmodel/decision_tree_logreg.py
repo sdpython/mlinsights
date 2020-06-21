@@ -108,7 +108,7 @@ class _DecisionTreeLogisticRegressionNode:
         """
         self.estimator.fit(X, y, sample_weight=sample_weight)
         if dtlr.verbose >= 1:
-            print("[DTLR ] %s trained acc %1.2f N=%d" % (
+            print("[DTLR ] %s trained acc %1.2f N=%d" % (  # pragma: no cover
                 " " * self.depth, self.estimator.score(X, y), X.shape[0]))
         prob = self.fit_improve(dtlr, total_N, X, y,
                                 sample_weight=sample_weight)
@@ -179,14 +179,15 @@ class _DecisionTreeLogisticRegressionNode:
         @return                     probabilities
         """
         if self.estimator is None:
-            raise RuntimeError("Estimator was not trained.")
+            raise RuntimeError(
+                "Estimator was not trained.")  # pragma: no cover
         prob = self.estimator.predict_proba(X)
         if dtlr.fit_improve_algo in (None, 'none'):
             return prob
 
         if not isinstance(self.estimator, LinearClassifierMixin):
             # The classifier is not linear and cannot be improved.
-            if dtlr.fit_improve_algo == 'intercept_sort_always':
+            if dtlr.fit_improve_algo == 'intercept_sort_always':  # pragma: no cover
                 raise RuntimeError(
                     "The model is not linear ({}), "
                     "intercept cannot be improved.".format(self.estimator.__class__.__name__))
@@ -199,7 +200,7 @@ class _DecisionTreeLogisticRegressionNode:
         n_min = min(n_above, n_below)
         p1p2 = float(n_above * n_below) / X.shape[0] ** 2
         if dtlr.verbose >= 2:
-            print("[DTLRI] %s imp %d <> %d, p1p2=%1.3f <> %1.3f" % (
+            print("[DTLRI] %s imp %d <> %d, p1p2=%1.3f <> %1.3f" % (  # pragma: no cover
                 " " * self.depth, n_min, dtlr.min_samples_leaf,
                 p1p2, dtlr.p1p2))
         if (n_min >= dtlr.min_samples_leaf and
@@ -232,7 +233,7 @@ class _DecisionTreeLogisticRegressionNode:
 
         if beta_best is not None:
             if dtlr.verbose >= 1:
-                print("[DTLRI] %s change intercept %f --> %f in [%f, %f]" % (
+                print("[DTLRI] %s change intercept %f --> %f in [%f, %f]" % (  # pragma: no cover
                     " " * self.depth, self.estimator.intercept_, beta_best,
                     - sorted_df[-1], - sorted_df[0]))
             self.estimator.intercept_ = beta_best
@@ -354,9 +355,10 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         else:
             self.estimator = estimator
         if max_depth is None:
-            raise ValueError("'max_depth' cannot be None.")
+            raise ValueError("'max_depth' cannot be None.")  # pragma: no cover
         if max_depth > 1024:
-            raise ValueError("'max_depth' must be <= 1024.")
+            raise ValueError(
+                "'max_depth' must be <= 1024.")  # pragma: no cover
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
@@ -406,7 +408,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
             raise TypeError("'X' must be an array.")
         if (sample_weight is not None and
                 not isinstance(sample_weight, numpy.ndarray)):
-            raise TypeError("'sample_weight' must be an array.")
+            raise TypeError(
+                "'sample_weight' must be an array.")  # pragma: no cover
         self.classes_ = numpy.array(sorted(set(y)))
         if len(self.classes_) != 2:
             raise RuntimeError(
@@ -436,7 +439,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         Calls *decision_function*.
         """
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "Decision function is not available for this model.")
 
     @property

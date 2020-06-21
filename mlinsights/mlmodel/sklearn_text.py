@@ -5,7 +5,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 try:
     from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
-except ImportError:
+except ImportError:  # pragma: no cover
     # scikit-learn < 0.23
     from sklearn.feature_extraction.text import VectorizerMixin
 
@@ -60,8 +60,9 @@ class NGramsMixin(VectorizerMixin):
                     elif isinstance(token, tuple):
                         new_tokens.extend(token)
                     else:
-                        raise TypeError("Unable to build a n-grams out of {}.".format(
-                            tokens))
+                        raise TypeError(  # pragma: no cover
+                            "Unable to build a n-grams out of {}.".format(
+                                tokens))
                 return tuple(new_tokens)
 
             for n in range(min_n,

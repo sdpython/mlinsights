@@ -48,7 +48,7 @@ def linearize_matrix(mat, *adds):
                 for k, am in enumerate(adds):
                     res[i, k + 3] = am[a, b]
             return res
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "This kind of sparse matrix is not handled: {0}".format(type(mat)))
     else:
         n = mat.shape[0]
@@ -92,7 +92,7 @@ def constraint_kmeans(X, labels, sample_weight, centers, inertia,
                                 iter, all_centers)
     """
     if labels.dtype != numpy.int32:
-        raise TypeError(
+        raise TypeError(  # pragma: no cover
             "Labels must be an array of int not '{0}'".format(labels.dtype))
 
     if strategy == 'weights':
@@ -147,7 +147,7 @@ def constraint_kmeans(X, labels, sample_weight, centers, inertia,
                 centers=centers, distances=distances_close)
 
             iter += 1
-            if verbose and fLOG:
+            if verbose and fLOG:  # pragma: no cover
                 fLOG("CKMeans %d/%d inertia=%f" % (iter, max_iter, inertia))
 
             # best option so far?
@@ -224,7 +224,8 @@ def _constraint_association(leftover, counters, labels, leftclose, distances_clo
         return _constraint_association_gain(
             leftover, counters, labels, leftclose, distances_close,
             centers, X, x_squared_norms, limit, strategy, state=state)
-    raise ValueError("Unknwon strategy '{0}'.".format(strategy))
+    raise ValueError("Unknwon strategy '{0}'.".format(
+        strategy))  # pragma: no cover
 
 
 def _compute_strategy_coefficient(distances, strategy, labels):
@@ -478,7 +479,7 @@ def _constraint_association_gain(leftover, counters, labels, leftclose, distance
 
     neg = (counters < ave).sum()
     if neg > 0:
-        raise RuntimeError(
+        raise RuntimeError(  # pragma: no cover
             "The algorithm failed, counters={0}".format(counters))
 
     _switch_clusters(labels, distances)
@@ -538,7 +539,7 @@ def _constraint_kmeans_weights(X, labels, sample_weight, centers, inertia, it,
         # association
         labels = _constraint_association_weights(X, centers, sw, weights)
         if len(set(labels)) != centers.shape[0]:
-            if verbose and fLOG:
+            if verbose and fLOG:  # pragma: no cover
                 if isinstance(verbose, int) and verbose >= 10:
                     fLOG("CKMeans new weights: w=%r" % weights)
                 else:
@@ -578,7 +579,7 @@ def _constraint_kmeans_weights(X, labels, sample_weight, centers, inertia, it,
                 fLOG("CKMeans %d/%d inertia=%f (%f) hist=%r" % (
                     it, max_iter, inertia, best_inertia, hist))
             else:
-                fLOG("CKMeans %d/%d inertia=%f (%f T=%f)" % (
+                fLOG("CKMeans %d/%d inertia=%f (%f T=%f)" % (  # pragma: no cover
                     it, max_iter, inertia, best_inertia, total_inertia))
 
         # early stop

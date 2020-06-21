@@ -67,7 +67,7 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
     """
     if (distances is not None and
             distances.shape != (X.shape[0], )):
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Dimension mismatch for distance got {}, expecting {}."
             "".format(distances.shape, (X.shape[0], centers.shape[0])))
     n_clusters = centers.shape[0]

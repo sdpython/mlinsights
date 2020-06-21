@@ -39,7 +39,8 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         self.estimator = estimator
         self.clus = clus
         if not hasattr(clus, "transform"):
-            raise AttributeError("clus does not have a transform method.")
+            raise AttributeError(  # pragma: no cover
+                "clus does not have a transform method.")
         if kwargs:
             self.set_params(**kwargs)
 
@@ -165,7 +166,8 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
             elif k.startswith('c_'):
                 pc[k[2:]] = v
             else:
-                raise ValueError("Unexpected parameter name '{0}'".format(k))
+                raise ValueError(  # pragma: no cover
+                    "Unexpected parameter name '{0}'".format(k))
         self.clus.set_params(**pc)
         self.estimator.set_params(**pe)
 

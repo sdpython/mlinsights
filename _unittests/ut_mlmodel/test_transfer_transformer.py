@@ -4,9 +4,9 @@
 """
 import unittest
 import numpy
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import make_pipeline, Pipeline
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import TransferTransformer
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
@@ -27,6 +27,60 @@ class TestTransferTransformer(ExtTestCase):
 
         pipe = make_pipeline(TransferTransformer(norm),
                              TransferTransformer(clr))
+        pipe.fit(X)
+        got = pipe.transform(X)
+        self.assertEqual(exp, got)
+
+    def test_transfer_transformer_sample_weight(self):
+        X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
+        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
+        sw = numpy.array([1, 1, 1.5, 1.5, 1.])
+        norm = StandardScaler()
+        norm.fit(X)
+        X2 = norm.transform(X)
+
+        clr = LinearRegression()
+        clr.fit(X2, Y)
+        exp = clr.predict(X2)
+
+        pipe = Pipeline(steps=[
+            ('scaler', TransferTransformer(norm)),
+            ('model', TransferTransformer(clr))])
+        pipe.fit(X, model__sample_weight=sw)
+        got = pipe.transform(X)
+        self.assertEqual(exp, got)
+
+    def test_transfer_transformer_logreg(self):
+        X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
+        Y = numpy.array([0, 0, 1, 1, 1])
+        norm = StandardScaler()
+        norm.fit(X)
+        X2 = norm.transform(X)
+
+        clr = LogisticRegression()
+        clr.fit(X2, Y)
+        exp = clr.predict_proba(X2)
+
+        pipe = make_pipeline(TransferTransformer(norm),
+                             TransferTransformer(clr))
+        pipe.fit(X)
+        got = pipe.transform(X)
+        self.assertEqual(exp, got)
+
+    def test_transfer_transformer_decision_function(self):
+        X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
+        Y = numpy.array([0, 0, 1, 1, 1])
+        norm = StandardScaler()
+        norm.fit(X)
+        X2 = norm.transform(X)
+
+        clr = LogisticRegression()
+        clr.fit(X2, Y)
+        exp = clr.decision_function(X2)
+
+        pipe = make_pipeline(
+            TransferTransformer(norm),
+            TransferTransformer(clr, method="decision_function"))
         pipe.fit(X)
         got = pipe.transform(X)
         self.assertEqual(exp, got)
