@@ -1,3 +1,4 @@
+autopep8
 chardet
 coverage
 cpyquickhelper>=0.2.229
