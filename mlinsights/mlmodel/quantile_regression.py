@@ -33,42 +33,33 @@ class QuantileLinearRegression(LinearRegression):
                  n_jobs=1, delta=0.0001, max_iter=10, quantile=0.5,
                  verbose=False):
         """
-        Parameters
-        ----------
-        fit_intercept: boolean, optional, default True
+        :param fit_intercept: boolean, optional, default True
             whether to calculate the intercept for this model. If set
             to False, no intercept will be used in calculations
             (e.g. data is expected to be already centered).
-
-        normalize: boolean, optional, default False
+        :param normalize: boolean, optional, default False
             This parameter is ignored when ``fit_intercept`` is set to False.
             If True, the regressors X will be normalized before regression by
             subtracting the mean and dividing by the l2-norm.
             If you wish to standardize, please use
             :class:`sklearn.preprocessing.StandardScaler` before calling ``fit`` on
             an estimator with ``normalize=False``.
-
-        copy_X: boolean, optional, default True
+        :param copy_X: boolean, optional, default True
             If True, X will be copied; else, it may be overwritten.
-
-        n_jobs: int, optional, default 1
+        :param n_jobs: int, optional, default 1
             The number of jobs to use for the computation.
             If -1 all CPUs are used. This will only provide speedup for
             n_targets > 1 and sufficient large problems.
-
-        max_iter: int, optional, default 1
+        :param max_iter: int, optional, default 1
             The number of iteration to do at training time.
             This parameter is specific to the quantile regression.
-
-        delta: float, optional, default 0.0001
+        :param delta: float, optional, default 0.0001
             Used to ensure matrices has an inverse
             (*M + delta*I*).
-
-        quantile: float, by default 0.5,
+        :param quantile: float, by default 0.5,
             determines which quantile to use
             to estimate the regression.
-
-        verbose: bool, optional, default False
+        :param verbose: bool, optional, default False
             Prints error at each iteration of the optimisation.
         """
         LinearRegression.__init__(self, fit_intercept=fit_intercept, normalize=normalize,
@@ -93,33 +84,24 @@ class QuantileLinearRegression(LinearRegression):
         `Régression quantile
         <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td_note_2017_2.html>`_.
 
-        Parameters
-        ----------
-        X : numpy array or sparse matrix of shape [n_samples,n_features]
+        :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data
-
-        y : numpy array of shape [n_samples, n_targets]
+        :param y: numpy array of shape [n_samples, n_targets]
             Target values. Will be cast to X's dtype if necessary
-
-        sample_weight : numpy array of shape [n_samples]
+        :param sample_weight: numpy array of shape [n_samples]
             Individual weights for each sample
+        :return: self, returns an instance of self.
 
-        Returns
-        -------
-        self : returns an instance of self.
+        Fitted attributes:
 
-        Attributes
-        ----------
-        coef_ : array, shape (n_features, ) or (n_targets, n_features)
+        * `coef_`: array, shape (n_features, ) or (n_targets, n_features)
             Estimated coefficients for the linear regression problem.
             If multiple targets are passed during the fit (y 2D), this
             is a 2D array of shape (n_targets, n_features), while if only
             one target is passed, this is a 1D array of length n_features.
-
-        intercept_ : array
+        *  `intercept_`: array
             Independent term in the linear model.
-
-        n_iter_: int
+        * `n_iter_`: int
             Number of iterations at training time.
         """
         if len(y.shape) > 1 and y.shape[1] != 1:
@@ -198,21 +180,13 @@ class QuantileLinearRegression(LinearRegression):
         """
         Returns Mean absolute error regression loss.
 
-        Parameters
-        ----------
-        X : array-like, shape = (n_samples, n_features)
+        :param X: array-like, shape = (n_samples, n_features)
             Test samples.
-
-        y : array-like, shape = (n_samples) or (n_samples, n_outputs)
+        :param y: array-like, shape = (n_samples) or (n_samples, n_outputs)
             True values for X.
-
-        sample_weight : array-like, shape = [n_samples], optional
+        :param sample_weight: array-like, shape = [n_samples], optional
             Sample weights.
-
-        Returns
-        -------
-
-        score : float
+        :return: score : float
             mean absolute error regression loss
         """
         pred = self.predict(X)

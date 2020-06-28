@@ -13,31 +13,25 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
     """
     Generates extended features such as polynomial features.
 
-    Parameters
-    ----------
-    kind: string
+    :param kind: string
         ``'poly'`` for polynomial features,
         ``'poly-slow'`` for polynomial features in *scikit-learn 0.20.2*
-
-    poly_degree : integer
+    :param poly_degree: integer
         The degree of the polynomial features. Default = 2.
-
-    poly_interaction_only: boolean
+    :param poly_interaction_only: boolean
         If true, only interaction features are produced: features that
         are products of at most degree distinct input features
         (so not ``x[1] ** 2, x[0] * x[2] ** 3``, etc.).
-
-    poly_include_bias: boolean
+    :param poly_include_bias: boolean
         If True (default), then include a bias column, the feature in
         which all polynomial powers are zero (i.e. a column of ones -
         acts as an intercept term in a linear model).
 
-    Attributes
-    ----------
-    n_input_features_ : int
-        The total number of input features.
+    Fitted attributes:
 
-    n_output_features_ : int
+    * `n_input_features_`: int
+        The total number of input features.
+    * `n_output_features_`: int
         The total number of polynomial output features. The number of output
         features is computed by iterating over all suitably sized combinations
         of input features.
@@ -56,14 +50,10 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         Returns feature names for output features.
 
-        Parameters
-        ----------
-        input_features : list of string, length n_features, optional
+        :param input_features: list of string, length n_features, optional
             String names for input features if available. By default,
             "x0", "x1", ... "xn_features" is used.
-        Returns
-        -------
-        output_feature_names : list of string, length n_output_features
+        :return: output_feature_names : list of string, length n_output_features
         """
         if self.kind == 'poly':
             return self._get_feature_names_poly(input_features)
@@ -122,13 +112,10 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         """
         Compute number of output features.
-        Parameters
-        ----------
-        X : array-like, shape (n_samples, n_features)
+
+        :param X: array-like, shape (n_samples, n_features)
             The data.
-        Returns
-        -------
-        self : instance
+        :return: self : instance
         """
         self.n_input_features_ = X.shape[1]
         self.n_output_features_ = len(self.get_feature_names())
@@ -151,13 +138,10 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         Transforms data to extended features.
 
-        Parameters
-        ----------
-        X : array-like, shape [n_samples, n_features]
+        :param X: array-like, shape [n_samples, n_features]
             The data to transform, row by row.
             rns
-        -------
-        XP : numpy.ndarray, shape [n_samples, NP]
+        :param XP: numpy.ndarray, shape [n_samples, NP]
             The matrix of features, where NP is the number of polynomial
             features generated from the combination of inputs.
         """

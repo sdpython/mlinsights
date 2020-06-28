@@ -31,38 +31,22 @@ from ._kmeans_022 import (
 def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
     """Init n_clusters seeds according to k-means++
 
-    Parameters
-    ----------
-    norm : `l1` or `l2`
+    :param norm: `l1` or `l2`
         manhattan or euclidean distance
-
-    X : array or sparse matrix, shape (n_samples, n_features)
+    :param X: array or sparse matrix, shape (n_samples, n_features)
         The data to pick seeds for. To avoid memory copy, the input data
         should be double precision (dtype=numpy.float64).
-
-    n_clusters : integer
+    :param n_clusters: integer
         The number of seeds to choose
-
-    random_state : int, RandomState instance
+    :param random_state: int, RandomState instance
         The generator used to initialize the centers. Use an int to make the
         randomness deterministic.
         See :term:`Glossary <random_state>`.
-
-    n_local_trials : integer, optional
+    :param n_local_trials: integer, optional
         The number of seeding trials for each center (except the first),
         of which the one reducing inertia the most is greedily chosen.
         Set to None to make the number of trials depend logarithmically
         on the number of seeds (2+log(k)); this is the default.
-
-    Notes
-    -----
-    Selects initial cluster centers for k-mean clustering in a smart way
-    to speed up convergence. see: Arthur, D. and Vassilvitskii, S.
-    "k-means++: the advantages of careful seeding". ACM-SIAM symposium
-    on Discrete algorithms. 2007
-
-    Version ported from http://www.stanford.edu/~darthur/kMeansppTest.zip,
-    which is the implementation used in the aforementioned paper.
     """
     n_samples, n_features = X.shape
 
@@ -131,32 +115,22 @@ def _init_centroids(norm, X, k, init, random_state=None,
                     init_size=None):
     """Compute the initial centroids
 
-    Parameters
-    ----------
-    norm : 'l1' or 'l2'
-
-    X : array, shape (n_samples, n_features)
-
-    k : int
+    :param norm: 'l1' or 'l2'
+    :param X: array, shape (n_samples, n_features)
+    :param k: int
         number of centroids
-
-    init : {'k-means++', 'random' or ndarray or callable} optional
+    :param init: {'k-means++', 'random' or ndarray or callable} optional
         Method for initialization
-
-    random_state : int, RandomState instance or None (default)
+    :param random_state: int, RandomState instance or None (default)
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
         See :term:`Glossary <random_state>`.
-
-    init_size : int, optional
+    :param init_size: int, optional
         Number of samples to randomly sample for speeding up the
         initialization (sometimes at the expense of accuracy): the
         only algorithm is initialized by running a batch KMeans on a
         random subset of the data. This needs to be larger than k.
-
-    Returns
-    -------
-    centers : array, shape(k, n_features)
+    :return: centers, array, shape(k, n_features)
     """
     random_state = check_random_state(random_state)
     n_samples = X.shape[0]
@@ -205,28 +179,18 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances,
     M step of the K-means EM algorithm.
     Computation of cluster centers / means.
 
-    Parameters
-    ----------
-    X : array-like, shape (n_samples, n_features)
-
-    sample_weight : array-like, shape (n_samples,)
+    :param X: array-like, shape (n_samples, n_features)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-
-    labels : array of integers, shape (n_samples)
+    :param labels: array of integers, shape (n_samples)
         Current label assignment
-
-    n_clusters : int
+    :param n_clusters: int
         Number of desired clusters
-
-    distances : array-like, shape (n_samples)
+    :param distances: array-like, shape (n_samples)
         Distance to closest cluster for each sample.
-
-    X_sort_index : array-like, shape (n_samples, n_features)
+    :param X_sort_index: array-like, shape (n_samples, n_features)
         index of each feature in all features
-
-    Returns
-    -------
-    centers : array, shape (n_clusters, n_features)
+    :return: centers, array, shape (n_clusters, n_features)
         The resulting centers
     """
     dtype = X.dtype
@@ -272,24 +236,17 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
     """
     A single run of k-means, assumes preparation completed prior.
 
-    Parameters
-    ----------
-    norm : 'l1' or 'l2'
-
-    X : array-like of floats, shape (n_samples, n_features)
+    :param norm: 'l1' or 'l2'
+    :param X: array-like of floats, shape (n_samples, n_features)
         The observations to cluster.
-
-    n_clusters : int
+    :param n_clusters: int
         The number of clusters to form as well as the number of
         centroids to generate.
-
-    sample_weight : array-like, shape (n_samples,)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-
-    max_iter : int, optional, default 300
+    :param max_iter: int, optional, default 300
         Maximum number of iterations of the k-means algorithm to run.
-
-    init : {'k-means++', 'random', or ndarray, or a callable}, optional
+    :param init: {'k-means++', 'random', or ndarray, or a callable}, optional
         Method for initialization, default to 'k-means++':
 
         'k-means++' : selects initial cluster centers for k-mean
@@ -305,34 +262,25 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
         If a callable is passed, it should take arguments X, k and
         and a random state and return an initialization.
 
-    tol : float, optional
+    :param tol: float, optional
         The relative increment in the results before declaring convergence.
-
-    verbose : boolean, optional
+    :param verbose: boolean, optional
         Verbosity mode
-
-    precompute_distances : boolean, default: True
+    :param precompute_distances: boolean, default: True
         Precompute distances (faster but takes more memory).
-
-    random_state : int, RandomState instance or None (default)
+    :param random_state: int, RandomState instance or None (default)
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
         See :term:`Glossary <random_state>`.
-
-    Returns
-    -------
-    centroid : float ndarray with shape (k, n_features)
+    :return: centroid : float ndarray with shape (k, n_features)
         Centroids found at the last iteration of k-means.
-
-    label : integer ndarray with shape (n_samples,)
+    :return: label : integer ndarray with shape (n_samples,)
         label[i] is the code or index of the centroid the
         i'th observation is closest to.
-
-    inertia : float
+    :return: inertia : float
         The final value of the inertia criterion (sum of squared distances to
         the closest centroid for all observations in the training set).
-
-    n_iter : int
+    :return: n_iter : int
         Number of iterations run.
     """
     random_state = check_random_state(random_state)
@@ -400,30 +348,19 @@ def _labels_inertia(norm, X, sample_weight, centers,
     Computes the labels and the inertia of the given samples and centers.
     This will compute the distances in-place.
 
-    Parameters
-    ----------
-    norm : 'l1' or 'l2'
-
-    X : float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
+    :param norm: 'l1' or 'l2'
+    :param X: float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
         The input samples to assign to the labels.
-
-    sample_weight : array-like, shape (n_samples,)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-
-    centers : float array, shape (k, n_features)
+    :param centers: float array, shape (k, n_features)
         The cluster centers.
-
-    precompute_distances : boolean, default: True
+    :param precompute_distances: boolean, default: True
         Precompute distances (faster but takes more memory).
-
-    distances: existing distances
-
-    Returns
-    -------
-    labels : int array of shape(n)
+    :param distances: existing distances
+    :return: labels : int array of shape(n)
         The resulting assignment
-
-    inertia : float
+    :return: inertia : float
         Sum of squared distances of samples to their closest cluster center.
     """
     if norm == 'l2':
@@ -465,14 +402,10 @@ class KMeansL1L2(KMeans):
     K-Means clustering with either norm L1 or L2.
     See notebook :ref:`kmeansl1rst` for an example.
 
-    Parameters
-    ----------
-
-    n_clusters : int, default=8
+    :param n_clusters: int, default=8
         The number of clusters to form as well as the number of
         centroids to generate.
-
-    init : {'k-means++', 'random'} or ndarray of shape \
+    :param init: {'k-means++', 'random'} or ndarray of shape \
             (n_clusters, n_features), default='k-means++'
         Method for initialization, defaults to 'k-means++':
 
@@ -486,19 +419,16 @@ class KMeansL1L2(KMeans):
         If an ndarray is passed, it should be of shape (n_clusters, n_features)
         and gives the initial centers.
 
-    n_init : int, default=10
+    :param n_init: int, default=10
         Number of time the k-means algorithm will be run with different
         centroid seeds. The final results will be the best output of
         n_init consecutive runs in terms of inertia.
-
-    max_iter : int, default=300
+    :param max_iter: int, default=300
         Maximum number of iterations of the k-means algorithm for a
         single run.
-
-    tol : float, default=1e-4
+    :param tol: float, default=1e-4
         Relative tolerance with regards to inertia to declare convergence.
-
-    precompute_distances : 'auto' or bool, default='auto'
+    :param precompute_distances: 'auto' or bool, default='auto'
         Precompute distances (faster but takes more memory).
 
         'auto' : do not precompute distances if n_samples * n_clusters > 12
@@ -509,15 +439,13 @@ class KMeansL1L2(KMeans):
 
         False : never precompute distances.
 
-    verbose : int, default=0
+    :param verbose: int, default=0
         Verbosity mode.
-
-    random_state : int, RandomState instance, default=None
+    :param random_state: int, RandomState instance, default=None
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
         See :term:`Glossary <random_state>`.
-
-    copy_x : bool, default=True
+    :param copy_x: bool, default=True
         When pre-computing distances it is more numerically accurate to center
         the data first.  If copy_x is True (default), then the original data is
         not modified, ensuring X is C-contiguous.  If False, the original data
@@ -525,39 +453,33 @@ class KMeansL1L2(KMeans):
         numerical differences may be introduced by subtracting and then adding
         the data mean, in this case it will also not ensure that data is
         C-contiguous which may cause a significant slowdown.
-
-    n_jobs : int, default=None
+    :param n_jobs: int, default=None
         The number of jobs to use for the computation. This works by computing
         each of the n_init runs in parallel.
 
         ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
         ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
         for more details.
-
-    algorithm : {"auto", "full", "elkan"}, default="auto"
+    :param algorithm: {"auto", "full", "elkan"}, default="auto"
         K-means algorithm to use. The classical EM-style algorithm is "full".
         The "elkan" variation is more efficient by using the triangle
         inequality, but currently doesn't support sparse data. "auto" chooses
         "elkan" for dense data and "full" for sparse data.
-
-    norm : {"L1", "L2"}
+    :param norm: {"L1", "L2"}
         The norm *L2* is identical to :epkg:`KMeans`.
         Norm *L1* uses a complete different path.
 
-    Attributes
-    ----------
-    cluster_centers_ : ndarray of shape (n_clusters, n_features)
+    Fitted attributes:
+
+    * `cluster_centers_`: ndarray of shape (n_clusters, n_features)
         Coordinates of cluster centers. If the algorithm stops before fully
         converging (see ``tol`` and ``max_iter``), these will not be
         consistent with ``labels_``.
-
-    labels_ : ndarray of shape (n_samples,)
+    * `labels_`: ndarray of shape (n_samples,)
         Labels of each point
-
-    inertia_ : float
+    * `inertia_`: float
         Sum of squared distances of samples to their closest cluster center.
-
-    n_iter_ : int
+    * `n_iter_`: int
         Number of iterations run.
     """
 
@@ -580,23 +502,16 @@ class KMeansL1L2(KMeans):
         """
         Computes k-means clustering.
 
-        Parameters
-        ----------
-        X : array-like or sparse matrix, shape=(n_samples, n_features)
+        :param X: array-like or sparse matrix, shape=(n_samples, n_features)
             Training instances to cluster. It must be noted that the data
             will be converted to C ordering, which will cause a memory
             copy if the given data is not C-contiguous.
-
-        y : Ignored
+        :param y: Ignored
             Not used, present here for API consistency by convention.
-
-        sample_weight : array-like, shape (n_samples,), optional
+        :param sample_weight: array-like, shape (n_samples,), optional
             The weights for each observation in X. If None, all observations
             are assigned equal weight (default: None).
-
-        Returns
-        -------
-        self
+        :return: self
             Fitted estimator.
         """
         if self.norm == 'l2':
@@ -612,23 +527,16 @@ class KMeansL1L2(KMeans):
         """
         Computes k-means clustering with norm `'l1'`.
 
-        Parameters
-        ----------
-        X : array-like or sparse matrix, shape=(n_samples, n_features)
+        :param X: array-like or sparse matrix, shape=(n_samples, n_features)
             Training instances to cluster. It must be noted that the data
             will be converted to C ordering, which will cause a memory
             copy if the given data is not C-contiguous.
-
-        y : Ignored
+        :param y: Ignored
             Not used, present here for API consistency by convention.
-
-        sample_weight : array-like, shape (n_samples,), optional
+        :param sample_weight: array-like, shape (n_samples,), optional
             The weights for each observation in X. If None, all observations
             are assigned equal weight (default: None).
-
-        Returns
-        -------
-        self
+        :return: self
             Fitted estimator.
         """
         random_state = check_random_state(self.random_state)
@@ -761,14 +669,9 @@ class KMeansL1L2(KMeans):
         centers.  Note that even if X is sparse, the array returned by
         `transform` will typically be dense.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+        :param X: {array-like, sparse matrix} of shape (n_samples, n_features)
             New data to transform.
-
-        Returns
-        -------
-        X_new : array, shape [n_samples, k]
+        :return: X_new : array, shape [n_samples, k]
             X transformed in the new space.
         """
         if self.norm == 'l2':
@@ -795,18 +698,12 @@ class KMeansL1L2(KMeans):
         the code book and each value returned by `predict` is the index of
         the closest code in the code book.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+        :param X: {array-like, sparse matrix} of shape (n_samples, n_features)
             New data to predict.
-
-        sample_weight : array-like, shape (n_samples,), optional
+        :param sample_weight: array-like, shape (n_samples,), optional
             The weights for each observation in X. If None, all observations
             are assigned equal weight (default: None), unused here
-
-        Returns
-        -------
-        labels : array, shape [n_samples,]
+        :return: labels : array, shape [n_samples,]
             Index of the cluster each sample belongs to.
         """
         if self.norm == 'l2':

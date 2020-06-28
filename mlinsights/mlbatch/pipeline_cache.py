@@ -23,21 +23,18 @@ class PipelineCache(Pipeline):
     the model was already trained accross
     even in a different pipeline.
 
-    Parameters
-    ----------
-
-    steps : list
+    :param steps: list
         List of (name, transform) tuples (implementing fit/transform) that are
         chained, in the order in which they are chained, with the last object
         an estimator.
-    cache_name : name of the cache, if None, a new name is created
-    verbose : boolean, optional
+    :param cache_name: name of the cache, if None, a new name is created
+    :param verbose: boolean, optional
         If True, the time elapsed while fitting each step will be printed as it
         is completed.
 
-    Attributes
-    ----------
-    named_steps : bunch object, a dictionary with attribute access
+    Other attributes:
+
+    :param named_steps: bunch object, a dictionary with attribute access
         Read-only attribute to access any step parameter by user given name.
         Keys are step names and values are steps parameters.
     """

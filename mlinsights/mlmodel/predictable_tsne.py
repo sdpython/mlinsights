@@ -66,38 +66,24 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         Trains a :epkg:`TSNE` then trains an estimator
         to approximate its outputs.
 
-        Parameters
-        ----------
-        X : numpy array or sparse matrix of shape [n_samples,n_features]
+        :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data
-
-        y : numpy array of shape [n_samples, n_targets]
+        :param y: numpy array of shape [n_samples, n_targets]
             Target values. Will be cast to X's dtype if necessary
-
-        sample_weight : numpy array of shape [n_samples]
+        :param sample_weight: numpy array of shape [n_samples]
             Individual weights for each sample
+        :return: self, returns an instance of self.
 
-        Returns
-        -------
-        self : returns an instance of self.
+        Fitted attributes:
 
-        Attributes
-        ----------
-
-        normalizer_: trained normalier
-
-        transformer_: trained transformeer
-
-        estimator_: trained regressor
-
-        tsne_outputs_: t-SNE outputs if *keep_tsne_outputs* is True
-
-        mean_: average of the *t-SNE* output on each dimension
-
-        inv_std_: inverse of the standard deviation of the *t-SNE*
+        * `normalizer_`: trained normalier
+        * `transformer_`: trained transformeer
+        * `estimator_`: trained regressor
+        * `tsne_outputs_`: t-SNE outputs if *keep_tsne_outputs* is True
+        * `mean_`: average of the *t-SNE* output on each dimension
+        * `inv_std_`: inverse of the standard deviation of the *t-SNE*
             output on each dimension
-
-        loss_: loss (:epkg:`sklearn:metrics:mean_squared_error`) between the predictions
+        * `loss_`: loss (:epkg:`sklearn:metrics:mean_squared_error`) between the predictions
             and the outputs of t-SNE
         """
         params = dict(y=y, sample_weight=sample_weight)
@@ -143,14 +129,9 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         """
         Runs the predictions.
 
-        Parameters
-        ----------
-        X : numpy array or sparse matrix of shape [n_samples,n_features]
+        :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data
-
-        Returns
-        -------
-        tranformed *X*
+        :return: tranformed *X*
         """
         if self.normalizer_ is not None:
             X = self.normalizer_.transform(X)

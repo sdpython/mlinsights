@@ -17,29 +17,20 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
 
     This will overwrite the 'distances' array in-place.
 
-    Parameters
-    ----------
-    norm : 'l1' or 'l2'
-
-    X : numpy array, shape (n_sample, n_features)
+    :param norm: 'l1' or 'l2'
+    :param X:  numpy array, shape (n_sample, n_features)
         Input data.
-
-    sample_weight : array-like, shape (n_samples,)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-
-    centers : numpy array, shape (n_clusters, n_features)
+    :param centers: numpy array, shape (n_clusters, n_features)
         Cluster centers which data is assigned to.
-
-    distances : numpy array, shape (n_samples,)
+    :param distances: numpy array, shape (n_samples,)
         Pre-allocated array in which distances are stored.
-
-    Returns
-    -------
-    labels : numpy array, dtype=numpy.int, shape (n_samples,)
+    :return: labels : numpy array, dtype=numpy.int, shape (n_samples,)
         Indices of clusters that samples are assigned to.
-
-    inertia : float
-        Sum of squared distances of samples to their closest cluster center.
+    :return: inertia : float
+        Sum of squared distances of samples to their closest
+        cluster center.
     """
     n_samples = X.shape[0]
     if norm == 'l2':
@@ -157,27 +148,24 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
     """E step of the K-means EM algorithm.
     Compute the labels and the inertia of the given samples and centers.
     This will compute the distances in-place.
-    Parameters
-    ----------
-    X : float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
+
+    :param X: float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
         The input samples to assign to the labels.
-    sample_weight : array-like, shape (n_samples,)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-    x_squared_norms : array, shape (n_samples,)
+    :param x_squared_norms: array, shape (n_samples,)
         Precomputed squared euclidean norm of each data point, to speed up
         computations.
-    centers : float array, shape (k, n_features)
+    :param centers: float array, shape (k, n_features)
         The cluster centers.
-    precompute_distances : boolean, default: True
+    :param precompute_distances: boolean, default: True
         Precompute distances (faster but takes more memory).
-    distances : float array, shape (n_samples,)
+    :param distances: float array, shape (n_samples,)
         Pre-allocated array to be filled in with each sample's distance
         to the closest center.
-    Returns
-    -------
-    labels : int array of shape(n)
+    :return: labels, int array of shape(n)
         The resulting assignment
-    inertia : float
+    :return: inertia, float
         Sum of squared distances of samples to their closest cluster center.
     """
     n_samples = X.shape[0]
@@ -207,20 +195,17 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances):
     """
     M step of the K-means EM algorithm
     Computation of cluster centers / means.
-    Parameters
-    ----------
-    X : array-like, shape (n_samples, n_features)
-    sample_weight : array-like, shape (n_samples,)
+
+    :param X: array-like, shape (n_samples, n_features)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-    labels : array of integers, shape (n_samples)
+    :param labels: array of integers, shape (n_samples)
         Current label assignment
-    n_clusters : int
+    :param n_clusters: int
         Number of desired clusters
-    distances : array-like, shape (n_samples)
+    :param distances: array-like, shape (n_samples)
         Distance to closest cluster for each sample.
-    Returns
-    -------
-    centers : array, shape (n_clusters, n_features)
+    :return: centers : array, shape (n_clusters, n_features)
         The resulting centers
     """
     n_samples = X.shape[0]
@@ -259,20 +244,17 @@ def _centers_sparse(X, sample_weight, labels, n_clusters, distances):
     """
     M step of the K-means EM algorithm
     Computation of cluster centers / means.
-    Parameters
-    ----------
-    X : scipy.sparse.csr_matrix, shape (n_samples, n_features)
-    sample_weight : array-like, shape (n_samples,)
+
+    :param X: scipy.sparse.csr_matrix, shape (n_samples, n_features)
+    :param sample_weight: array-like, shape (n_samples,)
         The weights for each observation in X.
-    labels : array of integers, shape (n_samples)
+    :param labels: array of integers, shape (n_samples)
         Current label assignment
-    n_clusters : int
+    :param n_clusters: int
         Number of desired clusters
-    distances : array-like, shape (n_samples)
+    :param distances: array-like, shape (n_samples)
         Distance to closest cluster for each sample.
-    Returns
-    -------
-    centers : array, shape (n_clusters, n_features)
+    :return: centers, array, shape (n_clusters, n_features)
         The resulting centers
     """
     n_samples = X.shape[0]

@@ -92,21 +92,19 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         Returns -1 in case of failure to allocate memory
         (and raise *MemoryError*) or 0 otherwise.
 
-        Parameters
-        ----------
-        X : array-like, features, dtype=DOUBLE_t
-        y : array-like, dtype=DOUBLE_t
+        :param X: array-like, features, dtype=DOUBLE_t
+        :param y: array-like, dtype=DOUBLE_t
             y is a buffer that can store values for n_outputs target variables
-        sample_weight : array-like, dtype=DOUBLE_t
+        :param sample_weight: array-like, dtype=DOUBLE_t
             The weight of each sample
-        weighted_n_samples : DOUBLE_t
+        :param weighted_n_samples: DOUBLE_t
             The total weight of the samples being considered
-        samples : array-like, dtype=DOUBLE_t
+        :param samples: array-like, dtype=DOUBLE_t
             Indices of the samples in X and y, where samples[start:end]
             correspond to the samples in this node
-        start : SIZE_t
+        :param start: SIZE_t
             The first sample to be used on this node
-        end : SIZE_t
+        :param end: SIZE_t
             The last sample used on this node
         """
         cdef int ki, ks

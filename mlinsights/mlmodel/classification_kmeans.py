@@ -50,29 +50,18 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         then trains a classifier on the
         extended set of features.
 
-        Parameters
-        ----------
-        X : numpy array or sparse matrix of shape [n_samples,n_features]
+        :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data
-
-        y : numpy array of shape [n_samples, n_targets]
+        :param y: numpy array of shape [n_samples, n_targets]
             Target values. Will be cast to X's dtype if necessary
-
-        sample_weight : numpy array of shape [n_samples]
+        :param sample_weight: numpy array of shape [n_samples]
             Individual weights for each sample
+        :return: self : returns an instance of self.
 
-        Returns
-        -------
-        self : returns an instance of self.
-
-        Attributes
-        ----------
-
-        labels_: dictionary of clustering models
-
-        clus_: array of clustering models
-
-        estimator_: trained classifier
+        Fitting attributes:
+        * `labels_`: dictionary of clustering models
+        * `clus_`: array of clustering models
+        * `estimator_`: trained classifier
         """
         classes = set(y)
         self.labels_ = list(sorted(classes))

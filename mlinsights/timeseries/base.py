@@ -90,18 +90,11 @@ class BaseTimeSeries(BaseEstimator):
         Applies the preprocessing.
         *X*, *y*, *sample_weight*.
 
-        Parameters
-        ----------
-
-        X: output of
+        :param X: output of
             X may be empty (None)
-        y: timeseries (one single vector), array [n_obs]
-        sample_weight: weights None or array [n_obs]
-
-        Returns
-        -------
-
-        *X*, *y*, *sample_weight*
+        :param y: timeseries (one single vector), array [n_obs]
+        :param sample_weight: weights None or array [n_obs]
+        :return: *X*, *y*, *sample_weight*
         """
         check_ts_X_y(self, X, y)
 
@@ -118,18 +111,11 @@ class BaseTimeSeries(BaseEstimator):
         Trains the preprocessing and returns the modified
         *X*, *y*, *sample_weight*.
 
-        Parameters
-        ----------
-
-        X: output of
+        :param X: output of
             X may be empty (None)
-        y: timeseries (one single vector), array [n_obs]
-        sample_weight: weights None or array [n_obs]
-
-        Returns
-        -------
-
-        *X*, *y*, *sample_weight*
+        :param y: timeseries (one single vector), array [n_obs]
+        :param sample_weight: weights None or array [n_obs]
+        :return: *X*, *y*, *sample_weight*
 
         The *y* series is moved by *self.delay1* in the past.
         """

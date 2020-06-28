@@ -49,18 +49,11 @@ class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
         """
         Trains the model.
 
-        Parameters
-        ----------
-
-        X: output of
+        :param X: output of
             X may be empty (None)
-        y: timeseries (one single vector), array [n_obs]
-        sample_weight: weights None or array [n_obs]
-
-        Returns
-        -------
-
-        self
+        :param y: timeseries (one single vector), array [n_obs]
+        :param sample_weight: weights None or array [n_obs]
+        :return: self
         """
         X, y, sample_weight = self._base_fit_predict(X, y, sample_weight)
         self.estimator_ = (self.estimator.fit(X, y)

@@ -60,32 +60,21 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         Trains the binner and an estimator on every
         bucket.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :param y: target
+        :param sample_weight: sample weights
+        :return: self: returns an instance of self.
 
-        y: target
+        Fitted attributes:
 
-        sample_weight: sample weights
-
-        Returns
-        -------
-        self: returns an instance of self.
-
-        Attributes
-        ----------
-
-        binner_ : binner
-
-        estimators_ : dictionary of estimators, each of them
+        * `binner_`: binner
+        * `estimators_`: dictionary of estimators, each of them
             mapped to a leave to the tree
-
-        mean_estimator_ : estimator trained on the whole
+        * `mean_estimator_`: estimator trained on the whole
             datasets in case the binner can find a bucket for
             a new observation
-
-        dim_: dimension of the output
-        mean_: average targets
+        * `dim_`: dimension of the output
+        * `mean_`: average targets
         """
         self.estimators_ = []
         estimators = [clone(self.estimator) for i in range(self.n_estimators)]
@@ -115,14 +104,8 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         """
         Computes the predictions for all estimators.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions
         """
         container = numpy.empty((X.shape[0], len(self.estimators_)))
         for i, est in enumerate(self.estimators_):
@@ -134,14 +117,8 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         """
         Computes the average predictions.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions
         """
         preds = self.predict_all(X)
         return preds.mean(axis=1)
@@ -151,14 +128,8 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         Computes the predictions for all estimators.
         Sorts them for all observations.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions sorted for each observation
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions sorted for each observation
         """
         preds = self.predict_all(X)
         for i in range(preds.shape[0]):

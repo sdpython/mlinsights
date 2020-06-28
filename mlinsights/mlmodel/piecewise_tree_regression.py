@@ -146,18 +146,14 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         fitted with the observations mapped to each leave
         of the tree.
 
-        Parameters
-        ----------
-        X : array-like or sparse matrix of shape = [n_samples, n_features]
+        :param X: array-like or sparse matrix of shape = [n_samples, n_features]
             The input samples. Internally, it will be converted to
             ``dtype=np.float32`` and if a sparse matrix is provided
             to a sparse ``csr_matrix``.
-        check_input : boolean, (default=True)
+        :param check_input: boolean, (default=True)
             Allow to bypass several input checking.
             Don't use this parameter unless you know what you do.
-        Returns
-        -------
-        y : array of shape = [n_samples] or [n_samples, n_outputs]
+        :return: y, array of shape = [n_samples] or [n_samples, n_outputs]
             The predicted classes, or the predict values.
         """
         leaves = self.predict_leaves(X)

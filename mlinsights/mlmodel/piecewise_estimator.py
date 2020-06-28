@@ -205,32 +205,21 @@ class PiecewiseEstimator(BaseEstimator):
         Trains the binner and an estimator on every
         bucket.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :param y: target
+        :param sample_weight: sample weights
+        :return: self: returns an instance of self.
 
-        y: target
+        Fitted attributes:
 
-        sample_weight: sample weights
-
-        Returns
-        -------
-        self: returns an instance of self.
-
-        Attributes
-        ----------
-
-        binner_ : binner
-
-        estimators_ : dictionary of estimators, each of them
+        * `binner_`: binner
+        * `estimators_`: dictionary of estimators, each of them
             mapped to a leave to the tree
-
-        mean_estimator_ : estimator trained on the whole
+        * `mean_estimator_`: estimator trained on the whole
             datasets in case the binner can find a bucket for
             a new observation
-
-        dim_: dimension of the output
-        mean_: average targets
+        * `dim_`: dimension of the output
+        * `mean_`: average targets
         """
         if isinstance(X, pandas.DataFrame):
             X = X.values
@@ -353,14 +342,8 @@ class PiecewiseRegressor(PiecewiseEstimator, RegressorMixin):
         """
         Computes the predictions.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions
         """
         return self._apply_predict_method(X, "predict", _predict_piecewise_estimator, self.dim_)
 
@@ -414,14 +397,8 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         """
         Computes the predictions.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions
         """
         pred = self._apply_predict_method(
             X, "predict", _predict_piecewise_estimator, 1)
@@ -431,14 +408,8 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         """
         Computes the predictions probabilities.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions probabilities
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions probabilities
         """
         return self._apply_predict_method(X, "predict_proba", _predict_proba_piecewise_estimator,
                                           len(self.mean_estimator_.classes_))
@@ -447,14 +418,8 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         """
         Computes the predictions probabilities.
 
-        Parameters
-        ----------
-        X: features, *X* is converted into an array if *X* is a dataframe
-
-        Returns
-        -------
-
-        predictions probabilities
+        :param X: features, *X* is converted into an array if *X* is a dataframe
+        :return: predictions probabilities
         """
         justone = self.mean_estimator_.decision_function(X[:1])
         return self._apply_predict_method(X, "decision_function", _decision_function_piecewise_estimator,

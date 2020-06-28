@@ -60,9 +60,7 @@ cdef class CommonRegressorCriterion(Criterion):
         from the right child to the left child. It must be implemented by
         the subclass.
 
-        Parameters
-        ----------
-        new_pos : SIZE_t
+        :param new_pos: SIZE_t
             New starting index position of the samples in the right child
         """
         self.pos = new_pos
@@ -90,18 +88,16 @@ cdef class CommonRegressorCriterion(Criterion):
         children nodes, i.e. the impurity of ``samples[start:pos]``
         the impurity of ``samples[pos:end]``.
 
-        Parameters
-        ----------
-        impurity_left : double pointer
+        :param impurity_left: double pointer
             The memory address where the impurity of the left child should be
             stored.
-        impurity_right : double pointer
+        :param impurity_right: double pointer
             The memory address where the impurity of the right child should be
             stored.
-        weight_left : double pointer
+        :param weight_left: double pointer
             The memory address where the weight of the left child should be
             stored.
-        weight_right : double pointer
+        :param weight_right: double pointer
             The memory address where the weight of the right child should be
             stored.
         """
@@ -130,12 +126,10 @@ cdef class CommonRegressorCriterion(Criterion):
         """
         Calculates the impurity of children.
         
-        Parameters
-        ----------
-        impurity_left : double pointer
+        :param impurity_left: double pointer
             The memory address where the impurity of the left child should be
             stored.
-        impurity_right : double pointer
+        :param impurity_right: double pointer
             The memory address where the impurity of the right child should be
             stored.
         """
@@ -147,9 +141,7 @@ cdef class CommonRegressorCriterion(Criterion):
         Computes the node value, usually, the prediction
         the tree would do. Stores the value into *dest*.
 
-        Parameters
-        ----------
-        dest : double pointer
+        :param dest: double pointer
             The memory address where the node value should be stored.
         """
         cdef DOUBLE_t weight
@@ -188,13 +180,9 @@ cdef class CommonRegressorCriterion(Criterion):
         at the current node, *N_t_L* is the number of samples in the left child,
         and *N_t_R* is the number of samples in the right child,
 
-        Parameters
-        ----------
-        impurity : double
+        :param impurity: double
             The initial impurity of the node before the split
-        Return
-        ------
-        double : improvement in impurity after the split occurs
+        :return: double, improvement in impurity after the split occurs
         """
         cdef double impurity_left
         cdef double impurity_right

@@ -262,45 +262,36 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
     It only handles a binary classification.
     The built tree cannot be deeper than the maximum recursion.
 
-    Parameters
-    ----------
-    estimator: binary classification estimator,
+    :param estimator: binary classification estimator,
         if empty, use a logistic regression, the theoritical
         model defined with a logistic regression but it could
         any binary classifier
-
-    max_depth : int, default=None
+    :param max_depth: int, default=None
         The maximum depth of the tree. If None, then nodes are expanded until
         all leaves are pure or until all leaves contain less than
         min_samples_split samples. It must be below the maximum
         allowed recursion by python.
-
-    min_samples_split : int or float, default=2
+    :param min_samples_split: int or float, default=2
         The minimum number of samples required to split an internal node:
-
         - If int, then consider `min_samples_split` as the minimum number.
         - If float, then `min_samples_split` is a fraction and
           `ceil(min_samples_split * n_samples)` are the minimum
           number of samples for each split.
-
-    min_samples_leaf : int or float, default=1
+    :param min_samples_leaf: int or float, default=1
         The minimum number of samples required to be at a leaf node.
         A split point at any depth will only be considered if it leaves at
         least ``min_samples_leaf`` training samples in each of the left and
         right branches.  This may have the effect of smoothing the model,
         especially in regression.
-
         - If int, then consider `min_samples_leaf` as the minimum number.
         - If float, then `min_samples_leaf` is a fraction and
           `ceil(min_samples_leaf * n_samples)` are the minimum
           number of samples for each node.
-
-    min_weight_fraction_leaf : float, default=0.0
+    :param min_weight_fraction_leaf: float, default=0.0
         The minimum weighted fraction of the sum total of weights (of all
         the input samples) required to be at a leaf node. Samples have
         equal weight when sample_weight is not provided.
-
-    fit_improve_algo: string, one of the following value:
+    :param fit_improve_algo: string, one of the following value:
         - `'auto'`: chooses the best option below, '`none'` for
           every non linear model, `'intercept_sort'` for linear models
         - '`none'`: does not nothing once the binary classifier is fit
@@ -309,14 +300,12 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
           the constraints
         - `'intercept_sort_always'`: always chooses the best intercept
           possible
-
-    p1p2: threshold in [0, 1]
+    :param p1p2: threshold in [0, 1]
         for every split, we can define probabilities :math:`p_1 p_2`
         which define the ratio of samples in both splits,
         if :math:`p_1 p_2` is below the threshold,
         method *fit_improve* is called
-
-    gamma: weight before the coefficient :math:`p (1-p)`.
+    :param gamma: weight before the coefficient :math:`p (1-p)`.
         When the model tries to improve the linear classifier,
         it looks a better intercept which maximizes the
         likelihood and verifies the constraints.
@@ -325,16 +314,14 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         the function maximimes :math:`likelihood + \\gamma p (1 - p)`
         where *p* is the proportion of samples falling in the first
         fold.
+    :param verbose: prints out information about the training
 
-    verbose: prints out information about the training
+    Fitted attributes:
 
-    Attributes
-    ----------
-    classes_ : ndarray of shape (n_classes,) or list of ndarray
+    *  `classes_`: ndarray of shape (n_classes,) or list of ndarray
         The classes labels (single output problem),
         or a list of arrays of class labels (multi-output problem).
-
-    tree_ : Tree
+    * `tree_`: Tree
         The underlying Tree object.
     """
 
@@ -377,29 +364,19 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         Builds the tree model.
 
-        Parameters
-        ----------
-        X : numpy array or sparse matrix of shape [n_samples,n_features]
+        :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data
-
-        y : numpy array of shape [n_samples, n_targets]
+        :param y: numpy array of shape [n_samples, n_targets]
             Target values. Will be cast to X's dtype if necessary
-
-        sample_weight : numpy array of shape [n_samples]
+        :param sample_weight: numpy array of shape [n_samples]
             Individual weights for each sample
+        :return: self : returns an instance of self.
 
-        Returns
-        -------
-        self : returns an instance of self.
+        Fitted attributes:
 
-        Attributes
-        ----------
-
-        classes_: classes
-
-        tree_: tree structure, see @see cl _DecisionTreeLogisticRegressionNode
-
-        n_nodes_: number of nodes
+        * `classes_`: classes
+        * `tree_`: tree structure, see @see cl _DecisionTreeLogisticRegressionNode
+        * `n_nodes_`: number of nodes
         """
         if not isinstance(X, numpy.ndarray):
             if hasattr(X, 'values'):

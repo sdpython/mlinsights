@@ -73,20 +73,15 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         """
         Fits the model according to the given training data.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape (n_samples, n_features)
             Training vector, where n_samples is the number of samples and
             n_features is the number of features.
-        y : array-like, shape (n_samples,)
+        :param y: array-like, shape (n_samples,)
             Target values.
-        sample_weight : array-like, shape (n_samples,) optional
+        :param sample_weight: array-like, shape (n_samples,) optional
             Array of weights that are assigned to individual samples.
             If not provided, then each sample is given unit weight.
-
-        Returns
-        -------
-        self : object
+        :return: self, object
         """
         self.transformer_ = _common_get_transform(self.transformer, True)
         self.transformer_.fit(X, y, sample_weight=sample_weight)
@@ -108,14 +103,9 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         """
         Predicts using the base regressor, applying inverse.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape = (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape = (n_samples, n_features)
             Samples.
-
-        Returns
-        -------
-        y_hat : array, shape = (n_samples,)
+        :return: y_hat : array, shape = (n_samples,)
             Predicted values.
         """
         if not hasattr(self, 'regressor_'):
@@ -192,20 +182,15 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         Fits the model according to the given training data.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape (n_samples, n_features)
             Training vector, where n_samples is the number of samples and
             n_features is the number of features.
-        y : array-like, shape (n_samples,)
+        :param y: array-like, shape (n_samples,)
             Target values.
-        sample_weight : array-like, shape (n_samples,) optional
+        :param sample_weight: array-like, shape (n_samples,) optional
             Array of weights that are assigned to individual samples.
             If not provided, then each sample is given unit weight.
-
-        Returns
-        -------
-        self : object
+        :return: self, object
         """
         self.transformer_ = _common_get_transform(self.transformer, False)
         self.transformer_.fit(X, y, sample_weight=sample_weight)
@@ -245,14 +230,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         Calls *predict*, *predict_proba* or *decision_function*
         using the base classifier, applying inverse.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape = (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape = (n_samples, n_features)
             Samples.
-
-        Returns
-        -------
-        y_hat : array, shape = (n_samples,)
+        :return: y_hat, array, shape = (n_samples,)
             Predicted values.
         """
         self._check_is_fitted()
@@ -270,14 +250,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         Predicts using the base classifier, applying inverse.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape = (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape = (n_samples, n_features)
             Samples.
-
-        Returns
-        -------
-        y_hat : array, shape = (n_samples,)
+        :return: y_hat, array, shape = (n_samples,)
             Predicted values.
         """
         return self._apply(X, 'predict')
@@ -286,14 +261,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         Predicts using the base classifier, applying inverse.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape = (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape = (n_samples, n_features)
             Samples.
-
-        Returns
-        -------
-        predict probabilities : array, shape = (n_samples, n_classes)
+        :return: predict probabilities, array, shape = (n_samples, n_classes)
             Predicted values.
         """
         return self._apply(X, 'predict_proba')
@@ -302,14 +272,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         Predicts using the base classifier, applying inverse.
 
-        Parameters
-        ----------
-        X : {array-like, sparse matrix}, shape = (n_samples, n_features)
+        :param X: {array-like, sparse matrix}, shape = (n_samples, n_features)
             Samples.
-
-        Returns
-        -------
-        raw score : array, shape = (n_samples, ?)
+        :return: raw score : array, shape = (n_samples, ?)
         """
         return self._apply(X, 'decision_function')
 

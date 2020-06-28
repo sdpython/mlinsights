@@ -58,22 +58,14 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
         """
         The function does nothing.
 
-        Parameters
-        ----------
-        X: unused
+        :param X: unused
+        :param y: unused
+        :param sample_weight: unused
+        :return: self: returns an instance of self.
 
-        y: unused
+        Fitted attributes:
 
-        sample_weight: unused
-
-        Returns
-        -------
-        self: returns an instance of self.
-
-        Attributes
-        ----------
-
-        estimator_: already trained estimator
+        * `estimator_`: already trained estimator
         """
         if self.copy_estimator:
             self.estimator_ = clone_with_fitted_parameters(self.estimator)
@@ -98,14 +90,9 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
         """
         Runs the predictions.
 
-        Parameters
-        ----------
-        X : numpy array or sparse matrix of shape [n_samples,n_features]
+        :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data
-
-        Returns
-        -------
-        tranformed *X*
+        :return: tranformed *X*
         """
         meth = getattr(self.estimator_, self.method)
         return meth(X)

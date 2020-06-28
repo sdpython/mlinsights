@@ -65,17 +65,11 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         Makes the list of all categories in input *X*.
         *X* must be a dataframe.
 
-        Parameters
-        ----------
-        X : iterable
+        :param X: iterable
             Training data
-
-        y : iterable, default=None
+        :param y: iterable, default=None
             Training targets.
-
-        Returns
-        -------
-        self
+        :return: self
         """
         if not isinstance(X, pandas.DataFrame):
             raise TypeError(  # pragma: no cover
@@ -131,17 +125,11 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         *X* must be a dataframe. The function does not preserve
         the order of the columns.
 
-        Parameters
-        ----------
-        X : iterable
+        :param X: iterable
             Training data
-
-        y : iterable, default=None
+        :param y: iterable, default=None
             Training targets.
-
-        Returns
-        -------
-        DataFrame, *X* with categories.
+        :return: DataFrame, *X* with categories.
         """
         if not isinstance(X, pandas.DataFrame):
             raise TypeError(  # pragma: no cover
@@ -218,16 +206,10 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         *X* must be a dataframe. The function does not preserve
         the order of the columns.
 
-        Parameters
-        ----------
-        X : iterable
+        :param X: iterable
             Training data
-
-        y : iterable, default=None
+        :param y: iterable, default=None
             Training targets.
-
-        Returns
-        -------
-        Dataframe, *X* with categories.
+        :return: Dataframe, *X* with categories.
         """
         return self.fit(X, y=y, **fit_params).transform(X, y)

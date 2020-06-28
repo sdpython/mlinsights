@@ -94,18 +94,13 @@ class ConstraintKMeans(KMeans):
         """
         Compute k-means clustering.
 
-        Parameters
-        ----------
-        X : array-like or sparse matrix, shape=(n_samples, n_features)
+        :param X: array-like or sparse matrix, shape=(n_samples, n_features)
             Training instances to cluster. It must be noted that the data
             will be converted to C ordering, which will cause a memory
             copy if the given data is not C-contiguous.
-
-        y : Ignored
-
-        sample_weight : sample weight
-
-        fLOG: logging function
+        :param y: Ignored
+        :param sample_weight: sample weight
+        :param fLOG: logging function
         """
         max_iter = self.max_iter
         self.max_iter //= 2
