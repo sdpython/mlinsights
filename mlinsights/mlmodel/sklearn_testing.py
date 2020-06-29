@@ -96,7 +96,10 @@ def _get_test_instance():
     except ImportError:
 
         class _ExtTestCase(TestCase):
+            "simple test classe with a more methods"
+
             def assertIsInstance(self, inst, cltype):
+                "checks that one instance is from one type"
                 if not isinstance(inst, cltype):
                     raise AssertionError(
                         "Unexpected type {} != {}.".format(
