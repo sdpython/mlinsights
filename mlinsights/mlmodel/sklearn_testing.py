@@ -14,7 +14,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.base import clone
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
-from pyquickhelper.pycode import ExtTestCase
 
 
 def train_test_split_with_none(X, y=None, sample_weight=None, random_state=0):
@@ -89,6 +88,23 @@ def test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
     return model, model2
 
 
+def _get_test_instance():
+    try:
+        from pyquickhelper.pycode import ExtTestCase
+        cls = ExtTestCase
+    except ImportError:
+
+        class _ExtTestCase(TestCase):
+            def assertIsInstance(self, inst, cltype):
+                if not isinstance(inst, cltype):
+                    raise AssertionError(
+                        "Unexpected type {} != {}.".format(
+                            type(inst), cltype))
+
+        cls = _ExtTestCase
+    return cls()
+
+
 def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
     """
     Tests that a cloned model is similar to the original one.
@@ -109,7 +125,7 @@ def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
         cloned = clone(conv)
     p2 = cloned.get_params(deep=True)
     if ext is None:
-        ext = ExtTestCase()
+        ext = _get_test_instance()
     try:
         ext.assertEqual(set(p1), set(p2))
     except AssertionError as e:  # pragma no cover
@@ -128,8 +144,9 @@ def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
             try:
                 ext.assertEqual(p1[k], p2[k])
             except AssertionError as e:  # pragma no cover
-                raise AssertionError("Difference for key '{0}'\n==1 {1}\n==2 {2}".format(
-                    k, p1[k], p2[k]))
+                raise AssertionError(
+                    "Difference for key '{0}'\n==1 {1}\n==2 {2}".format(
+                        k, p1[k], p2[k]))
     return conv, cloned
 
 
@@ -190,7 +207,7 @@ def assert_estimator_equal(esta, estb, ext=None):
     The function raises an exception if the comparison fails.
     """
     if ext is None:
-        ext = ExtTestCase()
+        ext = _get_test_instance()
     ext.assertIsInstance(esta, estb.__class__)
     ext.assertIsInstance(estb, esta.__class__)
     _assert_dict_equal(esta.get_params(), estb.get_params(), ext)
@@ -241,7 +258,8 @@ def test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid
     else:
         clf.fit(X_train, y_train, w_train)  # pylint: disable=E1121
     score = clf.score(X_test, y_test)
-    ExtTestCase().assertIsInstance(score, float)
+    ext = _get_test_instance()
+    ext.assertIsInstance(score, float)
     return dict(model=clf, X_train=X_train, y_train=y_train, w_train=w_train,
                 X_test=X_test, y_test=y_test, w_test=w_test, score=score)
 
