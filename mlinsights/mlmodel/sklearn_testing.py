@@ -91,7 +91,7 @@ def test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
 
 def _get_test_instance():
     try:
-        from pyquickhelper.pycode import ExtTestCase
+        from pyquickhelper.pycode import ExtTestCase  # pylint: disable=C0415
         cls = ExtTestCase
     except ImportError:
 
