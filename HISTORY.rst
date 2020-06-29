@@ -5,7 +5,12 @@
 History
 =======
 
-current - 2020-06-08 - 0.00Mb
+current - 2020-06-30 - 0.00Mb
+=============================
+
+* `78`: Removes strong dependency on pyquickhelper (2020-06-29)
+
+0.2.450 - 2020-06-08 - 0.83Mb
 =============================
 
 * `77`: Add parameter trainable to TransferTransformer (2020-06-07)

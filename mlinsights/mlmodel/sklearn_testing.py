@@ -5,6 +5,7 @@
 import copy
 import pickle
 import pprint
+from unittest import TestCase
 from io import BytesIO
 from numpy import ndarray
 from numpy.testing import assert_almost_equal
