@@ -48,7 +48,7 @@ class DummyTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
         check_ts_X_y(self, X, y)
         return self
 
-    def predict(self, X, y=None):
+    def predict(self, X, y):
         """
         Returns the prediction
         """

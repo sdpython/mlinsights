@@ -2,6 +2,7 @@
 @file
 @brief Helpers to visualize a pipeline.
 """
+import pprint
 from collections import OrderedDict
 import numpy
 import pandas
@@ -18,13 +19,14 @@ def _pipeline_info(pipe, data, context, former_data=None):
     """
     def _get_name(context, prefix='-v-', info=None, data=None):
         if info is None:
-            raise RuntimeError("info should not be None")
+            raise RuntimeError("info should not be None")  # pragma: no cover
         if isinstance(prefix, list):
             return [_get_name(context, el, info, data) for el in prefix]
         if isinstance(prefix, int):
             prefix = former_data[prefix]
         if isinstance(prefix, int):
-            raise TypeError("prefix must be a string.\ninfo={}".format(info))
+            raise TypeError(  # pragma: no cover
+                "prefix must be a string.\ninfo={}".format(info))
         sug = "%s%d" % (prefix, context['n'])
         while sug in context['names']:
             context['n'] += 1
@@ -37,8 +39,9 @@ def _pipeline_info(pipe, data, context, former_data=None):
             return name
         res = data[name]
         if isinstance(res, int):
-            raise RuntimeError("Column name is still a number and not a name: {} and {}."
-                               "".format(name, data))
+            raise RuntimeError(  # pragma: no cover
+                "Column name is still a number and not a name: {} and {}."
+                "".format(name, data))
         return res
 
     if isinstance(pipe, Pipeline):
@@ -104,7 +107,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
         return infos
 
     elif isinstance(pipe, TransformedTargetRegressor):
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "Not yet implemented for TransformedTargetRegressor.")
 
     elif isinstance(pipe, TransformerMixin):
@@ -155,11 +158,11 @@ def _pipeline_info(pipe, data, context, former_data=None):
             info['outputs'] = _get_name(context, data, info)
             info = [info]
         else:
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma: no cover
                 "Not yet implemented for keyword '{}'.".format(type(pipe)))
         return info
     else:
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "Not yet implemented for {}.".format(type(pipe)))
 
 
@@ -194,12 +197,13 @@ def pipeline2dot(pipe, data, **params):
             data[c] = 'sch0:f%d' % k
     elif isinstance(raw_data, numpy.ndarray):
         if len(raw_data.shape) != 2:
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma: no cover
                 "Unexpected training data dimension: {}.".format(data.shape))
         for i in range(raw_data.shape[1]):
             data['X%d' % i] = 'sch0:f%d' % i
     elif not isinstance(raw_data, list):
-        raise TypeError("Unexpected data type: {}.".format(type(raw_data)))
+        raise TypeError(  # pragma: no cover
+            "Unexpected data type: {}.".format(type(raw_data)))
 
     options = {
         'orientation': 'portrait',
@@ -248,8 +252,7 @@ def pipeline2dot(pipe, data, **params):
 
             for inp in line['inputs']:
                 if isinstance(inp, int):
-                    import pprint  # pylint: disable=C0415
-                    raise IndexError(
+                    raise IndexError(  # pragma: no cover
                         "Unable to guess columns {} in\n{}\n---\n{}".format(
                             inp, pprint.pformat(columns), '\n'.join(exp)))
                 else:

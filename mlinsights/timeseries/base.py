@@ -26,7 +26,7 @@ class BaseReciprocalTimeSeriesTransformer(BaseReciprocalTransformer):
         """
         Stores the first values.
         """
-        raise NotImplementedError("Should be overwritten.")
+        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
 
     def transform(self, X, y, sample_weight=None, context=None):
         """
@@ -37,13 +37,13 @@ class BaseReciprocalTimeSeriesTransformer(BaseReciprocalTransformer):
         in the predictor is not related to the *y* series
         given to the *transform* method.
         """
-        raise NotImplementedError("Should be overwritten.")
+        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
 
     def get_fct_inv(self):
         """
         Returns the reverse tranform.
         """
-        raise NotImplementedError("Should be overwritten.")
+        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
 
 
 class BaseTimeSeries(BaseEstimator):
@@ -76,14 +76,16 @@ class BaseTimeSeries(BaseEstimator):
         self.use_all_past = use_all_past
         self.preprocessing = preprocessing
         if self.delay1 < 1:
-            raise ValueError("delay1 must be >= 1")
+            raise ValueError("delay1 must be >= 1")  # pragma: no cover
         if self.delay2 <= self.delay1:
-            raise ValueError("delay2 must be >= 1")
+            raise ValueError("delay2 must be >= 1")  # pragma: no cover
         if self.past < 0:
-            raise ValueError("past must be > 0")
-        if (preprocessing is not None and not isinstance(preprocessing, BaseReciprocalTimeSeriesTransformer)):
-            raise TypeError("preprocessing must be of type 'BaseReciprocalTimeSeriesTransformer' "
-                            "not {}".format(type(preprocessing)))
+            raise ValueError("past must be > 0")  # pragma: no cover
+        if (preprocessing is not None and
+                not isinstance(preprocessing, BaseReciprocalTimeSeriesTransformer)):
+            raise TypeError(  # pragma: no cover
+                "preprocessing must be of type 'BaseReciprocalTimeSeriesTransformer' "
+                "not {}".format(type(preprocessing)))
 
     def _fit_preprocessing(self, X, y, sample_weight=None):
         """

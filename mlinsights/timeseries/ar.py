@@ -61,9 +61,9 @@ class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
                            else self.estimator.fit(X, y, sample_weight=sample_weight))
         return self
 
-    def predict(self, X):
+    def predict(self, X, y):
         """
         Returns the prediction
         """
-        check_ts_X_y(self, X, None)
-        return self.estimator_.predict(X)
+        X, y, _ = self._base_fit_predict(X, y, None)
+        return self.estimator_.predict(X, y)

@@ -165,7 +165,7 @@ def check_ts_X_y(model, X, y):
         raise TypeError(
             "Features must be of type float32 and float64 not {}.".format(X.dtype))
     if y is not None and y.dtype not in (numpy.float32, numpy.float64):
-        raise TypeError(
+        raise TypeError(  # pragma: no cover
             "Features must be of type float32 and float64 not {}.".format(y.dtype))
     cst = model.past
     if (hasattr(model, 'preprocessing_') and model.preprocessing_ is not None):

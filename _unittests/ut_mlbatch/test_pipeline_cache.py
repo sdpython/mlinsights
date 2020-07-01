@@ -35,6 +35,8 @@ class TestPipelineCache(ExtTestCase):
         self.assertIn("[('X',", key)
         self.assertIn("('copy', 'True')", key)
         MLCache.remove_cache('cache__')
+        items = list(pipe.cache_.items())
+        self.assertEqual(len(items), 1)
 
     def test_grid_search(self):
         X, y = make_classification(random_state=42)

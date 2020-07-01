@@ -77,7 +77,7 @@ def tree_find_common_node(tree, i, j, parents=None):
         return j, path_i[pos:], path_j[pos:]
     if pj is not None and pj == i:
         return i, path_i[pos:], path_j[pos:]
-    raise RuntimeError(
+    raise RuntimeError(  # pragma: no cover
         "Paths are equal, i={} and j={} must be differet.".format(i, j))
 
 

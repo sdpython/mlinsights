@@ -45,8 +45,7 @@ class TimeSeriesDifference(BaseReciprocalTimeSeriesTransformer):
             X = X[1:]
         if sample_weight is None:
             return X, y
-        else:
-            return X, y, sample_weight[1:]
+        return X, y, sample_weight[1:]
 
     def get_fct_inv(self):
         """
@@ -67,8 +66,9 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
         BaseReciprocalTimeSeriesTransformer.__init__(
             self, estimator.context_length)
         if not isinstance(estimator, TimeSeriesDifference):
-            raise TypeError("estimator must be of type TimeSeriesDifference not {}"
-                            "".format(type(estimator)))
+            raise TypeError(  # pragma: no cover
+                "estimator must be of type TimeSeriesDifference not {}"
+                "".format(type(estimator)))
         self.estimator = estimator
 
     def fit(self, X=None, y=None, sample_weight=None):
@@ -76,7 +76,8 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
         Checks that estimator is fitted.
         """
         if not hasattr(self.estimator, 'X_'):
-            raise RuntimeError("Estimator is not fitted.")
+            raise RuntimeError(  # pragma: no cover
+                "Estimator is not fitted.")
         self.estimator_ = self.estimator
         return self
 
@@ -111,8 +112,7 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
             ny = numpy.squeeze(ny)
         if sample_weight is None:
             return nx, ny
-        else:
-            nw = numpy.zeros(ny.shape[0])
-            de = nw.shape[0] - sample_weight.shape[0]
-            nw[de:] = sample_weight
-            return nx, ny, nw
+        nw = numpy.zeros(ny.shape[0])
+        de = nw.shape[0] - sample_weight.shape[0]
+        nw[de:] = sample_weight
+        return nx, ny, nw

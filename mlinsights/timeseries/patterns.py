@@ -33,7 +33,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     if name_subset is not None:
         set_names &= set(name_subset)
     if fLOG:
-        fLOG('[find_ts_group_pattern] build features, {} groups'.format(len(set_names)))
+        fLOG(  # pragma: no cover
+            '[find_ts_group_pattern] build features, {} groups'.format(len(set_names)))
     gr_names = []
     to_merge = []
     for name in set_names:
@@ -47,7 +48,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
         to_merge.append(gr)
 
     if fLOG:
-        fLOG('[find_ts_group_pattern] merge features')
+        fLOG(  # pragma: no cover
+            '[find_ts_group_pattern] merge features')
     all_merged = pandas.concat(to_merge, axis=1)
     all_merged.fillna(0, inplace=True)
     ncol = all_merged.shape[1] // len(gr_names)
@@ -60,7 +62,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
 
     # cluster
     if fLOG:
-        fLOG('[find_ts_group_pattern] clustering, shape={}'.format(gr_feats.shape))
+        fLOG(  # pragma: no cover
+            '[find_ts_group_pattern] clustering, shape={}'.format(gr_feats.shape))
     if estimator is None:
         estimator = KMeans()
     estimator.fit(gr_feats)
@@ -69,7 +72,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     pred = estimator.predict(gr_feats)
     dist = estimator.transform(gr_feats)
     if fLOG:
-        fLOG('[find_ts_group_pattern] number of clusters: {}'.format(len(set(pred))))
+        fLOG(  # pragma: no cover
+            '[find_ts_group_pattern] number of clusters: {}'.format(len(set(pred))))
 
     row_name = {n: i for i, n in enumerate(gr_names)}
     clusters = numpy.empty(ttime.shape[0], dtype=pred.dtype)

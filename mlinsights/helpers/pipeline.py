@@ -62,7 +62,7 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
                 for couple in enumerate_pipeline_models(model, coor + (i,)):
                     yield couple
         elif isinstance(pipe, TransformedTargetRegressor):
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma: no cover
                 "Not yet implemented for TransformedTargetRegressor.")
         elif isinstance(pipe, (TransformerMixin, ClassifierMixin, RegressorMixin)):
             pass
