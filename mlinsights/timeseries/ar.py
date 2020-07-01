@@ -4,7 +4,6 @@
 """
 from .base import BaseTimeSeries, TimeSeriesRegressorMixin
 from .dummies import DummyTimeSeriesRegressor
-from .utils import check_ts_X_y
 
 
 class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
