@@ -47,7 +47,7 @@ class TestDummyTimeSeries(ExtTestCase):
         bs = DummyTimeSeriesRegressor(
             past=1, preprocessing=TimeSeriesDifference(1))
         bs.fit(X, y)
-        self.assertRaise(lambda: bs.predict(X),
+        self.assertRaise(lambda: bs.predict(X),  # pylint: disable=E1120
                          (TypeError, RuntimeError))
         for i in range(y.shape[0]):
             if i >= y.shape[0] - 2:
