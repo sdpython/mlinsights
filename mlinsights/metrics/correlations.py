@@ -130,8 +130,8 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
                 mod = clone(model)
                 try:
                     mod.fit(xi_train, xj_train.ravel())
-                except Exception as e:
-                    raise ValueError(  # pragma: no cover
+                except Exception as e:  # pragma: no cover
+                    raise ValueError(
                         "Unable to compute correlation for i={0} j={1}.".format(i, j)) from e
                 v = mod.predict(xi_test)
                 c = (1 - numpy.var(v - xj_test.ravel()))

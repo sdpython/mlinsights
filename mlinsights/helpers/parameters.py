@@ -12,9 +12,8 @@ def format_value(v):
     @param      v           a string
     @return                 a string
     """
-    if isinstance(v, str):
-        return "'{0}'".format(v.replace("'", "\\'"))
-    return "{0}".format(v)
+    return ("'{0}'".format(v.replace("'", "\\'"))
+            if isinstance(v, str) else "{0}".format(v))
 
 
 def format_parameters(pdict):
