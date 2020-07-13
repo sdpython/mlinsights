@@ -107,10 +107,12 @@ class PiecewiseEstimator(BaseEstimator):
         """
         BaseEstimator.__init__(self)
         if estimator is None:
-            raise ValueError("estimator cannot be null.")
+            raise ValueError(  # pragma: no cover
+                "estimator cannot be null.")
         if binner is None:
-            raise TypeError(
-                "Unsupported options for binner=='tree' and model {}.".format(type(estimator)))
+            raise TypeError(  # pragma: no cover
+                "Unsupported options for binner=='tree' and model {}.".format(
+                    type(estimator)))
         elif binner == "bins":
             binner = KBinsDiscretizer()
         self.binner = binner
@@ -165,7 +167,7 @@ class PiecewiseEstimator(BaseEstimator):
                     x.todense()).ravel().astype(numpy.int32))
                 association[i] = mapping.get(d, -1)
         else:
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma: no cover
                 "binner is not a decision tree or a transform")
 
         return association, mapping, leaves
@@ -196,7 +198,7 @@ class PiecewiseEstimator(BaseEstimator):
                     x.todense()).ravel().astype(numpy.int32))
                 association[i] = self.mapping_.get(d, -1)
         else:
-            raise NotImplementedError(
+            raise NotImplementedError(  # pragma: no cover
                 "binner is not a decision tree or a transform")
         return association
 
@@ -224,7 +226,8 @@ class PiecewiseEstimator(BaseEstimator):
         if isinstance(X, pandas.DataFrame):
             X = X.values
         if isinstance(X, list):
-            raise TypeError("X cannot be a list.")
+            raise TypeError(  # pragma: no cover
+                "X cannot be a list.")
         binner = clone(self.binner)
         if sample_weight is None:
             self.binner_ = binner.fit(X, y)
@@ -236,13 +239,13 @@ class PiecewiseEstimator(BaseEstimator):
 
         estimators = [clone(self.estimator) for i in self.mapping_]
 
-        loop = tqdm(range(len(estimators))
-                    ) if self.verbose == 'tqdm' else range(len(estimators))
+        loop = (tqdm(range(len(estimators)))
+                if self.verbose == 'tqdm' else range(len(estimators)))
         verbose = 1 if self.verbose == 'tqdm' else (1 if self.verbose else 0)
 
         self.mean_estimator_ = clone(self.estimator).fit(X, y, sample_weight)
-        nb_classes = None if not hasattr(self.mean_estimator_, 'classes_') \
-            else len(set(self.mean_estimator_.classes_))
+        nb_classes = (None if not hasattr(self.mean_estimator_, 'classes_')
+                      else len(set(self.mean_estimator_.classes_)))
 
         if hasattr(self, 'random_state') and self.random_state is not None:  # pylint: disable=E1101
             rnd = numpy.random.RandomState(  # pylint: disable=E1101
@@ -268,11 +271,12 @@ class PiecewiseEstimator(BaseEstimator):
         *decision_function* as well.
         """
         if len(self.estimators_) == 0:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Estimator was apparently fitted but contains no estimator.")
         if not hasattr(self.estimators_[0], method):
-            raise TypeError("Estimator {} does not have method '{}'.".format(
-                type(self.estimators_[0]), method))
+            raise TypeError(  # pragma: no cover
+                "Estimator {} does not have method '{}'.".format(
+                    type(self.estimators_[0]), method))
         if isinstance(X, pandas.DataFrame):
             X = X.values
 
@@ -345,7 +349,8 @@ class PiecewiseRegressor(PiecewiseEstimator, RegressorMixin):
         :param X: features, *X* is converted into an array if *X* is a dataframe
         :return: predictions
         """
-        return self._apply_predict_method(X, "predict", _predict_piecewise_estimator, self.dim_)
+        return self._apply_predict_method(
+            X, "predict", _predict_piecewise_estimator, self.dim_)
 
 
 class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
@@ -389,8 +394,9 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         if binner in ('tree', None):
             binner = DecisionTreeClassifier(min_samples_leaf=5)
         ClassifierMixin.__init__(self)
-        PiecewiseEstimator.__init__(self, binner=binner, estimator=estimator,
-                                    n_jobs=n_jobs, verbose=verbose)
+        PiecewiseEstimator.__init__(
+            self, binner=binner, estimator=estimator,
+            n_jobs=n_jobs, verbose=verbose)
         self.random_state = random_state
 
     def predict(self, X):
@@ -411,8 +417,9 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         :param X: features, *X* is converted into an array if *X* is a dataframe
         :return: predictions probabilities
         """
-        return self._apply_predict_method(X, "predict_proba", _predict_proba_piecewise_estimator,
-                                          len(self.mean_estimator_.classes_))
+        return self._apply_predict_method(
+                X, "predict_proba", _predict_proba_piecewise_estimator,
+                len(self.mean_estimator_.classes_))
 
     def decision_function(self, X):
         """
@@ -422,5 +429,6 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         :return: predictions probabilities
         """
         justone = self.mean_estimator_.decision_function(X[:1])
-        return self._apply_predict_method(X, "decision_function", _decision_function_piecewise_estimator,
-                                          1 if len(justone.shape) == 1 else justone.shape[1])
+        return self._apply_predict_method(
+                X, "decision_function", _decision_function_piecewise_estimator,
+                1 if len(justone.shape) == 1 else justone.shape[1])

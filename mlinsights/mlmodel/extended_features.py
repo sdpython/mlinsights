@@ -57,9 +57,9 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         if self.kind == 'poly':
             return self._get_feature_names_poly(input_features)
-        elif self.kind == 'poly-slow':
+        if self.kind == 'poly-slow':
             return self._get_feature_names_poly(input_features)
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unknown extended features '{}'.".format(self.kind))
 
     def _get_feature_names_poly(self, input_features=None):
@@ -71,8 +71,9 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             input_features = ["x%d" %
                               i for i in range(0, self.n_input_features_)]
         elif len(input_features) != self.n_input_features_:
-            raise ValueError("input_features should contain {} strings.".format(
-                self.n_input_features_))
+            raise ValueError(
+                "input_features should contain {} strings.".format(
+                    self.n_input_features_))
 
         names = ["1"] if self.poly_include_bias else []
         n = self.n_input_features_
@@ -150,9 +151,9 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             raise ValueError("X shape does not match training shape")
         if self.kind == 'poly':
             return self._transform_poly(X)
-        elif self.kind == 'poly-slow':
+        if self.kind == 'poly-slow':
             return self._transform_poly_slow(X)
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unknown extended features '{}'.".format(self.kind))
 
     def _transform_poly(self, X):
@@ -160,7 +161,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         Transforms data to polynomial features.
         """
         if sparse.isspmatrix(X):
-            raise NotImplementedError("Not implemented for sparse matrices.")
+            raise NotImplementedError(  # pragma: no cover
+                "Not implemented for sparse matrices.")
 
         XP = numpy.empty(
             (X.shape[0], self.n_output_features_), dtype=X.dtype)
@@ -182,7 +184,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         Transforms data to polynomial features.
         """
         if sparse.isspmatrix(X):
-            raise NotImplementedError("Not implemented for sparse matrices.")
+            raise NotImplementedError(  # pragma: no cover
+                "Not implemented for sparse matrices.")
 
         comb = _combinations_poly(X.shape[1], self.poly_degree, self.poly_interaction_only,
                                   include_bias=self.poly_include_bias)
