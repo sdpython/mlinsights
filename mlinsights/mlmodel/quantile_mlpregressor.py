@@ -11,7 +11,7 @@ from sklearn.utils.extmath import safe_sparse_dot
 from sklearn.neural_network._base import DERIVATIVES, LOSS_FUNCTIONS
 try:
     from sklearn.neural_network._multilayer_perceptron import BaseMultilayerPerceptron
-except ImportError:
+except ImportError:  # pragma: no cover
     # scikit-learn < 0.22.
     from sklearn.neural_network.multilayer_perceptron import BaseMultilayerPerceptron
 from sklearn.metrics import mean_absolute_error
@@ -35,10 +35,9 @@ def float_sign(a):
     "Returns 1 if *a > 0*, otherwise -1"
     if a > 1e-8:
         return 1.
-    elif a < -1e-8:
+    if a < -1e-8:
         return -1.
-    else:
-        return 0.
+    return 0.
 
 
 EXTENDED_LOSS_FUNCTIONS = {'absolute_loss': absolute_loss}
@@ -87,8 +86,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         """
         if self.loss == 'absolute_loss':
             return DERIVATIVE_LOSS_FUNCTIONS['absolute_loss'](last_deltas)
-        else:
-            return last_deltas
+        return last_deltas  # pragma: no cover
 
     def _backprop(self, X, y, activations, deltas, coef_grads,
                   intercept_grads):
