@@ -35,7 +35,7 @@ def check(log=False):
     @param      log     if True, display information, otherwise
     @return             0 or exception
     """
-    return True
+    return True  # pragma: no cover
 
 
 def _setup_hook(use_print=False):
@@ -46,5 +46,5 @@ def _setup_hook(use_print=False):
     """
     # we can check many things, needed module
     # any others things before unit tests are started
-    if use_print:
+    if use_print:  # pragma: no cover
         print("Success: _setup_hook")  # pragma: no cover
