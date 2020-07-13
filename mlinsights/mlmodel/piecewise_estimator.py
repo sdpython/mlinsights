@@ -418,8 +418,8 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         :return: predictions probabilities
         """
         return self._apply_predict_method(
-                X, "predict_proba", _predict_proba_piecewise_estimator,
-                len(self.mean_estimator_.classes_))
+            X, "predict_proba", _predict_proba_piecewise_estimator,
+            len(self.mean_estimator_.classes_))
 
     def decision_function(self, X):
         """
@@ -430,5 +430,5 @@ class PiecewiseClassifier(PiecewiseEstimator, ClassifierMixin):
         """
         justone = self.mean_estimator_.decision_function(X[:1])
         return self._apply_predict_method(
-                X, "decision_function", _decision_function_piecewise_estimator,
-                1 if len(justone.shape) == 1 else justone.shape[1])
+            X, "decision_function", _decision_function_piecewise_estimator,
+            1 if len(justone.shape) == 1 else justone.shape[1])
