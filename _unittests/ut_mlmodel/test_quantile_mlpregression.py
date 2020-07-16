@@ -72,7 +72,7 @@ class TestQuantileMLPRegression(ExtTestCase):
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
-        self.assertLesser(res['score'], 10)
+        self.assertLesser(res['score'], 11)
 
 
 if __name__ == "__main__":
