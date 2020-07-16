@@ -52,7 +52,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
             infos.extend(info)
         return infos
 
-    elif isinstance(pipe, ColumnTransformer):
+    if isinstance(pipe, ColumnTransformer):
         infos = []
         outputs = []
         for _, model, vs in pipe.transformers:
@@ -105,7 +105,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
             infos.append(info)
         return infos
 
-    elif isinstance(pipe, FeatureUnion):
+    if isinstance(pipe, FeatureUnion):
         infos = []
         outputs = []
         for _, model in pipe.transformer_list:
@@ -123,11 +123,11 @@ def _pipeline_info(pipe, data, context, former_data=None):
             infos.append(info)
         return infos
 
-    elif isinstance(pipe, TransformedTargetRegressor):
+    if isinstance(pipe, TransformedTargetRegressor):
         raise NotImplementedError(  # pragma: no cover
             "Not yet implemented for TransformedTargetRegressor.")
 
-    elif isinstance(pipe, TransformerMixin):
+    if isinstance(pipe, TransformerMixin):
         info = {'name': pipe.__class__.__name__, 'type': 'transform'}
         if len(data) == 1:
             info['outputs'] = data
@@ -140,7 +140,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
                      'inputs': data, 'type': 'transform'}, info]
         return info
 
-    elif isinstance(pipe, ClassifierMixin):
+    if isinstance(pipe, ClassifierMixin):
         info = {'name': pipe.__class__.__name__, 'type': 'classifier'}
         exp = ['PredictedLabel', 'Probabilities']
         if len(data) == 1:
@@ -154,7 +154,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
                      'type': 'transform'}, info]
         return info
 
-    elif isinstance(pipe, RegressorMixin):
+    if isinstance(pipe, RegressorMixin):
         info = {'name': pipe.__class__.__name__, 'type': 'regressor'}
         exp = ['Prediction']
         if len(data) == 1:
@@ -168,19 +168,24 @@ def _pipeline_info(pipe, data, context, former_data=None):
                      'type': 'transform'}, info]
         return info
 
-    elif isinstance(pipe, str):
+    if isinstance(pipe, str):
         if pipe == "passthrough":
             info = {'name': 'Identity', 'type': 'transform'}
             info['inputs'] = [_get_name_simple(n, former_data) for n in data]
-            info['outputs'] = _get_name(context, data=data, info=info)
+            if isinstance(data, (OrderedDict, dict)) and len(data) > 1:
+                info['outputs'] = [
+                    _get_name(context, data=k, info=info)
+                    for k in data]
+            else:
+                info['outputs'] = _get_name(context, data=data, info=info)
             info = [info]
         else:
             raise NotImplementedError(  # pragma: no cover
                 "Not yet implemented for keyword '{}'.".format(type(pipe)))
         return info
-    else:
-        raise NotImplementedError(  # pragma: no cover
-            "Not yet implemented for {}.".format(type(pipe)))
+
+    raise NotImplementedError(  # pragma: no cover
+        "Not yet implemented for {}.".format(type(pipe)))
 
 
 def pipeline2dot(pipe, data, **params):

@@ -255,7 +255,7 @@ class TestDot(ExtTestCase):
         cat_cols = ['CAT1', 'CAT2']
         train_data = data.drop('y', axis=1)
 
-        numeric_transformer = Pipeline(steps=[('scaler', StandardScaler())])
+        # numeric_transformer = Pipeline(steps=[('scaler', StandardScaler())])
         categorical_transformer = Pipeline([
             ('onehot', OneHotEncoder(sparse=False, handle_unknown='ignore'))])
         preprocessor = ColumnTransformer(
@@ -268,8 +268,9 @@ class TestDot(ExtTestCase):
         dot = pipeline2dot(pipe, train_data)
         self.assertIn("sch0:f2 ->", dot)
         self.assertNotIn("node3 -> sch3:f34;", dot)
-        self.assertIn("node3 -> sch3:f3;", dot)
-        self.assertIn("node3 -> sch3:f2;", dot)
+        self.assertIn("node3 -> sch3:f0;", dot)
+        self.assertIn("node3 -> sch3:f1;", dot)
+        self.assertNotIn("node3 -> sch3:f2;", dot)
 
 
 if __name__ == "__main__":
