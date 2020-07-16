@@ -82,7 +82,24 @@ def _pipeline_info(pipe, data, context, former_data=None):
             #info[-1]['outputs'] = new_outputs
             outputs.extend(info[-1]['outputs'])
             infos.extend(info)
-        if len(pipe.transformers) > 1:
+
+        final_hat = False
+        if pipe.remainder == "passthrough":
+
+            done = [set(d['inputs']) for d in info]
+            merged = done[0]
+            for d in done[1:]:
+                merged.union(d)
+            new_data = OrderedDict(
+                [(k, v) for k, v in data.items() if k not in merged])
+
+            info = _pipeline_info(
+                "passthrough", new_data, context, former_data=new_data)
+            outputs.extend(info[-1]['outputs'])
+            infos.extend(info)
+            final_hat = True
+
+        if len(pipe.transformers) > 1 or final_hat:
             info = {'name': 'union', 'inputs': outputs, 'type': 'transform'}
             info['outputs'] = [_get_name(context, info=info)]
             infos.append(info)
@@ -155,7 +172,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
         if pipe == "passthrough":
             info = {'name': 'Identity', 'type': 'transform'}
             info['inputs'] = [_get_name_simple(n, former_data) for n in data]
-            info['outputs'] = _get_name(context, data, info)
+            info['outputs'] = _get_name(context, data=data, info=info)
             info = [info]
         else:
             raise NotImplementedError(  # pragma: no cover
@@ -271,7 +288,8 @@ def pipeline2dot(pipe, data, **params):
             for out in line['outputs']:
                 nc = columns[out]
                 edge = '  node{1} -> {0};'.format(nc, i)
-                exp.append(edge)
+                if edge not in exp:
+                    exp.append(edge)
 
     exp.append('}')
     return "\n".join(exp)

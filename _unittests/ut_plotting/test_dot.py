@@ -11,6 +11,7 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline, FeatureUnion, make_pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
@@ -240,7 +241,37 @@ class TestDot(ExtTestCase):
         self.assertNotIn("  0 -> node1;", dot)
         # self.assertNotIn("sch1:f0 -> node2;", dot)
 
+    def test_pipeline_passthrough(self):
+
+        data = pandas.DataFrame([
+            dict(CAT1='a', CAT2='c', num1=0.5, num2=0.6, y=0),
+            dict(CAT1='b', CAT2='d', num1=0.4, num2=0.8, y=1),
+            dict(CAT1='a', CAT2='d', num1=0.5, num2=0.56, y=0),
+            dict(CAT1='a', CAT2='d', num1=0.55, num2=0.56, y=1),
+            dict(CAT1='a', CAT2='c', num1=0.35, num2=0.86, y=0),
+            dict(CAT1='a', CAT2='c', num1=0.5, num2=0.68, y=1),
+        ])
+
+        cat_cols = ['CAT1', 'CAT2']
+        train_data = data.drop('y', axis=1)
+
+        numeric_transformer = Pipeline(steps=[('scaler', StandardScaler())])
+        categorical_transformer = Pipeline([
+            ('onehot', OneHotEncoder(sparse=False, handle_unknown='ignore'))])
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('cat', categorical_transformer, cat_cols)],
+            remainder='passthrough')
+        pipe = Pipeline([('preprocess', preprocessor),
+                         ('rf', RandomForestClassifier(n_estimators=2))])
+        pipe.fit(train_data, data['y'])
+        dot = pipeline2dot(pipe, train_data)
+        self.assertIn("sch0:f2 ->", dot)
+        self.assertNotIn("node3 -> sch3:f34;", dot)
+        self.assertIn("node3 -> sch3:f3;", dot)
+        self.assertIn("node3 -> sch3:f2;", dot)
+
 
 if __name__ == "__main__":
-    # TestDot().test_pipeline_bug2()
+    # TestDot().test_pipeline_passthrough()
     unittest.main()
