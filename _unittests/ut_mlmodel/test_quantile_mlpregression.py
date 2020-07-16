@@ -8,13 +8,15 @@ from numpy.random import random
 import pandas
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_absolute_error
-from pyquickhelper.pycode import ExtTestCase
+from sklearn.exceptions import ConvergenceWarning
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import QuantileMLPRegressor
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 
 
 class TestQuantileMLPRegression(ExtTestCase):
 
+    @ignore_warnings(ConvergenceWarning)
     def test_quantile_regression_diff(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
         Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
@@ -29,6 +31,7 @@ class TestQuantileMLPRegression(ExtTestCase):
         self.assertLesser(err1, 5)
         self.assertLesser(err2, 5)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_quantile_regression_pandas(self):
         X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
         Y = numpy.array([1., 1.1])
@@ -43,6 +46,7 @@ class TestQuantileMLPRegression(ExtTestCase):
         self.assertLesser(err1, 3)
         self.assertLesser(err2, 3)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_quantile_regression_pickle(self):
         X = random(100)
         eps1 = (random(90) - 0.5) * 0.1
@@ -55,9 +59,11 @@ class TestQuantileMLPRegression(ExtTestCase):
         test_sklearn_pickle(lambda: QuantileMLPRegressor(
             hidden_layer_sizes=(3,)), X, Y)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_quantile_regression_clone(self):
         test_sklearn_clone(lambda: QuantileMLPRegressor())
 
+    @ignore_warnings(ConvergenceWarning)
     def test_quantile_regression_grid_search(self):
         X = random(100)
         eps1 = (random(90) - 0.5) * 0.1
