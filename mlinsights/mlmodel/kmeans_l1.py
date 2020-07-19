@@ -167,6 +167,17 @@ def _init_centroids(norm, X, k, init, random_state=None,
     if issparse(centers):
         centers = centers.toarray()
 
+    def _validate_center_shape(X, k, centers):
+        """Check if centers is compatible with X and n_clusters"""
+        if centers.shape[0] != k:
+            raise ValueError(
+                f"The shape of the initial centers {centers.shape} does not "
+                f"match the number of clusters {k}.")
+        if centers.shape[1] != X.shape[1]:
+            raise ValueError(
+                f"The shape of the initial centers {centers.shape} does not "
+                f"match the number of features of the data {X.shape[1]}.")
+
     _validate_center_shape(X, k, centers)
     return centers
 

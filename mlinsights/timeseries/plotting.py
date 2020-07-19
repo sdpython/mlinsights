@@ -149,7 +149,7 @@ def plot_week_timeseries(time, value, normalise=True,
         xticks.append((xs[i] + xs[i + 1]) / 2)
     if len(xticks) < len(xlabels):
         xticks.append(xs[-1])
-    ax.set_xticks(xticks)    
+    ax.set_xticks(xticks)
     ax.set_xticklabels(
         [xfmt % x for x in xlabels] if xfmt else xlabels)
 
