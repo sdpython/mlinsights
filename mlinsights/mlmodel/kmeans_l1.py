@@ -8,24 +8,22 @@ import numpy
 from scipy.sparse import issparse
 from joblib import Parallel, delayed, effective_n_jobs
 from sklearn.cluster import KMeans
-from sklearn.cluster._kmeans import (
-    _tolerance as _tolerance_skl,
-    _check_normalize_sample_weight,
-    _validate_center_shape
-)
+from sklearn.cluster._kmeans import _tolerance as _tolerance_skl
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.metrics.pairwise import (
-    euclidean_distances,
-    manhattan_distances,
-    pairwise_distances_argmin_min
-)
+    euclidean_distances, manhattan_distances,
+    pairwise_distances_argmin_min)
 from sklearn.utils import check_random_state, check_array
 from sklearn.utils.validation import _num_samples, check_is_fitted
 from sklearn.utils.extmath import stable_cumsum
+try:
+    from sklearn.cluster._kmeans import _check_sample_weight
+except ImportError:
+    from sklearn.cluster._kmeans import (
+        _check_normalize_sample_weight as _check_sample_weight)
 from ._kmeans_022 import (
     _labels_inertia_skl,
-    _labels_inertia_precompute_dense,
-)
+    _labels_inertia_precompute_dense)
 
 
 def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
@@ -285,7 +283,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
     """
     random_state = check_random_state(random_state)
 
-    sample_weight = _check_normalize_sample_weight(sample_weight, X)
+    sample_weight = _check_sample_weight(sample_weight, X)
 
     best_labels, best_inertia, best_centers = None, None, None
     # init
@@ -369,7 +367,7 @@ def _labels_inertia(norm, X, sample_weight, centers,
             precompute_distances=precompute_distances,
             x_squared_norms=None)
 
-    sample_weight = _check_normalize_sample_weight(sample_weight, X)
+    sample_weight = _check_sample_weight(sample_weight, X)
     # set the default value of centers to -1 to be able to detect any anomaly
     # easily
     if distances is None:
@@ -585,7 +583,7 @@ class KMeansL1L2(KMeans):
         init = self.init
         if hasattr(init, '__array__'):  # pragma: no cover
             init = check_array(init, dtype=X.dtype.type, copy=True)
-            _validate_center_shape(X, self.n_clusters, init)
+            self._validate_center_shape(X, self.n_clusters, init)
 
             if n_init != 1:
                 warnings.warn(

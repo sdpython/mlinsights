@@ -7,7 +7,11 @@ import numpy
 from scipy.sparse import issparse
 # Source: https://github.com/scikit-learn/scikit-learn/blob/95d4f0841d57e8b5f6b2a570312e9d832e69debc/sklearn/cluster/_k_means_fast.pyx
 from sklearn.utils.sparsefuncs_fast import assign_rows_csr  # pylint: disable=W0611,E0611
-from sklearn.cluster._kmeans import _check_normalize_sample_weight
+try:
+    from sklearn.cluster._kmeans import _check_sample_weight
+except ImportError:
+    from sklearn.cluster._kmeans import (
+        _check_normalize_sample_weight as _check_sample_weight)
 from sklearn.metrics.pairwise import pairwise_distances_argmin_min
 
 
@@ -169,7 +173,7 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
         Sum of squared distances of samples to their closest cluster center.
     """
     n_samples = X.shape[0]
-    sample_weight = _check_normalize_sample_weight(sample_weight, X)
+    sample_weight = _check_sample_weight(sample_weight, X)
     # set the default value of centers to -1 to be able to detect any anomaly
     # easily
     labels = numpy.full(n_samples, -1, numpy.int32)

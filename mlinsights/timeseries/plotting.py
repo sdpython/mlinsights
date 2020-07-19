@@ -147,12 +147,11 @@ def plot_week_timeseries(time, value, normalise=True,
         dx = dx - int(dx / input_maxy) * input_maxy
         xlabels.append(dx if normalise else (dx * max_value))
         xticks.append((xs[i] + xs[i + 1]) / 2)
-    xticks.append(xs[-1])
-    ax.set_xticks(xticks)
-    if xfmt:
-        ax.set_xticklabels([xfmt % x for x in xlabels])
-    else:
-        ax.set_xticklabels(xlabels)
+    if len(xticks) < len(xlabels):
+        xticks.append(xs[-1])
+    ax.set_xticks(xticks)    
+    ax.set_xticklabels(
+        [xfmt % x for x in xlabels] if xfmt else xlabels)
 
     ax.tick_params(axis='x', rotation=30)
 
