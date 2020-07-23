@@ -60,7 +60,7 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
         print('ny=', ny)
     """
     if not hasattr(model, "use_all_past") or not hasattr(model, "past"):
-        raise TypeError(
+        raise TypeError(  # pragma: no cover
             "model must be of type BaseTimeSeries not {}".format(type(model)))
     if same_rows:
         if model.use_all_past:
@@ -160,7 +160,7 @@ def check_ts_X_y(model, X, y):
     """
     cfg = get_config()
     if cfg.get('assume_finite', True):
-        return
+        return  # pragma: no cover
     if X.dtype not in (numpy.float32, numpy.float64):
         raise TypeError(
             "Features must be of type float32 and float64 not {}.".format(X.dtype))
@@ -175,7 +175,7 @@ def check_ts_X_y(model, X, y):
             raise AssertionError(  # pragma: no cover
                 "y must be specified to give the model past data to predict, "
                 "it requires at least {} observations.".format(cst))
-        return
+        return  # pragma: no cover
     if y.shape[0] != X.shape[0]:
         raise AssertionError(  # pragma: no cover
             "X and y must have the same number of rows {} != {}.".format(

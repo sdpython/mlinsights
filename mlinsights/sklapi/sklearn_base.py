@@ -33,7 +33,7 @@ class SkBase:
         @param      sample_weight   weight
         @return                     self
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def get_params(self, deep=True):
         """
@@ -101,15 +101,15 @@ class SkBase:
             if k not in p1:
                 if exc:
                     raise KeyError("Key '{0}' was added.".format(k))
-                else:
-                    return False
+                return False
         for k in sorted(p1):
             v1, v2 = p1[k], p2[k]
             if hasattr(v1, 'test_equality'):
                 b = v1.test_equality(v2, exc=exc)
                 if exc and v1 is not v2:
-                    warnings.warn(
-                        "v2 is a clone of v1 not v1 itself for key '{0}' and class {1}.".format(k, type(v1)))
+                    warnings.warn(  # pragma: no cover
+                        "v2 is a clone of v1 not v1 itself for key '{0}' and class {1}."
+                        "".format(k, type(v1)))
             elif isinstance(v1, list) and isinstance(v2, list) and len(v1) == len(v2):
                 b = True
                 for e1, e2 in zip(v1, v2):

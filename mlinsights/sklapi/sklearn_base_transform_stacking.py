@@ -65,20 +65,21 @@ class SkBaseTransformStacking(SkBaseTransform):
         """
         super().__init__(**kwargs)
         if models is None:
-            raise ValueError("models cannot be None")
+            raise ValueError("models cannot be None")  # pragma: no cover
         if not isinstance(models, list):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "models must be a list not {0}".format(type(models)))
         if method is None:
             method = 'predict'
         if not isinstance(method, str):
-            raise TypeError(
-                "method must be a string not {0}".format(type(method)))
+            raise TypeError(  # pragma: no cover
+                "Method must be a string not {0}".format(type(method)))
         self.method = method
         if isinstance(method, list):
             if len(method) != len(models):
-                raise ValueError("models and methods must have the same length: {0} != {1}".format(
-                    len(models), len(method)))
+                raise ValueError(  # pragma: no cover
+                    "models and methods must have the same length: {0} != {1}".format(
+                        len(models), len(method)))
         else:
             method = [method for m in models]
 
@@ -88,16 +89,14 @@ class SkBaseTransformStacking(SkBaseTransform):
             if isinstance(m, SkBaseTransformLearner):
                 if me == m.method:
                     return m
-                else:
-                    res = SkBaseTransformLearner(m.model, me)
-                    new_learners.append(res)
-                    return res
-            elif hasattr(m, 'transform'):
-                return m
-            else:
-                res = SkBaseTransformLearner(m, me)
+                res = SkBaseTransformLearner(m.model, me)
                 new_learners.append(res)
                 return res
+            if hasattr(m, 'transform'):
+                return m
+            res = SkBaseTransformLearner(m, me)
+            new_learners.append(res)
+            return res
 
         new_learners = []
         res = list(map(lambda c: convert2transform(
@@ -171,7 +170,7 @@ class SkBaseTransformStacking(SkBaseTransform):
             del values['method']
         for k, v in values.items():
             if not k.startswith('models_'):
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Parameter '{0}' must start with 'models_'.".format(k))
         d = len('models_')
         pars = [{} for m in self.models]

@@ -85,7 +85,8 @@ class SearchEngineVectors:
             arrays = []
             for row in data:
                 if not isinstance(row, tuple):
-                    raise TypeError('data must be an iterator on tuple')
+                    raise TypeError(  # pragma: no cover
+                        'data must be an iterator on tuple')
                 if len(row) != 2:
                     raise ValueError(  # pragma: no cover
                         'data must be an iterator on tuple on two elements')

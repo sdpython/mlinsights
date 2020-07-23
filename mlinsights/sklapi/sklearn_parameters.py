@@ -38,7 +38,7 @@ class SkLearnParameters:
         @raises                 raises @see cl SkException if error
         """
         if name.startswith("_") or name.endswith("_"):
-            raise SkException(
+            raise SkException(  # pragma: no cover
                 "Parameter name must not start by '_': '{0}'".format(name))
 
     @property

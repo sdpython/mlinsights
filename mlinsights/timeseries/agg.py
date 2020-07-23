@@ -64,7 +64,8 @@ def aggregate_timeseries(df, index='time', values='y',
                     lambda t: datetime.timedelta(
                         days=t.day, hours=t.hour, minutes=t.minute),
                     pyres))
-        raise ValueError("Unknown frequency '{}'.".format(per))
+        raise ValueError(  # pragma: no cover
+            "Unknown frequency '{}'.".format(per))
 
     agg_name = _get_column_name(df)
     df = df.copy()
@@ -72,7 +73,8 @@ def aggregate_timeseries(df, index='time', values='y',
         freq = datetime.timedelta(minutes=30)
         df[agg_name] = round_(df[index], freq, per)
     else:
-        raise ValueError("Unknown time unit '{}'.".format(unit))
+        raise ValueError(  # pragma: no cover
+            "Unknown time unit '{}'.".format(unit))
     if not isinstance(values, list):
         values = [values]
     if agg == 'sum':
@@ -89,5 +91,6 @@ def aggregate_timeseries(df, index='time', values='y',
             if su != 0:
                 gr[c] /= su
     else:
-        raise ValueError("Unknown aggregation '{}'.".format(agg))
+        raise ValueError(  # pragma: no cover
+            "Unknown aggregation '{}'.".format(agg))
     return gr.sort_values(agg_name).reset_index(drop=True)

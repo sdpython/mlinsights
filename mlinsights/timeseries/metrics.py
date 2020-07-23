@@ -18,8 +18,9 @@ def ts_mape(expected_y, predicted_y, sample_weight=None):
     @return                         metrics
     """
     if len(expected_y) != len(predicted_y):
-        raise ValueError('Size mismatch {} != {}.'.format(
-            len(expected_y), len(predicted_y)))
+        raise ValueError(  # pragma: no cover
+            'Size mismatch {} != {}.'.format(
+                len(expected_y), len(predicted_y)))
     expected_y = numpy.squeeze(expected_y)
     predicted_y = numpy.squeeze(predicted_y)
     mask = numpy.isnan(predicted_y)
