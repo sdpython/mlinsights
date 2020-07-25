@@ -595,8 +595,8 @@ class KMeansL1L2(KMeans):
         if hasattr(init, '__array__'):  # pragma: no cover
             init = check_array(init, dtype=X.dtype.type, copy=True)
             if hasattr(self, '_validate_center_shape'):
-                self._validate_center_shape(
-                    X, self.n_clusters, init)  # pylint: disable=E1101
+                self._validate_center_shape(  # pylint: disable=E1101
+                    X, self.n_clusters, init)
 
             if n_init != 1:
                 warnings.warn(
