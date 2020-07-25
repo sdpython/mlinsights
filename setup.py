@@ -200,7 +200,8 @@ if not r:
         from Cython.Build import cythonize
         opts = dict(boundscheck=False, cdivision=True,
                     wraparound=False, language_level=3,
-                    cdivision_warnings=True)
+                    cdivision_warnings=False, embedsignature=True,
+                    initializedcheck=False)
         ext_modules = cythonize(ext_modules, compiler_directives=opts)
     except ImportError:
         # Cython is not installed.

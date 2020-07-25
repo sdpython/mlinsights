@@ -9,7 +9,6 @@ cimport numpy
 numpy.import_array()
 
 from libc.stdlib cimport calloc, free
-from libc.stdio cimport printf
 from libc.string cimport memcpy
 from libc.math cimport NAN
 
@@ -105,7 +104,9 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             
         self.nbvar = X.shape[1] + 1
         self.nbrows = X.shape[0]
-        self.work = min(self.nbrows, self.nbvar) * 3 + max(max(self.nbrows, self.nbvar), min(self.nbrows, self.nbvar) * 2)
+        self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 + 
+                             max(max(self.nbrows, self.nbvar),
+                                 min(self.nbrows, self.nbvar) * <SIZE_t>2))
         if self.sample_f_buffer == NULL:
             self.sample_f_buffer = <DOUBLE_t*> calloc(X.shape[0] * self.nbvar, sizeof(DOUBLE_t))
         if self.sample_pC == NULL:
@@ -181,7 +182,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         :param end: SIZE_t
             The last sample used on this node
         """
-        cdef int ki, ks, idx, c
+        cdef SIZE_t ki, ks, idx, c
 
         self.start = start
         self.pos = start
@@ -194,7 +195,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
 
         # Filling accumulators.
         idx = start * self.nbvar
-        for ki in range(start, end):
+        for ki in range(<int>start, <int>end):
             ks = samples[ki]
             self.sample_i[ki] = ks
             self.sample_w[ki] = sample_weight[ks] if sample_weight else 1.
@@ -202,7 +203,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             self.sample_y[ki] = y[ks, 0]
             self.sample_sum_wy += y[ks, 0] * self.sample_w[ki]
             self.sample_sum_w += self.sample_w[ki]
-            for c in range(0, self.nbvar-1):
+            for c in range(0, <int>self.nbvar-1):
                 self.sample_f[idx] = X[ks, c]
                 idx += 1
             self.sample_f[idx] = 1.
@@ -220,8 +221,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             return
         cdef DOUBLE_t m = 0.
         cdef DOUBLE_t w = 0.
-        cdef int k
-        for k in range(start, end):
+        cdef SIZE_t k
+        for k in range(<int>start, <int>end):
             m += self.sample_wy[k]
             w += self.sample_w[k]
         weight[0] = w
@@ -234,31 +235,31 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         *mean* is unused but could be if the inverse does not exist.
         The solution is the vector ``self.sample_pC[:self.nbvar]``.
         """
-        cdef int i, j, idx, pos
+        cdef SIZE_t i, j, idx, pos
         cdef DOUBLE_t w
         cdef DOUBLE_t* sample_f_buffer = self.sample_f_buffer
         pos = 0
         for j in range(self.nbvar):
             idx = start * self.nbvar + j
-            for i in range(start, end):
+            for i in range(<int>start, <int>end):
                 w = self.sample_w[i]
                 sample_f_buffer[pos] = self.sample_f[idx] * w
                 idx += self.nbvar
                 pos += 1
         
         cdef DOUBLE_t* pC = self.sample_pC
-        for i in range(start, end):
+        for i in range(<int>start, <int>end):
             pC[i-start] = self.sample_wy[i]
 
-        cdef int col = self.nbvar
-        cdef int row = end - start
+        cdef int col = <int>self.nbvar
+        cdef int row = <int>(end - start)
         cdef int info
         cdef int nrhs = 1
         cdef int lda = row
         cdef int ldb = row
         cdef DOUBLE_t rcond = -1
         cdef int rank        
-        cdef int work = self.work
+        cdef int work = <int>self.work
         
         if row < col:
             if low_rank:
@@ -283,14 +284,14 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self._reglin(start, end, 0)
         
         cdef double* pC = self.sample_pC
-        cdef int j, idx
+        cdef SIZE_t j, idx
         
         # replaces what follows by gemm
         cdef DOUBLE_t squ = 0.
         cdef DOUBLE_t d
-        cdef int k
+        cdef SIZE_t k
         idx = start * self.nbvar
-        for k in range(start, end):            
+        for k in range(<int>start, <int>end):
             d = 0.
             for j in range(self.nbvar):
                 d += self.sample_f[idx] * pC[j]

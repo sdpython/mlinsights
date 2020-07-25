@@ -245,7 +245,7 @@ def _test_criterion_update(Criterion criterion, SIZE_t new_pos):
     
 def _test_criterion_printf(Criterion crit):
     "Test purposes. Methods cannot be directly called from python."    
-    printf("start=%d pos=%d end=%d\n", crit.start, crit.pos, crit.end)
+    printf("start=%zu pos=%zu end=%zu\n", crit.start, crit.pos, crit.end)
     cdef DOUBLE_t left, right, value
     cdef int i;
     crit.children_impurity(&left, &right)

@@ -9,7 +9,6 @@ cimport numpy
 numpy.import_array()
 
 from libc.stdlib cimport calloc, free
-from libc.stdio cimport printf
 from libc.math cimport NAN
 
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
@@ -115,7 +114,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         :param end: SIZE_t
             The last sample used on this node
         """
-        cdef int ki, ks
+        cdef SIZE_t ki, ks
 
         self.start = start
         self.pos = start
@@ -127,7 +126,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.sample_sum_w = 0.
 
         # Filling accumulators.
-        for ki in range(start, end):
+        for ki in range(<int>start, <int>end):
             ks = samples[ki]
             self.sample_i[ki] = ks
             self.sample_w[ki] = sample_weight[ks] if sample_weight else 1.
@@ -155,7 +154,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         cdef DOUBLE_t m = 0.
         cdef DOUBLE_t w = 0.
         cdef int k
-        for k in range(start, end):
+        for k in range(<int>start, <int>end):
             m += self.sample_wy[k]
             w += self.sample_w[k]
         weight[0] = w
@@ -170,6 +169,6 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             return 0.
         cdef DOUBLE_t squ = 0.
         cdef int k
-        for k in range(start, end):            
+        for k in range(<int>start, <int>end):            
             squ += (self.y[self.sample_i[k], 0] - mean) ** 2 * self.sample_w[k]
         return 0. if weight == 0. else squ / weight

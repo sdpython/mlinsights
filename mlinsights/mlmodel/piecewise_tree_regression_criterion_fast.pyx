@@ -107,7 +107,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         :param end: SIZE_t
             The last sample used on this node
         """
-        cdef int ki, ks
+        cdef SIZE_t ki, ks
         cdef double w, y_
 
         self.start = start
@@ -123,14 +123,14 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
             self.sample_wy2_left[i] = 0
 
         # Left side.
-        for ki in range(start, start+1):
+        for ki in range(<int>start, <int>start+1):
             ks = samples[ki]
             w = sample_weight[ks] if sample_weight else 1.
             y_ = y[ks, 0]
             self.sample_w_left[ki] = w
             self.sample_wy_left[ki] = w * y_
             self.sample_wy2_left[ki] = w * y_ * y_
-        for ki in range(start+1, end):
+        for ki in range(<int>start+1, <int>end):
             ks = samples[ki]
             w = sample_weight[ks] if sample_weight else 1.
             y_ = y[ks, 0]

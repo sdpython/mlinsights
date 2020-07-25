@@ -110,6 +110,9 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         points mapped a specific leave. ``leaves_index_`` keeps
         in memory a set of leaves.
         """
+        from .piecewise_tree_regression_criterion_linear import (  # pylint: disable=E0611,C0415
+            LinearRegressorCriterion)
+
         tree = self.tree_
         self.leaves_index_ = [i for i in range(len(tree.children_left))
                               if tree.children_left[i] <= i and tree.children_right[i] <= i]  # pylint: disable=E1136
