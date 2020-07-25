@@ -12,6 +12,7 @@ from .kmeans_constraint import ConstraintKMeans
 from .kmeans_l1 import KMeansL1L2
 from .ml_featurizer import model_featurizer
 from .piecewise_estimator import PiecewiseRegressor, PiecewiseClassifier
+from .piecewise_tree_regression import PiecewiseTreeRegressor
 from .predictable_tsne import PredictableTSNE
 from .quantile_mlpregressor import QuantileMLPRegressor
 from .quantile_regression import QuantileLinearRegression
