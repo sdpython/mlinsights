@@ -20,7 +20,5 @@ seaborn
 sphinx>=2.1
 sphinxcontrib.imagesvg
 sphinx_gallery
-tensorflow>=2.2
-torchvision>=0.6.0
 tqdm
 wheel

@@ -89,6 +89,10 @@ class ConstraintKMeans(KMeans):
         if strategy not in ConstraintKMeans._strategy_value:
             raise ValueError('strategy must be in {0}'.format(
                 ConstraintKMeans._strategy_value))
+        if precompute_distances == 'deprecated':
+            km = KMeans()
+            if km.precompute_distances != precompute_distances:
+                self.precompute_distances = km.precompute_distances
 
     def fit(self, X, y=None, sample_weight=None, fLOG=None):
         """

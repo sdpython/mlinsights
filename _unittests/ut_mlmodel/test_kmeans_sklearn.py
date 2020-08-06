@@ -5,13 +5,18 @@
 import unittest
 import numpy as np
 from scipy import sparse as sp
+from sklearn import __version__ as sklearn_vers
 from sklearn.utils._testing import (
     assert_array_equal, assert_array_almost_equal,
     assert_almost_equal, assert_raise_message)
 from sklearn.metrics.cluster import v_measure_score
 from sklearn.datasets import make_blobs
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper.version_helper import compare_module_version
 from mlinsights.mlmodel import KMeansL1L2
+
+
+sklearn_023 = compare_module_version(sklearn_vers, "0.23.2") >= 0
 
 
 class TestKMeansL1L2Sklearn(ExtTestCase):
@@ -37,7 +42,10 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
         # will be rescaled to [1.5, 0.5, 0.5, 1.5]
         if sw:
             sample_weight = [3, 1, 1, 3]
-            expected_inertia = 0.375
+            if sklearn_023:
+                expected_inertia = 0.375
+            else:
+                expected_inertia = 0.1875
             expected_centers = np.array([[0.125, 0], [0.875, 1]], dtype=dtype)
             expected_n_iter = 2
         else:
