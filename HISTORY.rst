@@ -8,6 +8,8 @@ History
 current - 2020-08-06 - 0.00Mb
 =============================
 
+* `81`: Make mlinsights work with scikit-learn 0.22 and 0.23 (2020-08-06)
+* `82`: Fixes #81, skl 0.22, 0.23 together (2020-08-06)
 * `79`: pipeline2dot fails with 'passthrough' (2020-07-16)
 
 0.2.463 - 2020-06-29 - 0.83Mb
