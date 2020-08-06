@@ -559,8 +559,7 @@ class KMeansL1L2(KMeans):
         if self.max_iter <= 0:
             raise ValueError(  # pragma no cover
                 'Number of iterations should be a positive number,'
-                ' got %d instead' % self.max_iter
-            )
+                ' got %d instead' % self.max_iter)
 
         # avoid forcing order when copy_x=False
         order = "C" if self.copy_x else None
@@ -592,11 +591,11 @@ class KMeansL1L2(KMeans):
 
         # Validate init array
         init = self.init
-        if hasattr(init, '__array__'):  # pragma: no cover
+        if hasattr(init, '__array__'):
             init = check_array(init, dtype=X.dtype.type, copy=True)
             if hasattr(self, '_validate_center_shape'):
                 self._validate_center_shape(  # pylint: disable=E1101
-                    X, self.n_clusters, init)
+                    X, init)
 
             if n_init != 1:
                 warnings.warn(

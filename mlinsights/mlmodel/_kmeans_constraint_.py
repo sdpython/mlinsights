@@ -12,9 +12,7 @@ from scipy.spatial.distance import cdist
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.utils.extmath import row_norms
 from ._kmeans_022 import (
-    _centers_dense, _centers_sparse,
-    _labels_inertia_skl
-)
+    _centers_dense, _centers_sparse, _labels_inertia_skl)
 
 
 def linearize_matrix(mat, *adds):

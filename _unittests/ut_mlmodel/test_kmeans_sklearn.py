@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=5s)
+@brief      test log(time=4s)
 """
 import unittest
 import numpy as np
 from scipy import sparse as sp
+from sklearn import __version__ as sklearn_vers
 from sklearn.utils._testing import (
     assert_array_equal, assert_array_almost_equal,
     assert_almost_equal, assert_raise_message)
 from sklearn.metrics.cluster import v_measure_score
 from sklearn.datasets import make_blobs
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper.version_helper import compare_module_version
 from mlinsights.mlmodel import KMeansL1L2
+
+
+sklearn_023 = compare_module_version(sklearn_vers, "0.23.2") >= 0
 
 
 class TestKMeansL1L2Sklearn(ExtTestCase):
@@ -28,23 +33,56 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
                                 cluster_std=1., random_state=42)[:2]
     X_csr = sp.csr_matrix(X)
 
-    def do_test_kmeans_results(self, representation, algo, dtype):
+    def do_test_kmeans_results(self, representation, algo, dtype, norm, sw):
         # cheks that kmeans works as intended
         array_constr = {'dense': np.array,
                         'sparse': sp.csr_matrix}[representation]
         X = array_constr([[0, 0], [0.5, 0], [0.5, 1], [1, 1]], dtype=dtype)
-        # will be rescaled to [1.5, 0.5, 0.5, 1.5]
-        sample_weight = [3, 1, 1, 3]
         init_centers = np.array([[0, 0], [1, 1]], dtype=dtype)
+        # will be rescaled to [1.5, 0.5, 0.5, 1.5]
+        if sw:
+            sample_weight = [3, 1, 1, 3]
+            if sklearn_023:
+                expected_inertia = 0.375
+            else:
+                expected_inertia = 0.1875
+            expected_centers = np.array([[0.125, 0], [0.875, 1]], dtype=dtype)
+            expected_n_iter = 2
+        else:
+            sample_weight = None
+            if norm == 'L2':
+                expected_inertia = 0.25
+                expected_centers = np.array(
+                    [[0.25, 0], [0.75, 1]], dtype=dtype)
+                expected_n_iter = 2
+            else:
+                expected_inertia = 1.
+                expected_centers = np.array(
+                    [[0.25, 0], [0.75, 1]], dtype=dtype)
+                expected_n_iter = 1
 
         expected_labels = [0, 0, 1, 1]
-        expected_inertia = 0.1875
-        expected_centers = np.array([[0.125, 0], [0.875, 1]], dtype=dtype)
-        expected_n_iter = 2
 
-        kmeans = KMeansL1L2(n_clusters=2, n_init=1,
-                            init=init_centers, algorithm=algo)
-        kmeans.fit(X, sample_weight=sample_weight)
+        try:
+            kmeans = KMeansL1L2(n_clusters=2, n_init=1,
+                                init=init_centers, algorithm=algo,
+                                norm=norm)
+        except NotImplementedError as e:
+            if ("Only algorithm 'full' is implemented" in str(e) and
+                    norm == 'L1'):
+                return
+            raise e
+
+        try:
+            kmeans.fit(X, sample_weight=sample_weight)
+        except NotImplementedError as e:
+            if ("Non uniform weights are not implemented yet" in str(e) and
+                    norm == 'L1'):
+                return
+            if ("Sparse matrix is not implemented" in str(e) and
+                    norm == 'L1'):
+                return
+            raise e
 
         assert_array_equal(kmeans.labels_, expected_labels)
         assert_almost_equal(kmeans.inertia_, expected_inertia)
@@ -56,7 +94,12 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
                                      ('dense', 'elkan'),
                                      ('sparse', 'full')]:
             for dtype in [np.float32, np.float64]:
-                self.do_test_kmeans_results(representation, algo, dtype)
+                for norm in ['L1', 'L2']:
+                    for sw in [False, True]:
+                        with self.subTest(c=representation, algo=algo,
+                                          dtype=dtype, sw=sw, norm=norm):
+                            self.do_test_kmeans_results(
+                                representation, algo, dtype, norm, sw)
 
     def _check_fitted_model(self, km):
         # check that the number of clusters centers and distinct labels match
