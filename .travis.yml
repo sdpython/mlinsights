@@ -5,8 +5,8 @@ language: python
 matrix:
   include:
   - python: 3.7
-    name: "Py37-skl023"
-    env: sklearnc=">=0.23"
+    name: "Py37-skl022"
+    env: sklearnc="==0.22.2"
   - python: 3.8
     name: "Py38-skl023"
     env: sklearnc=">=0.23"

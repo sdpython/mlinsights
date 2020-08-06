@@ -5,7 +5,12 @@
 History
 =======
 
-current - 2020-06-30 - 0.00Mb
+current - 2020-08-06 - 0.00Mb
+=============================
+
+* `79`: pipeline2dot fails with 'passthrough' (2020-07-16)
+
+0.2.463 - 2020-06-29 - 0.83Mb
 =============================
 
 * `78`: Removes strong dependency on pyquickhelper (2020-06-29)
