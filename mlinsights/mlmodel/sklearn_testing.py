@@ -148,7 +148,7 @@ def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
             try:
                 ext.assertEqual(p1[k], p2[k])
             except AssertionError as e:  # pragma no cover
-                raise AssertionError(
+                raise AssertionError(  # pylint: disable=W0707
                     "Difference for key '{0}'\n==1 {1}\n==2 {2}".format(
                         k, p1[k], p2[k]))
     return conv, cloned

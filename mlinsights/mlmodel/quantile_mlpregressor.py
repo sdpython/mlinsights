@@ -327,7 +327,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         """
         See :epkg:`sklearn:neural_networks:MLPRegressor`
         """
-        sup = super(QuantileMLPRegressor, self)
+        sup = super(QuantileMLPRegressor, self)  # pylint: disable=R1725
         if "max_fun" not in kwargs:
             sig = inspect.signature(sup.__init__)
             if "max_fun" in sig.parameters:

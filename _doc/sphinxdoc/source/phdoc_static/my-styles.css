@@ -29,15 +29,15 @@ pre.highlight-default {
 }
 
 table {
-    border: solid 1px #DDEEEE;
+    border: solid 1px #EEEEEE;
     border-collapse: collapse;
     border-spacing: 0;
-    font: normal 13px Arial, sans-serif;
+    font: normal 11px;
 }
 thead th {
-    background-color: #DDEFEF;
-    border: solid 1px #DDEEEE;
-    color: #336B6B;
+    background-color: #EFEFEF;
+    border: solid 1px #EEEEEE;
+    color: #6B6B6B;
     padding: 10px;
     text-align: left;
     text-shadow: 1px 1px 1px #fff;
@@ -45,6 +45,5 @@ thead th {
 tbody td {
     border: solid 1px #DDEEEE;
     color: #333;
-    padding: 10px;
-    text-shadow: 1px 1px 1px #fff;
+    padding: 3px;
 }
