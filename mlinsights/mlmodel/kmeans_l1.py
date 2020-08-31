@@ -18,7 +18,7 @@ from sklearn.utils.validation import _num_samples, check_is_fitted
 from sklearn.utils.extmath import stable_cumsum
 try:
     from sklearn.cluster._kmeans import _check_sample_weight
-except ImportError:
+except ImportError:  # pragma: no cover
     from sklearn.cluster._kmeans import (
         _check_normalize_sample_weight as _check_sample_weight)
 from ._kmeans_022 import (
@@ -144,7 +144,7 @@ def _init_centroids(norm, X, k, init, random_state=None,
         X = X[init_indices]
         n_samples = X.shape[0]
     elif n_samples < k:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "n_samples=%d should be larger than k=%d" % (n_samples, k))
 
     if isinstance(init, str) and init == 'k-means++':
@@ -160,9 +160,10 @@ def _init_centroids(norm, X, k, init, random_state=None,
         centers = init(norm, X, k, random_state=random_state)
         centers = numpy.asarray(centers, dtype=X.dtype)
     else:
-        raise ValueError("the init parameter for the k-means should "
-                         "be 'k-means++' or 'random' or an ndarray, "
-                         "'%s' (type '%s') was passed." % (init, type(init)))
+        raise ValueError(  # pragma: no cover
+            "init parameter for the k-means should "
+            "be 'k-means++' or 'random' or an ndarray, "
+            "'%s' (type '%s') was passed." % (init, type(init)))
 
     if issparse(centers):
         centers = centers.toarray()
@@ -170,11 +171,11 @@ def _init_centroids(norm, X, k, init, random_state=None,
     def _validate_center_shape(X, k, centers):
         """Check if centers is compatible with X and n_clusters"""
         if centers.shape[0] != k:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 f"The shape of the initial centers {centers.shape} does not "
                 f"match the number of clusters {k}.")
         if centers.shape[1] != X.shape[1]:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 f"The shape of the initial centers {centers.shape} does not "
                 f"match the number of features of the data {X.shape[1]}.")
 
@@ -598,7 +599,7 @@ class KMeansL1L2(KMeans):
                     X, init)
 
             if n_init != 1:
-                warnings.warn(
+                warnings.warn(  # pragma: no cover
                     'Explicit initial center position passed: '
                     'performing only one init in k-means instead of n_init=%d'
                     % n_init, RuntimeWarning, stacklevel=2)
