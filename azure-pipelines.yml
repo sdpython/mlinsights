@@ -147,7 +147,8 @@ jobs:
    #- script: python -m pip install --upgrade pip setuptools wheel
    #  displayName: 'Install tools'
  
-   - bash: pip install --no-deps pyquickhelper jyquickhelper jupyter_sphinx sphinx-readable-theme
+   - bash: pip install --no-deps pyquickhelper jyquickhelper jupyter_sphinx sphinx-readable-theme numpy pybind11 scipy
+     displayName: 'Install numpy'
    #- script: conda install --file requirements.txt
    #  displayName: 'Install Requirements'
    - script: pip install -r requirements.txt
