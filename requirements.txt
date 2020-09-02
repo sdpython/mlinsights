@@ -1,7 +1,7 @@
 autopep8
 chardet
 coverage
-cpyquickhelper>=0.2.229
+cpyquickhelper>=0.2.330
 cython
 joblib
 jupyter_sphinx>=0.2
