@@ -1,0 +1,22 @@
+
+.. blogpost::
+    :title: scikit-learn internal API
+    :keywords: API
+    :date: 2020-09-02
+    :categories: scikit-learn
+    :lid: blog-internal-api-impurity-improvement
+
+    The signature of method `impurity_improvement
+    <https://github.com/scikit-learn/scikit-learn/blob/master/
+    sklearn/tree/_criterion.pxd#L65>`_ will change for version
+    0.24. That's usually easy to handle two versions of scikit-learn
+    even overloaded in a class except that method is implemented
+    in :epkg:`cython`. The method must be overloaded the same way
+    with the same signature. The way it was handled is implemented
+    in PR `88 <https://github.com/sdpython/mlinsights/pull/88>`_.
+
+    The best would be to include both of them but only one of
+    them can compile. I did not find any good solution to that.
+    It compiles whatever scikit-learn's version but the compiled
+    module only works with the installed version of
+    :epkg:`scikti-learn`.

@@ -29,6 +29,10 @@ cdef class CommonRegressorCriterion(Criterion):
     <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
+
+    If the file does not compile, some explanations are given
+    in :ref:`scikit-learn internal API
+    <blog-internal-api-impurity-improvement>`_.
     """
     def __getstate__(self):
         return {}
