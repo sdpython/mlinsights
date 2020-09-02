@@ -1,4 +1,5 @@
 
+
 .. _l-HISTORY:
 
 =======
@@ -8,6 +9,8 @@ History
 current - 2020-09-02 - 0.00Mb
 =============================
 
+* `86`: Update CI, use python 3.8 (2020-09-02)
+* `87`: Set up CI with Azure Pipelines (2020-09-02)
 * `71`: update kmeans l1 to the latest kmeans (signatures changed) (2020-08-31)
 * `84`: style (2020-08-30)
 
