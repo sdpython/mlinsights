@@ -157,6 +157,7 @@ if r and ask_help():
     process_standard_options_for_setup_help(sys.argv)
 
 if not r:
+    import sklearn
     if len(sys.argv) in (1, 2) and sys.argv[-1] in ("--help-commands",):
         from pyquickhelper.pycode import process_standard_options_for_setup_help
         process_standard_options_for_setup_help(sys.argv)
@@ -178,8 +179,15 @@ if not r:
     # mlmodel
 
     extensions = ["direct_blas_lapack"]
+    spl = sklearn.__version__.split('.')
+    vskl = (int(spl[0]), int(spl[1]))
+    if vskl >= (0, 24):
+        extensions.append(("_piecewise_tree_regression_common",
+                           "_piecewise_tree_regression_common024"))
+    else:
+        extensions.append(("_piecewise_tree_regression_common",
+                           "_piecewise_tree_regression_common023"))
     extensions.extend([
-        "_piecewise_tree_regression_common",
         "piecewise_tree_regression_criterion",
         "piecewise_tree_regression_criterion_linear",
         "piecewise_tree_regression_criterion_fast",
@@ -188,11 +196,18 @@ if not r:
     pattern1 = "mlinsights.mlmodel.%s"
     import numpy
     for name in extensions:
-        m = Extension(pattern1 % name,
-                      ['mlinsights/mlmodel/%s.pyx' % name],
-                      include_dirs=[numpy.get_include()],
-                      extra_compile_args=["-O3"],
-                      language='c')
+        if isinstance(name, tuple):
+            m = Extension(pattern1 % name[0],
+                          ['mlinsights/mlmodel/%s.pyx' % name[1]],
+                          include_dirs=[numpy.get_include()],
+                          extra_compile_args=["-O3"],
+                          language='c')
+        else:
+            m = Extension(pattern1 % name,
+                          ['mlinsights/mlmodel/%s.pyx' % name],
+                          include_dirs=[numpy.get_include()],
+                          extra_compile_args=["-O3"],
+                          language='c')
         ext_modules.append(m)
 
     # cythonize
