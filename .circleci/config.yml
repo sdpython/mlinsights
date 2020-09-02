@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.7.5
+      - image: circleci/python:3.8.5
     
     working_directory: ~/repo
     
@@ -18,8 +18,8 @@ jobs:
           name: Install pandoc
           command: |
                     sudo apt-get update 
-                    wget https://github.com/jgm/pandoc/releases/download/2.2.1/pandoc-2.2.1-1-amd64.deb
-                    sudo dpkg -i pandoc-2.2.1-1-amd64.deb
+                    wget https://github.com/jgm/pandoc/releases/download/2.10.1/pandoc-2.10.1-1-amd64.deb
+                    sudo dpkg -i pandoc-2.10.1-1-amd64.deb
           
       - run:
           name: Install tex
@@ -107,17 +107,17 @@ jobs:
             mkdir -p test-reports
             cp -r  mlinsights test-reports
 
-      - run:
-          name: documentation
-          command: |
-            . venv/bin/activate
-            python setup.py build_sphinx
-            
-      - run:
-          name: copy documentation
-          command: |
-            mkdir -p test-reports/doc
-            zip -r -9  test-reports/doc/documentation_html.zip _doc/sphinxdoc/build/html
+#      - run:
+#          name: documentation
+#          command: |
+#           . venv/bin/activate
+#           python setup.py build_sphinx
+#           
+#      - run:
+#          name: copy documentation
+#          command: |
+#           mkdir -p test-reports/doc
+#           zip -r -9  test-reports/doc/documentation_html.zip _doc/sphinxdoc/build/html
             
       - store_artifacts:
           path: test-reports
