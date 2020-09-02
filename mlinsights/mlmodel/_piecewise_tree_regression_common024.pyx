@@ -29,6 +29,10 @@ cdef class CommonRegressorCriterion(Criterion):
     <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
+
+    If the file does not compile, some explanations are given
+    in :ref:`scikit-learn internal API
+    <blog-internal-api-impurity-improvement>`_.
     """
     def __getstate__(self):
         return {}
@@ -167,7 +171,9 @@ cdef class CommonRegressorCriterion(Criterion):
         return (- self.weighted_n_right * impurity_right
                 - self.weighted_n_left * impurity_left)
 
-    cdef double impurity_improvement(self, double impurity) nogil:
+    cdef double impurity_improvement(self, double impurity_parent,
+                                     double impurity_left,
+                                     double impurity_right) nogil:
         """
         Computes the improvement in impurity
         This method computes the improvement in impurity when a split occurs.
@@ -180,21 +186,24 @@ cdef class CommonRegressorCriterion(Criterion):
         at the current node, *N_t_L* is the number of samples in the left child,
         and *N_t_R* is the number of samples in the right child,
 
-        :param impurity: double
+        :param impurity_parent: double
             The initial impurity of the node before the split
+        :param impurity_left: double
+            The impurity of the left child
+        :param impurity_right: double
+            The impurity of the right child
         :return: double, improvement in impurity after the split occurs
         """
-        cdef double impurity_left
-        cdef double impurity_right
-        self.children_impurity_weights(&impurity_left, &impurity_right,
-                                       &self.weighted_n_left, &self.weighted_n_right)
-        if self.pos == self.start or self.pos == self.end:
-            return NAN
+        # self.children_impurity_weights(&impurity_left, &impurity_right,
+        #                                &self.weighted_n_left, &self.weighted_n_right)
+        # if self.pos == self.start or self.pos == self.end:
+        #     return NAN
 
-        cdef double weight = self.weighted_n_left + self.weighted_n_right
+        # cdef double weight = self.weighted_n_left + self.weighted_n_right
+        cdef double weight = self.weighted_n_node_samples
         return ((weight / self.weighted_n_samples) *
-                (impurity - (self.weighted_n_right / weight * impurity_right)
-                          - (self.weighted_n_left / weight * impurity_left)))
+                (impurity_parent - (self.weighted_n_right / weight * impurity_right)
+                                 - (self.weighted_n_left / weight * impurity_left)))
 
 
 def _test_criterion_init(Criterion criterion, 
@@ -219,9 +228,10 @@ def _test_criterion_proxy_impurity_improvement(Criterion criterion):
     return criterion.proxy_impurity_improvement()
 
     
-def _test_criterion_impurity_improvement(Criterion criterion, double impurity):
+def _test_criterion_impurity_improvement(Criterion criterion, double impurity_parent,
+                                         double impurity_left, double impurity_right):
     "Test purposes. Methods cannot be directly called from python."
-    return criterion.impurity_improvement(impurity)
+    return criterion.impurity_improvement(impurity_parent, impurity_left, impurity_right)
 
     
 def _test_criterion_node_impurity_children(Criterion criterion):
