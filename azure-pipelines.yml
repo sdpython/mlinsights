@@ -98,68 +98,68 @@ jobs:
        targetPath: 'dist'
 
  - job: 'TestMac'
-  pool:
-    vmImage: 'macOS-latest'
-  strategy:
-    matrix:
-      Python37:
-        python.version: "3.7"
-
-  steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(python.version)'
-      architecture: 'x64'
-  - script: gcc --version
-    displayName: 'gcc version'
-
-  - script: |
-          brew update
-    displayName: 'brew update'
-  - script: export
-    displayName: 'export'
-  - script: gcc --version
-    displayName: 'gcc version'
-  - script: brew install llvm
-    displayName: 'install llvm'
-  - script: brew install libomp
-    displayName: 'Install omp'
-  - script: brew install p7zip
-    displayName: 'Install p7zip'
-  - script: brew install pandoc
-    displayName: 'Install Pandoc'
-  - script: brew install graphviz
-    displayName: 'Install Graphviz'
-  - script: brew install pybind11
-    displayName: 'Install pybind11'
-
-  - bash: echo "##vso[task.prependpath]$CONDA/bin"
-    displayName: Add conda to PATH.
-  - bash: sudo chown -R $USER $CONDA
-    displayName: Take ownership of conda installation
-  - bash: conda update conda --yes --quiet
-    displayName: Update conda.
-  - bash: conda info -a
-  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
-    displayName: Create Anaconda environment.
-  - bash: conda list
-  - bash: |
-      source activate pyenv
-
-  - script: pip install -r requirements.txt
-    displayName: 'Install Requirements'
-  - script: |
-          export MACOSX_DEPLOYMENT_TARGET=10.13
-          python setup.py build_ext --inplace
-    displayName: 'Build package'
-  - script: |
-      python -u setup.py unittests
-    displayName: 'Runs Unit Tests'
-  - script: |
-      python -u setup.py bdist_wheel
-    displayName: 'Build Package'
-  - task: PublishPipelineArtifact@0
-    inputs:
-      artifactName: 'wheel-mac-$(python.version)'
-      targetPath: 'dist'
+   pool:
+     vmImage: 'macOS-latest'
+   strategy:
+     matrix:
+       Python37:
+         python.version: "3.7"
+ 
+   steps:
+   - task: UsePythonVersion@0
+     inputs:
+       versionSpec: '$(python.version)'
+       architecture: 'x64'
+   - script: gcc --version
+     displayName: 'gcc version'
+ 
+   - script: |
+           brew update
+     displayName: 'brew update'
+   - script: export
+     displayName: 'export'
+   - script: gcc --version
+     displayName: 'gcc version'
+   - script: brew install llvm
+     displayName: 'install llvm'
+   - script: brew install libomp
+     displayName: 'Install omp'
+   - script: brew install p7zip
+     displayName: 'Install p7zip'
+   - script: brew install pandoc
+     displayName: 'Install Pandoc'
+   - script: brew install graphviz
+     displayName: 'Install Graphviz'
+   - script: brew install pybind11
+     displayName: 'Install pybind11'
+ 
+   - bash: echo "##vso[task.prependpath]$CONDA/bin"
+     displayName: Add conda to PATH.
+   - bash: sudo chown -R $USER $CONDA
+     displayName: Take ownership of conda installation
+   - bash: conda update conda --yes --quiet
+     displayName: Update conda.
+   - bash: conda info -a
+   - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
+     displayName: Create Anaconda environment.
+   - bash: conda list
+   - bash: |
+       source activate pyenv
+ 
+   - script: pip install -r requirements.txt
+     displayName: 'Install Requirements'
+   - script: |
+           export MACOSX_DEPLOYMENT_TARGET=10.13
+           python setup.py build_ext --inplace
+     displayName: 'Build package'
+   - script: |
+       python -u setup.py unittests
+     displayName: 'Runs Unit Tests'
+   - script: |
+       python -u setup.py bdist_wheel
+     displayName: 'Build Package'
+   - task: PublishPipelineArtifact@0
+     inputs:
+       artifactName: 'wheel-mac-$(python.version)'
+       targetPath: 'dist'
 
