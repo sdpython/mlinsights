@@ -92,14 +92,6 @@ jobs:
      displayName: 'Runs Unit Tests'
    - script: |
        python -u setup.py bdist_wheel
-     displayName: 'Build Package'
-   #  - script: |
-   #      python -u setup.py build_sphinx
-   #    displayName: 'Builds Documentation'
-   - task: PublishPipelineArtifact@0
-     inputs:
-       artifactName: 'wheel-linux-$(python.version)'
-       targetPath: 'dist'
 
  - job: 'TestMac'
    pool:
@@ -150,12 +142,20 @@ jobs:
    - bash: |
        source activate pyenv
  
+   # - script: brew cask install mactex
+   #   displayName: 'Install latex'
+   #- script: python -m pip install --upgrade pip setuptools wheel
+   #  displayName: 'Install tools'
+ 
+   - bash: pip install --no-deps pyquickhelper jyquickhelper jupyter_sphinx sphinx-readable-theme
+   #- script: conda install --file requirements.txt
+   #  displayName: 'Install Requirements'
    - script: pip install -r requirements.txt
      displayName: 'Install Requirements'
-   - script: pip install -r requirements-ext.txt
-     displayName: 'Install Requirements ext'
+   - script: python -c "import platform;print(platform.version())"
+     displayName: 'Platform'
    - script: |
-           export MACOSX_DEPLOYMENT_TARGET=10.13
+           # export MACOSX_DEPLOYMENT_TARGET=10.13
            python setup.py build_ext --inplace
      displayName: 'Build package'
    - script: |
