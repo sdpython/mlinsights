@@ -107,17 +107,17 @@ jobs:
             mkdir -p test-reports
             cp -r  mlinsights test-reports
 
-      - run:
-          name: documentation
-          command: |
-            . venv/bin/activate
-            python setup.py build_sphinx
-            
-      - run:
-          name: copy documentation
-          command: |
-            mkdir -p test-reports/doc
-            zip -r -9  test-reports/doc/documentation_html.zip _doc/sphinxdoc/build/html
+#      - run:
+#          name: documentation
+#          command: |
+#           . venv/bin/activate
+#           python setup.py build_sphinx
+#           
+#      - run:
+#          name: copy documentation
+#          command: |
+#           mkdir -p test-reports/doc
+#           zip -r -9  test-reports/doc/documentation_html.zip _doc/sphinxdoc/build/html
             
       - store_artifacts:
           path: test-reports
