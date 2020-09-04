@@ -157,7 +157,6 @@ if r and ask_help():
     process_standard_options_for_setup_help(sys.argv)
 
 if not r:
-    import sklearn
     if len(sys.argv) in (1, 2) and sys.argv[-1] in ("--help-commands",):
         from pyquickhelper.pycode import process_standard_options_for_setup_help
         process_standard_options_for_setup_help(sys.argv)
@@ -178,6 +177,7 @@ if not r:
 
     # mlmodel
 
+    import sklearn
     extensions = ["direct_blas_lapack"]
     spl = sklearn.__version__.split('.')
     vskl = (int(spl[0]), int(spl[1]))
@@ -241,7 +241,7 @@ if not r:
         packages=packages,
         package_dir=package_dir,
         package_data=package_data,
-        setup_requires=["pyquickhelper", 'cython', 'scipy'],
+        setup_requires=["pyquickhelper", 'cython', 'scipy', 'scikit-learn'],
         install_requires=['cython', 'scikit-learn>=0.22.1', 'pandas', 'scipy',
                           'matplotlib', 'pandas_streaming', 'numpy>=1.16'],
         ext_modules=ext_modules,  # cythonize(ext_modules),
