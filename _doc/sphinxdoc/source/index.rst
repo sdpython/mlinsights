@@ -21,7 +21,7 @@ mlinsights: tricky scikit-learn
 .. image:: https://circleci.com/gh/sdpython/mlinsights/tree/master.svg?style=svg
     :target: https://circleci.com/gh/sdpython/mlinsights/tree/master
 
-.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights
+.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights%20(2)
     :target: https://dev.azure.com/xavierdupre3/mlinsights/
 
 .. image:: https://badge.fury.io/py/mlinsights.svg
