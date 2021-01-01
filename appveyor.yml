@@ -10,7 +10,6 @@ init:
 
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
-  - "%PYTHON%\\Scripts\\pip install cython numpy"
   - "%PYTHON%\\Scripts\\pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html"
   - "%PYTHON%\\Scripts\\pip install -r requirements.txt"
 build: off
