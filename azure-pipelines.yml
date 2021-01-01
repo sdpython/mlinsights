@@ -5,7 +5,7 @@ jobs:
    strategy:
      matrix:
        Python37-Linux:
-         python.version: '3.8'
+         python.version: '3.9'
      maxParallel: 3
  
    steps:
@@ -56,7 +56,7 @@ jobs:
    strategy:
      matrix:
        Python37-Linux:
-         python.version: '3.8'
+         python.version: '3.9'
      maxParallel: 3
  
    steps:
@@ -99,7 +99,7 @@ jobs:
    strategy:
      matrix:
        Python37:
-         python.version: "3.7"
+         python.version: "3.9"
  
    steps:
    - task: UsePythonVersion@0
@@ -142,7 +142,7 @@ jobs:
    - bash: |
        source activate pyenv
  
-   # - script: brew cask install mactex
+   # - script: brew install mactex --cask
    #   displayName: 'Install latex'
    #- script: python -m pip install --upgrade pip setuptools wheel
    #  displayName: 'Install tools'
