@@ -8,6 +8,7 @@ import pickle
 import warnings
 import pandas
 from numpy.random import permutation
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression, LinearRegression
@@ -20,7 +21,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
 from sklearn.preprocessing import Normalizer, MinMaxScaler
-from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from mlinsights.sklapi import SkBaseTransformStacking
 
 with warnings.catch_warnings():
@@ -42,12 +43,13 @@ def load_wines_dataset(shuffle=False):
 
 class TestSklearnStacking(ExtTestCase):
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_classifiers(self):
         data = load_iris()
         X, y = data.data, data.target
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         conv = SkBaseTransformStacking(
-            [LogisticRegression(), DecisionTreeClassifier()])
+            [LogisticRegression(n_jobs=1), DecisionTreeClassifier()])
         pipe = make_pipeline(conv, DecisionTreeClassifier())
         pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
@@ -59,6 +61,7 @@ class TestSklearnStacking(ExtTestCase):
         self.assertStartsWith(
             'SkBaseTransformStacking([LogisticRegression(', rp)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_transforms(self):
         data = load_iris()
         X, y = data.data, data.target
@@ -76,6 +79,7 @@ class TestSklearnStacking(ExtTestCase):
         self.assertStartsWith(
             "SkBaseTransformStacking([Normalizer(", rp)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_params(self):
         conv = SkBaseTransformStacking([LinearRegression(normalize=True),
                                         DecisionTreeClassifier(max_depth=3)])
@@ -95,6 +99,7 @@ class TestSklearnStacking(ExtTestCase):
         self.assertEqual(
             pars['skbasetransformstacking__models_0__model__normalize'], True)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
         data = load_iris()
         X, y = data.data, data.target
@@ -113,6 +118,7 @@ class TestSklearnStacking(ExtTestCase):
         pred2 = rec.predict(X)
         self.assertEqualArray(pred, pred2)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_clone(self):
         conv = SkBaseTransformStacking([LinearRegression(normalize=True),
                                         DecisionTreeClassifier(max_depth=3)],
@@ -120,6 +126,7 @@ class TestSklearnStacking(ExtTestCase):
         cloned = clone(conv)
         conv.test_equality(cloned, exc=True)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_grid(self):
         data = load_iris()
         X, y = data.data, data.target
@@ -139,6 +146,7 @@ class TestSklearnStacking(ExtTestCase):
         pred = clf.predict(X)
         self.assertEqualArray(y, pred)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_wines(self):
         df = load_wines_dataset(shuffle=True)
         X = df.drop(['quality', 'color'], axis=1)

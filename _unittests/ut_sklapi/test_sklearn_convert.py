@@ -5,6 +5,7 @@ import unittest
 import pickle
 from io import BytesIO
 import pandas
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression, LinearRegression
@@ -12,12 +13,13 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.metrics import accuracy_score, r2_score
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import GridSearchCV
-from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from mlinsights.sklapi import SkBaseTransformLearner
 
 
 class TestSklearnConvert(ExtTestCase):
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_classifiers(self):
         data = load_iris()
         X, y = data.data, data.target
@@ -34,11 +36,12 @@ class TestSklearnConvert(ExtTestCase):
         self.assertStartsWith(
             'SkBaseTransformLearner(model=LogisticRegression(', rp)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_callable(self):
         data = load_iris()
         X, y = data.data, data.target
         X_train, X_test, y_train, y_test = train_test_split(X, y)
-        tmod = LogisticRegression()
+        tmod = LogisticRegression(n_jobs=1)
         conv = SkBaseTransformLearner(tmod, method=tmod.decision_function)
         pipe = make_pipeline(conv, DecisionTreeClassifier())
         pipe.fit(X_train, y_train)
@@ -51,6 +54,7 @@ class TestSklearnConvert(ExtTestCase):
         self.assertStartsWith(
             'SkBaseTransformLearner(model=LogisticRegression(', rp)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_regressors(self):
         data = load_iris()
         X, y = data.data, data.target
@@ -67,6 +71,7 @@ class TestSklearnConvert(ExtTestCase):
         self.assertStartsWith(
             'SkBaseTransformLearner(model=LinearRegression(', rp)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_params(self):
         conv = SkBaseTransformLearner(LinearRegression(normalize=True))
         pipe = make_pipeline(conv, DecisionTreeRegressor())
@@ -82,6 +87,7 @@ class TestSklearnConvert(ExtTestCase):
         self.assertEqual(
             pars['skbasetransformlearner__model__normalize'], True)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
         df = pandas.DataFrame(dict(y=[0, 1, 0, 1, 0, 1, 0, 1],
                                    X1=[0.5, 0.6, 0.52, 0.62,
@@ -101,6 +107,7 @@ class TestSklearnConvert(ExtTestCase):
         pred2 = rec.transform(X)
         self.assertEqualArray(pred, pred2)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_grid(self):
         df = pandas.DataFrame(dict(y=[0, 1, 0, 1, 0, 1, 0, 1],
                                    X1=[0.5, 0.6, 0.52, 0.62,

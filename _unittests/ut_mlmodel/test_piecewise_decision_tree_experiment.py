@@ -9,14 +9,15 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611,E0401
     _test_criterion_init, _test_criterion_node_impurity,
     _test_criterion_node_impurity_children, _test_criterion_update,
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
     _test_criterion_impurity_improvement)
-from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611
+(  # pylint: disable=E0611
     _test_criterion_check, assert_criterion_equal)
-from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel.piecewise_tree_regression_criterion import (  # pylint: disable=E0611, E0401
+    SimpleRegressorCriterion)
 
 
 class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
@@ -152,7 +153,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
                     c1, 0., left1, right1)
                 p2 = _test_criterion_impurity_improvement(
                     c2, 0., left2, right2)
-            except ImportError:
+            except TypeError:
                 # scikit-learn < 0.24
                 p1 = _test_criterion_impurity_improvement(c1, 0.)
                 p2 = _test_criterion_impurity_improvement(c2, 0.)

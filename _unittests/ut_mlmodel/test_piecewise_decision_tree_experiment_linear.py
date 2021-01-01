@@ -10,7 +10,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611,E0401
     _test_criterion_init, _test_criterion_node_impurity,
     _test_criterion_node_impurity_children, _test_criterion_update,
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
@@ -119,7 +119,7 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
                     c1, 0., left1, right1)
                 p2 = _test_criterion_impurity_improvement(
                     c2, 0., left2, right2)
-            except ImportError:
+            except TypeError:
                 # scikit-learn < 0.23
                 p1 = _test_criterion_impurity_improvement(c1, 0.)
                 p2 = _test_criterion_impurity_improvement(c2, 0.)
