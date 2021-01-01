@@ -147,7 +147,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         deltas[last] = self._modify_loss_derivatives(deltas[last])
 
         # Compute gradient for the last layer
-        temp = self._compute_loss_grad(
+        temp = self._compute_loss_grad(  # pylint: disable=E1111
             last, n_samples, activations, deltas, coef_grads, intercept_grads)
         if temp is None:
             # recent version of scikit-learn
@@ -173,7 +173,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 inplace_derivative = DERIVATIVES[self.activation]
                 inplace_derivative(activations[i], deltas[i - 1])
 
-                coef_grads, intercept_grads = self._compute_loss_grad(
+                coef_grads, intercept_grads = self._compute_loss_grad(  # pylint: disable=E1111
                     i - 1, n_samples, activations, deltas, coef_grads,
                     intercept_grads)
 
