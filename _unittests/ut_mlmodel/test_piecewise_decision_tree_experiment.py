@@ -13,8 +13,9 @@ from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: di
     _test_criterion_init, _test_criterion_node_impurity,
     _test_criterion_node_impurity_children, _test_criterion_update,
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
-    _test_criterion_impurity_improvement
-)
+    _test_criterion_impurity_improvement)
+from mlinsights.mlmodel._piecewise_tree_regression_common import (
+    _test_criterion_check, assert_criterion_equal)
 from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
 
 
@@ -72,19 +73,31 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         ys = y.astype(float).reshape((y.shape[0], 1))
         _test_criterion_init(c1, ys, w, 1., ind, 0, y.shape[0])
         _test_criterion_init(c2, ys, w, 1., ind, 0, y.shape[0])
+        _test_criterion_check(c1)
+        _test_criterion_check(c2)
         i1 = _test_criterion_node_impurity(c1)
         i2 = _test_criterion_node_impurity(c2)
+        _test_criterion_check(c1)
+        _test_criterion_check(c2)
+        assert_criterion_equal(c1, c2)
         self.assertAlmostEqual(i1, i2)
         v1 = _test_criterion_node_value(c1)
         v2 = _test_criterion_node_value(c2)
+        _test_criterion_check(c2)
+        assert_criterion_equal(c1, c2)
         self.assertEqual(v1, v2)
         p1 = _test_criterion_proxy_impurity_improvement(c1)
         p2 = _test_criterion_proxy_impurity_improvement(c2)
+        _test_criterion_check(c2)
+        assert_criterion_equal(c1, c2)
         self.assertTrue(numpy.isnan(p1), numpy.isnan(p2))
 
         for i in range(1, 4):
+            _test_criterion_check(c2)
             _test_criterion_update(c1, i)
             _test_criterion_update(c2, i)
+            _test_criterion_check(c2)
+            assert_criterion_equal(c1, c2)
             left1, right1 = _test_criterion_node_impurity_children(c1)
             left2, right2 = _test_criterion_node_impurity_children(c2)
             self.assertAlmostEqual(left1, left2)
@@ -92,8 +105,16 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            p1 = _test_criterion_impurity_improvement(c1, 0.)
-            p2 = _test_criterion_impurity_improvement(c2, 0.)
+            try:
+                # scikit-learn >= 0.24
+                p1 = _test_criterion_impurity_improvement(
+                    c1, 0., left1, right1)
+                p2 = _test_criterion_impurity_improvement(
+                    c2, 0., left2, right2)
+            except TypeError:
+                # scikit-learn < 0.24
+                p1 = _test_criterion_impurity_improvement(c1, 0.)
+                p2 = _test_criterion_impurity_improvement(c2, 0.)
             self.assertAlmostEqual(p1, p2)
 
         X = numpy.array([[1., 2., 10., 11.]]).T
@@ -125,8 +146,16 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            p1 = _test_criterion_impurity_improvement(c1, 0.)
-            p2 = _test_criterion_impurity_improvement(c2, 0.)
+            try:
+                # scikit-learn >= 0.24
+                p1 = _test_criterion_impurity_improvement(
+                    c1, 0., left1, right1)
+                p2 = _test_criterion_impurity_improvement(
+                    c2, 0., left2, right2)
+            except ImportError:
+                # scikit-learn < 0.24
+                p1 = _test_criterion_impurity_improvement(c1, 0.)
+                p2 = _test_criterion_impurity_improvement(c2, 0.)
             self.assertAlmostEqual(p1, p2)
 
     def test_decision_tree_criterion(self):

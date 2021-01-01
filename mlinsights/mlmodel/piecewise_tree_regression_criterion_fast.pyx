@@ -138,7 +138,11 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
             self.sample_wy_left[ki] = self.sample_wy_left[ki-1] + w * y_
             self.sample_wy2_left[ki] = self.sample_wy2_left[ki-1] + w * y_ * y_
         
+        self.weighted_n_node_samples = self.sample_w_left[end-1]
         self.reset()
+        if self.weighted_n_node_samples == 0:
+            raise ValueError(
+                "self.weighted_n_node_samples is null, first weight is %r." % self.sample_w[0])
         return 0
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:
@@ -164,3 +168,15 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         # This formula only holds if mean is computed on the same interval.
         # Otherwise, it is squ / weight - true_mean ** 2 + (mean - true_mean) ** 2.
         return 0. if weight == 0. else squ / weight - mean ** 2
+
+    cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
+        """
+        Updates members `weighted_n_right` and `weighted_n_left`
+        when `pos` changes.
+        """
+        if new_pos == 0:
+            self.weighted_n_left = 0.
+            self.weighted_n_right = self.sample_w_left[end - 1]
+        else:
+            self.weighted_n_left = self.sample_w_left[new_pos - 1]
+            self.weighted_n_right = self.sample_w_left[end - 1] - self.sample_w_left[new_pos - 1]

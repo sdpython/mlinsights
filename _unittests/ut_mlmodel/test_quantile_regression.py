@@ -6,14 +6,19 @@ import unittest
 import numpy
 from numpy.random import random
 import pandas
+from sklearn import __version__ as sklver
 from sklearn.linear_model import LinearRegression
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import QuantileLinearRegression
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 from mlinsights.mlmodel.quantile_mlpregressor import float_sign
 
 
 class TestQuantileRegression(ExtTestCase):
+
+    def test_sklver(self):
+        self.assertTrue(compare_module_version(sklver, "0.22") >= 0)
 
     def test_quantile_regression_no_intercept(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])

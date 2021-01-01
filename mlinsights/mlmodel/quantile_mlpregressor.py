@@ -359,7 +359,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
             return y_pred.ravel()
         return y_pred
 
-    def _validate_input(self, X, y, incremental):
+    def _validate_input(self, X, y, incremental, reset=False):
         X, y = check_X_y(X, y, accept_sparse=['csr', 'csc', 'coo'],
                          multi_output=True, y_numeric=True)
         if y.ndim == 2 and y.shape[1] == 1:

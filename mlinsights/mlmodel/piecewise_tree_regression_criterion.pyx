@@ -133,16 +133,25 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             self.sample_wy[ki] = self.sample_w[ki] * y[ks, 0]
             self.sample_sum_wy += y[ks, 0] * self.sample_w[ki]
             self.sample_sum_w += self.sample_w[ki]
-        
+
+        self.weighted_n_node_samples = self.sample_sum_w
         self.reset()
+        if self.weighted_n_node_samples == 0:
+            raise ValueError(
+                "self.weighted_n_node_samples is null, first weight is %r." % self.sample_w[0])
         return 0
 
-    cdef int reset(self) nogil except -1:
+    cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
         """
-        Resets the criterion at *pos=start*.
-        This method must be implemented by the subclass.
+        Updates members `weighted_n_right` and `weighted_n_left`
+        when `pos` changes.
         """
-        self.pos = self.start
+        self.weighted_n_right = 0
+        self.weighted_n_left = 0
+        for k in range(start, new_pos):
+            self.weighted_n_left += self.sample_w[k]
+        for k in range(new_pos, end):
+            self.weighted_n_right += self.sample_w[k]
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:
         """

@@ -43,18 +43,27 @@ cdef class CommonRegressorCriterion(Criterion):
     def __cinit__(self, const DOUBLE_t[:, ::1] X):
         self.sample_X = X
 
+    cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
+        """
+        Updates members `weighted_n_right` and `weighted_n_left`
+        when `pos` changes. This method should be overloaded.
+        """
+        pass
+
     cdef int reset(self) nogil except -1:
         """
         Resets the criterion at *pos=start*.
         This method must be implemented by the subclass.
         """
-        self.pos = self.start
+        self._update_weights(self.start, self.end, self.pos, self.start)
+        self.pos = self.start        
 
     cdef int reverse_reset(self) nogil except -1:
         """
         Resets the criterion at *pos=end*.
         This method must be implemented by the subclass.
         """
+        self._update_weights(self.start, self.end, self.pos, self.end)
         self.pos = self.end
 
     cdef int update(self, SIZE_t new_pos) nogil except -1:
@@ -67,6 +76,7 @@ cdef class CommonRegressorCriterion(Criterion):
         :param new_pos: SIZE_t
             New starting index position of the samples in the right child
         """
+        self._update_weights(self.start, self.end, self.pos, new_pos)
         self.pos = new_pos
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:
@@ -216,6 +226,32 @@ def _test_criterion_init(Criterion criterion,
     criterion.init(y,
                    &sample_weight[0], weighted_n_samples,
                    &samples[0], start, end)
+
+
+def _test_criterion_check(Criterion criterion):
+    if criterion.weighted_n_node_samples == 0:
+        raise ValueError(
+            "weighted_n_node_samples is null, weighted_n_left=%r, weighted_n_right=%r" % (
+                criterion.weighted_n_left, criterion.weighted_n_right))
+
+
+def assert_criterion_equal(Criterion c1, Criterion c2):
+    if c1.weighted_n_node_samples != c2.weighted_n_node_samples:
+        raise ValueError(
+            "weighted_n_node_samples: %r != %r" % (
+                c1.weighted_n_node_samples, c2.weighted_n_node_samples))
+    if c1.weighted_n_samples != c2.weighted_n_samples:
+        raise ValueError(
+            "weighted_n_samples: %r != %r" % (
+                c1.weighted_n_samples, c2.weighted_n_samples))
+    if c1.weighted_n_left != c2.weighted_n_left:
+        raise ValueError(
+            "weighted_n_left: %r != %r" % (
+                c1.weighted_n_left, c2.weighted_n_left))
+    if c1.weighted_n_right != c2.weighted_n_right:
+        raise ValueError(
+            "weighted_n_right: %r != %r" % (
+                c1.weighted_n_right, c2.weighted_n_right))
 
 
 def _test_criterion_node_impurity(Criterion criterion):

@@ -1,13 +1,27 @@
 dist: focal
 sudo: true
 language: python
+
 matrix:
   include:
   - python: 3.9
-    name: "Py39"
+    name: "Py39-024+"
+    env:
+      - sklver=">=0.24.0"
+  - python: 3.9
+    name: "Py39-023"
+    env:
+      - sklver="==0.23.2"
+
+before_install:	
+  - sudo apt-get -y install graphviz      
+
 install:
   - pip install -r requirements.txt
+  - pip install "scikit-learn$sklver"
+
 before_script:
   - python setup.py build_ext --inplace
+
 script:
   - python setup.py unittests

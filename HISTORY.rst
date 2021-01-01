@@ -8,6 +8,9 @@ History
 current - 2021-01-01 - 0.00Mb
 =============================
 
+* `91`: Fixes regression criterion for scikit-learn 0.24 (2021-01-01)
+* `90`: Fixes PipelineCache for scikit-learn 0.24 (2021-01-01)
+
 0.2.508 - 2020-09-02 - 0.43Mb
 =============================
 

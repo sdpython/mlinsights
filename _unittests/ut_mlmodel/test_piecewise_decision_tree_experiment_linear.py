@@ -113,8 +113,16 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            p1 = _test_criterion_impurity_improvement(c1, 0.)
-            p2 = _test_criterion_impurity_improvement(c2, 0.)
+            try:
+                # scikit-learn >= 0.24
+                p1 = _test_criterion_impurity_improvement(
+                    c1, 0., left1, right1)
+                p2 = _test_criterion_impurity_improvement(
+                    c2, 0., left2, right2)
+            except ImportError:
+                # scikit-learn < 0.23
+                p1 = _test_criterion_impurity_improvement(c1, 0.)
+                p2 = _test_criterion_impurity_improvement(c2, 0.)
             self.assertGreater(p1, p2 - 1.)
 
             dest = numpy.empty((2, ))
