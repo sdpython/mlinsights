@@ -7,6 +7,7 @@ import inspect
 import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.utils import check_X_y, column_or_1d
+from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.extmath import safe_sparse_dot
 from sklearn.neural_network._base import DERIVATIVES, LOSS_FUNCTIONS
 try:
@@ -354,7 +355,11 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         :return: y : array-like, shape (n_samples, n_outputs)
             The predicted values.
         """
-        y_pred = self._predict(X)
+        check_is_fitted(self)
+        if hasattr(self, '_predict'):
+            y_pred = self._predict(X)
+        else:
+            y_pred = self._forward_pass_fast(X)
         if y_pred.shape[1] == 1:
             return y_pred.ravel()
         return y_pred

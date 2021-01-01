@@ -14,7 +14,7 @@ from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: di
     _test_criterion_node_impurity_children, _test_criterion_update,
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
     _test_criterion_impurity_improvement)
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
+from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611
     _test_criterion_check, assert_criterion_equal)
 from mlinsights.mlmodel.piecewise_tree_regression_criterion import SimpleRegressorCriterion  # pylint: disable=E0611, E0401
 
