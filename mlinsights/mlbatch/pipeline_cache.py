@@ -40,6 +40,7 @@ class PipelineCache(Pipeline):
     """
 
     def __init__(self, steps, cache_name=None, verbose=False):
+        self.cache_name = cache_name
         Pipeline.__init__(self, steps, memory=None, verbose=verbose)
         if cache_name is None:
             cache_name = "Pipeline%d" % id(self)
