@@ -144,7 +144,7 @@ class TestTargetPredictors(ExtTestCase):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, random_state=12)
 
-        log = LogisticRegression()
+        log = LogisticRegression(n_jobs=1)
         log.fit(X_train, y_train)
         sc = log.score(X_test, y_test)
         r2 = r2_score(y_test, log.predict(X_test))

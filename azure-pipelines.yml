@@ -31,8 +31,6 @@ jobs:
      displayName: 'Install numpy scipy cython'
    - script: pip install -r requirements.txt
      displayName: 'Install Requirements'
-   - script: pip install -r requirements-ext.txt
-     displayName: 'Install Requirements ext'
    - script: |
        python -u setup.py build_ext --inplace
      displayName: 'Runs Unit Tests'
@@ -82,8 +80,6 @@ jobs:
      displayName: 'Install numpy scipy cython'
    - script: pip install -r requirements.txt
      displayName: 'Install Requirements'
-   - script: pip install -r requirements-ext.txt
-     displayName: 'Install Requirements ext'
    - script: |
        python -u setup.py build_ext --inplace
      displayName: 'Runs Unit Tests'
@@ -153,8 +149,6 @@ jobs:
    #  displayName: 'Install Requirements'
    - script: pip install -r requirements.txt
      displayName: 'Install Requirements'
-   - script: pip install -r requirements-ext.txt
-     displayName: 'Install Requirements ext'
    - script: python -c "import platform;print(platform.version())"
      displayName: 'Platform'
    - script: |

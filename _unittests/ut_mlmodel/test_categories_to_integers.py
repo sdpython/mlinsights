@@ -107,12 +107,13 @@ class TestCategoriesToIntegers(ExtTestCase):
         pipe = make_pipeline(CategoriesToIntegers(), LogisticRegression())
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: pipe, df), ValueError)
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(lambda: pipe, X, y,
-                                                             categoriestointegers__single=[True, False]),
-                         ValueError, "Unable to find category value")
+        self.assertRaise(
+            lambda: test_sklearn_grid_search_cv(
+                lambda: pipe, X, y, categoriestointegers__single=[True, False]),
+            ValueError, "Unable to find category value")
         pipe = make_pipeline(CategoriesToIntegers(),
                              Imputer(strategy='most_frequent'),
-                             LogisticRegression())
+                             LogisticRegression(n_jobs=1))
         res = test_sklearn_grid_search_cv(lambda: pipe, X, y,
                                           categoriestointegers__single=[
                                               True, False],
