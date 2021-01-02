@@ -112,7 +112,8 @@ class TestCategoriesToIntegers(ExtTestCase):
         df = pandas.read_csv(data, sep="\t")
         X = df.drop('income', axis=1)
         y = df['income']
-        pipe = make_pipeline(CategoriesToIntegers(), LogisticRegression())
+        pipe = make_pipeline(CategoriesToIntegers(),
+                             LogisticRegression(n_jobs=1))
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: pipe, df), ValueError)
         self.assertRaise(

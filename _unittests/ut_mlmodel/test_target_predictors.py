@@ -150,8 +150,11 @@ class TestTargetPredictors(ExtTestCase):
         r2 = r2_score(y_test, log.predict(X_test))
 
         for _ in range(10):
-            tt = TransformedTargetClassifier2(
+            TransformedTargetClassifier2(
                 classifier=None, transformer='permute')
+            tt = TransformedTargetClassifier2(
+                classifier=LogisticRegression(n_jobs=1),
+                transformer='permute')
             tt.fit(X_train, y_train)
             sc2 = tt.score(X_test, y_test)
             self.assertEqual(sc, sc2)
