@@ -22,6 +22,7 @@ except ImportError:
     from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.loghelper import BufferedPrint
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel._kmeans_constraint_ import (
     linearize_matrix, _compute_strategy_coefficient,
     _constraint_association_gain)
@@ -201,7 +202,12 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         km = ConstraintKMeans(strategy='distance')
         pipe = make_pipeline(km, LogisticRegression())
-        pipe.fit(X_train, y_train)
+        try:
+            pipe.fit(X_train, y_train)
+        except AttributeError as e:
+                if compare_module_version(sklver, "0.24") < 0:
+                    return
+                raise e
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)

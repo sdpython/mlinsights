@@ -12,6 +12,7 @@ try:
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import (
     ClassifierAfterKMeans, test_sklearn_pickle, test_sklearn_clone,
     test_sklearn_grid_search_cv)
@@ -81,7 +82,12 @@ class TestClassifierAfterKMeans(ExtTestCase):
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
         clk = ClassifierAfterKMeans(c_n_clusters=6, c_random_state=state)
-        clk.fit(X, Y)
+        try:
+            clk.fit(X, Y)
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         score = clk.score(X, Y)
         self.assertGreater(score, 0.95)
 

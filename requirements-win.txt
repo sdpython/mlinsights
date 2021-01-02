@@ -1,5 +1,6 @@
 astroid
 importlib_metadata
+ipython
 isort
 matplotlib
 numpy

@@ -14,6 +14,7 @@ try:
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
 from mlinsights.mlmodel import TransformedTargetClassifier2, TransformedTargetRegressor2
 
@@ -155,7 +156,12 @@ class TestTargetPredictors(ExtTestCase):
             tt = TransformedTargetClassifier2(
                 classifier=LogisticRegression(n_jobs=1),
                 transformer='permute')
-            tt.fit(X_train, y_train)
+            try:
+                tt.fit(X_train, y_train)
+            except AttributeError as e:
+                if compare_module_version(sklver, "0.24") < 0:
+                    return
+                raise e
             sc2 = tt.score(X_test, y_test)
             self.assertEqual(sc, sc2)
             r22 = r2_score(y_test, tt.predict(X_test))

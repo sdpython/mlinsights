@@ -22,6 +22,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
 from sklearn.preprocessing import Normalizer, MinMaxScaler
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.sklapi import SkBaseTransformStacking
 
 with warnings.catch_warnings():
@@ -154,7 +155,7 @@ class TestSklearnStacking(ExtTestCase):
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         model = make_pipeline(
             SkBaseTransformStacking(
-                [LogisticRegression()], 'decision_function'),
+                [LogisticRegression(n_jobs=1)], 'decision_function'),
             RandomForestClassifier())
         model.fit(X_train, y_train)
         auc_pipe = roc_auc_score(y_test == model.predict(X_test),

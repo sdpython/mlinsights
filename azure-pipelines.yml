@@ -94,13 +94,11 @@ jobs:
   #- script: brew install --cask mactex
   #  continueOnError: true
   #  displayName: 'Install latex'
-  - script: pip install --upgrade pip setuptools wheel
-    displayName: 'Install pip setuptools wheel'
-  - bash: conda install numpy scipy
+  - bash: conda install -y numpy scipy
     displayName: Install numpy scipy
-  - bash: conda install llvmlite numba
+  - bash: conda install -y llvmlite numba
     displayName: Install llvmlite numba
-  - bash: conda install pyproj cartopy shapely
+  - bash: conda install -y pyproj cartopy shapely
     displayName: Install pyproj cartopy shapely
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
