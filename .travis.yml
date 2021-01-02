@@ -8,10 +8,12 @@ matrix:
     name: "Py39-024+"
     env:
       - sklver=">=0.24.0"
+      - jlver=">=1.0"
   - python: 3.8
     name: "Py38-023"
     env:
       - sklver="==0.23.2"
+      - jlver="==0.17.0"
 
 before_install:	
   - sudo apt-get -y install graphviz      
@@ -19,6 +21,7 @@ before_install:
 install:
   - pip install -r requirements.txt
   - pip install "scikit-learn$sklver"
+  - pip install "joblib$jlver"
 
 before_script:
   - python setup.py build_ext --inplace
