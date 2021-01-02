@@ -15,8 +15,15 @@ matrix:
       - sklver="==0.23.2"
       - jlver="==0.17.0"
 
-before_install:	
-  - sudo apt-get -y install graphviz      
+before_install:
+    - sudo apt-get install libgeos-dev libproj-dev proj-data graphviz libblas-dev liblapack-dev
+    - wget https://apt.llvm.org/llvm.sh
+    - chmod +x llvm.sh
+    - sudo ./llvm.sh 10
+    - ls /usr/bin/llvm*
+    - export LLVM_CONFIG=/usr/bin/llvm-config
+    # - sudo ln -s /usr/bin/llvm-config-10 /usr/bin/llvm-config
+    - sudo apt-get -y install graphviz      
 
 install:
   - pip install -r requirements.txt

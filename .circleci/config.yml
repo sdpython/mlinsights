@@ -11,8 +11,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v3-dependencies-{{ checksum "requirements.txt" }}
-          - v3-dependencies-
+          - v2-dependencies-{{ checksum "requirements.txt" }}
+          - v2-dependencies-
 
       - run:
           name: Install pandoc
@@ -43,47 +43,65 @@ jobs:
           command: |
                     sudo apt-get install -y graphviz
           
-      # statsmodels setup.py requires it
       - run:
-          name: install numpy
+          name: Install libproj
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install numpy
+            sudo apt-get install -y libgeos-dev libproj-dev proj-data graphviz
 
       - run:
-          name: Install cython
+          name: Install llvmlite
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install cython
+            sudo apt-get install lsb-release wget software-properties-common
+            wget https://apt.llvm.org/llvm.sh
+            chmod +x llvm.sh
+            sudo ./llvm.sh 10
+            ls /usr/bin/llvm*
 
       - run:
-          name: Install geos, proj for cartopy
+          name: Install standard libraries
           command: |
-            sudo apt-get -qq update
-            sudo apt-get install -y libproj-dev proj-bin proj-data
-            sudo apt-get install -y python-pyproj
-            sudo apt-get install -y libc6
-            sudo apt-get install libgeos-dev
-            sudo apt-get install python-gdal gdal-bin
-            wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj9_4.9.2-2_amd64.deb 
-            sudo dpkg -i libproj9_4.9.2-2_amd64.deb 
-            wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj-dev_4.9.2-2_amd64.deb
-            sudo dpkg -i libproj-dev_4.9.2-2_amd64.deb
+            python -m venv venv
+            . venv/bin/activate
+            pip install scipy matplotlib numpy cython pandas
+
+      - run:
+          name: Install pyproj, shapely, cartopy
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install pyproj
+            pip uninstall -y shapely
+            pip install --no-binary shapely shapely
+            pip install cartopy
+
+      - run:
+          name: Install numba, llvmlite
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            # export LLVM_CONFIG=/usr/local/opt/llvm/bin/llvm-config
+            sudo ln -s /usr/bin/llvm-config-10 /usr/bin/llvm-config
+            pip install llvmlite numba
 
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
+            python -m venv venv
             . venv/bin/activate
-            pip install scipy
             pip install -r requirements.txt
 
       - save_cache:
           paths:
             - ./venv
-          key: v3-dependencies-{{ checksum "requirements.txt" }}
+          key: v2-dependencies-{{ checksum "requirements.txt" }}
+        
+      - run:
+          name: check list of dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip freeze
+            apt list --installed
         
       - run:
           name: compile and build

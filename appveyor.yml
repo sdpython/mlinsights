@@ -2,18 +2,21 @@ image:
   - Visual Studio 2019
 environment:
   matrix:
-    - PYTHON: "C:\\Python38-x64"
-      PYTHON_VERSION: "3.8.x"
+    - PYTHON: "C:\\Python39-x64"
+      PYTHON_VERSION: "3.9.x"
       PYTHON_ARCH: "64"
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
-  - "%PYTHON%\\python -m pip install pymyinstall"
-  - "%PYTHON%\\Scripts\\pymy_install3 numpy"
+  # for many packages
+  - "%PYTHON%\\Scripts\\pip install -r requirements-win.txt"
+  # install precompiled versions not available on pypi
+  - "%PYTHON%\\Scripts\\pymy_install3 llvmlite numba"
   - "%PYTHON%\\Scripts\\pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html"
-  - "%PYTHON%\\Scripts\\pip install -v -v -r requirements.txt"
+  # other dependencies
+  - "%PYTHON%\\Scripts\\pip install -r requirements.txt --no-deps"
 build: off
 
 before_test:
