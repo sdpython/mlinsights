@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2021-01-01 - 0.00Mb
+current - 2021-01-03 - 0.00Mb
 =============================
 
+* `89`: Install fails: ModuleNotFoundError: No module named 'sklearn' (2021-01-03)
+* `92`: QuantileMLPRegressor does not work with scikit-learn 0.24 (2021-01-01)
 * `91`: Fixes regression criterion for scikit-learn 0.24 (2021-01-01)
 * `90`: Fixes PipelineCache for scikit-learn 0.24 (2021-01-01)
 

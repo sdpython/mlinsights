@@ -17,6 +17,7 @@ from mlinsights.mlmodel import (
 
 skipped_warnings = (ConvergenceWarning, UserWarning, FitFailedWarning)
 
+
 class TestCategoriesToIntegers(ExtTestCase):
 
     @ignore_warnings(skipped_warnings)
@@ -115,7 +116,7 @@ class TestCategoriesToIntegers(ExtTestCase):
         X = df.drop('income', axis=1)
         y = df['income']
         pipe = make_pipeline(CategoriesToIntegers(),
-                             LogisticRegression(n_jobs=1))
+                             LogisticRegression())
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: pipe, df), ValueError)
         self.assertRaise(

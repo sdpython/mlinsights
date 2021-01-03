@@ -56,9 +56,9 @@ class TestSklearnStacking(ExtTestCase):
         try:
             pipe.fit(X_train, y_train)
         except AttributeError as e:
-                if compare_module_version(sklver, "0.24") < 0:
-                    return
-                raise e
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)
@@ -166,9 +166,9 @@ class TestSklearnStacking(ExtTestCase):
         try:
             model.fit(X_train, y_train)
         except AttributeError as e:
-                if compare_module_version(sklver, "0.24") < 0:
-                    return
-                raise e
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         auc_pipe = roc_auc_score(y_test == model.predict(X_test),
                                  model.predict_proba(X_test).max(axis=1))
         acc = model.score(X_test, y_test)
