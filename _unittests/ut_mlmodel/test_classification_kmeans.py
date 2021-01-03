@@ -39,7 +39,12 @@ class TestClassifierAfterKMeans(ExtTestCase):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         clr = ClassifierAfterKMeans()
-        clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
+        try:
+            clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
 

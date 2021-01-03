@@ -44,11 +44,11 @@ jobs:
           pip install -r requirements.txt
     displayName: 'Install Requirements'
   - script: python -u setup.py build_ext --inplace
-    displayName: 'Runs Unit Tests'
+    displayName: 'Build package inplace'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
-    displayName: 'Build Package'
+    displayName: 'Build wheel'
   #- script: python -u setup.py build_sphinx
   #  displayName: 'Builds Documentation'
   - task: PublishPipelineArtifact@0
@@ -62,7 +62,8 @@ jobs:
   strategy:
     matrix:
       Python39-MacOs:
-        python.version: "3.9"
+        python.version: '3.9'
+    maxParallel: 3
   steps:
   - task: UsePythonVersion@0
     inputs:
@@ -107,11 +108,11 @@ jobs:
   - script: |
          # export MACOSX_DEPLOYMENT_TARGET=10.13
          python setup.py build_ext --inplace
-    displayName: 'Build package'
+    displayName: 'Build package inplace'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
-    displayName: 'Build Package'
+    displayName: 'Build wheel'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-mac-$(python.version)'
