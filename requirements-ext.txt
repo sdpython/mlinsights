@@ -1,2 +1,0 @@
-tensorflow>=2.2
-torchvision>=0.6.0

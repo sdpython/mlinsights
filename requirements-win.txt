@@ -9,6 +9,7 @@ matplotlib
 nbformat
 numpy
 pandas
+psutil
 pylint
 pymyinstall
 pyshp

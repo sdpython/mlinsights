@@ -37,6 +37,8 @@ jobs:
     displayName: 'Install tools'
   - script: pip install numpy
     displayName: 'Install numpy'
+  - script: pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    displayName: 'Install pytorch'
   - script: |
           export LLVM_CONFIG=/usr/bin/llvm-config-10
           pip install -r requirements.txt
@@ -100,6 +102,8 @@ jobs:
     displayName: Install pyproj cartopy shapely
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
+  - script: conda install -y -c conda-forge pytorch torchvision torchaudio
+    displayName: 'Install pytorch'
   - script: |
          # export MACOSX_DEPLOYMENT_TARGET=10.13
          python setup.py build_ext --inplace
