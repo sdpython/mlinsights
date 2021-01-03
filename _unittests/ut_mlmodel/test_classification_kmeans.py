@@ -59,9 +59,14 @@ class TestClassifierAfterKMeans(ExtTestCase):
         X, y = iris.data, iris.target
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: ClassifierAfterKMeans(), X, y), ValueError)
-        res = test_sklearn_grid_search_cv(
-            lambda: ClassifierAfterKMeans(),
-            X, y, c_n_clusters=[2, 3])
+        try:
+            res = test_sklearn_grid_search_cv(
+                lambda: ClassifierAfterKMeans(),
+                X, y, c_n_clusters=[2, 3])
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)

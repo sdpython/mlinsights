@@ -4,11 +4,13 @@
 import os
 import unittest
 import pandas
+from sklearn import __version__ as sklver
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.impute import SimpleImputer as Imputer
 from sklearn.exceptions import ConvergenceWarning, FitFailedWarning
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import CategoriesToIntegers
 from mlinsights.mlmodel import (
     test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv)
@@ -123,10 +125,14 @@ class TestCategoriesToIntegers(ExtTestCase):
         pipe = make_pipeline(CategoriesToIntegers(),
                              Imputer(strategy='most_frequent'),
                              LogisticRegression(n_jobs=1))
-        res = test_sklearn_grid_search_cv(lambda: pipe, X, y,
-                                          categoriestointegers__single=[
-                                              True, False],
-                                          categoriestointegers__skip_errors=[True])
+        try:
+            res = test_sklearn_grid_search_cv(
+                lambda: pipe, X, y, categoriestointegers__single=[True, False],
+                categoriestointegers__skip_errors=[True])
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
