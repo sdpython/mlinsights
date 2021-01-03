@@ -107,7 +107,7 @@ jobs:
           name: compile and build
           command: |
             . venv/bin/activate
-            python -u setup.py build_ext --inplace --verbose
+            python setup.py build_ext --inplace
 
       - run:
           name: run tests
@@ -119,7 +119,7 @@ jobs:
           name: wheel
           command: |
             . venv/bin/activate
-            python ./setup.py bdist_wheel
+            python setup.py bdist_wheel
             mkdir -p test-reports/dist
             cp dist/*.whl test-reports/dist
             mkdir -p test-reports
