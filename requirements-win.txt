@@ -1,4 +1,5 @@
 astroid
+ijson
 importlib_metadata
 ipython
 isort
