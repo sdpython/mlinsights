@@ -2,6 +2,7 @@ astroid
 importlib_metadata
 ipython
 isort
+joblib
 jupyter
 matplotlib
 nbformat
@@ -10,3 +11,5 @@ pandas
 pylint
 pymyinstall
 pyshp
+scikit-learn
+threadpoolctl

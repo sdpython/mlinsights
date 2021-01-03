@@ -103,7 +103,7 @@ jobs:
   - script: |
          # export MACOSX_DEPLOYMENT_TARGET=10.13
          python setup.py build_ext --inplace
-   displayName: 'Build package'
+    displayName: 'Build package'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel

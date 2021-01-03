@@ -51,7 +51,12 @@ class TestSklearnConvert(ExtTestCase):
         tmod = LogisticRegression(n_jobs=1)
         conv = SkBaseTransformLearner(tmod, method=tmod.decision_function)
         pipe = make_pipeline(conv, DecisionTreeClassifier())
-        pipe.fit(X_train, y_train)
+        try:
+            pipe.fit(X_train, y_train)
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)
