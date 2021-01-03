@@ -3,8 +3,7 @@ from __future__ import print_function
 import sys
 import os
 import warnings
-from setuptools import setup, Extension
-from setuptools import find_packages
+from setuptools import setup, Extension, find_packages
 
 #########
 # settings
@@ -28,13 +27,13 @@ CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable'
 ]
 
+
 #######
 # data
 #######
 
-here = os.path.dirname(__file__)
 packages = find_packages()
-package_dir = {k: os.path.join(here, k.replace(".", "/")) for k in packages}
+package_dir = {k: os.path.join('.', k.replace(".", "/")) for k in packages}
 package_data = {
     project_var_name + ".mlmodel": ["*.pxd", "*.pyx"],
 }
@@ -61,10 +60,10 @@ def is_local():
 
 def verbose():
     print("---------------------------------")
-    print("package_dir  =", package_dir)
-    print("packages     =", packages)
-    print("package_data =", package_data)
-    print("current      =", os.path.abspath(os.getcwd()))
+    print("package_dir =", package_dir)
+    print("packages    =", packages)
+    print("package_data=", package_data)
+    print("current     =", os.path.abspath(os.getcwd()))
     print("---------------------------------")
 
 ##########
