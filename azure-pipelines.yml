@@ -102,7 +102,7 @@ jobs:
     displayName: Install pyproj cartopy shapely
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
-  - script: conda install -y -c conda-forge pytorch torchvision torchaudio
+  - script: pip install torch torchvision torchaudio
     displayName: 'Install pytorch'
   - script: |
          # export MACOSX_DEPLOYMENT_TARGET=10.13
