@@ -4,6 +4,7 @@
 """
 import os
 import unittest
+from sklearn import __version__ as sklver
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
@@ -29,7 +30,7 @@ class TestNotebookLogRegClus(unittest.TestCase):
             test_notebook_execution_coverage(
                 __file__, "logistic_regression_clustering",
                 folder, 'mlinsights', fLOG=fLOG)
-        except AttributeError as e:
+        except Exception as e:
             if compare_module_version(sklver, "0.24") < 0:
                 return
             raise e

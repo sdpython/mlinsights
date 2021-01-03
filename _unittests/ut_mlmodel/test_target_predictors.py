@@ -4,6 +4,7 @@
 """
 import unittest
 import numpy
+from sklearn import __version__ as sklver
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score

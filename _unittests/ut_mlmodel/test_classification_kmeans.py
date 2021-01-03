@@ -5,6 +5,7 @@
 import unittest
 import numpy
 from numpy.random import RandomState
+from sklearn import __version__ as sklver
 from sklearn import datasets
 from sklearn.exceptions import ConvergenceWarning
 try:

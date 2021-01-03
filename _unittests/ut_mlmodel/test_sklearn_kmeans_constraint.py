@@ -7,6 +7,7 @@ from io import BytesIO
 import numpy
 import scipy.sparse
 import pandas
+from sklearn import __version__ as sklver
 from sklearn.datasets import make_blobs
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris

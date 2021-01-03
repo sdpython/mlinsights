@@ -2,7 +2,9 @@ astroid
 importlib_metadata
 ipython
 isort
+jupyter
 matplotlib
+nbformat
 numpy
 pylint
 pymyinstall

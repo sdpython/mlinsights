@@ -4,6 +4,7 @@
 """
 import os
 import unittest
+from sklearn import __version__ as sklver
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
@@ -29,7 +30,7 @@ class TestNotebookTargetPredictor(unittest.TestCase):
             test_notebook_execution_coverage(
                 __file__, "sklearn_transformed_target",
                 folder, 'mlinsights', fLOG=fLOG)
-        except AttributeError as e:
+        except Exception as e:
             if compare_module_version(sklver, "0.24") < 0:
                 return
             raise e

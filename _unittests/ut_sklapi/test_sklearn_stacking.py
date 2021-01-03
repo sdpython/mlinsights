@@ -8,6 +8,7 @@ import pickle
 import warnings
 import pandas
 from numpy.random import permutation
+from sklearn import __version__ as sklver
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
@@ -157,7 +158,12 @@ class TestSklearnStacking(ExtTestCase):
             SkBaseTransformStacking(
                 [LogisticRegression(n_jobs=1)], 'decision_function'),
             RandomForestClassifier())
-        model.fit(X_train, y_train)
+        try:
+            model.fit(X_train, y_train)
+        except AttributeError as e:
+                if compare_module_version(sklver, "0.24") < 0:
+                    return
+                raise e
         auc_pipe = roc_auc_score(y_test == model.predict(X_test),
                                  model.predict_proba(X_test).max(axis=1))
         acc = model.score(X_test, y_test)
