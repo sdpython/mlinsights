@@ -5,7 +5,12 @@
 History
 =======
 
-current - 2021-01-03 - 0.00Mb
+current - 2021-01-09 - 0.00Mb
+=============================
+
+* `93`: Include build wheel for all platforms in CI (2021-01-09)
+
+0.3.543 - 2021-01-03 - 0.67Mb
 =============================
 
 * `89`: Install fails: ModuleNotFoundError: No module named 'sklearn' (2021-01-03)
