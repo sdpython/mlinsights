@@ -79,6 +79,10 @@ jobs:
     displayName: 'Install Requirements'
   - script: python -c "import platform;print(platform.version())"
     displayName: 'Platform'
+  - script: python -u setup.py build_ext --inplace
+    displayName: 'Build inplace'
+  - script: python -u setup.py unittests -d 5
+    displayName: 'Runs Unit Tests'
   - script: |
       python -m pip install cibuildwheel
       set CIBW_BEFORE_BUILD=pip install .
