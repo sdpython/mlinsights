@@ -47,13 +47,48 @@ jobs:
     displayName: 'Build package inplace'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
-  - script: python -u setup.py bdist_wheel
-    displayName: 'Build wheel'
-  #- script: python -u setup.py build_sphinx
-  #  displayName: 'Builds Documentation'
+  - script: |
+      python -m pip install cibuildwheel
+      export CIBW_MANYLINUX_X86_64_IMAGE="manylinux2014"
+      export CIBW_BEFORE_BUILD="pip install ."
+      export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
+      export CIBW_BUILD="cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64"
+      python -m cibuildwheel --output-dir dist/wheelhouse --platform linux
+    displayName: 'Build Package manylinux2014'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-linux-$(python.version)'
+      targetPath: 'dist'
+
+- job: 'TestWindows'
+  pool:
+    vmImage: 'windows-latest'
+  strategy:
+    matrix:
+      Python39-Windows:
+        python.version: '3.9'
+    maxParallel: 3
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: python -c "import platform;print(platform.version())"
+    displayName: 'Platform'
+  - script: |
+      python -m pip install cibuildwheel
+      set CIBW_BEFORE_BUILD=pip install .
+      set CIBW_BEFORE_BUILD=pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming
+      set CIBW_BUILD=cp37-win_amd64 cp38-win_amd64 cp39-win_amd64
+      python -m cibuildwheel --output-dir dist/wheelhouse
+    displayName: 'Build Package many'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-windows-$(python.version)'
       targetPath: 'dist'
 
 - job: 'TestMac'
@@ -79,7 +114,8 @@ jobs:
     displayName: 'gcc version'
   - script: brew install libomp
     displayName: 'Install omp'
-  - script: brew install p7zip
+  - script: brew upgrade p7zip
+    continueOnError: true
     displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
@@ -111,8 +147,13 @@ jobs:
     displayName: 'Build package inplace'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
-  - script: python -u setup.py bdist_wheel
-    displayName: 'Build wheel'
+  - script: |
+      python -m pip install cibuildwheel
+      export CIBW_BEFORE_BUILD="pip install ."
+      export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
+      export CIBW_BUILD="cp37-macosx_x86_64 cp38-macosx_x86_64 cp39-macosx_x86_64"
+      python -m cibuildwheel --output-dir dist/wheelhouse
+    displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-mac-$(python.version)'
