@@ -293,7 +293,10 @@ class PiecewiseEstimator(BaseEstimator):
         for ind, p in indpred:
             if ind is None:
                 continue
-            pred[ind] = p
+            # pred[ind] = p
+            mask = (ind==True)
+            numpy.putmask(pred,mask,p)
+
             indall = numpy.logical_or(indall, ind)  # pylint: disable=E1111
 
         # no in a bucket
