@@ -2,8 +2,7 @@
 language: python
 
 python:
-  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7 }
-  - { PATH: "{{Python38}}", VERSION: 3.8, DIST: std, PYINT: python3.8 }
+  - { PATH: "{{Python39}}", VERSION: 3.9, DIST: std, PYINT: python3.9 }
   
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("$NAME_JENKINS", project_name + "_$VERSION_$DIST_$NAME"), "_venv")}}
@@ -12,8 +11,8 @@ install:
   - $PYINT -m pip install --upgrade pip
   - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper cpyquickhelper pandas_streaming --extra-index-url=https://pypi.python.org/simple/
   - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ scikit-learn>=0.22 --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install -r requirements-win.txt
   - $PYINT -m pip install -r requirements.txt
-  - $PYINT -m pip install -r requirements-ext.txt
   - $PYINT --version
   - $PYINT -m pip freeze
 

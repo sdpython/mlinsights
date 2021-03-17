@@ -1,63 +1,108 @@
 jobs:
-# - job: 'TestLinux'
-#   pool:
-#     vmImage: 'ubuntu-latest'
-#   strategy:
-#     matrix:
-#       Python37-Linux:
-#         python.version: '3.7'
-#     maxParallel: 3
-# 
-#   steps:
-#   - task: UsePythonVersion@0
-#     inputs:
-#       versionSpec: '$(python.version)'
-#       architecture: 'x64'
-#   - script: sudo apt-get update
-#     displayName: 'AptGet Update'
-#   - script: sudo apt-get install -y pandoc
-#     displayName: 'Install Pandoc'
-#   - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
-#     displayName: 'Install Latex'
-#   - script: sudo apt-get install -y p7zip-full
-#     displayName: 'Install 7z, rar'
-#   - script: sudo apt-get install -y inkscape
-#     displayName: 'Install Inkscape'
-#   - script: sudo apt-get install -y graphviz
-#     displayName: 'Install Graphviz'
-#   - script: python -m pip install --upgrade pip setuptools wheel
-#     displayName: 'Install tools'
-#   - script: pip install numpy scipy cython
-#     displayName: 'Install numpy scipy cython'
-#   - script: pip install jupyter_sphinx==0.1.4
-#     displayName: 'Install jupyter_sphinx'
-#   - script: pip install -r requirements.txt
-#     displayName: 'Install Requirements'
-#   - script: |
-#       python -u setup.py build_ext --inplace
-#     displayName: 'Runs Unit Tests'
-#   - script: |
-#       python -u setup.py unittests
-#     displayName: 'Runs Unit Tests'
-#   - script: |
-#       python -u setup.py bdist_wheel
-#     displayName: 'Build Package'
-# #  - script: |
-# #      python -u setup.py build_sphinx
-# #    displayName: 'Builds Documentation'
-#   - task: PublishPipelineArtifact@0
-#     inputs:
-#       artifactName: 'wheel-linux-$(python.version)'
-#       targetPath: 'dist'
+- job: 'TestLinux'
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      Python39-Linux:
+        python.version: '3.9'
+    maxParallel: 3
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: sudo apt-get update
+    displayName: 'AptGet Update'
+  - script: sudo apt-get install -y inkscape
+    displayName: 'Install Inkscape'
+  - script: sudo apt-get install -y pandoc
+    displayName: 'Install Pandoc'
+  - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
+    displayName: 'Install Latex'
+  - script: sudo apt-get install -y libgeos-dev libproj-dev proj-data graphviz libblas-dev liblapack-dev
+    displayName: 'Install Geos packages'
+  - script: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 10
+          ls /usr/bin/llvm*
+          export LLVM_CONFIG=/usr/bin/llvm-config-10
+    displayName: 'Install llvmlite'
+  - script: sudo apt-get install -y p7zip-full
+    displayName: 'Install 7z, rar'
+  - script: sudo apt-get install -y graphviz
+    displayName: 'Install Graphviz'
+  - script: pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install numpy
+    displayName: 'Install numpy'
+  - script: pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    displayName: 'Install pytorch'
+  - script: |
+          export LLVM_CONFIG=/usr/bin/llvm-config-10
+          pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: python -u setup.py build_ext --inplace
+    displayName: 'Build package inplace'
+  - script: python -u setup.py unittests
+    displayName: 'Runs Unit Tests'
+  - script: |
+      python -m pip install cibuildwheel
+      export CIBW_MANYLINUX_X86_64_IMAGE="manylinux2014"
+      export CIBW_BEFORE_BUILD="pip install ."
+      export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
+      export CIBW_BUILD="cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64"
+      python -m cibuildwheel --output-dir dist/wheelhouse --platform linux
+    displayName: 'Build Package manylinux2014'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-linux-$(python.version)'
+      targetPath: 'dist'
+
+- job: 'TestWindows'
+  pool:
+    vmImage: 'windows-latest'
+  strategy:
+    matrix:
+      Python39-Windows:
+        python.version: '3.9'
+    maxParallel: 3
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: python -c "import platform;print(platform.version())"
+    displayName: 'Platform'
+  - script: python -u setup.py build_ext --inplace
+    displayName: 'Build inplace'
+  - script: python -u setup.py unittests -d 5
+    displayName: 'Runs Unit Tests'
+  - script: |
+      python -m pip install cibuildwheel
+      set CIBW_BEFORE_BUILD=pip install .
+      set CIBW_BEFORE_BUILD=pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming
+      set CIBW_BUILD=cp37-win_amd64 cp38-win_amd64 cp39-win_amd64
+      python -m cibuildwheel --output-dir dist/wheelhouse
+    displayName: 'Build Package many'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-windows-$(python.version)'
+      targetPath: 'dist'
 
 - job: 'TestMac'
   pool:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python37:
-        python.version: "3.7"
-
+      Python39-MacOs:
+        python.version: '3.9'
+    maxParallel: 3
   steps:
   - task: UsePythonVersion@0
     inputs:
@@ -65,54 +110,55 @@ jobs:
       architecture: 'x64'
   - script: gcc --version
     displayName: 'gcc version'
-
-  - script: |
-          brew update
+  - script: brew update
     displayName: 'brew update'
   - script: export
     displayName: 'export'
   - script: gcc --version
     displayName: 'gcc version'
-  - script: brew install llvm
-    displayName: 'install llvm'
   - script: brew install libomp
     displayName: 'Install omp'
-  - script: brew install p7zip
+  - script: brew upgrade p7zip
+    continueOnError: true
     displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
   - script: brew install graphviz
+    continueOnError: true
     displayName: 'Install Graphviz'
-  - script: brew install pybind11
-    displayName: 'Install pybind11'
-
+  - script: brew install cairo pango gdk-pixbuf libffi
+    displayName: 'Install cairo pango gdk-pixbuf libffi'
   - bash: echo "##vso[task.prependpath]$CONDA/bin"
     displayName: Add conda to PATH.
   - bash: sudo chown -R $USER $CONDA
     displayName: Take ownership of conda installation
-  - bash: conda update conda --yes --quiet
-    displayName: Update conda.
-  - bash: conda info -a
-  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
-    displayName: Create Anaconda environment.
-  - bash: conda list
-  - bash: |
-      source activate pyenv
-
+  #- script: brew install --cask mactex
+  #  continueOnError: true
+  #  displayName: 'Install latex'
+  - bash: conda install -y -c conda-forge numpy scipy
+    displayName: Install numpy scipy
+  - bash: conda install -y -c conda-forge llvmlite numba
+    displayName: Install llvmlite numba
+  - bash: conda install -y -c conda-forge pyproj cartopy shapely
+    displayName: Install pyproj cartopy shapely
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
+  - script: pip install torch torchvision torchaudio
+    displayName: 'Install pytorch'
   - script: |
-          export MACOSX_DEPLOYMENT_TARGET=10.13
-          python setup.py build_ext --inplace
-    displayName: 'Build package'
-  - script: |
-      python -u setup.py unittests
+         # export MACOSX_DEPLOYMENT_TARGET=10.13
+         python setup.py build_ext --inplace
+    displayName: 'Build package inplace'
+  - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: |
-      python -u setup.py bdist_wheel
-    displayName: 'Build Package'
+      python -m pip install cibuildwheel
+      export CIBW_BEFORE_BUILD="pip install ."
+      export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
+      export CIBW_BUILD="cp37-macosx_x86_64 cp38-macosx_x86_64 cp39-macosx_x86_64"
+      python -m cibuildwheel --output-dir dist/wheelhouse
+    displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-mac-$(python.version)'
       targetPath: 'dist'
-

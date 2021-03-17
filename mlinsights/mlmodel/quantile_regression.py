@@ -82,7 +82,7 @@ class QuantileLinearRegression(LinearRegression):
         <https://en.wikipedia.org/wiki/Iteratively_reweighted_least_squares>`_.
         It is described in French at
         `Régression quantile
-        <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/notebooks/td_note_2017_2.html>`_.
+        <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/notebooks/td_note_2017_2.html>`_.
 
         :param X: numpy array or sparse matrix of shape [n_samples,n_features]
             Training data

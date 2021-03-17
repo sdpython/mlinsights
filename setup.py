@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import sys
 import os
 import warnings
-from setuptools import setup, Extension
-from setuptools import find_packages
+from setuptools import setup, Extension, find_packages
 
 #########
 # settings
@@ -28,13 +26,13 @@ CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable'
 ]
 
+
 #######
 # data
 #######
 
-here = os.path.dirname(__file__)
 packages = find_packages()
-package_dir = {k: os.path.join(here, k.replace(".", "/")) for k in packages}
+package_dir = {k: os.path.join('.', k.replace(".", "/")) for k in packages}
 package_data = {
     project_var_name + ".mlmodel": ["*.pxd", "*.pyx"],
 }
@@ -61,10 +59,10 @@ def is_local():
 
 def verbose():
     print("---------------------------------")
-    print("package_dir  =", package_dir)
-    print("packages     =", packages)
-    print("package_data =", package_data)
-    print("current      =", os.path.abspath(os.getcwd()))
+    print("package_dir =", package_dir)
+    print("packages    =", packages)
+    print("package_data=", package_data)
+    print("current     =", os.path.abspath(os.getcwd()))
     print("---------------------------------")
 
 ##########
@@ -146,7 +144,7 @@ if is_local():
         add_htmlhelp=sys.platform.startswith("win"),
         coverage_options=dict(omit=["*exclude*.py"]),
         fLOG=logging_function, github_owner='sdpython',
-        covtoken=("1ac0b95d-6722-4f29-804a-e4e0d5295497", "'_UT_37_std' in outfile"))
+        covtoken=("1ac0b95d-6722-4f29-804a-e4e0d5295497", "'_UT_39_std' in outfile"))
     if not r and not (build_commmands & set(sys.argv)):
         raise Exception("unable to interpret command line: " + str(sys.argv))
 else:
@@ -160,53 +158,73 @@ if not r:
     if len(sys.argv) in (1, 2) and sys.argv[-1] in ("--help-commands",):
         from pyquickhelper.pycode import process_standard_options_for_setup_help
         process_standard_options_for_setup_help(sys.argv)
-    from mlinsights import __version__ as sversion
 
     try:
         from pyquickhelper.pycode import clean_readme
         long_description = clean_readme(long_description)
     except ImportError:
         long_description = ""
-    root = os.path.abspath(os.path.dirname(__file__))
-    if sys.platform.startswith("win"):
-        extra_compile_args = None
-    else:
-        extra_compile_args = ['-std=c++11']
 
-    ext_modules = []
+    from mlinsights import __version__ as sversion
 
-    # mlmodel
+    def get_extensions():
+        root = os.path.abspath(os.path.dirname(__file__))
+        if sys.platform.startswith("win"):
+            extra_compile_args = None
+        else:
+            extra_compile_args = ['-std=c++11']
 
-    extensions = ["direct_blas_lapack"]
-    extensions.extend([
-        "_piecewise_tree_regression_common",
-        "piecewise_tree_regression_criterion",
-        "piecewise_tree_regression_criterion_linear",
-        "piecewise_tree_regression_criterion_fast",
-    ])
+        ext_modules = []
 
-    pattern1 = "mlinsights.mlmodel.%s"
-    import numpy
-    for name in extensions:
-        m = Extension(pattern1 % name,
-                      ['mlinsights/mlmodel/%s.pyx' % name],
-                      include_dirs=[numpy.get_include()],
-                      extra_compile_args=["-O3"],
-                      language='c')
-        ext_modules.append(m)
+        # mlmodel
 
-    # cythonize
-    try:
+        import sklearn
+        extensions = ["direct_blas_lapack"]
+        spl = sklearn.__version__.split('.')
+        vskl = (int(spl[0]), int(spl[1]))
+        if vskl >= (0, 24):
+            extensions.append(("_piecewise_tree_regression_common",
+                               "_piecewise_tree_regression_common024"))
+        else:
+            extensions.append(("_piecewise_tree_regression_common",
+                               "_piecewise_tree_regression_common023"))
+        extensions.extend([
+            "piecewise_tree_regression_criterion",
+            "piecewise_tree_regression_criterion_linear",
+            "piecewise_tree_regression_criterion_fast",
+        ])
+
+        pattern1 = "mlinsights.mlmodel.%s"
+        import numpy
+        for name in extensions:
+            if isinstance(name, tuple):
+                m = Extension(pattern1 % name[0],
+                              ['mlinsights/mlmodel/%s.pyx' % name[1]],
+                              include_dirs=[numpy.get_include()],
+                              extra_compile_args=["-O3"],
+                              language='c')
+            else:
+                m = Extension(pattern1 % name,
+                              ['mlinsights/mlmodel/%s.pyx' % name],
+                              include_dirs=[numpy.get_include()],
+                              extra_compile_args=["-O3"],
+                              language='c')
+            ext_modules.append(m)
+
+        # cythonize
         from Cython.Build import cythonize
         opts = dict(boundscheck=False, cdivision=True,
                     wraparound=False, language_level=3,
                     cdivision_warnings=False, embedsignature=True,
                     initializedcheck=False)
         ext_modules = cythonize(ext_modules, compiler_directives=opts)
-    except ImportError:
-        # Cython is not installed.
+        return ext_modules
+
+    try:
+        ext_modules = get_extensions()
+    except ImportError as e:
         warnings.warn(
-            "cython is not installed. Only pure python subpckages will be available.")
+            "Unable to build C++ extension with missing dependencies %r." % e)
         ext_modules = None
 
     # setup
@@ -226,7 +244,7 @@ if not r:
         packages=packages,
         package_dir=package_dir,
         package_data=package_data,
-        setup_requires=["pyquickhelper", 'cython', 'scipy'],
+        setup_requires=["pyquickhelper", 'cython', 'scipy', 'scikit-learn'],
         install_requires=['cython', 'scikit-learn>=0.22.1', 'pandas', 'scipy',
                           'matplotlib', 'pandas_streaming', 'numpy>=1.16'],
         ext_modules=ext_modules,  # cythonize(ext_modules),

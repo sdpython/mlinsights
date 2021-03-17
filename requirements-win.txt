@@ -1,0 +1,17 @@
+astroid
+ijson
+importlib_metadata
+ipython
+isort
+joblib
+jupyter
+matplotlib
+nbformat
+numpy
+pandas
+psutil
+pylint
+pymyinstall
+pyshp
+scikit-learn
+threadpoolctl

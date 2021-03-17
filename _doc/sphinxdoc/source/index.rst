@@ -21,7 +21,7 @@ mlinsights: tricky scikit-learn
 .. image:: https://circleci.com/gh/sdpython/mlinsights/tree/master.svg?style=svg
     :target: https://circleci.com/gh/sdpython/mlinsights/tree/master
 
-.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights
+.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights%20(2)
     :target: https://dev.azure.com/xavierdupre3/mlinsights/
 
 .. image:: https://badge.fury.io/py/mlinsights.svg
@@ -86,11 +86,32 @@ which trains a multi-layer perceptron with :epkg:`L1` norm...
 
 Short example:
 
-::
+.. runpython::
+    :showcode:
 
+    from sklearn.datasets import load_boston
+    from sklearn.linear_model import LinearRegression
     from mlinsights.mlmodel import QuantileLinearRegression
+
+    data = load_boston()
+    X, y = data.data, data.target
+
     clq = QuantileLinearRegression()
-    clq.fit(X, Y)
+    clq.fit(X, y)
+    print(clq.coef_)
+
+    clr = LinearRegression()
+    clr.fit(X, y)
+    print(clr.coef_)
+
+This documentation was generated with :epkg:`scikit-learn`
+version...
+
+.. runpython::
+    :showcode:
+
+    from sklearn import __version__
+    print(__version__)
 
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |

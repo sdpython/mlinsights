@@ -1,7 +1,7 @@
 autopep8
 chardet
 coverage
-cpyquickhelper>=0.2.229
+cpyquickhelper>=0.3
 cython
 joblib
 jupyter_sphinx>=0.2
@@ -13,12 +13,12 @@ numpy
 pandas_streaming
 pybind11
 pycodestyle
-pyquickhelper>=1.9.3240
+pyquickhelper>=1.10
 pylint>=2.4.3
 scikit-learn>=0.22.1
 scipy
 seaborn
-sphinx>=2.1
+sphinx>=3.0
 sphinxcontrib.imagesvg
 sphinx_gallery
 tqdm

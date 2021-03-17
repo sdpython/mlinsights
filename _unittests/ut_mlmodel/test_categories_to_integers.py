@@ -4,16 +4,23 @@
 import os
 import unittest
 import pandas
+from sklearn import __version__ as sklver
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.impute import SimpleImputer as Imputer
-from pyquickhelper.pycode import ExtTestCase
+from sklearn.exceptions import ConvergenceWarning, FitFailedWarning
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import CategoriesToIntegers
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import (
+    test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv)
+
+skipped_warnings = (ConvergenceWarning, UserWarning, FitFailedWarning)
 
 
 class TestCategoriesToIntegers(ExtTestCase):
 
+    @ignore_warnings(skipped_warnings)
     def test_categories_to_integers(self):
         data = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "adult_set.txt")
@@ -70,6 +77,7 @@ class TestCategoriesToIntegers(ExtTestCase):
         self.assertEqual(len(ret), len(exp))
         self.assertEqual(exp, ret)
 
+    @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_big(self):
         data = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "adult_set.txt")
@@ -88,35 +96,44 @@ class TestCategoriesToIntegers(ExtTestCase):
         self.assertIn("single=True",
                       rep.replace(" ", "").replace("\n", ""))
 
+    @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_pickle(self):
         data = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "adult_set.txt")
         df = pandas.read_csv(data, sep="\t")
         test_sklearn_pickle(lambda: CategoriesToIntegers(skip_errors=True), df)
 
+    @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_clone(self):
         self.maxDiff = None
         test_sklearn_clone(lambda: CategoriesToIntegers())
 
+    @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_grid_search(self):
         data = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "adult_set.txt")
         df = pandas.read_csv(data, sep="\t")
         X = df.drop('income', axis=1)
         y = df['income']
-        pipe = make_pipeline(CategoriesToIntegers(), LogisticRegression())
+        pipe = make_pipeline(CategoriesToIntegers(),
+                             LogisticRegression())
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: pipe, df), ValueError)
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(lambda: pipe, X, y,
-                                                             categoriestointegers__single=[True, False]),
-                         ValueError, "Unable to find category value")
+        self.assertRaise(
+            lambda: test_sklearn_grid_search_cv(
+                lambda: pipe, X, y, categoriestointegers__single=[True, False]),
+            ValueError, "Unable to find category value")
         pipe = make_pipeline(CategoriesToIntegers(),
                              Imputer(strategy='most_frequent'),
-                             LogisticRegression())
-        res = test_sklearn_grid_search_cv(lambda: pipe, X, y,
-                                          categoriestointegers__single=[
-                                              True, False],
-                                          categoriestointegers__skip_errors=[True])
+                             LogisticRegression(n_jobs=1))
+        try:
+            res = test_sklearn_grid_search_cv(
+                lambda: pipe, X, y, categoriestointegers__single=[True, False],
+                categoriestointegers__skip_errors=[True])
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)

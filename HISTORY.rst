@@ -5,11 +5,34 @@
 History
 =======
 
-current - 2020-08-06 - 0.00Mb
+current - 2021-01-09 - 0.00Mb
 =============================
 
-* `81`: Make mlinsights work with scikit-learn 0.22 and 0.23 (2020-08-06)
+* `93`: Include build wheel for all platforms in CI (2021-01-09)
+
+0.3.543 - 2021-01-03 - 0.67Mb
+=============================
+
+* `89`: Install fails: ModuleNotFoundError: No module named 'sklearn' (2021-01-03)
+* `92`: QuantileMLPRegressor does not work with scikit-learn 0.24 (2021-01-01)
+* `91`: Fixes regression criterion for scikit-learn 0.24 (2021-01-01)
+* `90`: Fixes PipelineCache for scikit-learn 0.24 (2021-01-01)
+
+0.2.508 - 2020-09-02 - 0.43Mb
+=============================
+
+* `88`: Change for scikit-learn 0.24 (2020-09-02)
+* `87`: Set up CI with Azure Pipelines (2020-09-02)
+* `86`: Update CI, use python 3.8 (2020-09-02)
+* `71`: update kmeans l1 to the latest kmeans (signatures changed) (2020-08-31)
+* `84`: style (2020-08-30)
+
+0.2.491 - 2020-08-06 - 0.83Mb
+=============================
+
+* `83`: Upgrade version (2020-08-06)
 * `82`: Fixes #81, skl 0.22, 0.23 together (2020-08-06)
+* `81`: Make mlinsights work with scikit-learn 0.22 and 0.23 (2020-08-06)
 * `79`: pipeline2dot fails with 'passthrough' (2020-07-16)
 
 0.2.463 - 2020-06-29 - 0.83Mb

@@ -208,8 +208,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                 idx += 1
             self.sample_f[idx] = 1.
             idx += 1
-        
+
+        self.weighted_n_node_samples = self.sample_sum_w
         self.reset()
+        if self.weighted_n_node_samples == 0:
+            raise ValueError(
+                "self.weighted_n_node_samples is null, first weight is %r." % self.sample_w[0])
         return 0
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:

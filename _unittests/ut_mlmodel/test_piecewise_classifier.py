@@ -7,7 +7,7 @@ import numpy
 from numpy.random import random
 import pandas
 from sklearn.linear_model import LogisticRegression
-from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 from mlinsights.mlmodel.piecewise_estimator import PiecewiseClassifier
 
@@ -101,6 +101,7 @@ class TestPiecewiseClassifier(ExtTestCase):
         self.assertEqual(pred1.shape, (6, ))
         self.assertEqual(pred2.shape, (6, ))
 
+    @ignore_warnings(UserWarning)
     def test_piecewise_classifier_no_intercept_bins(self):
         X = numpy.array([[0.1, 0.2], [-0.2, -0.3], [0.2, 0.35], [-0.2, -0.36]])
         Y = numpy.array([0, 1, 0, 1])

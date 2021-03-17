@@ -7,6 +7,7 @@ import inspect
 import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.utils import check_X_y, column_or_1d
+from sklearn.utils.validation import check_is_fitted
 from sklearn.utils.extmath import safe_sparse_dot
 from sklearn.neural_network._base import DERIVATIVES, LOSS_FUNCTIONS
 try:
@@ -146,7 +147,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         deltas[last] = self._modify_loss_derivatives(deltas[last])
 
         # Compute gradient for the last layer
-        temp = self._compute_loss_grad(
+        temp = self._compute_loss_grad(  # pylint: disable=E1111
             last, n_samples, activations, deltas, coef_grads, intercept_grads)
         if temp is None:
             # recent version of scikit-learn
@@ -172,7 +173,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 inplace_derivative = DERIVATIVES[self.activation]
                 inplace_derivative(activations[i], deltas[i - 1])
 
-                coef_grads, intercept_grads = self._compute_loss_grad(
+                coef_grads, intercept_grads = self._compute_loss_grad(  # pylint: disable=E1111
                     i - 1, n_samples, activations, deltas, coef_grads,
                     intercept_grads)
 
@@ -354,12 +355,16 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         :return: y : array-like, shape (n_samples, n_outputs)
             The predicted values.
         """
-        y_pred = self._predict(X)
+        check_is_fitted(self)
+        if hasattr(self, '_predict'):
+            y_pred = self._predict(X)
+        else:
+            y_pred = self._forward_pass_fast(X)
         if y_pred.shape[1] == 1:
             return y_pred.ravel()
         return y_pred
 
-    def _validate_input(self, X, y, incremental):
+    def _validate_input(self, X, y, incremental, reset=False):
         X, y = check_X_y(X, y, accept_sparse=['csr', 'csc', 'coo'],
                          multi_output=True, y_numeric=True)
         if y.ndim == 2 and y.shape[1] == 1:

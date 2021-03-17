@@ -14,6 +14,7 @@ Data
 ====
 """
 from collections import Counter
+import numpy
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans
@@ -21,14 +22,15 @@ from mlinsights.mlmodel import ConstraintKMeans
 
 
 n_samples = 100
-data = make_blobs(n_samples=n_samples, n_features=2, centers=2, cluster_std=1.0,
-                  center_box=(-10.0, 0.0), shuffle=True, random_state=2)
+data = make_blobs(
+    n_samples=n_samples, n_features=2, centers=2, cluster_std=1.0,
+    center_box=(-10.0, 0.0), shuffle=True, random_state=2)
 X1 = data[0]
-data = make_blobs(n_samples=n_samples // 2, n_features=2, centers=2, cluster_std=1.0,
-                  center_box=(0.0, 10.0), shuffle=True, random_state=2)
+data = make_blobs(
+    n_samples=n_samples // 2, n_features=2, centers=2, cluster_std=1.0,
+    center_box=(0.0, 10.0), shuffle=True, random_state=2)
 X2 = data[0]
 
-import numpy
 X = numpy.vstack([X1, X2])
 X.shape
 

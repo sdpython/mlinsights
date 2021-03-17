@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-@brief      test log(time=43s)
+@brief      test log(time=17s)
 """
 import os
 import unittest
-from sklearn import __version__ as sklver
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import add_missing_development_version
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
-from pyquickhelper.texthelper import compare_module_version
 import mlinsights
 
 
-class TestNotebookTargetPredictor(unittest.TestCase):
+class TestNotebookKMeans(unittest.TestCase):
 
     def setUp(self):
         add_missing_development_version(["jyquickhelper"], __file__, hide=True)
 
-    def test_notebook_target_predictor(self):
+    def test_notebook_kmeansl1(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -26,14 +24,8 @@ class TestNotebookTargetPredictor(unittest.TestCase):
         self.assertTrue(mlinsights is not None)
         folder = os.path.join(os.path.dirname(__file__),
                               "..", "..", "_doc", "notebooks", "sklearn")
-        try:
-            test_notebook_execution_coverage(
-                __file__, "sklearn_transformed_target",
-                folder, 'mlinsights', fLOG=fLOG)
-        except Exception as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        test_notebook_execution_coverage(
+            __file__, "kmeans", folder, 'mlinsights', fLOG=fLOG)
 
 
 if __name__ == "__main__":

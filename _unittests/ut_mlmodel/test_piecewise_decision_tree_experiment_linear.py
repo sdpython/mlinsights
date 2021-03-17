@@ -10,7 +10,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611, E0401
+from mlinsights.mlmodel._piecewise_tree_regression_common import (  # pylint: disable=E0611,E0401
     _test_criterion_init, _test_criterion_node_impurity,
     _test_criterion_node_impurity_children, _test_criterion_update,
     _test_criterion_node_value, _test_criterion_proxy_impurity_improvement,
@@ -113,8 +113,16 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            p1 = _test_criterion_impurity_improvement(c1, 0.)
-            p2 = _test_criterion_impurity_improvement(c2, 0.)
+            try:
+                # scikit-learn >= 0.24
+                p1 = _test_criterion_impurity_improvement(
+                    c1, 0., left1, right1)
+                p2 = _test_criterion_impurity_improvement(
+                    c2, 0., left2, right2)
+            except TypeError:
+                # scikit-learn < 0.23
+                p1 = _test_criterion_impurity_improvement(c1, 0.)
+                p2 = _test_criterion_impurity_improvement(c2, 0.)
             self.assertGreater(p1, p2 - 1.)
 
             dest = numpy.empty((2, ))

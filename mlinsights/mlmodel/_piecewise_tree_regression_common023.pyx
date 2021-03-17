@@ -29,6 +29,10 @@ cdef class CommonRegressorCriterion(Criterion):
     <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
+
+    If the file does not compile, some explanations are given
+    in :ref:`scikit-learn internal API
+    <blog-internal-api-impurity-improvement>`_.
     """
     def __getstate__(self):
         return {}
@@ -38,6 +42,12 @@ cdef class CommonRegressorCriterion(Criterion):
 
     def __cinit__(self, const DOUBLE_t[:, ::1] X):
         self.sample_X = X
+
+    cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
+        """
+        Unused.
+        """
+        pass
 
     cdef int reset(self) nogil except -1:
         """
@@ -207,6 +217,16 @@ def _test_criterion_init(Criterion criterion,
     criterion.init(y,
                    &sample_weight[0], weighted_n_samples,
                    &samples[0], start, end)
+
+
+def _test_criterion_check(Criterion criterion):
+    "Unused"
+    pass
+
+
+def assert_criterion_equal(Criterion c1, Criterion c2):
+    "Unused"
+    pass
 
 
 def _test_criterion_node_impurity(Criterion criterion):

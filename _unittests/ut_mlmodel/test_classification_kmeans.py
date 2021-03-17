@@ -5,6 +5,7 @@
 import unittest
 import numpy
 from numpy.random import RandomState
+from sklearn import __version__ as sklver
 from sklearn import datasets
 from sklearn.exceptions import ConvergenceWarning
 try:
@@ -12,6 +13,7 @@ try:
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import (
     ClassifierAfterKMeans, test_sklearn_pickle, test_sklearn_clone,
     test_sklearn_grid_search_cv)
@@ -24,7 +26,12 @@ class TestClassifierAfterKMeans(ExtTestCase):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         clr = ClassifierAfterKMeans()
-        clr.fit(X, y)
+        try:
+            clr.fit(X, y)
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
         prob = clr.predict_proba(X)
@@ -37,7 +44,12 @@ class TestClassifierAfterKMeans(ExtTestCase):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         clr = ClassifierAfterKMeans()
-        clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
+        try:
+            clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
 
@@ -57,9 +69,14 @@ class TestClassifierAfterKMeans(ExtTestCase):
         X, y = iris.data, iris.target
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: ClassifierAfterKMeans(), X, y), ValueError)
-        res = test_sklearn_grid_search_cv(
-            lambda: ClassifierAfterKMeans(),
-            X, y, c_n_clusters=[2, 3])
+        try:
+            res = test_sklearn_grid_search_cv(
+                lambda: ClassifierAfterKMeans(),
+                X, y, c_n_clusters=[2, 3])
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
@@ -81,7 +98,12 @@ class TestClassifierAfterKMeans(ExtTestCase):
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
         clk = ClassifierAfterKMeans(c_n_clusters=6, c_random_state=state)
-        clk.fit(X, Y)
+        try:
+            clk.fit(X, Y)
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
         score = clk.score(X, Y)
         self.assertGreater(score, 0.95)
 
