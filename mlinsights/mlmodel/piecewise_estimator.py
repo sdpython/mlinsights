@@ -223,6 +223,12 @@ class PiecewiseEstimator(BaseEstimator):
         * `dim_`: dimension of the output
         * `mean_`: average targets
         """
+        if len(y.shape) == 2:
+            if y.shape[-1] == 1:
+                y = y.ravel()
+            else:
+                raise RuntimeError(
+                    "This regressor only works with single dimension targets.")
         if isinstance(X, pandas.DataFrame):
             X = X.values
         if isinstance(X, list):
