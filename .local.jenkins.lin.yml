@@ -20,7 +20,7 @@ before_script:
   - $PYINT -u setup.py build_ext --inplace
 
 script:
-  - { CMD: "$PYINT -u setup.py unittests", NAME: "UT" }
+  - { CMD: "$PYINT -u setup.py unittests --covtoken=1ac0b95d-6722-4f29-804a-e4e0d5295497", NAME: "UT" }
   - { CMD: "$PYINT -u setup.py unittests_LONG", NAME: "UT_DEEP_LONG" }
   - { CMD: "$PYINT -u setup.py unittests_SKIP", NAME: "UT_SKIP" }
 
@@ -29,5 +29,5 @@ after_script:
   - if [ ${NAME} == "UT" ] then cp dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
 
 documentation:
-  - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx fi
+  - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx --layout=html fi
   - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
