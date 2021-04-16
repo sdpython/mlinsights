@@ -92,6 +92,7 @@ def get_extensions():
     ext_modules = cythonize(ext_modules, compiler_directives=opts)
     return ext_modules
 
+
 try:
     ext_modules = get_extensions()
 except ImportError as e:
