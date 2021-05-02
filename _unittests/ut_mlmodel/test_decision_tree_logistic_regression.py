@@ -146,6 +146,13 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         leaves = predict_leaves(dtlr, X_test)
         self.assertEqual(leaves.shape[0], X_test.shape[0])
 
+    def test_classifier_strat(self):
+        X = numpy.array([[0.1, 0.2], [0.2, 0.3], [-0.2, -0.3], [0.4, 0.3]])
+        Y = numpy.array([0, 1, 0, 1])
+        dtlr = DecisionTreeLogisticRegression(
+            fit_improve_algo=None, strategy='')
+        self.assertRaise(lambda: dtlr.fit(X, Y), ValueError)
+
 
 if __name__ == "__main__":
     unittest.main()
