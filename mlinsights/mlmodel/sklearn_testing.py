@@ -93,7 +93,7 @@ def _get_test_instance():
     try:
         from pyquickhelper.pycode import ExtTestCase  # pylint: disable=C0415
         cls = ExtTestCase
-    except ImportError:
+    except ImportError:  # pragma: no cover
 
         class _ExtTestCase(TestCase):
             "simple test classe with a more methods"
@@ -185,7 +185,7 @@ def _assert_dict_equal(a, b, ext):
         if key not in b:
             rows.append("** Removed key '{0}' in a".format(key))
     if len(rows) > 0:
-        raise AssertionError(
+        raise AssertionError(  # pragma: no cover
             "Dictionaries are different\n{0}".format('\n'.join(rows)))
 
 
@@ -290,7 +290,7 @@ def clone_with_fitted_parameters(est):
                 if hasattr(obj2, k):
                     v1 = getattr(obj1, k)
                     if callable(v1):
-                        raise RuntimeError(
+                        raise RuntimeError(  # pragma: no cover
                             "Cannot migrate trained parameters for {}.".format(obj1))
                     elif isinstance(v1, BaseEstimator):
                         v1 = getattr(obj1, k)
@@ -302,7 +302,7 @@ def clone_with_fitted_parameters(est):
                     v1 = getattr(obj1, k)
                     setattr(obj2, k, clone_with_fitted_parameters(v1))
                 else:
-                    raise RuntimeError(
+                    raise RuntimeError(  # pragma: no cover
                         "Cloned object is missing '{0}' in {1}.".format(k, obj2))
 
     if isinstance(est, BaseEstimator):

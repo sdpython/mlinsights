@@ -315,6 +315,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         where *p* is the proportion of samples falling in the first
         fold.
     :param verbose: prints out information about the training
+    :param strategy: `'parallel'` or `'perpendicular'`,
+        see below
 
     Fitted attributes:
 
@@ -323,6 +325,14 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         or a list of arrays of class labels (multi-output problem).
     * `tree_`: Tree
         The underlying Tree object.
+
+    The class implements two strategies to build the tree.
+    The first one `'parallel'` splits the feature space using
+    the hyperplan defined by a logistic regression, the second
+    strategy `'perpendicular'` splis the feature space based on
+    a hyperplan perpendicular to a logistic regression. By doing
+    this, two logistic regression fit on both sub parts must
+    necessary decreases the training error.
     """
 
     _fit_improve_algo_values = (
@@ -332,7 +342,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
                  max_depth=20, min_samples_split=2,
                  min_samples_leaf=2, min_weight_fraction_leaf=0.0,
                  fit_improve_algo='auto', p1p2=0.09,
-                 gamma=1., verbose=0):
+                 gamma=1., verbose=0, strategy='parallel'):
         "constructor"
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -354,6 +364,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         self.p1p2 = p1p2
         self.gamma = gamma
         self.verbose = verbose
+        self.strategy = strategy
 
         if self.fit_improve_algo not in DecisionTreeLogisticRegression._fit_improve_algo_values:
             raise ValueError(
@@ -392,12 +403,26 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
             raise RuntimeError(
                 "The model only supports binary classification but labels are "
                 "{}.".format(self.classes_))
+
+        if self.strategy == 'parallel':
+            return self._fit_parallel(X, y, sample_weight)
+        if self.strategy == 'perpendicular':
+            return self._fit_perpendicular(X, y, sample_weight)
+        raise ValueError(
+            "Unknown strategy '{}'.".format(self.strategy))
+
+    def _fit_parallel(self, X, y, sample_weight):
+        "Implements the parallel strategy."
         cls = (y == self.classes_[1]).astype(numpy.int32)
         estimator = clone(self.estimator)
         self.tree_ = _DecisionTreeLogisticRegressionNode(estimator, 0.5)
         self.n_nodes_ = self.tree_.fit(
             X, cls, sample_weight, self, X.shape[0]) + 1
         return self
+
+    def _fit_perpendicular(self, X, y, sample_weight):
+        "Implements the perpendicular strategy."
+        raise NotImplementedError()
 
     def predict(self, X):
         """

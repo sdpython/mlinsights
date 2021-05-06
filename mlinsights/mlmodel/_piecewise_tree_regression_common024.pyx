@@ -43,6 +43,14 @@ cdef class CommonRegressorCriterion(Criterion):
     def __cinit__(self, const DOUBLE_t[:, ::1] X):
         self.sample_X = X
 
+    def __deepcopy__(self, memo=None):
+        """
+        This does not a copy but mostly creates a new instance
+        of the same criterion initialized with the same data.
+        """
+        inst = self.__class__(self.sample_X)
+        return inst
+
     cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
