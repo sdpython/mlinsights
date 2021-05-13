@@ -71,7 +71,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             input_features = ["x%d" %
                               i for i in range(0, self.n_input_features_)]
         elif len(input_features) != self.n_input_features_:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "input_features should contain {} strings.".format(
                     self.n_input_features_))
 
@@ -125,7 +125,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             return self._fit_poly(X, y)
         elif self.kind == 'poly-slow':
             return self._fit_poly(X, y)
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unknown extended features '{}'.".format(self.kind))
 
     def _fit_poly(self, X, y=None):
@@ -148,7 +148,8 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         """
         n_features = X.shape[1]
         if n_features != self.n_input_features_:
-            raise ValueError("X shape does not match training shape")
+            raise ValueError(  # pragma: no cover
+                "X shape does not match training shape")
         if self.kind == 'poly':
             return self._transform_poly(X)
         if self.kind == 'poly-slow':

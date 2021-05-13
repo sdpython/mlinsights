@@ -109,7 +109,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
             Predicted values.
         """
         if not hasattr(self, 'regressor_'):
-            raise NotFittedError(
+            raise NotFittedError(  # pragma: no cover
                 "This instance {} is not fitted yet. Call 'fit' with "
                 "appropriate arguments before using this method.".format(
                     type(self)))

@@ -46,12 +46,13 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
         BaseReciprocalTransformer.__init__(self)
         if isinstance(fct, str):
             if fct_inv is not None:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "If fct is a function name, fct_inv must not be specified.")
             opts = self.__class__.available_fcts()
             if fct not in opts:
-                raise ValueError("Unknown fct '{}', it should in {}.".format(
-                    fct, list(sorted(opts))))
+                raise ValueError(  # pragma: no cover
+                    "Unknown fct '{}', it should in {}.".format(
+                        fct, list(sorted(opts))))
         else:
             if fct_inv is None:
                 raise ValueError(
@@ -117,7 +118,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         Defines a random permutation over the targets.
         """
         if y is None:
-            raise RuntimeError("targets cannot be empty.")
+            raise RuntimeError(  # pragma: no cover
+                "targets cannot be empty.")
         num = numpy.issubdtype(y.dtype, numpy.floating)
         perm = {}
         for u in y.ravel():
@@ -141,7 +143,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
 
     def _check_is_fitted(self):
         if not hasattr(self, 'permutation_'):
-            raise NotFittedError(
+            raise NotFittedError(  # pragma: no cover
                 "This instance {} is not fitted yet. Call 'fit' with "
                 "appropriate arguments before using this method.".format(
                     type(self)))
@@ -169,8 +171,9 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             return float(res)
         if self.knn_perm_.dtype in (numpy.int32, numpy.int64):
             return int(res)
-        raise NotImplementedError("The function does not work for type {}.".format(
-            self.knn_perm_.dtype))
+        raise NotImplementedError(  # pragma: no cover
+            "The function does not work for type {}.".format(
+                self.knn_perm_.dtype))
 
     def transform(self, X, y):
         """

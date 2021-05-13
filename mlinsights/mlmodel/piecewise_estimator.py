@@ -13,7 +13,7 @@ from sklearn.utils._joblib import Parallel, delayed
 from sklearn.utils.fixes import _joblib_parallel_args
 try:
     from tqdm import tqdm
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 

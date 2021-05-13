@@ -234,7 +234,8 @@ def _compute_strategy_coefficient(distances, strategy, labels):
         ar = numpy.arange(distances.shape[0])
         dist = distances[ar, labels]
         return distances - dist[:, numpy.newaxis]
-    raise ValueError("Unknwon strategy '{0}'.".format(strategy))
+    raise ValueError(  # pragma: no cover
+        "Unknwon strategy '{0}'.".format(strategy))
 
 
 def _randomize_index(index, weights):
