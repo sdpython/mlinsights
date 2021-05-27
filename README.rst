@@ -7,8 +7,8 @@
 mlinsights - extensions to scikit-learn
 =======================================
 
-.. image:: https://travis-ci.org/sdpython/mlinsights.svg?branch=master
-    :target: https://travis-ci.org/sdpython/mlinsights
+.. image:: https://travis-ci.com/sdpython/mlinsights.svg?branch=master
+    :target: https://travis-ci.com/sdpython/mlinsights
     :alt: Build status
 
 .. image:: https://ci.appveyor.com/api/projects/status/uj6tq445k3na7hs9?svg=true
