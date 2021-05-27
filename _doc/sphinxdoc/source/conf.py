@@ -5,7 +5,7 @@ Configuration for the documntation.
 import sys
 import os
 import alabaster
-from pyquickhelper.helpgen.default_conf import set_sphinx_variables, get_default_stylesheet
+from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
@@ -20,8 +20,9 @@ set_sphinx_variables(__file__, "mlinsights", "Xavier Dupré", 2021,
                      title="mlinsights", book=True)
 
 blog_root = "http://www.xavierdupre.fr/app/mlinsights/helpsphinx/"
-html_context = {'css_files': get_default_stylesheet() +
-                ['_static/my-styles.css']}
+
+html_css_files = ['my-styles.css']
+
 html_logo = "phdoc_static/project_ico.png"
 html_sidebars = {}
 language = "en"

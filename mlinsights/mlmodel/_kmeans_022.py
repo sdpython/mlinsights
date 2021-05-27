@@ -9,7 +9,7 @@ from scipy.sparse import issparse
 from sklearn.utils.sparsefuncs_fast import assign_rows_csr  # pylint: disable=W0611,E0611
 try:
     from sklearn.cluster._kmeans import _check_sample_weight
-except ImportError:
+except ImportError:  # pragma: no cover
     from sklearn.cluster._kmeans import (
         _check_normalize_sample_weight as _check_sample_weight)
 from sklearn.metrics.pairwise import pairwise_distances_argmin_min

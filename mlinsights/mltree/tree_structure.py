@@ -14,7 +14,8 @@ def _get_tree(obj):
         return obj
     if hasattr(obj, "tree_"):
         return obj.tree_
-    raise AttributeError("obj is no tree: {}".format(type(obj)))
+    raise AttributeError(  # pragma: no cover
+        "obj is no tree: {}".format(type(obj)))
 
 
 def tree_leave_index(model):

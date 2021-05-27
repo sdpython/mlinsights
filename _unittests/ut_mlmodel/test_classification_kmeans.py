@@ -57,7 +57,12 @@ class TestClassifierAfterKMeans(ExtTestCase):
     def test_classification_kmeans_pickle(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
-        test_sklearn_pickle(lambda: ClassifierAfterKMeans(), X, y)
+        try:
+            test_sklearn_pickle(lambda: ClassifierAfterKMeans(), X, y)
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
 
     def test_classification_kmeans_clone(self):
         self.maxDiff = None

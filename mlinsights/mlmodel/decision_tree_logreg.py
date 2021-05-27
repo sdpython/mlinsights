@@ -422,7 +422,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
 
     def _fit_perpendicular(self, X, y, sample_weight):
         "Implements the perpendicular strategy."
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def predict(self, X):
         """

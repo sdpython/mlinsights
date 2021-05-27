@@ -13,7 +13,7 @@ from sklearn.utils._joblib import Parallel, delayed
 from sklearn.utils.fixes import _joblib_parallel_args
 try:
     from tqdm import tqdm
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 
@@ -223,6 +223,12 @@ class PiecewiseEstimator(BaseEstimator):
         * `dim_`: dimension of the output
         * `mean_`: average targets
         """
+        if len(y.shape) == 2:
+            if y.shape[-1] == 1:
+                y = y.ravel()
+            else:
+                raise RuntimeError(
+                    "This regressor only works with single dimension targets.")
         if isinstance(X, pandas.DataFrame):
             X = X.values
         if isinstance(X, list):

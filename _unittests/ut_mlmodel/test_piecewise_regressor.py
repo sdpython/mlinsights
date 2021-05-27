@@ -7,6 +7,8 @@ import numpy
 from numpy.random import random
 import pandas
 from sklearn.linear_model import LinearRegression
+from sklearn.datasets import make_regression
+from sklearn.tree import DecisionTreeRegressor
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
 from mlinsights.mlmodel.piecewise_estimator import PiecewiseRegressor
@@ -147,6 +149,23 @@ class TestPiecewiseRegressor(ExtTestCase):
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
         self.assertLesser(res['score'], 1)
+
+    def test_piecewise_regressor_issue(self):
+        X, y = make_regression(10000, n_features=1, n_informative=1,  # pylint: disable=W0632
+                               n_targets=1)
+        y = y.reshape((-1, 1))
+        model = PiecewiseRegressor(
+            binner=DecisionTreeRegressor(min_samples_leaf=300))
+        model.fit(X, y)
+        vvc = model.predict(X)
+        self.assertEqual(vvc.shape, (X.shape[0], ))
+
+    def test_piecewise_regressor_raise(self):
+        X, y = make_regression(10000, n_features=2, n_informative=2,  # pylint: disable=W0632
+                               n_targets=2)
+        model = PiecewiseRegressor(
+            binner=DecisionTreeRegressor(min_samples_leaf=300))
+        self.assertRaise(lambda: model.fit(X, y), RuntimeError)
 
 
 if __name__ == "__main__":
