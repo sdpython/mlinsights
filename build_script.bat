@@ -5,8 +5,8 @@ set pythonexe="%1"
 goto custom_python:
 
 :default_value_python:
-set pythonexe="c:\Python391_x64\python.exe"
-if not exist %pythonexe% set pythonexe="c:\Python372_x64\python.exe"
+set pythonexe="c:\Python395_x64\python.exe"
+if not exist %pythonexe% set pythonexe="c:\Python391_x64\python.exe"
 :custom_python:
 @echo [python] %pythonexe%
 %pythonexe% -u setup.py build_script

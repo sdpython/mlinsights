@@ -44,7 +44,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                 zip(dataloader, data.samples))
             if n is None:
                 n = len(data)
-        elif "keras" in str(type(data)):
+        elif "keras" in str(type(data)):  # pragma: no cover
             self.module_ = "keras"
             iter_images = data
             # We delay the import as keras backend is not necessarily installed.
@@ -120,15 +120,15 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         *meta* is the metadata.
         """
         if isinstance(iter_images, numpy.ndarray):
-            if self.module_ == "keras":
+            if self.module_ == "keras":  # pragma: no cover
                 raise NotImplementedError("Not yet implemented or Keras.")
             elif self.module_ == "torch":
                 from torch import from_numpy  # pylint: disable=E0611,E0401,C0415
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Unknown module '{0}'.".format(self.module_))
-        elif "keras" in str(iter_images):
+        elif "keras" in str(iter_images):  # pragma: no cover
             if self.module_ != "keras":
                 raise RuntimeError(  # pragma: no cover
                     "Keras object but {0} was used to train the KNN.".format(self.module_))

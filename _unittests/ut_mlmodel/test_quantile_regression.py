@@ -32,6 +32,22 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
 
+    def test_quantile_regression_no_intercept_positive(self):
+        X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
+        Y = numpy.array([1., 1.1])
+        clr = LinearRegression(fit_intercept=False, positive=True)
+        clr.fit(X, Y)
+        clq = QuantileLinearRegression(fit_intercept=False, positive=True)
+        clq.fit(X, Y)
+        self.assertEqual(clr.intercept_, 0)
+        self.assertEqual(clq.intercept_, 0)
+        self.assertGreater(clr.coef_.min(), 0)
+        self.assertGreater(clq.coef_.min(), 0)
+        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualArray(clr.coef_[0], clq.coef_[0])
+        self.assertGreater(clr.coef_[1:].min(), 3)
+        self.assertGreater(clq.coef_[1:].min(), 3)
+
     def test_quantile_regression_intercept(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
         Y = numpy.array([1., 1.1, 1.2])
@@ -43,6 +59,21 @@ class TestQuantileRegression(ExtTestCase):
         self.assertNotEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
         self.assertEqualArray(clr.coef_, clq.coef_)
+
+    def test_quantile_regression_intercept_positive(self):
+        X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
+        Y = numpy.array([1., 1.1, 1.2])
+        clr = LinearRegression(fit_intercept=True, positive=True)
+        clr.fit(X, Y)
+        clq = QuantileLinearRegression(
+            verbose=False, fit_intercept=True, positive=True)
+        clq.fit(X, Y)
+        self.assertNotEqual(clr.intercept_, 0)
+        self.assertNotEqual(clq.intercept_, 0)
+        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualArray(clr.coef_, clq.coef_)
+        self.assertGreater(clr.coef_.min(), 0)
+        self.assertGreater(clq.coef_.min(), 0)
 
     def test_quantile_regression_intercept_weights(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])

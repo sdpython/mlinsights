@@ -134,7 +134,7 @@ def model_featurizer_rfc(model, output=True):
     return lambda X, many, model=model: feat2(X, model, many)
 
 
-def wrap_predict_keras(X, fct, many, shapes):
+def wrap_predict_keras(X, fct, many, shapes):  # pragma: no cover
     """
     Checks types and dimension.
     Calls *fct* and returns the approriate type.
@@ -155,7 +155,7 @@ def wrap_predict_keras(X, fct, many, shapes):
     return fct(x).ravel()
 
 
-def model_featurizer_keras(model, layer=None):
+def model_featurizer_keras(model, layer=None):  # pragma: no cover
     """
     Builds a featurizer from a :epkg:`keras` model
     It returns a function which returns the output of one

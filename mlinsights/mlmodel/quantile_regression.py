@@ -31,7 +31,7 @@ class QuantileLinearRegression(LinearRegression):
 
     def __init__(self, fit_intercept=True, normalize=False, copy_X=True,
                  n_jobs=1, delta=0.0001, max_iter=10, quantile=0.5,
-                 verbose=False):
+                 positive=False, verbose=False):
         """
         :param fit_intercept: boolean, optional, default True
             whether to calculate the intercept for this model. If set
@@ -59,11 +59,12 @@ class QuantileLinearRegression(LinearRegression):
         :param quantile: float, by default 0.5,
             determines which quantile to use
             to estimate the regression.
+        :param positive: when set to True, forces the coefficients to be positive.
         :param verbose: bool, optional, default False
             Prints error at each iteration of the optimisation.
         """
         LinearRegression.__init__(self, fit_intercept=fit_intercept, normalize=normalize,
-                                  copy_X=copy_X, n_jobs=n_jobs)
+                                  copy_X=copy_X, n_jobs=n_jobs, positive=positive)
         self.max_iter = max_iter
         self.verbose = verbose
         self.delta = delta
@@ -131,7 +132,8 @@ class QuantileLinearRegression(LinearRegression):
             Xm = X
 
         clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                               n_jobs=self.n_jobs, normalize=self.normalize)
+                               n_jobs=self.n_jobs, normalize=self.normalize,
+                               positive=self.positive)
 
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0
@@ -197,5 +199,4 @@ class QuantileLinearRegression(LinearRegression):
             if mult is not None:
                 epsilon *= mult * 2
             return epsilon.sum() / X.shape[0]
-        else:
-            return mean_absolute_error(y, pred, sample_weight=sample_weight)
+        return mean_absolute_error(y, pred, sample_weight=sample_weight)
