@@ -87,7 +87,7 @@ class TestCategoriesToIntegers(ExtTestCase):
         trans.fit(df)
         newdf = trans.transform(df)
         self.assertEqual(len(newdf.columns), len(df.columns))
-        self.assertEqual(list(newdf.columns), list(df.columns))
+        self.assertEqual(list(newdf.columns), list(df.columns))  # pylint: disable=E1101
         newdf2 = trans.fit_transform(df)
         self.assertEqual(newdf, newdf2)
         rep = repr(trans)
@@ -114,7 +114,7 @@ class TestCategoriesToIntegers(ExtTestCase):
             os.path.dirname(__file__)), "data", "adult_set.txt")
         df = pandas.read_csv(data, sep="\t")
         X = df.drop('income', axis=1)
-        y = df['income']
+        y = df['income']  # pylint: disable=E1136
         pipe = make_pipeline(CategoriesToIntegers(),
                              LogisticRegression())
         self.assertRaise(lambda: test_sklearn_grid_search_cv(

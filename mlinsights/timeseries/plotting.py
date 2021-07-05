@@ -5,7 +5,7 @@
 import calendar
 import datetime
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import matplotlib.patches as patches  # pylint: disable=R0402
 
 
 def plot_week_timeseries(time, value, normalise=True,

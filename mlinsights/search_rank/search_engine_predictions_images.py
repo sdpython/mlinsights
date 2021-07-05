@@ -94,7 +94,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                         '[SearchEnginePredictionImages.fit] i={}/{} - {}'.format(i, n, name))
         super()._prepare_fit(data=iterator_feature_meta(), transform=transform)
 
-    def fit(self, iter_images, n=None, fLOG=None):
+    def fit(self, iter_images, n=None, fLOG=None):  # pylint: disable=W0237
         """
         Processes images through the model and fits a *k-nn*.
 
@@ -106,7 +106,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         self._prepare_fit(data=iter_images, transform=self.fct, n=n, fLOG=fLOG)
         return self._fit_knn()
 
-    def kneighbors(self, iter_images, n_neighbors=None):
+    def kneighbors(self, iter_images, n_neighbors=None):  # pylint: disable=W0237
         """
         Searches for neighbors close to the first image
         returned by *iter_images*. It returns the neighbors

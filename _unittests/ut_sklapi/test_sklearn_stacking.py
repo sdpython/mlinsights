@@ -157,7 +157,7 @@ class TestSklearnStacking(ExtTestCase):
     def test_pipeline_wines(self):
         df = load_wines_dataset(shuffle=True)
         X = df.drop(['quality', 'color'], axis=1)
-        y = df['quality']
+        y = df['quality']  # pylint: disable=E1136
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         model = make_pipeline(
             SkBaseTransformStacking(

@@ -3,7 +3,7 @@
 @brief Builds a tree of logistic regressions.
 """
 import numpy
-import scipy.sparse as sparse
+import scipy.sparse as sparse  # pylint: disable=R0402
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.linear_model._base import LinearClassifierMixin

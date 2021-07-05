@@ -165,7 +165,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                     i - 1, n_samples, activations, deltas, coef_grads,
                     intercept_grads)
         else:  # pragma: no cover
-            coef_grads, intercept_grads = temp
+            coef_grads, intercept_grads = temp  # pylint: disable=E0633
 
             # Iterate over the hidden layers
             for i in range(self.n_layers_ - 2, 0, -1):
@@ -173,7 +173,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 inplace_derivative = DERIVATIVES[self.activation]
                 inplace_derivative(activations[i], deltas[i - 1])
 
-                coef_grads, intercept_grads = self._compute_loss_grad(  # pylint: disable=E1111
+                coef_grads, intercept_grads = self._compute_loss_grad(  # pylint: disable=E1111,E0633
                     i - 1, n_samples, activations, deltas, coef_grads,
                     intercept_grads)
 

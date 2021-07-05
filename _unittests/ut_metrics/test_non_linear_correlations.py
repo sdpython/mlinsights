@@ -45,7 +45,9 @@ class TestNonLinearCorrelations(ExtTestCase):
         cor = non_linear_correlations(
             df, LinearRegression(fit_intercept=False))
         self.assertEqual(cor.shape, (4, 4))
-        self.assertEqual(list(cor[i, i] for i in range(0, 4)), [1, 1, 1, 1])
+        self.assertEqual(
+            list(cor[i, i] for i in range(0, 4)),  # pylint: disable=E1126
+            [1, 1, 1, 1])
         self.assertGreater(cor.min(), 0)
 
     def test_non_linear_correlations_df_tree(self):
