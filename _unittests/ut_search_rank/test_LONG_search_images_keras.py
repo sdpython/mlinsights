@@ -74,7 +74,7 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
 
         self.assertIsInstance(score, numpy.ndarray)
         self.assertEqual(score.shape, (5,))
-        self.assertEqual(score[0], 0)
+        self.assertEqual(abs(score[0]) < 1e-5
 
         self.assertIsInstance(meta, (numpy.ndarray, pandas.DataFrame))
         self.assertEqual(meta.shape, (5, 2))
