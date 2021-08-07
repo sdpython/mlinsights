@@ -28,9 +28,9 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
         with redirect_stderr(StringIO()):
             try:
                 from keras.applications.mobilenet import MobileNet  # pylint: disable=E0401,E0611
-            except (SyntaxError, ModuleNotFoundError) as e:
+            except (SyntaxError, ModuleNotFoundError, AttributeError) as e:
                 warnings.warn(
-                    "tensorflow is probably not available yet on python 3.7: {0}".format(e))
+                    "Issue with tensorflow or keras: {0}".format(e))
                 return
             from keras.preprocessing.image import ImageDataGenerator  # pylint: disable=E0401,E0611
             from keras.preprocessing.image import img_to_array, load_img  # pylint: disable=E0401,E0611
