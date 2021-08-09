@@ -91,8 +91,10 @@ def plot_week_timeseries(time, value, normalise=True,
             maxx = (x1, x1 + input_maxy)
             maxy = (y1, y2)
         else:
-            maxx = (min(x1, maxx[0]), max(x1 + input_maxy, maxx[1]))
-            maxy = (min(y1, maxy[0]), max(y2, maxy[1]))
+            maxx = (min(x1, maxx[0]),  # pylint: disable=E1136
+                    max(x1 + input_maxy, maxx[1]))  # pylint: disable=E1136
+            maxy = (min(y1, maxy[0]),  # pylint: disable=E1136
+                    max(y2, maxy[1]))  # pylint: disable=E1136
 
         rect = patches.Rectangle((x1, y1), value[i] * h, y2 - y1,
                                  linewidth=1, edgecolor=None,
