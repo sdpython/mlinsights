@@ -28,10 +28,6 @@ mlinsights - extensions to scikit-learn
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
 
-.. image:: https://requires.io/github/sdpython/mlinsights/requirements.svg?branch=master
-     :target: https://requires.io/github/sdpython/mlinsights/requirements/?branch=master
-     :alt: Requirements Status
-
 .. image:: https://codecov.io/github/sdpython/mlinsights/coverage.svg?branch=master
     :target: https://codecov.io/github/sdpython/mlinsights?branch=master
 
