@@ -28,6 +28,7 @@ class TestCategoriesToIntegers(ExtTestCase):
 
         trans = CategoriesToIntegers()
         trans.fit(df)
+        self.assertIsInstance(str(trans), str)
         newdf = trans.transform(df)
         exp = ['age', 'final_weight', 'education_num', 'capital_gain', 'capital_loss',
                'hours_per_week', 'marital_status= Divorced',

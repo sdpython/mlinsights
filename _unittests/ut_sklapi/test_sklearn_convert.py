@@ -13,6 +13,7 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.metrics import accuracy_score, r2_score
 from sklearn.pipeline import make_pipeline
+from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from pyquickhelper.texthelper import compare_module_version
@@ -42,6 +43,27 @@ class TestSklearnConvert(ExtTestCase):
         rp = repr(conv)
         self.assertStartsWith(
             'SkBaseTransformLearner(model=LogisticRegression(', rp)
+
+    def test_pipeline_transform(self):
+        data = load_iris()
+        X, y = data.data, data.target
+        X_train, X_test, y_train, y_test = train_test_split(X, y)
+        conv = SkBaseTransformLearner(PCA())
+        pipe = make_pipeline(conv, DecisionTreeClassifier())
+        try:
+            pipe.fit(X_train, y_train)
+        except AttributeError as e:
+            if compare_module_version(sklver, "0.24") < 0:
+                return
+            raise e
+        pred = pipe.predict(X_test)
+        score = accuracy_score(y_test, pred)
+        self.assertGreater(score, 0.8)
+        score2 = pipe.score(X_test, y_test)
+        self.assertEqual(score, score2)
+        rp = repr(conv)
+        self.assertStartsWith(
+            'SkBaseTransformLearner(model=PCA(', rp)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_callable(self):

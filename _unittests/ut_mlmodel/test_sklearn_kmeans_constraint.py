@@ -392,6 +392,10 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         score = km.score(mat)
         self.assertEqual(score.shape, (4, ))
         self.assertIn("CKMeans", str(buf))
+        km.weights_ = None
+        score = km.score(mat)
+        self.assertEqual(score.shape, (2, ))
+        self.assertIn("CKMeans", str(buf))
 
     def test_kmeans_constraint_weights_bigger(self):
         n_samples = 100

@@ -32,6 +32,19 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         self.assertEqual(prob.shape, (4, 2))
         dtlr.fit(X, Y, sample_weight=numpy.array([1, 1, 1, 1]))
 
+    def test_classifier_simple_perpendicular(self):
+        X = [[0.1, 0.2], [0.2, 0.3], [-0.2, -0.3], [0.4, 0.3]]
+        Y = numpy.array([0, 1, 0, 1])
+        dtlr = DecisionTreeLogisticRegression(
+            fit_improve_algo=None, strategy='perpendicular')
+        self.assertRaise(lambda: dtlr.fit(X, Y), TypeError)
+        X = numpy.array(X)
+        Y = numpy.array(Y)
+        self.assertRaise(lambda: dtlr.fit(X, Y), NotImplementedError)
+        # prob = dtlr.predict_proba(X)
+        # self.assertEqual(prob.shape, (4, 2))
+        # dtlr.fit(X, Y, sample_weight=numpy.array([1, 1, 1, 1]))
+
     def test_pandas(self):
         X = pandas.DataFrame(numpy.array([[0.1, 0.2], [-0.2, 0.3]]))
         Y = numpy.array([0, 1])

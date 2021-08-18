@@ -142,20 +142,19 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                 "transform a vector"
                 if v in vec:
                     return vec[v]
-                elif v is None:
+                if v is None:
                     return numpy.nan
-                elif isinstance(v, float) and numpy.isnan(v):
+                if isinstance(v, float) and numpy.isnan(v):
                     return numpy.nan
-                elif not self.skip_errors:
+                if not self.skip_errors:
                     lv = list(sorted(vec))
-                    if len(lv) > 20:
+                    if len(lv) > 20:  # pragma: no cover
                         lv = lv[:20]
                         lv.append("...")
                     raise ValueError(  # pragma: no cover
                         "Unable to find category value '{0}' type(v)={2} among\n{1}".format(
                             v, "\n".join(lv), type(v)))
-                else:
-                    return numpy.nan
+                return numpy.nan
 
             sch, pos, new_vector = self._schema
             X = X.copy()
@@ -181,7 +180,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     if v not in vec[k]:
                         if b:
                             lv = list(sorted(vec[k]))
-                            if len(lv) > 20:
+                            if len(lv) > 20:  # pragma: no cover
                                 lv = lv[:20]
                                 lv.append("...")
                             raise ValueError(  # pragma: no cover

@@ -36,7 +36,7 @@ def model_featurizer(model, **params):
     tried.append(RandomForestClassifier)
     if hasattr(model, "layers"):
         # It should be a keras model.
-        return model_featurizer_keras(model, **params)
+        return model_featurizer_keras(model, **params)  # pragma: no cover
     tried.append("Keras")
     if hasattr(model, "forward"):
         # It should be a torch model.

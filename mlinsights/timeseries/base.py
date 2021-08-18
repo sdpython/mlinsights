@@ -122,7 +122,7 @@ class BaseTimeSeries(BaseEstimator):
         The *y* series is moved by *self.delay1* in the past.
         """
         if y is None:
-            raise RuntimeError("y cannot be None")
+            raise RuntimeError("y cannot be None")  # pragma: no cover
         X, y, sample_weight = build_ts_X_y(
             self, X, y, sample_weight, same_rows=True)
         X, y, sample_weight = self._fit_preprocessing(X, y, sample_weight)

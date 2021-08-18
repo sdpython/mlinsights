@@ -21,6 +21,22 @@ class TestKMeansL1L2(ExtTestCase):
         cls = set(clr.predict(X))
         self.assertEqual({0, 1, 2, 3}, cls)
 
+    def test_kmeans_l2_random(self):
+        iris = datasets.load_iris()
+        X = iris.data
+        clr = KMeansL1L2(4, init="random")
+        clr.fit(X)
+        cls = set(clr.predict(X))
+        self.assertEqual({0, 1, 2, 3}, cls)
+
+    def test_kmeans_l2_parallel(self):
+        iris = datasets.load_iris()
+        X = iris.data
+        clr = KMeansL1L2(4, n_jobs=2)
+        clr.fit(X)
+        cls = set(clr.predict(X))
+        self.assertEqual({0, 1, 2, 3}, cls)
+
     def test_kmeans_l2_small(self):
         iris = datasets.load_iris()
         X = iris.data

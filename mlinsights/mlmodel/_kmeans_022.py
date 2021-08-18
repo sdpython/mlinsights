@@ -113,10 +113,8 @@ def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
     store_distances = 0
     inertia = 0.0
 
-    if centers.dtype == numpy.float32:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float32)
-    else:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float64)
+    dtype = numpy.float32 if centers.dtype == numpy.float32 else numpy.float64
+    center_squared_norms = numpy.zeros(n_clusters, dtype=dtype)
 
     if n_samples == distances.shape[0]:
         store_distances = 1

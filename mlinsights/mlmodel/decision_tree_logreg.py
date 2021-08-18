@@ -127,7 +127,7 @@ class _DecisionTreeLogisticRegressionNode:
 
         def _fit_side(index, y_above_below, above_below, n_above_below, side):
             if dtlr.verbose >= 1:
-                print("[DTLR*] %s%s: n_class=%d N=%d - %d/%d" % (
+                print("[DTLR*] %s%s: n_class=%d N=%d - %d/%d" % (  # pragma: no cover
                     " " * self.depth, side,
                     len(y_above_below), above_below.shape[0],
                     n_above_below, total_N))

@@ -11,6 +11,7 @@ from sklearn.pipeline import Pipeline
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlbatch.pipeline_cache import PipelineCache
 from mlinsights.mlbatch.cache_model import MLCache
+from mlinsights.mlmodel.sklearn_testing import clone_with_fitted_parameters
 
 
 class TestPipelineCache(ExtTestCase):
@@ -37,6 +38,12 @@ class TestPipelineCache(ExtTestCase):
         MLCache.remove_cache('cache__')
         items = list(pipe.cache_.items())
         self.assertEqual(len(items), 1)
+        self.assertEqual(cache.count("A"), 0)
+
+    def test_pass_through(self):
+        X, y = make_classification(random_state=42)
+        pipe = Pipeline([('pca', PCA(2)), ('p', 'passthrough')])
+        pipe.fit(X, y)
 
     def test_grid_search(self):
         X, y = make_classification(random_state=42)
@@ -112,6 +119,21 @@ class TestPipelineCache(ExtTestCase):
         MLCache.remove_cache('cache__3')
         self.assertEqual(grid0.best_params_, grid.best_params_)
 
+    def test_clone_with_fitted_parameters(self):
+        X, y = make_classification(random_state=42)
+        param_grid = {'pca__n_components': [2, 3],
+                      'pca__whiten': [True, False],
+                      'lr__fit_intercept': [True, False]}
+        pipe = Pipeline([('pca', PCA(2)),
+                         ('lr', LogisticRegression())])
+        pipe.fit(X, y)
+        cl = clone_with_fitted_parameters(pipe)
+        self.assertNotEmpty(cl)
+        cl = clone_with_fitted_parameters([pipe])
+        self.assertIsInstance(cl, list)
+        cl = clone_with_fitted_parameters((pipe, ))
+        self.assertIsInstance(cl, tuple)
+        
 
 if __name__ == "__main__":
     unittest.main()
