@@ -133,7 +133,7 @@ class TestPipelineCache(ExtTestCase):
         self.assertIsInstance(cl, list)
         cl = clone_with_fitted_parameters((pipe, ))
         self.assertIsInstance(cl, tuple)
-        
+
 
 if __name__ == "__main__":
     unittest.main()

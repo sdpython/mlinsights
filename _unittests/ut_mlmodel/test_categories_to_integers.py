@@ -88,7 +88,8 @@ class TestCategoriesToIntegers(ExtTestCase):
         trans.fit(df)
         newdf = trans.transform(df)
         self.assertEqual(len(newdf.columns), len(df.columns))
-        self.assertEqual(list(newdf.columns), list(df.columns))  # pylint: disable=E1101
+        self.assertEqual(list(newdf.columns), list(
+            df.columns))  # pylint: disable=E1101
         newdf2 = trans.fit_transform(df)
         self.assertEqual(newdf, newdf2)
         rep = repr(trans)
