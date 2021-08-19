@@ -138,9 +138,14 @@ class QuantileLinearRegression(LinearRegression):
         else:
             Xm = X
 
-        clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                               n_jobs=self.n_jobs, normalize=self.normalize,
-                               positive=self.positive)
+        try:
+            clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
+                                   n_jobs=self.n_jobs, normalize=self.normalize,
+                                   positive=self.positive)
+        except AttributeError:
+            # scikit-learn<0.24
+            clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
+                                   n_jobs=self.n_jobs, normalize=self.normalize)
 
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0
