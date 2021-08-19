@@ -20,6 +20,7 @@ before_install:
     - sudo apt-get -y install graphviz      
 
 install:
+  - pip install pyquicksetup
   - pip install -r requirements.txt
   - pip install "scikit-learn$sklver"
   - pip install "joblib$jlver"
