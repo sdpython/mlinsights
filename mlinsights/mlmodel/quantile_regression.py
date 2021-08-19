@@ -63,8 +63,15 @@ class QuantileLinearRegression(LinearRegression):
         :param verbose: bool, optional, default False
             Prints error at each iteration of the optimisation.
         """
-        LinearRegression.__init__(self, fit_intercept=fit_intercept, normalize=normalize,
-                                  copy_X=copy_X, n_jobs=n_jobs, positive=positive)
+        try:
+            LinearRegression.__init__(
+                self, fit_intercept=fit_intercept, normalize=normalize,
+                copy_X=copy_X, n_jobs=n_jobs, positive=positive)
+        except TypeError:
+            # scikit-learn<0.24
+            LinearRegression.__init__(
+                self, fit_intercept=fit_intercept, normalize=normalize,
+                copy_X=copy_X, n_jobs=n_jobs)
         self.max_iter = max_iter
         self.verbose = verbose
         self.delta = delta
