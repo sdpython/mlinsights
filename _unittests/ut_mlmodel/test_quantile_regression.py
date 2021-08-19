@@ -169,7 +169,8 @@ class TestQuantileRegression(ExtTestCase):
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
-            lambda: QuantileLinearRegression(), X, Y), ValueError)
+            lambda: QuantileLinearRegression(), X, Y),
+            (ValueError, TypeError))
         res = test_sklearn_grid_search_cv(lambda: QuantileLinearRegression(),
                                           X, Y, delta=[0.1, 0.001])
         self.assertIn('model', res)
