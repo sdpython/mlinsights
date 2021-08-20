@@ -11,7 +11,7 @@ mlinsights: tricky scikit-learn
 :ref:`blog <ap-main-0>`
 
 .. image:: https://travis-ci.com/sdpython/mlinsights.svg?branch=master
-    :target: https://travis-ci.com/sdpython/mlinsights
+    :target: https://app.travis-ci.com/github/sdpython/mlinsights/
     :alt: Build status
 
 .. image:: https://ci.appveyor.com/api/projects/status/uj6tq445k3na7hs9?svg=true
