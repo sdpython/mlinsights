@@ -32,6 +32,9 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
 
+    @unittest.skipIf(
+        compare_module_version(sklver,"0.24") == -1,
+        reason="positive was introduce in 0.24")
     def test_quantile_regression_no_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
         Y = numpy.array([1., 1.1])
@@ -60,6 +63,9 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqualArray(clr.intercept_, clq.intercept_)
         self.assertEqualArray(clr.coef_, clq.coef_)
 
+    @unittest.skipIf(
+        compare_module_version(sklver,"0.24") == -1,
+        reason="positive was introduce in 0.24")
     def test_quantile_regression_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
         Y = numpy.array([1., 1.1, 1.2])
