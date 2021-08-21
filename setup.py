@@ -64,20 +64,22 @@ def get_extensions():
         "piecewise_tree_regression_criterion",
         "piecewise_tree_regression_criterion_linear",
         "piecewise_tree_regression_criterion_fast",
+        "_tree_digitize",
     ])
 
-    pattern1 = "mlinsights.mlmodel.%s"
+    pattern1 = "mlinsights.%s.%s"
     import numpy
     for name in extensions:
+        folder = "mltree" if name == "_tree_digitize" else "mlmodel"
         if isinstance(name, tuple):
-            m = Extension(pattern1 % name[0],
-                          ['mlinsights/mlmodel/%s.pyx' % name[1]],
+            m = Extension(pattern1 % (folder, name[0]),
+                          ['mlinsights/%s/%s.pyx' % (folder, name[1])],
                           include_dirs=[numpy.get_include()],
                           extra_compile_args=["-O3"],
                           language='c')
         else:
-            m = Extension(pattern1 % name,
-                          ['mlinsights/mlmodel/%s.pyx' % name],
+            m = Extension(pattern1 % (folder, name),
+                          ['mlinsights/%s/%s.pyx' % (folder, name)],
                           include_dirs=[numpy.get_include()],
                           extra_compile_args=["-O3"],
                           language='c')
