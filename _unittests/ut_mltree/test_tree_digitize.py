@@ -4,7 +4,7 @@
 """
 import unittest
 import numpy
-from sklearn.tree import DecisionTreeRegressor, export_text
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree._tree import TREE_UNDEFINED
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mltree import digitize2tree
