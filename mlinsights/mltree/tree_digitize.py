@@ -1,6 +1,8 @@
 """
 @file
 @brief Helpers to investigate a tree structure.
+
+.. versionadded:: 0.4
 """
 import numpy
 from sklearn.tree._tree import Tree  # pylint: disable=E0611
@@ -22,6 +24,8 @@ def digitize2tree(bins, right=False):
         `bins[i-1] <= x < bins[i]` is the default behavior for
         monotonically increasing bins.
     :return: decision tree
+
+    .. versionadded:: 0.4
     """
     if not right:
         raise NotImplementedError("right must be true")
