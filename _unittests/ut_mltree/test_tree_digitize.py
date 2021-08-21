@@ -5,13 +5,17 @@
 import unittest
 import numpy
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.tree._tree import TREE_UNDEFINED
+try:
+    from sklearn.tree._tree import TREE_UNDEFINED  # pylint: disable=E0611
+except ImportError:
+    TREE_UNDEFINED = None
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mltree import digitize2tree
 
 
 class TestTreeDigitize(ExtTestCase):
 
+    @unittest.skipIf(TREE_UNDEFINED is None, reason="nothing to test")
     def test_cst(self):
         self.assertEqual(TREE_UNDEFINED, -2)
 

@@ -121,9 +121,6 @@ class TestPipelineCache(ExtTestCase):
 
     def test_clone_with_fitted_parameters(self):
         X, y = make_classification(random_state=42)
-        param_grid = {'pca__n_components': [2, 3],
-                      'pca__whiten': [True, False],
-                      'lr__fit_intercept': [True, False]}
         pipe = Pipeline([('pca', PCA(2)),
                          ('lr', LogisticRegression())])
         pipe.fit(X, y)

@@ -80,7 +80,7 @@ class SkBaseTransformLearner(SkBaseTransform):
         if model is None:
             raise ValueError("value cannot be None")  # pragma: no cover
         if method is None:
-            for name in {'predict_proba', 'predict', 'transform'}:
+            for name in ['predict_proba', 'predict', 'transform']:
                 if hasattr(model.__class__, name):
                     method = name
             if method is None:
