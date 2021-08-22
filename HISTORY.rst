@@ -5,7 +5,21 @@
 History
 =======
 
-current - 2021-01-09 - 0.00Mb
+current - 2021-08-23 - 0.00Mb
+=============================
+
+* `102`: Implements numpy.digitalize with a DecisionTreeRegressor (2021-08-22)
+* `101`: Update CI to build manylinux for python 3.9 (2021-08-18)
+* `100`: Support parameter positive for QuantileLinearRegression (2021-06-23)
+* `95`: _apply_prediction_method boolean indexing incompatible with standard sklearn format (2021-05-27)
+* `96`: Fixes #95, PiecewiseRegressor, makes sure target are vectors (2021-05-27)
+* `72`: Optimal decission tree for piecewise estimator (2021-05-06)
+* `80`: Piecewise Estimator: binner not a decision tree (2021-05-06)
+* `97`: piecewise_decision_tree does not compile with the latest version of scikit-learn (2021-05-03)
+* `98`: Fixes #97, fix issue with deepcopy and criterion (2021-05-03)
+* `85`: Fixes #70, implements DecisionTreeLogisticRegression (2021-05-02)
+
+0.3.549 - 2021-01-09 - 0.67Mb
 =============================
 
 * `93`: Include build wheel for all platforms in CI (2021-01-09)
@@ -63,17 +77,9 @@ current - 2021-01-09 - 0.00Mb
 * `64`: Implements a different version of TargetTransformRegressor which includes predefined functions (2019-08-24)
 * `63`: Add a transform which transform the target and applies the inverse function of the prediction before scoring (2019-08-24)
 * `49`: fix menu in documentation (2019-08-24)
-
-0.2.312 - 2019-07-13 - 0.66Mb
-=============================
-
 * `61`: Fix bug in pipeline2dot when keyword "passthrough is used" (2019-07-11)
 * `60`: Fix visualisation of pipeline which contains string "passthrough" (2019-07-09)
 * `58`: Explores a way to compute recommandations without training (2019-06-05)
-
-0.2.288 - 2019-05-28 - 0.66Mb
-=============================
-
 * `56`: Fixes #55, explore caching for scikit-learn pipeline (2019-05-22)
 * `55`: Explore caching for gridsearchCV (2019-05-22)
 * `53`: implements a function to extract intermediate model outputs within a pipeline (2019-05-07)
@@ -84,10 +90,6 @@ current - 2021-01-09 - 0.00Mb
 * `39`: implements a custom criterion for decision tree (2019-03-26)
 * `41`: implements a direct call to a lapack function from cython (2019-03-25)
 * `38`: better implementation of a regression criterion (2019-03-25)
-
-0.1.199 - 2019-03-05 - 0.05Mb
-=============================
-
 * `37`: implements interaction_only for polynomial features (2019-02-26)
 * `36`: add parameter include_bias to extended features (2019-02-25)
 * `34`: rename PiecewiseLinearRegression into PiecewiseRegression (2019-02-23)

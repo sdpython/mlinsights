@@ -4,7 +4,7 @@
 @brief Module *mlinsights*.
 Look for insights for machine learned models.
 """
-__version__ = "0.3.548"
+__version__ = "0.3.606"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/mlinsights"
 __url__ = "http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html"
