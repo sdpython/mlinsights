@@ -25,6 +25,32 @@ def digitize2tree(bins, right=False):
         monotonically increasing bins.
     :return: decision tree
 
+    .. note::
+        The implementation of decision trees in :epkg:`scikit-learn`
+        only allows one type of decision (`<=`). That's why the
+        function throws an exception when `right=False`. However,
+        this could be overcome by using :epkg:`ONNX` where all
+        kind of decision rules are implemented.
+
+    The following example shows what the tree looks like.
+
+    .. runpython::
+        :showcode:
+
+        import numpy
+        from sklearn.tree import export_text
+        from mlinsights.mltree import digitize2tree
+
+        x = numpy.array([0.2, 6.4, 3.0, 1.6])
+        bins = numpy.array([0.0, 1.0, 2.5, 4.0, 7.0])
+        expected = numpy.digitize(x, bins, right=True)
+        tree = digitize2tree(bins, right=True)
+        pred = tree.predict(x.reshape((-1, 1)))
+        print("Comparison with numpy:")
+        print(expected, pred)
+        print("Tree:")
+        print(export_text(tree, feature_names=['x']))
+
     .. versionadded:: 0.4
     """
     if not right:
