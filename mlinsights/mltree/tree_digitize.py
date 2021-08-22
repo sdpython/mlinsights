@@ -30,7 +30,8 @@ def digitize2tree(bins, right=False):
         only allows one type of decision (`<=`). That's why the
         function throws an exception when `right=False`. However,
         this could be overcome by using :epkg:`ONNX` where all
-        kind of decision rules are implemented.
+        kind of decision rules are implemented. Default value for
+        right is still *False* to follow *numpy* API.
 
     The following example shows what the tree looks like.
 
