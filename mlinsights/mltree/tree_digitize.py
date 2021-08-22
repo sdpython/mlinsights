@@ -31,7 +31,8 @@ def digitize2tree(bins, right=False):
         function throws an exception when `right=False`. However,
         this could be overcome by using :epkg:`ONNX` where all
         kind of decision rules are implemented. Default value for
-        right is still *False* to follow *numpy* API.
+        right is still *False* to follow *numpy* API even though
+        this value raises an exception in *digitize2tree*.
 
     The following example shows what the tree looks like.
 
