@@ -238,7 +238,7 @@ def pipeline2dot(pipe, data, **params):
     options.update(params)
 
     exp = ["digraph{"]
-    for opt in {'orientation', 'pad', 'nodesep', 'ranksep'}:
+    for opt in ['orientation', 'pad', 'nodesep', 'ranksep']:
         if opt in options:
             exp.append("  {}={};".format(opt, options[opt]))
     fontsize = 8

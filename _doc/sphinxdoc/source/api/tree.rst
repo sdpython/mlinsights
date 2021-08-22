@@ -2,6 +2,12 @@
 Trees
 =====
 
+.. contents::
+    :local:
+
+Digging into the tree structure
++++++++++++++++++++++++++++++++
+
 .. autosignature:: mlinsights.mltree.tree_structure.predict_leaves
 
 .. autosignature:: mlinsights.mltree.tree_structure.tree_find_common_node
@@ -15,3 +21,8 @@ Trees
 .. autosignature:: mlinsights.mltree.tree_structure.tree_leave_index
 
 .. autosignature:: mlinsights.mltree.tree_structure.tree_leave_neighbors
+
+Experiments, exercise
++++++++++++++++++++++
+
+.. autosignature:: mlinsights.mltree.tree_digitize.digitize2tree
