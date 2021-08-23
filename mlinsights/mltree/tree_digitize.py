@@ -151,7 +151,8 @@ def digitize2tree(bins, right=False):
 
     cl = DecisionTreeRegressor()
     cl.tree_ = tree
-    cl.tree_.value[:, 0, 0] = numpy.array(values, dtype=numpy.float64)
+    cl.tree_.value[:, 0, 0] = numpy.array(  # pylint: disable=E1137
+        values, dtype=numpy.float64)
     cl.n_outputs = 1
     cl.n_outputs_ = 1
     try:
