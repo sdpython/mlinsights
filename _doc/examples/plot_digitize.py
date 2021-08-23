@@ -1,6 +1,6 @@
 """
 
-.. _l-example-digitize
+.. _l-example-digitize:
 
 ========================
 numpy.digitize as a tree

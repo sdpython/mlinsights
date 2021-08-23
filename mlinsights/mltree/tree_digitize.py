@@ -53,6 +53,8 @@ def digitize2tree(bins, right=False):
         print("Tree:")
         print(export_text(tree, feature_names=['x']))
 
+    See also example :ref:`l-example-digitize`.
+
     .. versionadded:: 0.4
     """
     if not right:
