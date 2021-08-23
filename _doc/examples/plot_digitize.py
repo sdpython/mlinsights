@@ -23,7 +23,7 @@ Simple example
 """
 import warnings
 import numpy
-from pandas import DataFrame, pivot_table
+from pandas import DataFrame, pivot, pivot_table
 import matplotlib.pyplot as plt
 from onnxruntime import InferenceSession
 from sklearn.tree import export_text
@@ -112,9 +112,8 @@ n_bins = list(sorted(set(df.n_bins)))
 fig, ax = plt.subplots(1, len(n_bins), figsize=(14, 4))
 
 for i, nb in enumerate(n_bins):
-    piv = pivot_table(data=df[df.n_bins == nb], index="shape",
-                      columns=["name"],
-                      values=["average"])
+    piv = pivot(data=df[df.n_bins == nb], index="shape",
+                columns="name", values="average")
     piv.plot(title="Benchmark digitize / onnxruntime\nn_bins=%d" % nb,
              logx=True, logy=True, ax=ax[i])
 plt.show()
