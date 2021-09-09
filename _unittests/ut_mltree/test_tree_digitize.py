@@ -95,6 +95,17 @@ class TestTreeDigitize(ExtTestCase):
         pred = tree.predict(bins.reshape((-1, 1)))
         self.assertEqualArray(expected, pred)
 
+    def test_tree_digitize_bigger(self):
+        x = numpy.array([0, 1, 2, 3, 4, 5, 6, -1], dtype=numpy.float32)
+        bins = numpy.array([0, 1, 2, 3, 4], dtype=numpy.float32)
+        expected = numpy.digitize(x, bins, right=True)
+        tree = digitize2tree(bins, right=True)
+        pred = tree.predict(x.reshape((-1, 1)))
+        self.assertEqualArray(expected, pred)
+        expected = numpy.digitize(bins, bins, right=True)
+        pred = tree.predict(bins.reshape((-1, 1)))
+        self.assertEqualArray(expected, pred)
+
 
 if __name__ == "__main__":
     unittest.main()
