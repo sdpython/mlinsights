@@ -146,7 +146,7 @@ def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
 
 
 def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
-                        precompute_distances=True, distances=None):
+                        distances=None):
     """E step of the K-means EM algorithm.
     Compute the labels and the inertia of the given samples and centers.
     This will compute the distances in-place.
@@ -160,8 +160,6 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
         computations.
     :param centers: float array, shape (k, n_features)
         The cluster centers.
-    :param precompute_distances: boolean, default: True
-        Precompute distances (faster but takes more memory).
     :param distances: float array, shape (n_samples,)
         Pre-allocated array to be filled in with each sample's distance
         to the closest center.
@@ -183,10 +181,6 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
             X, sample_weight, x_squared_norms, centers, labels,
             distances=distances)
     else:
-        if precompute_distances:
-            return _labels_inertia_precompute_dense(
-                norm='l2', X=X, sample_weight=sample_weight,
-                centers=centers, distances=distances)
         inertia = _assign_labels_array(
             X, sample_weight, x_squared_norms, centers, labels,
             distances=distances)

@@ -6,7 +6,8 @@ import os
 import unittest
 import sklearn
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import add_missing_development_version
+from pyquickhelper.pycode import (
+    add_missing_development_version, skipif_appveyor)
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
 from pyquickhelper.texthelper import compare_module_version
 import mlinsights
@@ -19,6 +20,7 @@ class TestNotebookPiecewise(unittest.TestCase):
 
     @unittest.skipIf(compare_module_version(sklearn.__version__, "0.21") < 0,
                      reason="This notebook uses Criterion API changed in 0.21")
+    @skipif_appveyor('too long')
     def test_notebook_piecewise(self):
         fLOG(
             __file__,

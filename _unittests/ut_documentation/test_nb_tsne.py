@@ -5,7 +5,8 @@
 import os
 import unittest
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import add_missing_development_version
+from pyquickhelper.pycode import (
+    add_missing_development_version, skipif_appveyor)
 from pyquickhelper.ipythonhelper import test_notebook_execution_coverage
 import mlinsights
 
@@ -15,6 +16,7 @@ class TestNotebookTSNE(unittest.TestCase):
     def setUp(self):
         add_missing_development_version(["jyquickhelper"], __file__, hide=True)
 
+    @skipif_appveyor('too long')
     def test_notebook_tnse(self):
         fLOG(
             __file__,
