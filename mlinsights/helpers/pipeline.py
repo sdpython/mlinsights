@@ -139,7 +139,7 @@ class BaseEstimatorDebugInformation:
             rows = rows[:nrows]
             rows.append('...')
         if hasattr(data, 'shape'):
-            rows.insert(0, "shape={} type={}" % (data.shape, type(data)))
+            rows.insert(0, "shape=%r type=%r" % (data.shape, type(data)))
         else:
             rows.insert(0, "type=%r"% type(data))  # pragma: no cover
         return "\n".join(rows)
