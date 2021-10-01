@@ -6,7 +6,6 @@
 import warnings
 import numpy
 from scipy.sparse import issparse
-from joblib import Parallel, delayed, effective_n_jobs
 from sklearn.cluster import KMeans
 from sklearn.cluster._kmeans import _tolerance as _tolerance_skl
 from sklearn.exceptions import ConvergenceWarning

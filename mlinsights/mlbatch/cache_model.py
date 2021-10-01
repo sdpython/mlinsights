@@ -119,7 +119,7 @@ class MLCache:
         @param      name        name
         @return                 created cache
         """
-        global _caches  # pylint: disable=W0603
+        global _caches  # pylint: disable=W0603,W0602
         if name in _caches:
             raise RuntimeError(  # pragma: no cover
                 "cache '{0}' already exists.".format(name))
@@ -135,7 +135,7 @@ class MLCache:
 
         @param      name        name
         """
-        global _caches  # pylint: disable=W0603
+        global _caches  # pylint: disable=W0603,W0602
         del _caches[name]
 
     @staticmethod
@@ -146,7 +146,7 @@ class MLCache:
         @param      name        name
         @return                 created cache
         """
-        global _caches  # pylint: disable=W0603
+        global _caches  # pylint: disable=W0603,W0602
         return _caches[name]
 
     @staticmethod
@@ -157,5 +157,5 @@ class MLCache:
         @param      name        name
         @return                 boolean
         """
-        global _caches  # pylint: disable=W0603
+        global _caches  # pylint: disable=W0603,W0602
         return name in _caches
