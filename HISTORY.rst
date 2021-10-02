@@ -5,18 +5,24 @@
 History
 =======
 
-current - 2021-08-23 - 0.00Mb
+current - 2021-10-02 - 0.00Mb
+=============================
+
+* `103`: Updates for scikit-learn>=1.0 (2021-10-02)
+* `94`: Fixed Numpy boolean array indexing issue for 2dim arrays. (2021-09-27)
+
+0.3.606 - 2021-08-22 - 0.52Mb
 =============================
 
 * `102`: Implements numpy.digitalize with a DecisionTreeRegressor (2021-08-22)
 * `101`: Update CI to build manylinux for python 3.9 (2021-08-18)
 * `100`: Support parameter positive for QuantileLinearRegression (2021-06-23)
-* `95`: _apply_prediction_method boolean indexing incompatible with standard sklearn format (2021-05-27)
 * `96`: Fixes #95, PiecewiseRegressor, makes sure target are vectors (2021-05-27)
-* `72`: Optimal decission tree for piecewise estimator (2021-05-06)
+* `95`: _apply_prediction_method boolean indexing incompatible with standard sklearn format (2021-05-27)
 * `80`: Piecewise Estimator: binner not a decision tree (2021-05-06)
-* `97`: piecewise_decision_tree does not compile with the latest version of scikit-learn (2021-05-03)
+* `72`: Optimal decission tree for piecewise estimator (2021-05-06)
 * `98`: Fixes #97, fix issue with deepcopy and criterion (2021-05-03)
+* `97`: piecewise_decision_tree does not compile with the latest version of scikit-learn (2021-05-03)
 * `85`: Fixes #70, implements DecisionTreeLogisticRegression (2021-05-02)
 
 0.3.549 - 2021-01-09 - 0.67Mb
@@ -67,10 +73,6 @@ current - 2021-08-23 - 0.00Mb
 * `74`: Fix PipelineCache after as scikti-learn 0.23 changed the way parameters is handle in pipelines (2020-05-15)
 * `73`: ClassifierKMeans.__repr__ fails with scikit-learn 0.23 (2020-05-14)
 * `69`: Optimizes k-means with norm L1 (2020-01-13)
-
-0.2.360 - 2019-09-15 - 0.68Mb
-=============================
-
 * `66`: Fix visualisation graph: does not work when column index is an integer in ColumnTransformer (2019-09-15)
 * `59`: Add GaussianProcesses to the notebook about confidence interval and regression (2019-09-15)
 * `65`: Implements a TargetTransformClassifier similar to TargetTransformRegressor (2019-08-24)
