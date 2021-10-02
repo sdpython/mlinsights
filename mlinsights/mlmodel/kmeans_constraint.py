@@ -52,8 +52,8 @@ class ConstraintKMeans(KMeans):
     _strategy_value = {'distance', 'gain', 'weights'}
 
     def __init__(self, n_clusters=8, init='k-means++', n_init=10, max_iter=500,
-                 tol=0.0001, precompute_distances='deprecated', verbose=0,
-                 random_state=None, copy_x=True, n_jobs=1, algorithm='auto',
+                 tol=0.0001, verbose=0,
+                 random_state=None, copy_x=True, algorithm='auto',
                  balanced_predictions=False, strategy='gain', kmeans0=True,
                  learning_rate=1., history=False):
         """
@@ -62,11 +62,9 @@ class ConstraintKMeans(KMeans):
         @param      n_init                  used by :epkg:`k-means`
         @param      max_iter                used by :epkg:`k-means`
         @param      tol                     used by :epkg:`k-means`
-        @param      precompute_distances    used by :epkg:`k-means`
         @param      verbose                 used by :epkg:`k-means`
         @param      random_state            used by :epkg:`k-means`
         @param      copy_x                  used by :epkg:`k-means`
-        @param      n_jobs                  used by :epkg:`k-means`
         @param      algorithm               used by :epkg:`k-means`
         @param      balanced_predictions    produced balanced prediction
                                             or the regular ones
@@ -76,23 +74,19 @@ class ConstraintKMeans(KMeans):
         @param      history                 keeps centers accress iterations
         @param      learning_rate           learning rate, used by strategy `'weights'`
         """
+        self._n_threads = 1
         KMeans.__init__(self, n_clusters=n_clusters, init=init, n_init=n_init,
-                        max_iter=max_iter, tol=tol, precompute_distances=precompute_distances,
+                        max_iter=max_iter, tol=tol,
                         verbose=verbose, random_state=random_state, copy_x=copy_x,
-                        n_jobs=n_jobs, algorithm=algorithm)
+                        algorithm=algorithm)
         self.balanced_predictions = balanced_predictions
         self.strategy = strategy
         self.kmeans0 = kmeans0
         self.history = history
-        self._n_threads = None
         self.learning_rate = learning_rate
         if strategy not in ConstraintKMeans._strategy_value:
             raise ValueError('strategy must be in {0}'.format(
                 ConstraintKMeans._strategy_value))
-        if precompute_distances == 'deprecated':
-            km = KMeans()
-            if km.precompute_distances != precompute_distances:
-                self.precompute_distances = km.precompute_distances
 
     def fit(self, X, y=None, sample_weight=None, fLOG=None):
         """

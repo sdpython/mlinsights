@@ -50,7 +50,6 @@ jobs:
   - script: |
       python -m pip install cibuildwheel
       export CIBW_MANYLINUX_X86_64_IMAGE="manylinux_2_24"
-      export CIBW_BEFORE_BUILD="pip install ."
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
       export CIBW_BUILD="cp39-manylinux_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse39 --platform linux
@@ -58,7 +57,6 @@ jobs:
   - script: |
       python -m pip install cibuildwheel
       export CIBW_MANYLINUX_X86_64_IMAGE="manylinux2014"
-      export CIBW_BEFORE_BUILD="pip install ."
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
       export CIBW_BUILD="cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse --platform linux
@@ -93,9 +91,8 @@ jobs:
     displayName: 'Runs Unit Tests'
   - script: |
       python -m pip install cibuildwheel
-      set CIBW_BEFORE_BUILD="pip install ."
-      set CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      set CIBW_BUILD="cp37-win_amd64 cp38-win_amd64 cp39-win_amd64"
+      set CIBW_BEFORE_BUILD=pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming
+      set CIBW_BUILD=cp37-win_amd64 cp38-win_amd64 cp39-win_amd64
       python -m cibuildwheel --output-dir dist/wheelhouse
     displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0
@@ -157,11 +154,10 @@ jobs:
          # export MACOSX_DEPLOYMENT_TARGET=10.13
          python setup.py build_ext --inplace
     displayName: 'Build package inplace'
-  - script: python -u setup.py unittests
+  - script: python -u setup.py unittests -d 15
     displayName: 'Runs Unit Tests'
   - script: |
       python -m pip install cibuildwheel
-      export CIBW_BEFORE_BUILD="pip install ."
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
       export CIBW_BUILD="cp37-macosx_x86_64 cp38-macosx_x86_64 cp39-macosx_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse

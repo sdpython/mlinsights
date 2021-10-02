@@ -161,4 +161,9 @@ def digitize2tree(bins, right=False):
     except AttributeError:
         # scikit-learn < 0.24
         cl.n_features_ = 1
+    try:
+        # for scikit-learn<=0.23.2
+        cl.n_features_ = 1
+    except AttributeError:
+        pass
     return cl

@@ -5,6 +5,15 @@ environment:
     - PYTHON: "C:\\Python39-x64"
       PYTHON_VERSION: "3.9.x"
       PYTHON_ARCH: "64"
+      SKL: '>=1.0'
+    - PYTHON: "C:\\Python39-x64"
+      PYTHON_VERSION: "3.9.x"
+      PYTHON_ARCH: "64"
+      SKL: '==0.24.2'
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "64"
+      SKL: '==0.23.2'
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
@@ -17,6 +26,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html"
   # other dependencies
   - "%PYTHON%\\Scripts\\pip install -r requirements.txt --no-deps"
+  - "%PYTHON%\\Scripts\\pip install scikit-learn%SKL%"
 build: off
 
 before_test:

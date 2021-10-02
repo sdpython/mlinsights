@@ -11,7 +11,7 @@ from sklearn.utils._testing import (
     assert_almost_equal, assert_raise_message)
 from sklearn.metrics.cluster import v_measure_score
 from sklearn.datasets import make_blobs
-from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from pyquickhelper.texthelper.version_helper import compare_module_version
 from mlinsights.mlmodel import KMeansL1L2
 
@@ -89,6 +89,7 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
         assert_array_almost_equal(kmeans.cluster_centers_, expected_centers)
         self.assertEqualArray(kmeans.n_iter_, expected_n_iter)
 
+    @ignore_warnings(UserWarning)
     def test_kmeans_results(self):
         for representation, algo in [('dense', 'full'),
                                      ('dense', 'elkan'),
@@ -121,6 +122,7 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
         assert_raise_message(ValueError, "n_samples=1 should be >= n_clusters=%d"
                              % km.n_clusters, km.fit, [[0., 1.]])
 
+    @ignore_warnings(UserWarning)
     def test_k_means_new_centers(self):
         # Explore the part of the code where a new center is reassigned
         X = np.array([[0, 0, 1, 1],
@@ -145,17 +147,19 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
                 1][this_labels]
             np.testing.assert_array_equal(this_labels, labels)
 
+    @ignore_warnings(UserWarning)
     def test_k_means_plus_plus_init_not_precomputed(self):
         km = KMeansL1L2(
             init="k-means++", n_clusters=TestKMeansL1L2Sklearn.n_clusters,
-            random_state=42, precompute_distances=False).fit(
+            random_state=42).fit(
             TestKMeansL1L2Sklearn.X)
         self._check_fitted_model(km)
 
+    @ignore_warnings(UserWarning)
     def test_k_means_random_init_not_precomputed(self):
         km = KMeansL1L2(
             init="random", n_clusters=TestKMeansL1L2Sklearn.n_clusters,
-            random_state=42, precompute_distances=False).fit(
+            random_state=42).fit(
                 TestKMeansL1L2Sklearn.X)
         self._check_fitted_model(km)
 

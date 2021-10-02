@@ -32,7 +32,7 @@ class TestKMeansL1L2(ExtTestCase):
     def test_kmeans_l2_parallel(self):
         iris = datasets.load_iris()
         X = iris.data
-        clr = KMeansL1L2(4, n_jobs=2)
+        clr = KMeansL1L2(4)
         clr.fit(X)
         cls = set(clr.predict(X))
         self.assertEqual({0, 1, 2, 3}, cls)
@@ -41,7 +41,7 @@ class TestKMeansL1L2(ExtTestCase):
         iris = datasets.load_iris()
         X = iris.data
         X = X[:6]
-        clr = KMeansL1L2(4, n_jobs=1)
+        clr = KMeansL1L2(4)
         clr.fit(X)
         cls = set(clr.predict(X))
         self.assertEqual({0, 1, 2, 3}, cls)
@@ -50,7 +50,7 @@ class TestKMeansL1L2(ExtTestCase):
         iris = datasets.load_iris()
         X = iris.data
         X = X[:6]
-        clr = KMeansL1L2(4, norm='L1', n_jobs=1)
+        clr = KMeansL1L2(4, norm='L1')
         clr.fit(X)
         cls = set(clr.predict(X))
         self.assertEqual({0, 1, 2, 3}, cls)

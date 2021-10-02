@@ -36,8 +36,9 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
                 "Unable to handle this specific case.")
         elif hasattr(pipe, 'mapper') and pipe.mapper:
             # azureml DataTransformer
-            for couple in enumerate_pipeline_models(pipe.mapper, coor + (0,)):
-                yield couple
+            for couple in enumerate_pipeline_models(  # pragma: no cover
+                    pipe.mapper, coor + (0,)):  # pragma: no cover
+                yield couple  # pragma: no cover
         elif hasattr(pipe, 'built_features'):  # pragma: no cover
             # sklearn_pandas.dataframe_mapper.DataFrameMapper
             for i, (columns, transformers, _) in enumerate(pipe.built_features):
@@ -138,9 +139,9 @@ class BaseEstimatorDebugInformation:
             rows = rows[:nrows]
             rows.append('...')
         if hasattr(data, 'shape'):
-            rows.insert(0, "shape={} type={}".format(data.shape, type(data)))
+            rows.insert(0, "shape=%r type=%r" % (data.shape, type(data)))
         else:
-            rows.insert(0, "type={}".format(type(data)))
+            rows.insert(0, "type=%r" % type(data))  # pragma: no cover
         return "\n".join(rows)
 
 
