@@ -247,8 +247,8 @@ def test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid
     :raises:
         AssertionError
     """
-    X_train, y_train, w_train, X_test, y_test, w_test = train_test_split_with_none(
-        X, y, sample_weight)
+    X_train, y_train, w_train, X_test, y_test, w_test = (
+        train_test_split_with_none(X, y, sample_weight))
     model = fct_model()
     pipe = make_pipeline(model)
     name = model.__class__.__name__.lower()
