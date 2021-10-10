@@ -121,7 +121,7 @@ class TestCategoriesToIntegers(ExtTestCase):
                              LogisticRegression())
         self.assertRaise(lambda: test_sklearn_grid_search_cv(
             lambda: pipe, df), ValueError)
-        if (compare_module_version(sklver, "0.24") >= 0 and
+        if (compare_module_version(sklver, "0.24") >= 0 and  # pylint: disable=R1716
                 compare_module_version(pandas.__version__, "1.3") < 0):
             self.assertRaise(
                 lambda: test_sklearn_grid_search_cv(
