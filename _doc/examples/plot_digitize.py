@@ -60,6 +60,7 @@ for shape in tqdm([1, 10, 100, 1000, 10000, 100000]):
         repeat = number = 100
     else:
         repeat = number = 10
+
     for n_bins in [1, 10, 100]:
         bins = (numpy.arange(n_bins) / n_bins).astype(numpy.float32)
 
@@ -85,7 +86,8 @@ for shape in tqdm([1, 10, 100, 1000, 10000, 100000]):
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
-            onx = to_onnx(tree, x.reshape((-1, 1)))
+            onx = to_onnx(tree, x.reshape((-1, 1)),
+                          target_opset=15)
 
         sess = InferenceSession(onx.SerializeToString())
 

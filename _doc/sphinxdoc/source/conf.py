@@ -79,6 +79,7 @@ epkg_dictionary.update({
     'MLPClassifier': 'http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html',
     'MLPRegressor': 'http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html',
     'nogil': 'https://cython.readthedocs.io/en/latest/src/userguide/external_C_code.html#releasing-the-gil',
+    'onnxruntime': 'https://github.com/microsoft/onnxruntime',
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/',
                ('http://pandas.pydata.org/pandas-docs/stable/generated/pandas.{0}.html', 1),
                ('http://pandas.pydata.org/pandas-docs/stable/generated/pandas.{0}.{1}.html', 2)),
