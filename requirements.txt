@@ -15,6 +15,7 @@ onnxruntime
 pandas_streaming
 pybind11
 pycodestyle
+pydata-sphinx-theme
 pyquickhelper>=1.10
 pyquicksetup
 pylint>=2.9.3

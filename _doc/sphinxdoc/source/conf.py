@@ -4,7 +4,7 @@ Configuration for the documntation.
 """
 import sys
 import os
-import alabaster
+import pydata_sphinx_theme
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
 
@@ -14,7 +14,7 @@ local_template = os.path.join(os.path.abspath(
     os.path.dirname(__file__)), "phdoc_templates")
 
 set_sphinx_variables(__file__, "mlinsights", "Xavier Dupré", 2021,
-                     "alabaster", alabaster.get_path(),
+                     "pydata_sphinx_theme", pydata_sphinx_theme.get_html_theme_path(),
                      locals(), extlinks=dict(
                          issue=('https://github.com/sdpython/mlinsights/issues/%s', 'issue')),
                      title="mlinsights", book=True)
