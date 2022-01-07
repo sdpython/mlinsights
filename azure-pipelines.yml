@@ -4,8 +4,8 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python310-Linux:
-        python.version: '3.10'
+      Python39-Linux:
+        python.version: '3.9'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
@@ -37,7 +37,7 @@ jobs:
     displayName: 'Install tools'
   - script: pip install numpy
     displayName: 'Install numpy'
-  - script: pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+  - script: pip install torch torchvision torchaudio
     displayName: 'Install pytorch'
   - script: |
           export LLVM_CONFIG=/usr/bin/llvm-config-10
@@ -71,8 +71,8 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python310-Windows:
-        python.version: '3.10'
+      Python39-Windows:
+        python.version: '3.9'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
@@ -105,8 +105,8 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python310-MacOs:
-        python.version: '3.10'
+      Python39-MacOs:
+        python.version: '3.9'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
