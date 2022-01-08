@@ -5,7 +5,7 @@ jobs:
   strategy:
     matrix:
       Python39-Linux:
-        python.version: '39'
+        python.version: '3.9'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
@@ -72,7 +72,7 @@ jobs:
   strategy:
     matrix:
       Python39-Windows:
-        python.version: '39'
+        python.version: '3.9'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
@@ -106,7 +106,7 @@ jobs:
   strategy:
     matrix:
       Python39-MacOs:
-        python.version: '39'
+        python.version: '3.9'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
