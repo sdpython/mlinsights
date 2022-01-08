@@ -14,11 +14,6 @@ matrix:
     env:
       - sklver=">=0.24.2"
       - jlver=">=1.0"
-  - python: 3.8
-    name: "Py38-023"
-    env:
-      - sklver="==0.23.2"
-      - jlver="==0.17.0"
 
 before_install:
     - sudo apt-get install libgeos-dev libproj-dev proj-data graphviz libblas-dev liblapack-dev

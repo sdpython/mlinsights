@@ -6,9 +6,11 @@ cython
 joblib
 jupyter_sphinx>=0.2
 jyquickhelper
+llvmlite==0.38.0rc1
 matplotlib
 memory_profiler>=0.55
 nbconvert>=6.0.2
+numba==0.55.0rc1
 numpy
 onnx
 onnxruntime
