@@ -6,7 +6,6 @@ import numpy
 import numpy.random
 from sklearn.base import RegressorMixin, clone, BaseEstimator
 from sklearn.utils._joblib import Parallel, delayed
-from sklearn.utils.fixes import _joblib_parallel_args
 try:
     from tqdm import tqdm
 except ImportError:  # pragma: no cover
@@ -93,7 +92,7 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
 
         self.estimators_ = \
             Parallel(n_jobs=self.n_jobs, verbose=verbose,
-                     **_joblib_parallel_args(prefer='threads'))(
+                     prefer='threads')(
                 delayed(_fit_piecewise_estimator)(
                     i, estimators[i], X, y, sample_weight, self.alpha)
                 for i in loop)
