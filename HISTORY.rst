@@ -5,7 +5,13 @@
 History
 =======
 
-current - 2021-10-02 - 0.00Mb
+current - 2022-02-18 - 0.00Mb
+=============================
+
+* #106: Fixes failing import _joblib_parallel_args (2022-02-18)
+* #99: LICENSE file missing in PyPI release (2021-11-20)
+
+0.3.614 - 2021-10-02 - 0.52Mb
 =============================
 
 * #103: Updates for scikit-learn>=1.0 (2021-10-02)
