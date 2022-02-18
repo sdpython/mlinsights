@@ -10,7 +10,6 @@ from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.utils._joblib import Parallel, delayed
-from sklearn.utils.fixes import _joblib_parallel_args
 try:
     from tqdm import tqdm
 except ImportError:  # pragma: no cover
@@ -261,7 +260,7 @@ class PiecewiseEstimator(BaseEstimator):
 
         self.estimators_ = \
             Parallel(n_jobs=self.n_jobs, verbose=verbose,
-                     **_joblib_parallel_args(prefer='threads'))(
+                     prefer='threads')(
                 delayed(_fit_piecewise_estimator)(
                     i, estimators[i], X, y, sample_weight, association, nb_classes, rnd)
                 for i in loop)
