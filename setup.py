@@ -16,7 +16,8 @@ readme = 'README.rst'
 history = "HISTORY.rst"
 requirements = None
 
-KEYWORDS = project_var_name + ', Xavier Dupré'
+KEYWORDS = [project_var_name, 'Xavier Dupré', 'machine learning',
+            'scikit-learn']
 DESCRIPTION = """Extends scikit-learn with a couple of new models, transformers, metrics, plotting."""
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
