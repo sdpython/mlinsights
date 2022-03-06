@@ -31,3 +31,4 @@ after_script:
 documentation:
   - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx --layout=html fi
   - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
+  - if [ ${NAME} == "UT" and ${VERSION} == "3.9" ] then zip doc.zip -r dist/html fi
