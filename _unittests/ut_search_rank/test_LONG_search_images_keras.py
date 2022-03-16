@@ -28,7 +28,8 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
         with redirect_stderr(StringIO()):
             try:
                 from keras.applications.mobilenet import MobileNet  # pylint: disable=E0401,E0611
-            except (SyntaxError, ModuleNotFoundError, AttributeError) as e:
+            except (SyntaxError, ModuleNotFoundError, AttributeError,
+                    ImportError) as e:
                 warnings.warn(
                     "Issue with tensorflow or keras: {0}".format(e))
                 return
