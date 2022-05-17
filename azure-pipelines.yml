@@ -37,7 +37,7 @@ jobs:
     displayName: 'Install tools'
   - script: pip install numpy
     displayName: 'Install numpy'
-  - script: pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+  - script: pip install install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
     displayName: 'Install pytorch'
   - script: |
           export LLVM_CONFIG=/usr/bin/llvm-config-10

@@ -76,4 +76,4 @@ Function ``pipeline2dot`` converts a pipeline into a graph:
     from mlinsights.plotting import pipeline2dot
     dot = pipeline2dot(clf, df)
 
-.. image:: https://github.com/sdpython/mlinsights/raw/master/_doc/pipeline.png
+.. image:: https://raw.githubusercontent.com/sdpython/mlinsights/master/_doc/sphinxdoc/source/pipeline.png
