@@ -51,14 +51,11 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         self.sample_w_left = NULL
         self.sample_wy_left = NULL
         self.sample_wy2_left = NULL
-        
+
         # Criterion interface
         self.sample_weight = NULL
         self.samples = NULL
-        self.sum_total = NULL
-        self.sum_left = NULL
-        self.sum_right = NULL
-        
+
         # allocations
         if self.sample_w_left == NULL:
             self.sample_w_left = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))

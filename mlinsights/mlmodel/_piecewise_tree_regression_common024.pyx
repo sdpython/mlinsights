@@ -10,11 +10,11 @@ import numpy
 cimport numpy
 numpy.import_array()
 
-from sklearn.tree._criterion cimport Criterion
+from sklearn.tree._criterion cimport RegressionCriterion, Criterion
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 
-cdef class CommonRegressorCriterion(Criterion):
+cdef class CommonRegressorCriterion(RegressionCriterion):
     """
     Common class to implement various version of `mean square error 
     <https://en.wikipedia.org/wiki/Mean_squared_error>`_.
@@ -225,11 +225,11 @@ cdef class CommonRegressorCriterion(Criterion):
 
 
 def _test_criterion_init(Criterion criterion, 
-                        const DOUBLE_t[:, ::1] y,
-                        DOUBLE_t[:] sample_weight,
-                        double weighted_n_samples,
-                        SIZE_t[:] samples, 
-                        SIZE_t start, SIZE_t end):
+                         const DOUBLE_t[:, ::1] y,
+                         DOUBLE_t[:] sample_weight,
+                         double weighted_n_samples,
+                         SIZE_t[:] samples, 
+                         SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     criterion.init(y,
                    &sample_weight[0], weighted_n_samples,

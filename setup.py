@@ -59,8 +59,8 @@ def get_extensions():
         extensions.append(("_piecewise_tree_regression_common",
                            "_piecewise_tree_regression_common024"))
     else:
-        extensions.append(("_piecewise_tree_regression_common",
-                           "_piecewise_tree_regression_common023"))
+        raise ImportError("Cannot build mlisinghts for scikit-learn<1.0.")
+
     extensions.extend([
         "piecewise_tree_regression_criterion",
         "piecewise_tree_regression_criterion_linear",
@@ -122,7 +122,7 @@ setup(
     package_dir=package_dir,
     package_data=package_data,
     setup_requires=["pyquicksetup", 'cython', 'scipy', 'scikit-learn'],
-    install_requires=['cython', 'scikit-learn>=0.22.1', 'pandas', 'scipy',
+    install_requires=['cython', 'scikit-learn>=1.0', 'pandas', 'scipy',
                       'matplotlib', 'pandas_streaming', 'numpy>=1.16'],
     ext_modules=ext_modules,  # cythonize(ext_modules),
 )

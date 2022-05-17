@@ -36,7 +36,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     cdef DOUBLE_t* sample_work
     cdef SIZE_t* sample_i
     cdef DOUBLE_t* sample_f_buffer
-    
+
     cdef DOUBLE_t sample_sum_wy
     cdef DOUBLE_t sample_sum_w
     cdef SIZE_t nbvar
@@ -82,13 +82,10 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self.sample_pC = NULL
         self.sample_pS = NULL
         self.sample_work = NULL
-        
+
         # Criterion interface
         self.sample_weight = NULL
         self.samples = NULL
-        self.sum_total = NULL
-        self.sum_left = NULL
-        self.sum_right = NULL            
 
         # allocation
         if self.sample_w == NULL:
@@ -101,7 +98,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             self.sample_i = <SIZE_t*> calloc(X.shape[0], sizeof(SIZE_t))
         if self.sample_f == NULL:
             self.sample_f = <DOUBLE_t*> calloc(X.shape[0] * (X.shape[1] + 1), sizeof(DOUBLE_t))
-            
+
         self.nbvar = X.shape[1] + 1
         self.nbrows = X.shape[0]
         self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 + 
@@ -231,7 +228,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             w += self.sample_w[k]
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
-            
+
     cdef void _reglin(self, SIZE_t start, SIZE_t end, int low_rank) nogil:
         """
         Solves the linear regression between *start* and *end*
@@ -250,7 +247,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                 sample_f_buffer[pos] = self.sample_f[idx] * w
                 idx += self.nbvar
                 pos += 1
-        
+
         cdef DOUBLE_t* pC = self.sample_pC
         for i in range(<int>start, <int>end):
             pC[i-start] = self.sample_wy[i]
@@ -264,7 +261,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         cdef DOUBLE_t rcond = -1
         cdef int rank        
         cdef int work = <int>self.work
-        
+
         if row < col:
             if low_rank:
                 ldb = col
@@ -274,7 +271,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                              sample_f_buffer, &lda, pC, &ldb,   # 4-7
                              self.sample_pS, &rcond, &rank,     # 8-10
                              self.sample_work, &work, &info)    # 11-13
-                             
+
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
         """
         Computes mean square error between *start* and *end*
@@ -284,12 +281,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         if end - start <= self.nbvar:
             # More coefficients than the number of observations.
             return 0.
-        
+
         self._reglin(start, end, 0)
-        
+
         cdef double* pC = self.sample_pC
         cdef SIZE_t j, idx
-        
+
         # replaces what follows by gemm
         cdef DOUBLE_t squ = 0.
         cdef DOUBLE_t d
@@ -303,7 +300,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             d -= self.sample_y[k]
             squ += d * d * self.sample_w[k]
         return 0. if weight == 0. else squ / weight
-        
+
     cdef void _node_beta(self, double* dest) nogil:
         """
         Stores the results of the linear regression
@@ -318,7 +315,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         """
         Stores the results of the linear regression
         in an allocated numpy array.
-        
+
         :param dest: allocated array
         """
         if dest.shape[0] < self.nbvar:

@@ -58,13 +58,10 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.sample_w = NULL
         self.sample_wy = NULL
         self.sample_i = NULL
-        
+
         # Criterion interface
         self.sample_weight = NULL
         self.samples = NULL
-        self.sum_total = NULL
-        self.sum_left = NULL
-        self.sum_right = NULL
 
         # allocation
         if self.sample_w == NULL:
@@ -168,7 +165,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             w += self.sample_w[k]
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
-            
+
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
         """
         Computes mean square error between *start* and *end*

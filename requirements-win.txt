@@ -13,5 +13,5 @@ psutil
 pylint
 pymyinstall
 pyshp
-scikit-learn
+scikit-learn>=1.0
 threadpoolctl
