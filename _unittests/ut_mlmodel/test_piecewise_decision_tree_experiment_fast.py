@@ -175,7 +175,8 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         clr1 = DecisionTreeRegressor()
         clr1.fit(X, y)
         p1 = clr1.predict(X)
-        clr2 = DecisionTreeRegressor(criterion=SimpleRegressorCriterionFast(1, X.shape[0]))
+        clr2 = DecisionTreeRegressor(
+            criterion=SimpleRegressorCriterionFast(1, X.shape[0]))
         clr2.fit(X, y)
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])
