@@ -485,7 +485,7 @@ class KMeansL1L2(KMeans):
     """
 
     _parameter_constraints = {
-        **KMeans._parameter_constraints,
+        **getattr(KMeans, '_parameter_constraints', {}),
         "norm": [StrOptions({"L1", "L2"})],
     }
 
