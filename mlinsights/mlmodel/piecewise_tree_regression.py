@@ -44,7 +44,8 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
                 from .piecewise_tree_regression_criterion_linear import (  # pylint: disable=E0611,C0415
                     LinearRegressorCriterion)
                 replace = self.criterion
-                self.criterion = LinearRegressorCriterion(X)
+                self.criterion = LinearRegressorCriterion(
+                    1 if len(y.shape) <= 1 else y.shape[1], X)
             elif self.criterion == "simple":
                 from .piecewise_tree_regression_criterion_fast import (  # pylint: disable=E0611,C0415
                     SimpleRegressorCriterionFast)

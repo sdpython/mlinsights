@@ -10,11 +10,11 @@ import numpy
 cimport numpy
 numpy.import_array()
 
-from sklearn.tree._criterion cimport RegressionCriterion, Criterion
+from sklearn.tree._criterion cimport Criterion
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 
-cdef class CommonRegressorCriterion(RegressionCriterion):
+cdef class CommonRegressorCriterion(Criterion):
     """
     Common class to implement various version of `mean square error 
     <https://en.wikipedia.org/wiki/Mean_squared_error>`_.
@@ -39,10 +39,6 @@ cdef class CommonRegressorCriterion(RegressionCriterion):
 
     def __setstate__(self, d):
         pass
-
-    def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
-        self.n_outputs = n_outputs
-        self.n_samples = n_samples
 
     def __deepcopy__(self, memo=None):
         """

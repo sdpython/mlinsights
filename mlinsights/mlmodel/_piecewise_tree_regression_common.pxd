@@ -3,11 +3,11 @@ cimport cython
 import numpy
 cimport numpy
 
-from sklearn.tree._criterion cimport RegressionCriterion
+from sklearn.tree._criterion cimport Criterion
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 
-cdef class CommonRegressorCriterion(RegressionCriterion):
+cdef class CommonRegressorCriterion(Criterion):
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end,
                               SIZE_t old_pos, SIZE_t new_pos) nogil

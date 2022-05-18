@@ -150,7 +150,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             sum = sample_weight.sum()
             ws = &sample_weight[0]
 
-        obj = LinearRegressorCriterion(X)
+        obj = LinearRegressorCriterion(1 if len(y.shape) <= 1 else y.shape[0], X)
         obj.init(y, ws, sum, parr, 0, y.shape[0])            
         free(parr)
         return obj
