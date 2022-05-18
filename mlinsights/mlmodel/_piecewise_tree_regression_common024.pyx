@@ -40,15 +40,12 @@ cdef class CommonRegressorCriterion(Criterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, const DOUBLE_t[:, ::1] X):
-        self.sample_X = X
-
     def __deepcopy__(self, memo=None):
         """
         This does not a copy but mostly creates a new instance
         of the same criterion initialized with the same data.
         """
-        inst = self.__class__(self.sample_X)
+        inst = self.__class__(self.n_outputs, self.n_samples)
         return inst
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
@@ -225,11 +222,11 @@ cdef class CommonRegressorCriterion(Criterion):
 
 
 def _test_criterion_init(Criterion criterion, 
-                        const DOUBLE_t[:, ::1] y,
-                        DOUBLE_t[:] sample_weight,
-                        double weighted_n_samples,
-                        SIZE_t[:] samples, 
-                        SIZE_t start, SIZE_t end):
+                         const DOUBLE_t[:, ::1] y,
+                         DOUBLE_t[:] sample_weight,
+                         double weighted_n_samples,
+                         SIZE_t[:] samples, 
+                         SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     criterion.init(y,
                    &sample_weight[0], weighted_n_samples,

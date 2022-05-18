@@ -225,7 +225,8 @@ def tree_leave_neighbors(model):
         if fe not in features:
             features[fe] = []
         features[fe].append(th)
-    for fe in features:
+    features_keys = features.keys()
+    for fe in features_keys:
         features[fe] = list(sorted(set(features[fe])))
     for fe, v in features.items():
         if len(v) == 1:

@@ -27,6 +27,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     <mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion>`
     and is even slow as the criterion is more complex to compute.
     """
+    cdef SIZE_t n_features
+    cdef const DOUBLE_t[:, ::1] sample_X
     cdef DOUBLE_t* sample_w
     cdef DOUBLE_t* sample_y
     cdef DOUBLE_t* sample_wy
@@ -36,7 +38,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     cdef DOUBLE_t* sample_work
     cdef SIZE_t* sample_i
     cdef DOUBLE_t* sample_f_buffer
-    
+
     cdef DOUBLE_t sample_sum_wy
     cdef DOUBLE_t sample_sum_w
     cdef SIZE_t nbvar
@@ -70,8 +72,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, const DOUBLE_t[:, ::1] X):
+    def __cinit__(self, SIZE_t n_outputs, const DOUBLE_t[:, ::1] X):
+        self.n_outputs = n_outputs
         self.sample_X = X
+        self.n_samples = X.shape[0]
+        self.n_features = X.shape[1]
+
         # Allocate memory for the accumulators
         self.sample_w = NULL
         self.sample_y = NULL
@@ -82,39 +88,44 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self.sample_pC = NULL
         self.sample_pS = NULL
         self.sample_work = NULL
-        
+
         # Criterion interface
         self.sample_weight = NULL
         self.samples = NULL
-        self.sum_total = NULL
-        self.sum_left = NULL
-        self.sum_right = NULL            
 
         # allocation
         if self.sample_w == NULL:
-            self.sample_w = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_w = <DOUBLE_t*> calloc(self.n_samples, sizeof(DOUBLE_t))
         if self.sample_wy == NULL:
-            self.sample_wy = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_wy = <DOUBLE_t*> calloc(self.n_samples, sizeof(DOUBLE_t))
         if self.sample_y == NULL:
-            self.sample_y = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_y = <DOUBLE_t*> calloc(self.n_samples, sizeof(DOUBLE_t))
         if self.sample_i == NULL:
-            self.sample_i = <SIZE_t*> calloc(X.shape[0], sizeof(SIZE_t))
+            self.sample_i = <SIZE_t*> calloc(self.n_samples, sizeof(SIZE_t))
         if self.sample_f == NULL:
-            self.sample_f = <DOUBLE_t*> calloc(X.shape[0] * (X.shape[1] + 1), sizeof(DOUBLE_t))
-            
-        self.nbvar = X.shape[1] + 1
-        self.nbrows = X.shape[0]
+            self.sample_f = <DOUBLE_t*> calloc(self.n_samples * (self.n_features + 1), sizeof(DOUBLE_t))
+
+        self.nbvar = self.n_features + 1
+        self.nbrows = self.n_samples
         self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 + 
                              max(max(self.nbrows, self.nbvar),
                                  min(self.nbrows, self.nbvar) * <SIZE_t>2))
         if self.sample_f_buffer == NULL:
-            self.sample_f_buffer = <DOUBLE_t*> calloc(X.shape[0] * self.nbvar, sizeof(DOUBLE_t))
+            self.sample_f_buffer = <DOUBLE_t*> calloc(self.n_samples * self.nbvar, sizeof(DOUBLE_t))
         if self.sample_pC == NULL:
             self.sample_pC = <DOUBLE_t*> calloc(max(self.nbrows, self.nbvar), sizeof(DOUBLE_t))
         if self.sample_work == NULL:
             self.sample_work = <DOUBLE_t*> calloc(self.work, sizeof(DOUBLE_t))
         if self.sample_pS == NULL:
             self.sample_pS = <DOUBLE_t*> calloc(self.nbvar, sizeof(DOUBLE_t))
+
+    def __deepcopy__(self, memo=None):
+        """
+        This does not a copy but mostly creates a new instance
+        of the same criterion initialized with the same data.
+        """
+        inst = self.__class__(self.n_outputs, self.sample_X)
+        return inst
 
     @staticmethod
     def create(DOUBLE_t[:, ::1] X, DOUBLE_t[:, ::1] y, DOUBLE_t[::1] sample_weight=None):
@@ -139,7 +150,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             sum = sample_weight.sum()
             ws = &sample_weight[0]
 
-        obj = LinearRegressorCriterion(X)
+        obj = LinearRegressorCriterion(1 if len(y.shape) <= 1 else y.shape[0], X)
         obj.init(y, ws, sum, parr, 0, y.shape[0])            
         free(parr)
         return obj
@@ -152,6 +163,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         This function is overwritten to check *y* and *X* size are the same.
         This API changed in 0.21.
         """
+        if y.shape[0] != self.n_samples:
+            raise ValueError("n_samples={} -- y.shape={}".format(self.n_samples, y.shape))
         if y.shape[0] != self.sample_X.shape[0]:
             raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))
         if y.shape[1] != 1:
@@ -231,7 +244,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             w += self.sample_w[k]
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
-            
+
     cdef void _reglin(self, SIZE_t start, SIZE_t end, int low_rank) nogil:
         """
         Solves the linear regression between *start* and *end*
@@ -250,7 +263,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                 sample_f_buffer[pos] = self.sample_f[idx] * w
                 idx += self.nbvar
                 pos += 1
-        
+
         cdef DOUBLE_t* pC = self.sample_pC
         for i in range(<int>start, <int>end):
             pC[i-start] = self.sample_wy[i]
@@ -264,7 +277,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         cdef DOUBLE_t rcond = -1
         cdef int rank        
         cdef int work = <int>self.work
-        
+
         if row < col:
             if low_rank:
                 ldb = col
@@ -274,7 +287,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                              sample_f_buffer, &lda, pC, &ldb,   # 4-7
                              self.sample_pS, &rcond, &rank,     # 8-10
                              self.sample_work, &work, &info)    # 11-13
-                             
+
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
         """
         Computes mean square error between *start* and *end*
@@ -284,12 +297,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         if end - start <= self.nbvar:
             # More coefficients than the number of observations.
             return 0.
-        
+
         self._reglin(start, end, 0)
-        
+
         cdef double* pC = self.sample_pC
         cdef SIZE_t j, idx
-        
+
         # replaces what follows by gemm
         cdef DOUBLE_t squ = 0.
         cdef DOUBLE_t d
@@ -303,7 +316,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             d -= self.sample_y[k]
             squ += d * d * self.sample_w[k]
         return 0. if weight == 0. else squ / weight
-        
+
     cdef void _node_beta(self, double* dest) nogil:
         """
         Stores the results of the linear regression
@@ -318,7 +331,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         """
         Stores the results of the linear regression
         in an allocated numpy array.
-        
+
         :param dest: allocated array
         """
         if dest.shape[0] < self.nbvar:
