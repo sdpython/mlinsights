@@ -20,6 +20,12 @@ try:
 except ImportError:  # pragma: no cover
     from sklearn.cluster._kmeans import (
         _check_normalize_sample_weight as _check_sample_weight)
+try:
+    from sklearn.utils._param_validation import StrOptions
+except ImportError:
+    def StrOptions(*args):
+        return None
+
 from ._kmeans_022 import (
     _labels_inertia_skl,
     _labels_inertia_precompute_dense)
@@ -28,7 +34,7 @@ from ._kmeans_022 import (
 def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
     """Init n_clusters seeds according to k-means++
 
-    :param norm: `l1` or `l2`
+    :param norm: `L1` or `L2`
         manhattan or euclidean distance
     :param X: array or sparse matrix, shape (n_samples, n_features)
         The data to pick seeds for. To avoid memory copy, the input data
@@ -64,13 +70,13 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
         centers[0] = X[center_id]
 
     # Initialize list of closest distances and calculate current potential
-    if norm.lower() == 'l2':
+    if norm == 'L2':
         dist_fct = lambda x, y: euclidean_distances(x, y, squared=True)
-    elif norm.lower() == 'l1':
+    elif norm == 'L1':
         dist_fct = lambda x, y: manhattan_distances(x, y)
     else:
         raise NotImplementedError(  # pragma no cover
-            "norm must be 'l1' or 'l2' not '{}'.".format(norm))
+            "norm must be 'L1' or 'L2' not '{}'.".format(norm))
 
     closest_dist_sq = dist_fct(centers[0, numpy.newaxis], X)
     current_pot = closest_dist_sq.sum()
@@ -112,7 +118,7 @@ def _init_centroids(norm, X, k, init, random_state=None,
                     init_size=None):
     """Compute the initial centroids
 
-    :param norm: 'l1' or 'l2'
+    :param norm: 'L1' or 'L2'
     :param X: array, shape (n_samples, n_features)
     :param k: int
         number of centroids
@@ -244,7 +250,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
     """
     A single run of k-means, assumes preparation completed prior.
 
-    :param norm: 'l1' or 'l2'
+    :param norm: 'L1' or 'L2'
     :param X: array-like of floats, shape (n_samples, n_features)
         The observations to cluster.
     :param n_clusters: int
@@ -349,7 +355,7 @@ def _labels_inertia(norm, X, sample_weight, centers, distances=None):
     Computes the labels and the inertia of the given samples and centers.
     This will compute the distances in-place.
 
-    :param norm: 'l1' or 'l2'
+    :param norm: 'L1' or 'L2'
     :param X: float64 array-like or CSR sparse matrix, shape (n_samples, n_features)
         The input samples to assign to the labels.
     :param sample_weight: array-like, shape (n_samples,)
@@ -375,7 +381,7 @@ def _labels_inertia(norm, X, sample_weight, centers, distances=None):
     # distances will be changed in-place
     if issparse(X):
         raise NotImplementedError(  # pragma no cover
-            "Sparse matrix is not implemented for norm 'l1'.")
+            "Sparse matrix is not implemented for norm 'L1'.")
     return _labels_inertia_precompute_dense(
         norm=norm, X=X, sample_weight=sample_weight,
         centers=centers, distances=distances)
@@ -383,9 +389,9 @@ def _labels_inertia(norm, X, sample_weight, centers, distances=None):
 
 def _tolerance(norm, X, tol):
     """Return a tolerance which is independent of the dataset"""
-    if norm == 'l2':
+    if norm == 'L2':
         return _tolerance_skl(X, tol)
-    if norm == 'l1':
+    if norm == 'L1':
         variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
         return variances.sum()
     raise NotImplementedError(  # pragma no cover
@@ -478,6 +484,11 @@ class KMeansL1L2(KMeans):
         Number of iterations run.
     """
 
+    _parameter_constraints = {
+        **KMeans._parameter_constraints,
+        "norm": [StrOptions({"L1", "L2"})],
+    }
+
     def __init__(self, n_clusters=8, init='k-means++', n_init=10,
                  max_iter=300, tol=1e-4,
                  verbose=0, random_state=None, copy_x=True,
@@ -487,8 +498,8 @@ class KMeansL1L2(KMeans):
                         max_iter=max_iter, tol=tol,
                         verbose=verbose, random_state=random_state,
                         copy_x=copy_x, algorithm=algorithm)
-        self.norm = norm.lower()
-        if self.norm == 'l1' and self.algorithm != 'full':
+        self.norm = norm
+        if self.norm == 'L1' and self.algorithm != 'full':
             raise NotImplementedError(  # pragma no cover
                 "Only algorithm 'full' is implemented with norm 'l1'.")
 
@@ -508,18 +519,18 @@ class KMeansL1L2(KMeans):
         :return: self
             Fitted estimator.
         """
-        if self.norm == 'l2':
+        if self.norm == 'L2':
             KMeans.fit(self, X=X, y=y, sample_weight=sample_weight)
-        elif self.norm == 'l1':
+        elif self.norm == 'L1':
             self._fit_l1(X=X, y=y, sample_weight=sample_weight)
         else:
             raise NotImplementedError(  # pragma no cover
-                "Norm is not L1 or L2 but '{}'.".format(self.norm))
+                "Norm is not 'L1' or 'L2' but '{}'.".format(self.norm))
         return self
 
     def _fit_l1(self, X, y=None, sample_weight=None):
         """
-        Computes k-means clustering with norm `'l1'`.
+        Computes k-means clustering with norm `'L1'`.
 
         :param X: array-like or sparse matrix, shape=(n_samples, n_features)
             Training instances to cluster. It must be noted that the data
@@ -630,9 +641,9 @@ class KMeansL1L2(KMeans):
         :return: X_new : array, shape [n_samples, k]
             X transformed in the new space.
         """
-        if self.norm == 'l2':
+        if self.norm == 'L2':
             return KMeans.transform(self, X)
-        if self.norm == 'l1':
+        if self.norm == 'L1':
             return self._transform_l1(X)
         raise NotImplementedError(  # pragma no cover
             "Norm is not L1 or L2 but '{}'.".format(self.norm))
@@ -662,9 +673,9 @@ class KMeansL1L2(KMeans):
         :return: labels : array, shape [n_samples,]
             Index of the cluster each sample belongs to.
         """
-        if self.norm == 'l2':
+        if self.norm == 'L2':
             return KMeans.predict(self, X)
-        if self.norm == 'l1':
+        if self.norm == 'L1':
             return self._predict_l1(X, sample_weight=sample_weight)
         raise NotImplementedError(  # pragma no cover
             "Norm is not L1 or L2 but '{}'.".format(self.norm))

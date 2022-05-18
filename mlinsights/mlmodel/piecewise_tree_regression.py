@@ -34,8 +34,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             max_leaf_nodes=max_leaf_nodes,
             min_impurity_decrease=min_impurity_decrease)
 
-    def fit(self, X, y, sample_weight=None, check_input=True,
-            X_idx_sorted=None):
+    def fit(self, X, y, sample_weight=None, check_input=True):
         """
         Replaces the string stored in criterion by an instance of a class.
         """
@@ -54,8 +53,10 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         else:
             replace = None
 
-        DecisionTreeRegressor.fit(self, X, y, sample_weight=sample_weight, check_input=check_input,
-                                  X_idx_sorted=X_idx_sorted)
+        DecisionTreeRegressor.fit(
+            self, X, y,
+            sample_weight=sample_weight,
+            check_input=check_input)
 
         if replace:
             self.criterion = replace

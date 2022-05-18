@@ -228,7 +228,7 @@ class SearchEngineVectors:
         else:
             zf = zipfilename
             close = False
-        if 'index' is not kwargs:
+        if 'index' not in kwargs:
             kwargs['index'] = False
         to_zip(self.features_, zf, 'SearchEngineVectors-features.npy')
         to_zip(self.metadata_, zf, 'SearchEngineVectors-metadata.csv', **kwargs)

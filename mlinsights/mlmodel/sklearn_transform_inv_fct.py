@@ -137,7 +137,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
                 self.random_state)  # pylint: disable=E1101
             lin = rs.permutation(lin)
 
-        for u in perm:
+        perm_keys = list(perm.keys())
+        for u in perm_keys:
             perm[u] = lin[perm[u]]
         self.permutation_ = perm
 

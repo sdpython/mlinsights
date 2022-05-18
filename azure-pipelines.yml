@@ -18,8 +18,8 @@ jobs:
     displayName: 'Install Inkscape'
   - script: sudo apt-get install -y pandoc
     displayName: 'Install Pandoc'
-  - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
-    displayName: 'Install Latex'
+  # - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
+  #   displayName: 'Install Latex'
   - script: sudo apt-get install -y libgeos-dev libproj-dev proj-data graphviz libblas-dev liblapack-dev
     displayName: 'Install Geos packages'
   - script: |
