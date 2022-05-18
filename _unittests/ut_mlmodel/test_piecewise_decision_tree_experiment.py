@@ -26,7 +26,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         X = numpy.array([[1., 2.]]).T
         y = numpy.array([1., 2.])
         c1 = MSE(1, X.shape[0])
-        c2 = SimpleRegressorCriterion(X)
+        c2 = SimpleRegressorCriterion(1, X.shape[0])
         self.assertNotEmpty(c1)
         self.assertNotEmpty(c2)
         w = numpy.ones((y.shape[0],))
@@ -166,7 +166,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         clr1.fit(X, y)
         p1 = clr1.predict(X)
 
-        crit = SimpleRegressorCriterion(X)
+        crit = SimpleRegressorCriterion(1 if len(y.shape) <= 1 else y.shape[1], X.shape[0])
         clr2 = DecisionTreeRegressor(criterion=crit, max_depth=1)
         clr2.fit(X, y)
         p2 = clr2.predict(X)
@@ -179,7 +179,9 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         clr1 = DecisionTreeRegressor()
         clr1.fit(X, y)
         p1 = clr1.predict(X)
-        clr2 = DecisionTreeRegressor(criterion=SimpleRegressorCriterion(X))
+        clr2 = DecisionTreeRegressor(
+            criterion=SimpleRegressorCriterion(
+                1 if len(y.shape) <= 1 else y.shape[1], X.shape[0]))
         clr2.fit(X, y)
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])

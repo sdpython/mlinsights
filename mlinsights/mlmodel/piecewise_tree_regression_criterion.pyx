@@ -52,8 +52,9 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, const DOUBLE_t[:, ::1] X):
-        self.sample_X = X
+    def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
+        CommonRegressorCriterion.__cinit__(self, n_outputs, n_samples)
+
         # Allocate memory for the accumulators
         self.sample_w = NULL
         self.sample_wy = NULL
@@ -65,11 +66,11 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
 
         # allocation
         if self.sample_w == NULL:
-            self.sample_w = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_w = <DOUBLE_t*> calloc(n_samples, sizeof(DOUBLE_t))
         if self.sample_wy == NULL:
-            self.sample_wy = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_wy = <DOUBLE_t*> calloc(n_samples, sizeof(DOUBLE_t))
         if self.sample_i == NULL:
-            self.sample_i = <SIZE_t*> calloc(X.shape[0], sizeof(SIZE_t))
+            self.sample_i = <SIZE_t*> calloc(n_samples, sizeof(SIZE_t))
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
                   DOUBLE_t* sample_weight,
@@ -79,14 +80,14 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         This function is overwritten to check *y* and *X* size are the same.
         This API has changed in 0.21.
         """
-        if y.shape[0] != self.sample_X.shape[0]:
-            raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))
+        if y.shape[0] != self.n_samples:
+            raise ValueError("n_samples={} -- y.shape={}".format(self.n_samples, y.shape))
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
-        return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
+        return self.init_with_X(y, sample_weight, weighted_n_samples,
                                 samples, start, end)
 
-    cdef int init_with_X(self, const DOUBLE_t[:, ::1] X, 
+    cdef int init_with_X(self,
                          const DOUBLE_t[:, ::1] y,
                          DOUBLE_t* sample_weight,
                          double weighted_n_samples, SIZE_t* samples, 
@@ -96,7 +97,6 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         Returns -1 in case of failure to allocate memory
         (and raise *MemoryError*) or 0 otherwise.
 
-        :param X: array-like, features, dtype=DOUBLE_t
         :param y: array-like, dtype=DOUBLE_t
             y is a buffer that can store values for n_outputs target variables
         :param sample_weight: array-like, dtype=DOUBLE_t

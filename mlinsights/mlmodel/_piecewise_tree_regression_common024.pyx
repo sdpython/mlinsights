@@ -40,8 +40,8 @@ cdef class CommonRegressorCriterion(RegressionCriterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, const DOUBLE_t[:, ::1] X):
-        self.sample_X = X
+    def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
+        RegressionCriterion.__cinit__(self, n_outputs, n_samples)
 
     def __deepcopy__(self, memo=None):
         """

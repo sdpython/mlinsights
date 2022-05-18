@@ -27,6 +27,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     <mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion>`
     and is even slow as the criterion is more complex to compute.
     """
+    cdef SIZE_t n_features
+    cdef const DOUBLE_t[:, ::1] sample_X
     cdef DOUBLE_t* sample_w
     cdef DOUBLE_t* sample_y
     cdef DOUBLE_t* sample_wy
@@ -70,9 +72,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, const DOUBLE_t[:, ::1] X):
-        self.sample_X = X
+    def __cinit__(self, SIZE_t n_outputs, const DOUBLE_t[:, ::1] X):
+        CommonRegressorCriterion.__cinit__(self, n_outputs, X.shape[0])
+
         # Allocate memory for the accumulators
+        self.sample_X = X
+        self.n_features = X.shape[1]
         self.sample_w = NULL
         self.sample_y = NULL
         self.sample_wy = NULL
@@ -89,23 +94,23 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
 
         # allocation
         if self.sample_w == NULL:
-            self.sample_w = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_w = <DOUBLE_t*> calloc(self.n_samples, sizeof(DOUBLE_t))
         if self.sample_wy == NULL:
-            self.sample_wy = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_wy = <DOUBLE_t*> calloc(self.n_samples, sizeof(DOUBLE_t))
         if self.sample_y == NULL:
-            self.sample_y = <DOUBLE_t*> calloc(X.shape[0], sizeof(DOUBLE_t))
+            self.sample_y = <DOUBLE_t*> calloc(self.n_samples, sizeof(DOUBLE_t))
         if self.sample_i == NULL:
-            self.sample_i = <SIZE_t*> calloc(X.shape[0], sizeof(SIZE_t))
+            self.sample_i = <SIZE_t*> calloc(self.n_samples, sizeof(SIZE_t))
         if self.sample_f == NULL:
-            self.sample_f = <DOUBLE_t*> calloc(X.shape[0] * (X.shape[1] + 1), sizeof(DOUBLE_t))
+            self.sample_f = <DOUBLE_t*> calloc(self.n_samples * (self.n_features + 1), sizeof(DOUBLE_t))
 
-        self.nbvar = X.shape[1] + 1
-        self.nbrows = X.shape[0]
+        self.nbvar = self.n_features + 1
+        self.nbrows = self.n_samples
         self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 + 
                              max(max(self.nbrows, self.nbvar),
                                  min(self.nbrows, self.nbvar) * <SIZE_t>2))
         if self.sample_f_buffer == NULL:
-            self.sample_f_buffer = <DOUBLE_t*> calloc(X.shape[0] * self.nbvar, sizeof(DOUBLE_t))
+            self.sample_f_buffer = <DOUBLE_t*> calloc(self.n_samples * self.nbvar, sizeof(DOUBLE_t))
         if self.sample_pC == NULL:
             self.sample_pC = <DOUBLE_t*> calloc(max(self.nbrows, self.nbvar), sizeof(DOUBLE_t))
         if self.sample_work == NULL:
@@ -149,6 +154,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         This function is overwritten to check *y* and *X* size are the same.
         This API changed in 0.21.
         """
+        if y.shape[0] != self.n_samples:
+            raise ValueError("n_samples={} -- y.shape={}".format(self.n_samples, y.shape))
         if y.shape[0] != self.sample_X.shape[0]:
             raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))
         if y.shape[1] != 1:

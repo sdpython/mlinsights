@@ -49,7 +49,8 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
                 from .piecewise_tree_regression_criterion_fast import (  # pylint: disable=E0611,C0415
                     SimpleRegressorCriterionFast)
                 replace = self.criterion
-                self.criterion = SimpleRegressorCriterionFast(X)
+                self.criterion = SimpleRegressorCriterionFast(
+                    1 if len(y.shape) <= 1 else y.shape[1], X.shape[0])
         else:
             replace = None
 
