@@ -60,10 +60,10 @@ def plot_week_timeseries(time, value, normalise=True,
     input_maxy = 1.
 
     if ax is None:
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # pylint: disable=C0415
         ax = plt.gca()
 
-    import matplotlib.patches as patches  # pylint: disable=R0402
+    import matplotlib.patches as patches  # pylint: disable=R0402,C0415
 
     # bars
     delta = None

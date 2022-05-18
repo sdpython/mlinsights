@@ -53,7 +53,8 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         pass
 
     def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
-        CommonRegressorCriterion.__cinit__(self, n_outputs, n_samples)
+        self.n_outputs = n_outputs
+        self.n_samples = n_samples
 
         # Allocate memory for the accumulators
         self.sample_w = NULL

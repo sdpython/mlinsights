@@ -73,11 +73,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         pass
 
     def __cinit__(self, SIZE_t n_outputs, const DOUBLE_t[:, ::1] X):
-        CommonRegressorCriterion.__cinit__(self, n_outputs, X.shape[0])
+        self.n_outputs = n_outputs
+        self.sample_X = X
+        self.n_samples = X.shape[0]
+        self.n_features = X.shape[1]
 
         # Allocate memory for the accumulators
-        self.sample_X = X
-        self.n_features = X.shape[1]
         self.sample_w = NULL
         self.sample_y = NULL
         self.sample_wy = NULL
@@ -117,6 +118,14 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             self.sample_work = <DOUBLE_t*> calloc(self.work, sizeof(DOUBLE_t))
         if self.sample_pS == NULL:
             self.sample_pS = <DOUBLE_t*> calloc(self.nbvar, sizeof(DOUBLE_t))
+
+    def __deepcopy__(self, memo=None):
+        """
+        This does not a copy but mostly creates a new instance
+        of the same criterion initialized with the same data.
+        """
+        inst = self.__class__(self.n_outputs, self.sample_X)
+        return inst
 
     @staticmethod
     def create(DOUBLE_t[:, ::1] X, DOUBLE_t[:, ::1] y, DOUBLE_t[::1] sample_weight=None):

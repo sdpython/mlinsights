@@ -24,6 +24,7 @@ try:
     from sklearn.utils._param_validation import StrOptions
 except ImportError:
     def StrOptions(*args):
+        "Dummy replacement for a class introduced in scikit-learn==1.1."
         return None
 
 from ._kmeans_022 import (

@@ -41,14 +41,15 @@ cdef class CommonRegressorCriterion(RegressionCriterion):
         pass
 
     def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
-        RegressionCriterion.__cinit__(self, n_outputs, n_samples)
+        self.n_outputs = n_outputs
+        self.n_samples = n_samples
 
     def __deepcopy__(self, memo=None):
         """
         This does not a copy but mostly creates a new instance
         of the same criterion initialized with the same data.
         """
-        inst = self.__class__(self.sample_X)
+        inst = self.__class__(self.n_outputs, self.n_samples)
         return inst
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
