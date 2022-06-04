@@ -10,7 +10,7 @@ nbformat
 numpy
 pandas
 psutil
-pylint
+pylint>=2.14.0
 pymyinstall
 pyshp
 scikit-learn>=1.0
