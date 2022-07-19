@@ -40,7 +40,7 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
         height, width = imgs.shape
         if ax is not None and ax.shape != imgs.shape:
             raise ValueError(  # pragma: no cover
-                "ax.shape {0} != imgs.shape {1}".format(ax.shape, imgs.shape))
+                f"ax.shape {ax.shape} != imgs.shape {imgs.shape}")
         imgs = imgs.ravel()
         if texts is not None:
             texts = texts.ravel()
@@ -77,7 +77,7 @@ def plot_gallery_images(imgs, texts=None, width=4, return_figure=False,
                     im = Image.open(io.BytesIO(content))
                 except OSError as e:  # pragma: no cover
                     raise RuntimeError(
-                        "Unable to read image '{}'.".format(img)) from e
+                        f"Unable to read image '{img}'.") from e
             else:
                 # local file
                 if folder_image is not None:

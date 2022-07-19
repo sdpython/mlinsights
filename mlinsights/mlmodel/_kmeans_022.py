@@ -45,7 +45,7 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
             X=X, Y=centers, metric='manhattan')
     else:  # pragma no cover
         raise NotImplementedError(
-            "Not implemented for norm '{}'.".format(norm))
+            f"Not implemented for norm '{norm}'.")
     # cython k-means code assumes int32 inputs
     labels = labels.astype(numpy.int32, copy=False)
     if n_samples == distances.shape[0]:

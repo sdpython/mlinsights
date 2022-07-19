@@ -59,7 +59,7 @@ def digitize2tree(bins, right=False):
     """
     if not right:
         raise RuntimeError(
-            "right must be True not right=%r" % right)
+            f"right must be True not right={right!r}")
     ascending = len(bins) <= 1 or bins[0] < bins[1]
 
     if not ascending:
@@ -141,8 +141,7 @@ def digitize2tree(bins, right=False):
                 add_nodes(n, index, j, False)
                 return n
         raise NotImplementedError(  # pragma: no cover
-            "Unexpected case where i=%r, j=%r, is_left=%r." % (
-                i, j, is_left))
+            f"Unexpected case where i={i!r}, j={j!r}, is_left={is_left!r}.")
 
     index = len(bins) // 2
     add_root(index)

@@ -27,14 +27,14 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     """
     for var, na in zip([ttime, values, names], ['ttime', 'values', 'names']):
         if not isinstance(var, numpy.ndarray):
-            raise TypeError("'{}' must an array not {}".format(na, type(var)))
+            raise TypeError(f"'{na}' must an array not {type(var)}")
     # builds features
     set_names = set(names)
     if name_subset is not None:
         set_names &= set(name_subset)
     if fLOG:
         fLOG(  # pragma: no cover
-            '[find_ts_group_pattern] build features, {} groups'.format(len(set_names)))
+            f'[find_ts_group_pattern] build features, {len(set_names)} groups')
     gr_names = []
     to_merge = []
     for name in set_names:
@@ -63,7 +63,7 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     # cluster
     if fLOG:
         fLOG(  # pragma: no cover
-            '[find_ts_group_pattern] clustering, shape={}'.format(gr_feats.shape))
+            f'[find_ts_group_pattern] clustering, shape={gr_feats.shape}')
     if estimator is None:
         estimator = KMeans()
     estimator.fit(gr_feats)
@@ -73,7 +73,7 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     dist = estimator.transform(gr_feats)
     if fLOG:
         fLOG(  # pragma: no cover
-            '[find_ts_group_pattern] number of clusters: {}'.format(len(set(pred))))
+            f'[find_ts_group_pattern] number of clusters: {len(set(pred))}')
 
     row_name = {n: i for i, n in enumerate(gr_names)}
     clusters = numpy.empty(ttime.shape[0], dtype=pred.dtype)

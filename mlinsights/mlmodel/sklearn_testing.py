@@ -102,8 +102,7 @@ def _get_test_instance():
                 "checks that one instance is from one type"
                 if not isinstance(inst, cltype):
                     raise AssertionError(
-                        "Unexpected type {} != {}.".format(
-                            type(inst), cltype))
+                        f"Unexpected type {type(inst)} != {cltype}.")
 
         cls = _ExtTestCase
     return cls()
@@ -136,7 +135,7 @@ def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
         p1 = pprint.pformat(p1)
         p2 = pprint.pformat(p2)
         raise AssertionError(
-            "Differences between\n----\n{0}\n----\n{1}".format(p1, p2)) from e
+            f"Differences between\n----\n{p1}\n----\n{p2}") from e
 
     for k in sorted(p1):
         if isinstance(p1[k], BaseEstimator) and isinstance(p2[k], BaseEstimator):
@@ -149,15 +148,14 @@ def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
                 ext.assertEqual(p1[k], p2[k])
             except AssertionError:  # pragma no cover
                 raise AssertionError(  # pylint: disable=W0707
-                    "Difference for key '{0}'\n==1 {1}\n==2 {2}".format(
-                        k, p1[k], p2[k]))
+                    f"Difference for key '{k}'\n==1 {p1[k]}\n==2 {p2[k]}")
     return conv, cloned
 
 
 def _assert_list_equal(l1, l2, ext):
     if len(l1) != len(l2):
         raise AssertionError(  # pragma no cover
-            "Lists have different length {0} != {1}".format(len(l1), len(l2)))
+            f"Lists have different length {len(l1)} != {len(l2)}")
     for a, b in zip(l1, l2):
         if isinstance(a, tuple) and isinstance(b, tuple):
             _assert_tuple_equal(a, b, ext)
@@ -167,13 +165,13 @@ def _assert_list_equal(l1, l2, ext):
 
 def _assert_dict_equal(a, b, ext):
     if not isinstance(a, dict):  # pragma no cover
-        raise TypeError('a is not dict but {0}'.format(type(a)))
+        raise TypeError(f'a is not dict but {type(a)}')
     if not isinstance(b, dict):  # pragma no cover
-        raise TypeError('b is not dict but {0}'.format(type(b)))
+        raise TypeError(f'b is not dict but {type(b)}')
     rows = []
     for key in sorted(b):
         if key not in a:
-            rows.append("** Added key '{0}' in b".format(key))
+            rows.append(f"** Added key '{key}' in b")
         elif isinstance(a[key], BaseEstimator) and isinstance(b[key], BaseEstimator):
             assert_estimator_equal(a[key], b[key], ext)
         else:
@@ -183,7 +181,7 @@ def _assert_dict_equal(a, b, ext):
                         key, id(a[key]), id(b[key]), a[key], b[key]))
     for key in sorted(a):
         if key not in b:
-            rows.append("** Removed key '{0}' in a".format(key))
+            rows.append(f"** Removed key '{key}' in a")
     if len(rows) > 0:
         raise AssertionError(  # pragma: no cover
             "Dictionaries are different\n{0}".format('\n'.join(rows)))
@@ -192,7 +190,7 @@ def _assert_dict_equal(a, b, ext):
 def _assert_tuple_equal(t1, t2, ext):
     if len(t1) != len(t2):  # pragma no cover
         raise AssertionError(
-            "Lists have different length {0} != {1}".format(len(t1), len(t2)))
+            f"Lists have different length {len(t1)} != {len(t2)}")
     for a, b in zip(t1, t2):
         if isinstance(a, BaseEstimator) and isinstance(b, BaseEstimator):
             assert_estimator_equal(a, b, ext)
@@ -293,7 +291,7 @@ def clone_with_fitted_parameters(est):
                     v1 = getattr(obj1, k)
                     if callable(v1):
                         raise RuntimeError(  # pragma: no cover
-                            "Cannot migrate trained parameters for {}.".format(obj1))
+                            f"Cannot migrate trained parameters for {obj1}.")
                     elif isinstance(v1, BaseEstimator):
                         v1 = getattr(obj1, k)
                         setattr(obj2, k, clone_with_fitted_parameters(v1))
@@ -305,7 +303,7 @@ def clone_with_fitted_parameters(est):
                     setattr(obj2, k, clone_with_fitted_parameters(v1))
                 else:
                     raise RuntimeError(  # pragma: no cover
-                        "Cloned object is missing '{0}' in {1}.".format(k, obj2))
+                        f"Cloned object is missing '{k}' in {obj2}.")
 
     if isinstance(est, BaseEstimator):
         cloned = clone(est)

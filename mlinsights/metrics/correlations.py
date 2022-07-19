@@ -126,13 +126,13 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
                 xj_test = df_test[:, j:j + 1]
                 if len(xj_test) == 0 or len(xi_test) == 0:
                     raise ValueError(  # pragma: no cover
-                        "One column is empty i={0} j={1}.".format(i, j))
+                        f"One column is empty i={i} j={j}.")
                 mod = clone(model)
                 try:
                     mod.fit(xi_train, xj_train.ravel())
                 except Exception as e:  # pragma: no cover
                     raise ValueError(
-                        "Unable to compute correlation for i={0} j={1}.".format(i, j)) from e
+                        f"Unable to compute correlation for i={i} j={j}.") from e
                 v = mod.predict(xi_test)
                 c = (1 - numpy.var(v - xj_test.ravel()))
                 co = max(c, 0) ** 0.5

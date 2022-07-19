@@ -15,7 +15,7 @@ def _get_tree(obj):
     if hasattr(obj, "tree_"):
         return obj.tree_
     raise AttributeError(  # pragma: no cover
-        "obj is no tree: {}".format(type(obj)))
+        f"obj is no tree: {type(obj)}")
 
 
 def tree_leave_index(model):
@@ -79,7 +79,7 @@ def tree_find_common_node(tree, i, j, parents=None):
     if pj is not None and pj == i:
         return i, path_i[pos:], path_j[pos:]
     raise RuntimeError(  # pragma: no cover
-        "Paths are equal, i={} and j={} must be differet.".format(i, j))
+        f"Paths are equal, i={i} and j={j} must be differet.")
 
 
 def tree_node_parents(tree):

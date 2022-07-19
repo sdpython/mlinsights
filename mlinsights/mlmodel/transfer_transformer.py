@@ -50,8 +50,7 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
                     "predict in object {}".format(type(estimator)))
         if not hasattr(estimator, method):
             raise AttributeError(  # pragma: no cover
-                "Cannot find method '{}' in object {}".format(
-                    method, type(estimator)))
+                f"Cannot find method '{method}' in object {type(estimator)}")
         self.method = method
 
     def fit(self, X=None, y=None, sample_weight=None):

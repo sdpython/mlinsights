@@ -31,8 +31,7 @@ class TestNotebookSearchKeras(unittest.TestCase):
             except (SyntaxError, ModuleNotFoundError, AttributeError,
                     ImportError) as e:
                 warnings.warn(
-                    "tensorflow is probably not available yet on python 3.7: "
-                    "{0}".format(e))
+                    f"tensorflow is probably not available yet on python 3.7: {e}")
                 return
 
         self.assertTrue(mlinsights is not None)

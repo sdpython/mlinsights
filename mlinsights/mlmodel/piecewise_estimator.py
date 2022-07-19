@@ -110,8 +110,7 @@ class PiecewiseEstimator(BaseEstimator):
                 "estimator cannot be null.")
         if binner is None:
             raise TypeError(  # pragma: no cover
-                "Unsupported options for binner=='tree' and model {}.".format(
-                    type(estimator)))
+                f"Unsupported options for binner=='tree' and model {type(estimator)}.")
         elif binner == "bins":
             binner = KBinsDiscretizer()
         self.binner = binner

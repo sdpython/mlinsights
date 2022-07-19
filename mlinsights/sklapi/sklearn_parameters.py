@@ -39,7 +39,7 @@ class SkLearnParameters:
         """
         if name.startswith("_") or name.endswith("_"):
             raise SkException(  # pragma: no cover
-                "Parameter name must not start by '_': '{0}'".format(name))
+                f"Parameter name must not start by '_': '{name}'")
 
     @property
     def Keys(self):
@@ -55,9 +55,9 @@ class SkLearnParameters:
         def fmt(v):
             "formatting function"
             if isinstance(v, str):
-                return "'{0}'".format(v)
+                return f"'{v}'"
             return repr(v)
-        text = ", ".join("{0}={1}".format(k, fmt(getattr(self, k)))
+        text = ", ".join(f"{k}={fmt(getattr(self, k))}"
                          for k in sorted(self.Keys))
         return "\n".join(textwrap.wrap(text, subsequent_indent="    "))
 

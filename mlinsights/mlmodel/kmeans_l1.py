@@ -77,7 +77,7 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
         dist_fct = lambda x, y: manhattan_distances(x, y)
     else:
         raise NotImplementedError(  # pragma no cover
-            "norm must be 'L1' or 'L2' not '{}'.".format(norm))
+            f"norm must be 'L1' or 'L2' not '{norm}'.")
 
     closest_dist_sq = dist_fct(centers[0, numpy.newaxis], X)
     current_pot = closest_dist_sq.sum()
@@ -396,7 +396,7 @@ def _tolerance(norm, X, tol):
         variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
         return variances.sum()
     raise NotImplementedError(  # pragma no cover
-        "not implemented for norm '{}'.".format(norm))
+        f"not implemented for norm '{norm}'.")
 
 
 class KMeansL1L2(KMeans):
@@ -526,7 +526,7 @@ class KMeansL1L2(KMeans):
             self._fit_l1(X=X, y=y, sample_weight=sample_weight)
         else:
             raise NotImplementedError(  # pragma no cover
-                "Norm is not 'L1' or 'L2' but '{}'.".format(self.norm))
+                f"Norm is not 'L1' or 'L2' but '{self.norm}'.")
         return self
 
     def _fit_l1(self, X, y=None, sample_weight=None):
@@ -597,8 +597,7 @@ class KMeansL1L2(KMeans):
             kmeans_single = _kmeans_single_lloyd
         else:
             raise ValueError(  # pragma no cover
-                "Algorithm must be 'auto', 'full' or 'elkan', got"
-                " %s" % str(algorithm))
+                f"Algorithm must be 'auto', 'full' or 'elkan', got {str(algorithm)}")
 
         seeds = random_state.randint(numpy.iinfo(numpy.int32).max, size=n_init)
 
@@ -647,7 +646,7 @@ class KMeansL1L2(KMeans):
         if self.norm == 'L1':
             return self._transform_l1(X)
         raise NotImplementedError(  # pragma no cover
-            "Norm is not L1 or L2 but '{}'.".format(self.norm))
+            f"Norm is not L1 or L2 but '{self.norm}'.")
 
     def _transform_l1(self, X):
         """
@@ -679,7 +678,7 @@ class KMeansL1L2(KMeans):
         if self.norm == 'L1':
             return self._predict_l1(X, sample_weight=sample_weight)
         raise NotImplementedError(  # pragma no cover
-            "Norm is not L1 or L2 but '{}'.".format(self.norm))
+            f"Norm is not L1 or L2 but '{self.norm}'.")
 
     def _predict_l1(self, X, sample_weight=None, return_distances=False):
         """

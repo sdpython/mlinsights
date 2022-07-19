@@ -31,7 +31,7 @@ class TestSearchPredictionsImagesKeras(ExtTestCase):
             except (SyntaxError, ModuleNotFoundError, AttributeError,
                     ImportError) as e:
                 warnings.warn(
-                    "Issue with tensorflow or keras: {0}".format(e))
+                    f"Issue with tensorflow or keras: {e}")
                 return
             from keras.preprocessing.image import ImageDataGenerator  # pylint: disable=E0401,E0611
             from keras.preprocessing.image import img_to_array, load_img  # pylint: disable=E0401,E0611
