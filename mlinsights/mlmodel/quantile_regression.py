@@ -161,7 +161,7 @@ class QuantileLinearRegression(LinearRegression):
             self.n_iter_ = i
             if self.verbose:
                 print(  # pragma: no cover
-                    '[QuantileLinearRegression.fit] iter={0} error={1}'.format(i + 1, E))
+                    f'[QuantileLinearRegression.fit] iter={i + 1} error={E}')
             if lastE is not None and lastE == E:
                 break
             lastE = E

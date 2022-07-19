@@ -57,7 +57,7 @@ for i in range(0, max(cl) + 1):
     x = [km.cluster_centers_[i, 0], km.cluster_centers_[i, 0]]
     y = [km.cluster_centers_[i, 1], km.cluster_centers_[i, 1]]
     ax.plot(x, y, colors[i] + '+')
-ax.set_title('KMeans 4 clusters\n%r' % hist)
+ax.set_title(f'KMeans 4 clusters\n{hist!r}')
 ax.legend()
 
 #####################################
@@ -94,9 +94,9 @@ for i in range(0, max(cl1) + 1):
     x = [km2.cluster_centers_[i, 0], km2.cluster_centers_[i, 0]]
     y = [km2.cluster_centers_[i, 1], km2.cluster_centers_[i, 1]]
     ax[1].plot(x, y, colors[i] + '+')
-ax[0].set_title('ConstraintKMeans 4 clusters (gains)\n%r' % hist1)
+ax[0].set_title(f'ConstraintKMeans 4 clusters (gains)\n{hist1!r}')
 ax[0].legend()
-ax[1].set_title('ConstraintKMeans 4 clusters (distances)\n%r' % hist2)
+ax[1].set_title(f'ConstraintKMeans 4 clusters (distances)\n{hist2!r}')
 ax[1].legend()
 
 
@@ -129,7 +129,7 @@ for i in range(0, max(cl) + 1):
     x = [km.cluster_centers_[i, 0], km.cluster_centers_[i, 0]]
     y = [km.cluster_centers_[i, 1], km.cluster_centers_[i, 1]]
     ax[0].plot(x, y, colors[i] + '+')
-ax[0].set_title("ConstraintKMeans 4 clusters\nstrategy='weights'\n%r" % hist)
+ax[0].set_title(f"ConstraintKMeans 4 clusters\nstrategy='weights'\n{hist!r}")
 ax[0].legend()
 
 cls = km.cluster_centers_iter_

@@ -61,8 +61,7 @@ class NGramsMixin(VectorizerMixin):
                         new_tokens.extend(token)
                     else:
                         raise TypeError(  # pragma: no cover
-                            "Unable to build a n-grams out of {}.".format(
-                                tokens))
+                            f"Unable to build a n-grams out of {tokens}.")
                 return tuple(new_tokens)
 
             for n in range(min_n,

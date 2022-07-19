@@ -94,13 +94,13 @@ class SkBase:
         for k in p1:
             if k not in p2:
                 if exc:
-                    raise KeyError("Key '{0}' was removed.".format(k))
+                    raise KeyError(f"Key '{k}' was removed.")
                 else:
                     return False
         for k in p2:
             if k not in p1:
                 if exc:
-                    raise KeyError("Key '{0}' was added.".format(k))
+                    raise KeyError(f"Key '{k}' was added.")
                 return False
         for k in sorted(p1):
             v1, v2 = p1[k], p2[k]
@@ -134,7 +134,7 @@ class SkBase:
             if not b:
                 if exc:
                     raise ValueError(
-                        "Values for key '{0}' are different.\n---\n{1}\n---\n{2}".format(k, v1, v2))
+                        f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}")
                 else:
                     return False
         return True
@@ -143,5 +143,5 @@ class SkBase:
         """
         usual
         """
-        res = "{0}({1})".format(self.__class__.__name__, str(self.P))
+        res = f"{self.__class__.__name__}({str(self.P)})"
         return "\n".join(textwrap.wrap(res, subsequent_indent="    "))

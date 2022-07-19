@@ -85,8 +85,7 @@ class ConstraintKMeans(KMeans):
         self.history = history
         self.learning_rate = learning_rate
         if strategy not in ConstraintKMeans._strategy_value:
-            raise ValueError('strategy must be in {0}'.format(
-                ConstraintKMeans._strategy_value))
+            raise ValueError(f'strategy must be in {ConstraintKMeans._strategy_value}')
 
     def fit(self, X, y=None, sample_weight=None, fLOG=None):
         """

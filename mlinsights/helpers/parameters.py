@@ -13,7 +13,7 @@ def format_value(v):
     @return                 a string
     """
     return ("'{0}'".format(v.replace("'", "\\'"))
-            if isinstance(v, str) else "{0}".format(v))
+            if isinstance(v, str) else f"{v}")
 
 
 def format_parameters(pdict):
@@ -33,7 +33,7 @@ def format_parameters(pdict):
     """
     res = []
     for k, v in sorted(pdict.items()):
-        res.append('{0}={1}'.format(k, format_value(v)))
+        res.append(f'{k}={format_value(v)}')
     return ", ".join(res)
 
 
@@ -52,5 +52,5 @@ def format_function_call(name, pdict):
         d = dict(i=2, x=6.7, s="r")
         print(format_function_call("fct", d))
     """
-    res = '{0}({1})'.format(name, format_parameters(pdict))
+    res = f'{name}({format_parameters(pdict)})'
     return "\n".join(textwrap.wrap(res, width=70, subsequent_indent='    '))

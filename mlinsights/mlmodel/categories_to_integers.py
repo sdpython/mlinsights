@@ -73,7 +73,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         """
         if not isinstance(X, pandas.DataFrame):
             raise TypeError(  # pragma: no cover
-                "this transformer only accept Dataframes, not {0}".format(type(X)))
+                f"this transformer only accept Dataframes, not {type(X)}")
         if self.columns:
             columns = self.columns
         else:
@@ -89,7 +89,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             nb = len(distinct)
             if nb >= max_cat:
                 raise ValueError(  # pragma: no cover
-                    "Too many categories ({0}) for one column '{1}' max_cat={2}".format(nb, c, max_cat))
+                    f"Too many categories ({nb}) for one column '{c}' max_cat={max_cat}")
             self._categories[c] = dict((c, i)
                                        for i, c in enumerate(list(sorted(distinct))))
         self._schema = self._build_schema()
@@ -107,7 +107,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         new_vector = {}
         last = 0
         for c, v in self._categories.items():
-            sch = [(_[1], "{0}={1}".format(c, _[1]))
+            sch = [(_[1], f"{c}={_[1]}")
                    for _ in sorted((n, d) for d, n in v.items())]
             if self.remove:
                 sch = [d for d in sch if d[1] not in self.remove]
@@ -133,7 +133,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         """
         if not isinstance(X, pandas.DataFrame):
             raise TypeError(  # pragma: no cover
-                "X is not a dataframe: {0}".format(type(X)))
+                f"X is not a dataframe: {type(X)}")
 
         if self.single:
             b = not self.skip_errors

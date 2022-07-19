@@ -409,7 +409,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         if self.strategy == 'perpendicular':
             return self._fit_perpendicular(X, y, sample_weight)
         raise ValueError(
-            "Unknown strategy '{}'.".format(self.strategy))
+            f"Unknown strategy '{self.strategy}'.")
 
     def _fit_parallel(self, X, y, sample_weight):
         "Implements the parallel strategy."

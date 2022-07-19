@@ -32,7 +32,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
                 import torchvision.models as tmodels  # pylint: disable=E0401,C0415
             except (SyntaxError, ModuleNotFoundError) as e:
                 warnings.warn(
-                    "torch is not available: {0}".format(e))
+                    f"torch is not available: {e}")
                 return
             from torchvision import datasets, transforms  # pylint: disable=E0401
             from torch.utils.data import DataLoader  # pylint: disable=E0401

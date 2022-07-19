@@ -71,7 +71,7 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
             pass
         else:
             raise TypeError(  # pragma: no cover
-                "pipe is not a scikit-learn object: {}\n{}".format(type(pipe), pipe))
+                f"pipe is not a scikit-learn object: {type(pipe)}\n{pipe}")
 
 
 class BaseEstimatorDebugInformation:
@@ -112,8 +112,7 @@ class BaseEstimatorDebugInformation:
         """
         Tries to produce a readable message.
         """
-        rows = ['BaseEstimatorDebugInformation({})'.format(
-            self.model.__class__.__name__)]
+        rows = [f'BaseEstimatorDebugInformation({self.model.__class__.__name__})']
         for k in sorted(self.inputs):
             if k in self.outputs:
                 rows.append('  ' + k + '(')
@@ -126,7 +125,7 @@ class BaseEstimatorDebugInformation:
                 rows.append('  )')
             else:
                 raise KeyError(  # pragma: no cover
-                    "Unable to find output for method '{}'.".format(k))
+                    f"Unable to find output for method '{k}'.")
         return "\n".join(rows)
 
     def display(self, data, nrows):
@@ -139,9 +138,9 @@ class BaseEstimatorDebugInformation:
             rows = rows[:nrows]
             rows.append('...')
         if hasattr(data, 'shape'):
-            rows.insert(0, "shape=%r type=%r" % (data.shape, type(data)))
+            rows.insert(0, f"shape={data.shape!r} type={type(data)!r}")
         else:
-            rows.insert(0, "type=%r" % type(data))  # pragma: no cover
+            rows.insert(0, f"type={type(data)!r}")  # pragma: no cover
         return "\n".join(rows)
 
 

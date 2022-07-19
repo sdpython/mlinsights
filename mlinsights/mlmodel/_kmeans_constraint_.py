@@ -47,7 +47,7 @@ def linearize_matrix(mat, *adds):
                     res[i, k + 3] = am[a, b]
             return res
         raise NotImplementedError(  # pragma: no cover
-            "This kind of sparse matrix is not handled: {0}".format(type(mat)))
+            f"This kind of sparse matrix is not handled: {type(mat)}")
     else:
         n = mat.shape[0]
         c = mat.shape[1]
@@ -91,7 +91,7 @@ def constraint_kmeans(X, labels, sample_weight, centers, inertia,
     """
     if labels.dtype != numpy.int32:
         raise TypeError(  # pragma: no cover
-            "Labels must be an array of int not '{0}'".format(labels.dtype))
+            f"Labels must be an array of int not '{labels.dtype}'")
 
     if strategy == 'weights':
         return _constraint_kmeans_weights(
@@ -222,8 +222,7 @@ def _constraint_association(leftover, counters, labels, leftclose, distances_clo
         return _constraint_association_gain(
             leftover, counters, labels, leftclose, distances_close,
             centers, X, x_squared_norms, limit, strategy, state=state)
-    raise ValueError("Unknwon strategy '{0}'.".format(
-        strategy))  # pragma: no cover
+    raise ValueError(f"Unknwon strategy '{strategy}'.")  # pragma: no cover
 
 
 def _compute_strategy_coefficient(distances, strategy, labels):
@@ -235,7 +234,7 @@ def _compute_strategy_coefficient(distances, strategy, labels):
         dist = distances[ar, labels]
         return distances - dist[:, numpy.newaxis]
     raise ValueError(  # pragma: no cover
-        "Unknwon strategy '{0}'.".format(strategy))
+        f"Unknwon strategy '{strategy}'.")
 
 
 def _randomize_index(index, weights):
@@ -479,7 +478,7 @@ def _constraint_association_gain(leftover, counters, labels, leftclose, distance
     neg = (counters < ave).sum()
     if neg > 0:
         raise RuntimeError(  # pragma: no cover
-            "The algorithm failed, counters={0}".format(counters))
+            f"The algorithm failed, counters={counters}")
 
     _switch_clusters(labels, distances)
     distances_close[:] = distances[numpy.arange(X.shape[0]), labels]
@@ -540,7 +539,7 @@ def _constraint_kmeans_weights(X, labels, sample_weight, centers, inertia, it,
         if len(set(labels)) != centers.shape[0]:
             if verbose and fLOG:  # pragma: no cover
                 if isinstance(verbose, int) and verbose >= 10:
-                    fLOG("CKMeans new weights: w=%r" % weights)
+                    fLOG(f"CKMeans new weights: w={weights!r}")
                 else:
                     fLOG("CKMeans new weights")
             weights[:] = 1

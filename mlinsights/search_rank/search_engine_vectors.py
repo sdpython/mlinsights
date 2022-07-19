@@ -102,7 +102,7 @@ class SearchEngineVectors:
                 if not isinstance(tradd, numpy.ndarray):
                     if transform is None:
                         raise TypeError(  # pragma: no cover
-                            "feature should be of type numpy.array not {}".format(type(tradd)))
+                            f"feature should be of type numpy.array not {type(tradd)}")
                     else:
                         raise TypeError(  # pragma: no cover
                             "output of method transform ({}) should be of type numpy.array not {}".format(
