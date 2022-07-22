@@ -26,6 +26,22 @@ class TestPreprocessingTimeSeries(ExtTestCase):
             self.assertEqualArray(nx, ppx)
             self.assertEqualArray(ny, ppy)
 
+    def test_base_parameters_split0_weight(self):
+        X = numpy.arange(20).reshape((10, 2))
+        y = numpy.arange(10) * 100
+        bs = BaseTimeSeries(past=2)
+        nx, ny, _ = build_ts_X_y(bs, X, y)
+        weights = numpy.ones((nx.shape[0], ), dtype=nx.dtype)
+        for d in range(0, 5):
+            proc = TimeSeriesDifference(d)
+            proc.fit(nx, ny, weights)
+            px, py = proc.transform(nx, ny)
+            self.assertEqualArray(px[-1, :], nx[-1, :])
+            rev = proc.get_fct_inv()
+            ppx, ppy = rev.transform(px, py)
+            self.assertEqualArray(nx, ppx)
+            self.assertEqualArray(ny, ppy)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -210,7 +210,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
 
     def _check_is_fitted(self):
         if not hasattr(self, 'classifier_'):
-            raise NotFittedError(
+            raise NotFittedError(  # pragma: no cover
                 "This instance {} is not fitted yet. Call 'fit' with "
                 "appropriate arguments before using this method.".format(
                     type(self)))
@@ -237,8 +237,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         self._check_is_fitted()
         if not hasattr(self.classifier_, method):
-            raise RuntimeError("Unable to find method '{}' in model {}.".format(
-                method, type(self.classifier_)))
+            raise RuntimeError(  # pragma: no cover
+                f"Unable to find method {method!r} in model "
+                f"{type(self.classifier_)}.")
         meth = getattr(self.classifier_, method)
         X_trans, _ = self.transformer_.transform(X, None)
         pred = meth(X_trans)

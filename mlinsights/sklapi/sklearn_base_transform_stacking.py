@@ -76,8 +76,8 @@ class SkBaseTransformStacking(SkBaseTransform):
                 f"Method must be a string not {type(method)}")
         self.method = method
         if isinstance(method, list):
-            if len(method) != len(models):
-                raise ValueError(  # pragma: no cover
+            if len(method) != len(models):  # pragma: no cover
+                raise ValueError(
                     "models and methods must have the same length: {0} != {1}".format(
                         len(models), len(method)))
         else:

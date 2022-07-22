@@ -20,7 +20,7 @@ def _fit_piecewise_estimator(i, model, X, y, sample_weight, association, nb_clas
     ind = association == i
     if not numpy.any(ind):
         # No training example for this bucket.
-        return None
+        return model  # pragma: no cover
     Xi = X[ind, :]
     yi = y[ind]
     sw = sample_weight[ind] if sample_weight is not None else None
@@ -141,7 +141,7 @@ class PiecewiseEstimator(BaseEstimator):
                 ind = numpy.asarray(ind.todense()).flatten()
                 if not numpy.any(ind):
                     # No training example for this bucket.
-                    continue
+                    continue  # pragma: no cover
                 mapping[j] = ntree
                 association[ind] = ntree
                 ntree += 1

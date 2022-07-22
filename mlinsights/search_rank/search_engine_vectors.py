@@ -225,7 +225,7 @@ class SearchEngineVectors:
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, 'w')
             close = True
-        else:
+        else:  # pragma: no cover
             zf = zipfilename
             close = False
         if 'index' not in kwargs:
@@ -252,7 +252,7 @@ class SearchEngineVectors:
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, 'r')
             close = True
-        else:
+        else:  # pragma: no cover
             zf = zipfilename
             close = False
         feat = read_zip(zf, 'SearchEngineVectors-features.npy')
