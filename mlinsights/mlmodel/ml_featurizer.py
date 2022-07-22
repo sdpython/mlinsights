@@ -43,8 +43,8 @@ def model_featurizer(model, **params):
         return model_featurizer_torch(model, **params)
     tried.append("torch")
     raise FeaturizerTypeError(  # pragma no cover
-        f"Unable to process type {type(model)}, allowed:\n"
-        f"{'\n'.join(sorted(str(_) for _ in tried))}.")
+        "Unable to process type %r, allowed:\n%s" % (
+            type(model), '\n'.join(sorted(str(_) for _ in tried))))
 
 
 def is_vector(X):

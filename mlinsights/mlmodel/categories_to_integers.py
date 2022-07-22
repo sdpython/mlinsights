@@ -152,8 +152,8 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                         lv = lv[:20]
                         lv.append("...")
                     raise ValueError(  # pragma: no cover
-                        f"Unable to find category value {v!r} type(v)={type(v)} "
-                        f"among\n{'\n'.join(lv)}.")
+                        "Unable to find category value %r type(v)=%r "
+                        "among\n%s" % (v, type(v), '\n'.join(lv)))
                 return numpy.nan
 
             sch, pos, new_vector = self._schema
@@ -184,8 +184,9 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                                 lv = lv[:20]
                                 lv.append("...")
                             raise ValueError(  # pragma: no cover
-                                f"Unable to find category value {k!r}: {v!r} "
-                                f"type(v)={type(v)} among\n{'\n'.join(lv)}.")
+                                "Unable to find category value %r: %r "
+                                "type(v)=%r among\n%s" % (
+                                    k, v, type(v), '\n'.join(lv)))
                     else:
                         p = pos[k] + vec[k][v]
                     res[i, p] = 1.0

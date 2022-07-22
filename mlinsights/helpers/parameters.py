@@ -12,7 +12,7 @@ def format_value(v):
     @param      v           a string
     @return                 a string
     """
-    return (f'{v.replace("\'", "\\\'")}'
+    return (v.replace("'", "\\'")
             if isinstance(v, str) else f"{v}")
 
 
