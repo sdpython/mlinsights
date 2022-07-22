@@ -59,7 +59,7 @@ jobs:
             python -m pip install pyproj
             python -m pip uninstall -y shapely
             python -m pip install --no-binary shapely shapely
-            python -m pip install cartopy
+            python -m pip install cartopy==0.18.0
 
       - run:
           name: install dependencies
