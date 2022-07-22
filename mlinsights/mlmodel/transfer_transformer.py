@@ -46,8 +46,8 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
                 method = "predict"
             else:
                 raise AttributeError(  # pragma: no cover
-                    "Cannot find a method transform, predict_proba, decision_function, "
-                    "predict in object {}".format(type(estimator)))
+                    f"Cannot find a method transform, predict_proba, decision_function, "
+                    f"predict in object {type(estimator)}.")
         if not hasattr(estimator, method):
             raise AttributeError(  # pragma: no cover
                 f"Cannot find method '{method}' in object {type(estimator)}")

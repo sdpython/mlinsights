@@ -52,8 +52,8 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
                 f"normalizer {type(normalizer)} does not have a 'transform' method.")
         if not hasattr(transformer, "fit_transform"):
             raise AttributeError(  # pragma: no cover
-                "transformer {} does not have a 'fit_transform' method.".format(
-                    type(transformer)))
+                f"transformer {type(transformer)} does not have a "
+                f"'fit_transform' method.")
         if not hasattr(estimator, "predict"):
             raise AttributeError(  # pragma: no cover
                 f"estimator {type(estimator)} does not have a 'predict' method.")

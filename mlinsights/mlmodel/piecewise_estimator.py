@@ -278,8 +278,8 @@ class PiecewiseEstimator(BaseEstimator):
                 "Estimator was apparently fitted but contains no estimator.")
         if not hasattr(self.estimators_[0], method):
             raise TypeError(  # pragma: no cover
-                "Estimator {} does not have method '{}'.".format(
-                    type(self.estimators_[0]), method))
+                f"Estimator {type(self.estimators_[0])} "
+                f"does not have method {method!r}.")
         if isinstance(X, pandas.DataFrame):
             X = X.values
 

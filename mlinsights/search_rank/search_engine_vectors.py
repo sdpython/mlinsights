@@ -105,8 +105,8 @@ class SearchEngineVectors:
                             f"feature should be of type numpy.array not {type(tradd)}")
                     else:
                         raise TypeError(  # pragma: no cover
-                            "output of method transform ({}) should be of type numpy.array not {}".format(
-                                transform, type(tradd)))
+                            f"output of method transform {transform!r} should be of "
+                            f"type numpy.array not {type(tradd)}.")
                 arrays.append(tradd)
             self.features_ = numpy.vstack(arrays)
             self.metadata_ = pandas.DataFrame(metas)

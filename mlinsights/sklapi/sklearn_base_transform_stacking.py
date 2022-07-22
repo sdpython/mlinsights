@@ -78,8 +78,8 @@ class SkBaseTransformStacking(SkBaseTransform):
         if isinstance(method, list):
             if len(method) != len(models):  # pragma: no cover
                 raise ValueError(
-                    "models and methods must have the same length: {0} != {1}".format(
-                        len(models), len(method)))
+                    f"models and methods must have the same "
+                    f"length: {len(models)} != {len(method)}.")
         else:
             method = [method for m in models]
 

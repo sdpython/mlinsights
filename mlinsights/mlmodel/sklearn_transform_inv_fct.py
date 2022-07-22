@@ -144,9 +144,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
     def _check_is_fitted(self):
         if not hasattr(self, 'permutation_'):
             raise NotFittedError(  # pragma: no cover
-                "This instance {} is not fitted yet. Call 'fit' with "
-                "appropriate arguments before using this method.".format(
-                    type(self)))
+                f"This instance {type(self)} is not fitted yet. Call 'fit' with "
+                f"appropriate arguments before using this method.")
 
     def get_fct_inv(self):
         """
@@ -195,8 +194,9 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
                     if self.closest:
                         cl = self._find_closest(yp[i])
                     else:
-                        raise RuntimeError("Unable to find key '{}' in {}.".format(
-                            yp[i], list(sorted(self.permutation_))))
+                        raise RuntimeError(
+                            f"Unable to find key {yp[i]!r} in "
+                            f"{list(sorted(self.permutation_))!r}.")
                 else:
                     cl = yp[i]
                 yp[i] = self.permutation_[cl]

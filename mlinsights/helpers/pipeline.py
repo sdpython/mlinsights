@@ -203,5 +203,6 @@ def alter_pipeline_for_debugging(pipe):
             try:
                 setattr(model, k, MethodType(new_methods[k], model))
             except AttributeError:  # pragma: no cover
-                warnings.warn("Unable to overwrite method '{}' for class "
-                              "{}.".format(k, type(model)))
+                warnings.warn(
+                    f"Unable to overwrite method {k!r} for class "
+                    f"{type(model)!r}.")

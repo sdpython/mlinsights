@@ -550,9 +550,9 @@ def _constraint_kmeans_weights(X, labels, sample_weight, centers, inertia, it,
             X, centers, sw, weights, labels, total_inertia)
         if numpy.isnan(inertia):
             raise RuntimeError(  # pragma: no cover
-                "nanNobs={} Nclus={}\ninertia={}\nweights={}\ndiff={}\nlabels={}".format(
-                    X.shape[0], centers.shape[0], inertia, weights, diff,
-                    set(labels)))
+                f"nanNobs={X.shape[0]} Nclus={centers.shape[0]}\n"
+                f"inertia={inertia}\nweights={weights}\ndiff={diff}\n"
+                f"labels={set(labels)}")
 
         # best option so far?
         if best_inertia is None or inertia < best_inertia:

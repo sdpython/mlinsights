@@ -54,12 +54,12 @@ class PipelineCache(Pipeline):
             if '__' not in pname:
                 if not isinstance(pval, dict):
                     raise ValueError(  # pragma: no cover
-                        "For scikit-learn < 0.23, "
-                        "Pipeline.fit does not accept the {} parameter. "
-                        "You can pass parameters to specific steps of your "
-                        "pipeline using the stepname__parameter format, e.g. "
-                        "`Pipeline.fit(X, y, logisticregression__sample_weight"
-                        "=sample_weight)`.".format(pname))
+                        f"For scikit-learn < 0.23, "
+                        f"Pipeline.fit does not accept the {pname} parameter. "
+                        f"You can pass parameters to specific steps of your "
+                        f"pipeline using the stepname__parameter format, e.g. "
+                        f"`Pipeline.fit(X, y, logisticregression__sample_weight"
+                        f"=sample_weight)`.")
                 else:
                     fit_params_steps[pname].update(pval)
             else:

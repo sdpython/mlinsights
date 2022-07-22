@@ -84,8 +84,9 @@ class BaseTimeSeries(BaseEstimator):
         if (preprocessing is not None and
                 not isinstance(preprocessing, BaseReciprocalTimeSeriesTransformer)):
             raise TypeError(  # pragma: no cover
-                "preprocessing must be of type 'BaseReciprocalTimeSeriesTransformer' "
-                "not {}".format(type(preprocessing)))
+                f"preprocessing must be of type "
+                f"'BaseReciprocalTimeSeriesTransformer' "
+                f"not {type(preprocessing)}.")
 
     def _fit_preprocessing(self, X, y, sample_weight=None):
         """
