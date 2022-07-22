@@ -4,10 +4,10 @@ language: python
 
 matrix:
   include:
-  - python: 3.9
-    name: "Py39-024+"
+  - python: 3.10
+    name: "Py310"
     env:
-      - sklver=">=0.24.2"
+      - sklver=">=1.1"
       - jlver=">=1.0"
 
 before_install:
