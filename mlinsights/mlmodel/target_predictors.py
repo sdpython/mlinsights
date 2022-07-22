@@ -20,8 +20,9 @@ def _common_get_transform(transformer, is_regression):
             return FunctionReciprocalTransformer(transformer)
     elif isinstance(transformer, BaseReciprocalTransformer):
         return clone(transformer)
-    raise TypeError("Transformer {} must be a string or on object of type "
-                    "BaseReciprocalTransformer.".format(type(transformer)))
+    raise TypeError(
+        f"Transformer {type(transformer)} must be a string or "
+        f"on object of type BaseReciprocalTransformer.")
 
 
 class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
@@ -110,9 +111,8 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         """
         if not hasattr(self, 'regressor_'):
             raise NotFittedError(  # pragma: no cover
-                "This instance {} is not fitted yet. Call 'fit' with "
-                "appropriate arguments before using this method.".format(
-                    type(self)))
+                f"This instance {type(self)} is not fitted yet. Call 'fit' with "
+                f"appropriate arguments before using this method.")
         X_trans, _ = self.transformer_.transform(X, None)
         pred = self.regressor_.predict(X_trans)
 
@@ -210,10 +210,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
 
     def _check_is_fitted(self):
         if not hasattr(self, 'classifier_'):
-            raise NotFittedError(
-                "This instance {} is not fitted yet. Call 'fit' with "
-                "appropriate arguments before using this method.".format(
-                    type(self)))
+            raise NotFittedError(  # pragma: no cover
+                f"This instance {type(self)} is not fitted yet. Call 'fit' with "
+                f"appropriate arguments before using this method.")
 
     @property
     def classes_(self):
@@ -237,8 +236,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         self._check_is_fitted()
         if not hasattr(self.classifier_, method):
-            raise RuntimeError("Unable to find method '{}' in model {}.".format(
-                method, type(self.classifier_)))
+            raise RuntimeError(  # pragma: no cover
+                f"Unable to find method {method!r} in model "
+                f"{type(self.classifier_)}.")
         meth = getattr(self.classifier_, method)
         X_trans, _ = self.transformer_.transform(X, None)
         pred = meth(X_trans)

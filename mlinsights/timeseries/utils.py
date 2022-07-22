@@ -173,8 +173,8 @@ def check_ts_X_y(model, X, y):
     if y is None:
         if cst > 0:
             raise AssertionError(  # pragma: no cover
-                "y must be specified to give the model past data to predict, "
-                "it requires at least {} observations.".format(cst))
+                f"y must be specified to give the model past data to predict, "
+                f"it requires at least {cst} observations.")
         return  # pragma: no cover
     if y.shape[0] != X.shape[0]:
         raise AssertionError(  # pragma: no cover
@@ -184,5 +184,5 @@ def check_ts_X_y(model, X, y):
             f"y must be 1-dimensional not has shape {y.shape}.")
     if y.shape[0] < cst:
         raise AssertionError(  # pragma: no cover
-            "y is not enough past data to predict, "
-            "it requires at least {} observations.".format(cst))
+            f"y is not enough past data to predict, "
+            f"it requires at least {cst} observations.")

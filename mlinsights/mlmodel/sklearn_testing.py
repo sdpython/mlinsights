@@ -217,8 +217,9 @@ def assert_estimator_equal(esta, estb, ext=None):
         if (att.endswith('_') and not att.endswith('__')) or \
                 (att.startswith('_') and not att.startswith('__')):
             if not hasattr(estb, att):  # pragma no cover
-                raise AssertionError("Missing fitted attribute '{}' class {}\n==1 {}\n==2 {}".format(
-                    att, esta.__class__, list(sorted(esta.__dict__)), list(sorted(estb.__dict__))))
+                raise AssertionError(
+                    "Missing fitted attribute '{}' class {}\n==1 {}\n==2 {}".format(
+                        att, esta.__class__, list(sorted(esta.__dict__)), list(sorted(estb.__dict__))))
             if isinstance(getattr(esta, att), BaseEstimator):
                 assert_estimator_equal(
                     getattr(esta, att), getattr(estb, att), ext)
@@ -227,8 +228,9 @@ def assert_estimator_equal(esta, estb, ext=None):
     for att in estb.__dict__:
         if att.endswith('_') and not att.endswith('__'):
             if not hasattr(esta, att):  # pragma no cover
-                raise AssertionError("Missing fitted attribute\n==1 {}\n==2 {}".format(
-                    list(sorted(esta.__dict__)), list(sorted(estb.__dict__))))
+                raise AssertionError(
+                    "Missing fitted attribute\n==1 {}\n==2 {}".format(
+                        list(sorted(esta.__dict__)), list(sorted(estb.__dict__))))
 
 
 def test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid_params):

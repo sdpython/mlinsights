@@ -20,7 +20,7 @@ def _fit_piecewise_estimator(i, model, X, y, sample_weight, association, nb_clas
     ind = association == i
     if not numpy.any(ind):
         # No training example for this bucket.
-        return None
+        return model  # pragma: no cover
     Xi = X[ind, :]
     yi = y[ind]
     sw = sample_weight[ind] if sample_weight is not None else None
@@ -141,7 +141,7 @@ class PiecewiseEstimator(BaseEstimator):
                 ind = numpy.asarray(ind.todense()).flatten()
                 if not numpy.any(ind):
                     # No training example for this bucket.
-                    continue
+                    continue  # pragma: no cover
                 mapping[j] = ntree
                 association[ind] = ntree
                 ntree += 1
@@ -278,8 +278,8 @@ class PiecewiseEstimator(BaseEstimator):
                 "Estimator was apparently fitted but contains no estimator.")
         if not hasattr(self.estimators_[0], method):
             raise TypeError(  # pragma: no cover
-                "Estimator {} does not have method '{}'.".format(
-                    type(self.estimators_[0]), method))
+                f"Estimator {type(self.estimators_[0])} "
+                f"does not have method {method!r}.")
         if isinstance(X, pandas.DataFrame):
             X = X.values
 

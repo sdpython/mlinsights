@@ -617,9 +617,10 @@ class KMeansL1L2(KMeans):
         distinct_clusters = len(set(best_labels))
         if distinct_clusters < self.n_clusters:
             warnings.warn(  # pragma no cover
-                "Number of distinct clusters ({}) found smaller than "
-                "n_clusters ({}). Possibly due to duplicate points "
-                "in X.".format(distinct_clusters, self.n_clusters),
+                f"Number of distinct clusters ({distinct_clusters}) "
+                f"found smaller than "
+                f"n_clusters ({self.n_clusters}). Possibly "
+                f"due to duplicate points in X.",
                 ConvergenceWarning, stacklevel=2)
 
         self.cluster_centers_ = best_centers

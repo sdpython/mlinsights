@@ -52,8 +52,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415
             if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
                 raise NotImplementedError(  # pragma: no cover
-                    "iter_images must be a keras Iterator. No option implemented for type {0}."
-                    "".format(type(iter_images)))
+                    f"iter_images must be a keras Iterator. "
+                    f"No option implemented for type {type(iter_images)}.")
             if iter_images.batch_size != 1:
                 raise ValueError(  # pragma: no cover
                     f"batch_size must be 1 not {iter_images.batch_size}")
@@ -160,5 +160,5 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                     numpy.vstack([_[2] for _ in res]))
         else:
             raise TypeError(  # pragma: no cover
-                "Unexpected type {0} in SearchEnginePredictionImages.kneighbors".format(
-                    type(iter_images)))
+                f"Unexpected type {type(iter_images)} in "
+                f"SearchEnginePredictionImages.kneighbors")

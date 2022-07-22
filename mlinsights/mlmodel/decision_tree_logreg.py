@@ -189,8 +189,9 @@ class _DecisionTreeLogisticRegressionNode:
             # The classifier is not linear and cannot be improved.
             if dtlr.fit_improve_algo == 'intercept_sort_always':  # pragma: no cover
                 raise RuntimeError(
-                    "The model is not linear ({}), "
-                    "intercept cannot be improved.".format(self.estimator.__class__.__name__))
+                    f"The model is not linear "
+                    f"({self.estimator.__class__.__name__!r}), "
+                    f"intercept cannot be improved.")
             return prob
 
         above = prob[:, 1] > self.threshold
@@ -368,8 +369,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
 
         if self.fit_improve_algo not in DecisionTreeLogisticRegression._fit_improve_algo_values:
             raise ValueError(
-                "fit_improve_algo='{}' not in {}".format(
-                    self.fit_improve_algo, DecisionTreeLogisticRegression._fit_improve_algo_values))
+                f"fit_improve_algo={self.fit_improve_algo!r} "
+                f"not in {DecisionTreeLogisticRegression._fit_improve_algo_values}.")
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -401,8 +402,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         self.classes_ = numpy.array(sorted(set(y)))
         if len(self.classes_) != 2:
             raise RuntimeError(
-                "The model only supports binary classification but labels are "
-                "{}.".format(self.classes_))
+                f"The model only supports binary classification but labels are "
+                f"{self.classes_}.")
 
         if self.strategy == 'parallel':
             return self._fit_parallel(X, y, sample_weight)
