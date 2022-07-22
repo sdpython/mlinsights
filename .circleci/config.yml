@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Install libproj
           command: |
-            sudo apt-get install -y libgeos-dev libproj-dev proj-data graphviz
+            sudo apt-get install -y libgeos-dev proj-bin proj-data graphviz
 
       - run:
           name: Install standard libraries
