@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.9.6
+      - image: cimg/python:3.10.5
     
     working_directory: ~/repo
     
@@ -44,33 +44,14 @@ jobs:
                     sudo apt-get install -y graphviz
           
       - run:
-          name: Install libproj
-          command: |
-            sudo apt-get install -y libgeos-dev libproj-dev proj-data graphviz
-
-      - run:
           name: Install standard libraries
           command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install scipy matplotlib numpy cython pandas
-
-      - run:
-          name: Install pyproj, shapely, cartopy
-          command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install pyproj
-            pip uninstall -y shapely
-            pip install --no-binary shapely shapely
-            pip install cartopy
+            python -m pip install scipy matplotlib numpy cython pandas
 
       - run:
           name: install dependencies
           command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
+            python -m pip install -r requirements.txt
 
       - save_cache:
           paths:
@@ -80,27 +61,22 @@ jobs:
       - run:
           name: check list of dependencies
           command: |
-            python -m venv venv
-            . venv/bin/activate
-            pip freeze
+            python -m pip freeze
             apt list --installed
         
       - run:
           name: compile and build
           command: |
-            . venv/bin/activate
             python setup.py build_ext --inplace
 
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
             python setup.py unittests -d 9
 
       - run:
           name: wheel
           command: |
-            . venv/bin/activate
             python setup.py bdist_wheel
             mkdir -p test-reports/dist
             cp dist/*.whl test-reports/dist
