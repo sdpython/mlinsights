@@ -28,9 +28,10 @@ class TestNotebookSearchKeras(unittest.TestCase):
             try:
                 from keras.applications.mobilenet import MobileNet  # pylint: disable=E0401,E0611
                 assert MobileNet is not None
-            except (SyntaxError, ModuleNotFoundError, AttributeError) as e:
+            except (SyntaxError, ModuleNotFoundError, AttributeError,
+                    ImportError) as e:
                 warnings.warn(
-                    "tensorflow is probably not available yet on python 3.7: {0}".format(e))
+                    f"tensorflow is probably not available yet on python 3.7: {e}")
                 return
 
         self.assertTrue(mlinsights is not None)

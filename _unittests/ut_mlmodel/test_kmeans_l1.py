@@ -72,8 +72,9 @@ class TestKMeansL1L2(ExtTestCase):
         self.assertEqual({0, 1, 2, 3}, cls)
 
     def test_kmeans_l1_check(self):
-        X = numpy.array([[-10, 1, 2, 3, 4, 10],
-                         [-10, 1, 2, 3, 4, 10]]).T
+        X = numpy.ascontiguousarray(
+            numpy.array([[-10, 1, 2, 3, 4, 10],
+                         [-10, 1, 2, 3, 4, 10]]).T)
         clr = KMeansL1L2(2, norm='L1')
         clr.fit(X)
         cls = set(clr.predict(X))

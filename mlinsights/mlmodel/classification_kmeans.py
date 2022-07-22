@@ -156,7 +156,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
                 pc[k[2:]] = v
             else:
                 raise ValueError(  # pragma: no cover
-                    "Unexpected parameter name '{0}'".format(k))
+                    f"Unexpected parameter name '{k}'")
         self.clus.set_params(**pc)
         self.estimator.set_params(**pe)
 
@@ -165,8 +165,8 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         Overloads `repr` as *scikit-learn* now relies
         on the constructor signature.
         """
-        el = ', '.join(['%s=%r' % (k, v)
+        el = ', '.join([f'{k}={v!r}'
                         for k, v in self.get_params().items()])
-        text = "%s(%s)" % (self.__class__.__name__, el)
+        text = f"{self.__class__.__name__}({el})"
         lines = textwrap.wrap(text, subsequent_indent='    ')
         return "\n".join(lines)

@@ -34,8 +34,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             max_leaf_nodes=max_leaf_nodes,
             min_impurity_decrease=min_impurity_decrease)
 
-    def fit(self, X, y, sample_weight=None, check_input=True,
-            X_idx_sorted=None):
+    def fit(self, X, y, sample_weight=None, check_input=True):
         """
         Replaces the string stored in criterion by an instance of a class.
         """
@@ -45,17 +44,21 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
                 from .piecewise_tree_regression_criterion_linear import (  # pylint: disable=E0611,C0415
                     LinearRegressorCriterion)
                 replace = self.criterion
-                self.criterion = LinearRegressorCriterion(X)
+                self.criterion = LinearRegressorCriterion(
+                    1 if len(y.shape) <= 1 else y.shape[1], X)
             elif self.criterion == "simple":
                 from .piecewise_tree_regression_criterion_fast import (  # pylint: disable=E0611,C0415
                     SimpleRegressorCriterionFast)
                 replace = self.criterion
-                self.criterion = SimpleRegressorCriterionFast(X)
+                self.criterion = SimpleRegressorCriterionFast(
+                    1 if len(y.shape) <= 1 else y.shape[1], X.shape[0])
         else:
             replace = None
 
-        DecisionTreeRegressor.fit(self, X, y, sample_weight=sample_weight, check_input=check_input,
-                                  X_idx_sorted=X_idx_sorted)
+        DecisionTreeRegressor.fit(
+            self, X, y,
+            sample_weight=sample_weight,
+            check_input=check_input)
 
         if replace:
             self.criterion = replace

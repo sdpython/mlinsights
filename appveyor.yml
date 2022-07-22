@@ -2,12 +2,12 @@ image:
   - Visual Studio 2019
 environment:
   matrix:
-    - PYTHON: "C:\\Python39-x64"
-      PYTHON_VERSION: "3.9.x"
+    - PYTHON: "C:\\Python310-x64"
+      PYTHON_VERSION: "3.10.x"
       PYTHON_ARCH: "64"
       SKL: '>=1.0'
-    - PYTHON: "C:\\Python38-x64"
-      PYTHON_VERSION: "3.8.x"
+    - PYTHON: "C:\\Python39-x64"
+      PYTHON_VERSION: "3.9.x"
       PYTHON_ARCH: "64"
       SKL: '==0.24.2'
 init:
@@ -16,7 +16,7 @@ init:
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
   # for many packages
-  - pip install llvmlite==0.38.0rc1 numba==0.55.0rc1
+  - pip install llvmlite numba
   - "%PYTHON%\\Scripts\\pip install -r requirements-win.txt"
   # install precompiled versions not available on pypi
   - "%PYTHON%\\Scripts\\pip install torch torchvision torchaudio"

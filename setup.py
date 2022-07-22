@@ -10,13 +10,14 @@ from pyquicksetup import read_version, read_readme, default_cmdclass
 #########
 
 project_var_name = "mlinsights"
-versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
+versionPython = f"{sys.version_info.major}.{sys.version_info.minor}"
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
 history = "HISTORY.rst"
 requirements = None
 
-KEYWORDS = project_var_name + ', Xavier Dupré'
+KEYWORDS = [project_var_name, 'Xavier Dupré', 'machine learning',
+            'scikit-learn']
 DESCRIPTION = """Extends scikit-learn with a couple of new models, transformers, metrics, plotting."""
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
@@ -58,8 +59,8 @@ def get_extensions():
         extensions.append(("_piecewise_tree_regression_common",
                            "_piecewise_tree_regression_common024"))
     else:
-        extensions.append(("_piecewise_tree_regression_common",
-                           "_piecewise_tree_regression_common023"))
+        raise ImportError("Cannot build mlisinghts for scikit-learn<1.0.")
+
     extensions.extend([
         "piecewise_tree_regression_criterion",
         "piecewise_tree_regression_criterion_linear",
@@ -73,13 +74,13 @@ def get_extensions():
         folder = "mltree" if name == "_tree_digitize" else "mlmodel"
         if isinstance(name, tuple):
             m = Extension(pattern1 % (folder, name[0]),
-                          ['mlinsights/%s/%s.pyx' % (folder, name[1])],
+                          [f'mlinsights/{folder}/{name[1]}.pyx'],
                           include_dirs=[numpy.get_include()],
                           extra_compile_args=["-O3"],
                           language='c')
         else:
             m = Extension(pattern1 % (folder, name),
-                          ['mlinsights/%s/%s.pyx' % (folder, name)],
+                          [f'mlinsights/{folder}/{name}.pyx'],
                           include_dirs=[numpy.get_include()],
                           extra_compile_args=["-O3"],
                           language='c')
@@ -99,7 +100,7 @@ try:
     ext_modules = get_extensions()
 except ImportError as e:
     warnings.warn(
-        "Unable to build C++ extension with missing dependencies %r." % e)
+        f"Unable to build C++ extension with missing dependencies {e!r}.")
     ext_modules = None
 
 # setup
@@ -110,8 +111,8 @@ setup(
     author='Xavier Dupré',
     author_email='xavier.dupre@gmail.com',
     license="MIT",
-    url="http://www.xavierdupre.fr/app/%s/helpsphinx/index.html" % project_var_name,
-    download_url="https://github.com/sdpython/%s/" % project_var_name,
+    url=f"http://www.xavierdupre.fr/app/{project_var_name}/helpsphinx/index.html",
+    download_url=f"https://github.com/sdpython/{project_var_name}/",
     description=DESCRIPTION,
     long_description=read_readme(__file__),
     cmdclass=default_cmdclass(),
@@ -121,7 +122,7 @@ setup(
     package_dir=package_dir,
     package_data=package_data,
     setup_requires=["pyquicksetup", 'cython', 'scipy', 'scikit-learn'],
-    install_requires=['cython', 'scikit-learn>=0.22.1', 'pandas', 'scipy',
+    install_requires=['cython', 'scikit-learn>=1.0', 'pandas', 'scipy',
                       'matplotlib', 'pandas_streaming', 'numpy>=1.16'],
     ext_modules=ext_modules,  # cythonize(ext_modules),
 )

@@ -51,8 +51,7 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
             opts = self.__class__.available_fcts()
             if fct not in opts:
                 raise ValueError(  # pragma: no cover
-                    "Unknown fct '{}', it should in {}.".format(
-                        fct, list(sorted(opts))))
+                    f"Unknown fct '{fct}', it should in {list(sorted(opts))}.")
         else:
             if fct_inv is None:
                 raise ValueError(
@@ -137,7 +136,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
                 self.random_state)  # pylint: disable=E1101
             lin = rs.permutation(lin)
 
-        for u in perm:
+        perm_keys = list(perm.keys())
+        for u in perm_keys:
             perm[u] = lin[perm[u]]
         self.permutation_ = perm
 
@@ -172,8 +172,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         if self.knn_perm_.dtype in (numpy.int32, numpy.int64):
             return int(res)
         raise NotImplementedError(  # pragma: no cover
-            "The function does not work for type {}.".format(
-                self.knn_perm_.dtype))
+            f"The function does not work for type {self.knn_perm_.dtype}.")
 
     def transform(self, X, y):
         """
@@ -206,7 +205,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             # y is probababilies or raw score
             if len(y.shape) != 2:
                 raise RuntimeError(
-                    "yp should be a matrix but has shape {}.".format(y.shape))
+                    f"yp should be a matrix but has shape {y.shape}.")
             cl = [(v, k) for k, v in self.permutation_.items()]
             cl.sort()
             new_perm = {}

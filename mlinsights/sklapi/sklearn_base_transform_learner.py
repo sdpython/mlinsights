@@ -85,7 +85,7 @@ class SkBaseTransformLearner(SkBaseTransform):
                     method = name
             if method is None:
                 raise ValueError(  # pragma: no cover
-                    "Unable to guess a default method for '{0}'".format(repr(model)))
+                    f"Unable to guess a default method for '{repr(model)}'")
         self.method = method
         self._set_method(method)
 
@@ -105,12 +105,12 @@ class SkBaseTransformLearner(SkBaseTransform):
                 self.method_ = self.model.transform
             else:
                 raise ValueError(  # pragma: no cover
-                    "Unexpected method '{0}'".format(method))
+                    f"Unexpected method '{method}'")
         elif callable(method):
             self.method_ = method
         else:
             raise TypeError(  # pragma: no cover
-                "Unable to find the transform method, method={0}".format(method))
+                f"Unable to find the transform method, method={method}")
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -167,15 +167,14 @@ class SkBaseTransformLearner(SkBaseTransform):
             del values['model']
         elif not hasattr(self, 'model') or self.model is None:
             raise KeyError(  # pragma: no cover
-                "Missing key '{0}' in [{1}]".format(
-                    'model', ', '.join(sorted(values))))
+                f"Missing key 'model' in [{', '.join(sorted(values))}]")
         if 'method' in values:
             self._set_method(values['method'])
             del values['method']
         for k in values:
             if not k.startswith('model__'):
                 raise ValueError(  # pragma: no cover
-                    "Parameter '{0}' must start with 'model__'.".format(k))
+                    f"Parameter '{k}' must start with 'model__'.")
         d = len('model__')
         pars = {k[d:]: v for k, v in values.items()}
         self.model.set_params(**pars)
@@ -193,6 +192,5 @@ class SkBaseTransformLearner(SkBaseTransform):
         """
         rp = repr(self.model)
         rps = repr(self.P)
-        res = "{0}(model={1}, method={2}, {3})".format(
-            self.__class__.__name__, rp, self.method, rps)
+        res = f"{self.__class__.__name__}(model={rp}, method={self.method}, {rps})"
         return "\n".join(textwrap.wrap(res, subsequent_indent="    "))

@@ -20,8 +20,8 @@ pycodestyle
 pydata-sphinx-theme
 pyquickhelper>=1.10
 pyquicksetup
-pylint>=2.9.3
-scikit-learn>=0.22.1
+pylint>=2.14.0
+scikit-learn>=1.0
 scipy
 seaborn
 skl2onnx

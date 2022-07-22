@@ -4,8 +4,6 @@
 """
 import calendar
 import datetime
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches  # pylint: disable=R0402
 
 
 def plot_week_timeseries(time, value, normalise=True,
@@ -15,16 +13,16 @@ def plot_week_timeseries(time, value, normalise=True,
     """
     Shows a timeseries dispatched by days as bars.
 
-    @param      time        dates
-    @param      value       values to display as bars.
-    @param      normalise   normalise data before showing it
-    @param      label       label of the series
-    @param      values2     second series to show as a line
-    @param      label2      label of the second series
-    @param      daynames    names to use for week day names (default is English)
-    @param      xfmt        format number of the X axis
-    @param      ax          existing axis
-    @return                 axis
+    :param time: dates
+    :param value: values to display as bars.
+    :param normalise: normalise data before showing it
+    :param label: label of the series
+    :param values2: second series to show as a line
+    :param label2: label of the second series
+    :param daynames: names to use for week day names (default is English)
+    :param xfmt: format number of the X axis
+    :param ax: existing axis
+    :return: axis
 
     .. plot::
 
@@ -62,7 +60,10 @@ def plot_week_timeseries(time, value, normalise=True,
     input_maxy = 1.
 
     if ax is None:
+        import matplotlib.pyplot as plt  # pylint: disable=C0415
         ax = plt.gca()
+
+    import matplotlib.patches as patches  # pylint: disable=R0402,C0415
 
     # bars
     delta = None

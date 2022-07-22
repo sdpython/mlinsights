@@ -60,7 +60,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         if self.kind == 'poly-slow':
             return self._get_feature_names_poly(input_features)
         raise ValueError(  # pragma: no cover
-            "Unknown extended features '{}'.".format(self.kind))
+            f"Unknown extended features '{self.kind}'.")
 
     def _get_feature_names_poly(self, input_features=None):
         """
@@ -72,8 +72,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
                               i for i in range(0, self.n_input_features_)]
         elif len(input_features) != self.n_input_features_:
             raise ValueError(  # pragma: no cover
-                "input_features should contain {} strings.".format(
-                    self.n_input_features_))
+                f"input_features should contain {self.n_input_features_} strings.")
 
         names = ["1"] if self.poly_include_bias else []
         n = self.n_input_features_
@@ -126,7 +125,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         elif self.kind == 'poly-slow':
             return self._fit_poly(X, y)
         raise ValueError(  # pragma: no cover
-            "Unknown extended features '{}'.".format(self.kind))
+            f"Unknown extended features '{self.kind}'.")
 
     def _fit_poly(self, X, y=None):
         """
@@ -155,7 +154,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         if self.kind == 'poly-slow':
             return self._transform_poly_slow(X)
         raise ValueError(  # pragma: no cover
-            "Unknown extended features '{}'.".format(self.kind))
+            f"Unknown extended features '{self.kind}'.")
 
     def _transform_poly(self, X):
         """

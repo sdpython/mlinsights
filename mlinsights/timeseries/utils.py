@@ -61,7 +61,7 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
     """
     if not hasattr(model, "use_all_past") or not hasattr(model, "past"):
         raise TypeError(  # pragma: no cover
-            "model must be of type BaseTimeSeries not {}".format(type(model)))
+            f"model must be of type BaseTimeSeries not {type(model)}")
     if same_rows:
         if model.use_all_past:
             ncol = X.shape[1] if X is not None else 0
@@ -163,10 +163,10 @@ def check_ts_X_y(model, X, y):
         return  # pragma: no cover
     if X.dtype not in (numpy.float32, numpy.float64):
         raise TypeError(
-            "Features must be of type float32 and float64 not {}.".format(X.dtype))
+            f"Features must be of type float32 and float64 not {X.dtype}.")
     if y is not None and y.dtype not in (numpy.float32, numpy.float64):
         raise TypeError(  # pragma: no cover
-            "Features must be of type float32 and float64 not {}.".format(y.dtype))
+            f"Features must be of type float32 and float64 not {y.dtype}.")
     cst = model.past
     if (hasattr(model, 'preprocessing_') and model.preprocessing_ is not None):
         cst += model.preprocessing_.context_length
@@ -178,11 +178,10 @@ def check_ts_X_y(model, X, y):
         return  # pragma: no cover
     if y.shape[0] != X.shape[0]:
         raise AssertionError(  # pragma: no cover
-            "X and y must have the same number of rows {} != {}.".format(
-                X.shape[0], y.shape[0]))
+            f"X and y must have the same number of rows {X.shape[0]} != {y.shape[0]}.")
     if len(y.shape) > 1 and y.shape[1] != 1:
         raise AssertionError(  # pragma: no cover
-            "y must be 1-dimensional not has shape {}.".format(y.shape))
+            f"y must be 1-dimensional not has shape {y.shape}.")
     if y.shape[0] < cst:
         raise AssertionError(  # pragma: no cover
             "y is not enough past data to predict, "

@@ -27,7 +27,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         X = numpy.array([[1., 2.]]).T
         y = numpy.array([1., 2.])
         c1 = MSE(1, X.shape[0])
-        c2 = SimpleRegressorCriterionFast(X)
+        c2 = SimpleRegressorCriterionFast(1, X.shape[0])
         self.assertNotEmpty(c1)
         self.assertNotEmpty(c2)
         w = numpy.ones((y.shape[0],))
@@ -51,7 +51,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         X = numpy.array([[1., 2., 3.]]).T
         y = numpy.array([1., 2., 3.])
         c1 = MSE(1, X.shape[0])
-        c2 = SimpleRegressorCriterionFast(X)
+        c2 = SimpleRegressorCriterionFast(1, X.shape[0])
         w = numpy.ones((y.shape[0],))
         ind = numpy.arange(y.shape[0]).astype(numpy.int64)
         ys = y.astype(float).reshape((y.shape[0], 1))
@@ -71,7 +71,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         X = numpy.array([[1., 2., 10., 11.]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
         c1 = MSE(1, X.shape[0])
-        c2 = SimpleRegressorCriterionFast(X)
+        c2 = SimpleRegressorCriterionFast(1, X.shape[0])
         w = numpy.ones((y.shape[0],))
         ind = numpy.arange(y.shape[0]).astype(numpy.int64)
         ys = y.astype(float).reshape((y.shape[0], 1))
@@ -115,7 +115,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         X = numpy.array([[1., 2., 10., 11.]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
         c1 = MSE(1, X.shape[0])
-        c2 = SimpleRegressorCriterionFast(X)
+        c2 = SimpleRegressorCriterionFast(1, X.shape[0])
         w = numpy.ones((y.shape[0],))
         ind = numpy.array([0, 3, 2, 1], dtype=ind.dtype)
         ys = y.astype(float).reshape((y.shape[0], 1))
@@ -162,7 +162,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         clr1.fit(X, y)
         p1 = clr1.predict(X)
 
-        crit = SimpleRegressorCriterionFast(X)
+        crit = SimpleRegressorCriterionFast(1, X.shape[0])
         clr2 = DecisionTreeRegressor(criterion=crit, max_depth=1)
         clr2.fit(X, y)
         p2 = clr2.predict(X)
@@ -175,7 +175,8 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         clr1 = DecisionTreeRegressor()
         clr1.fit(X, y)
         p1 = clr1.predict(X)
-        clr2 = DecisionTreeRegressor(criterion=SimpleRegressorCriterionFast(X))
+        clr2 = DecisionTreeRegressor(
+            criterion=SimpleRegressorCriterionFast(1, X.shape[0]))
         clr2.fit(X, y)
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])

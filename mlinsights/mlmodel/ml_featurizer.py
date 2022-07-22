@@ -67,7 +67,7 @@ def is_vector(X):
             return False
         return True
     raise TypeError(  # pragma no cover
-        "Unable to guess if X is a vector, type(X)={0}".format(type(X)))
+        f"Unable to guess if X is a vector, type(X)={type(X)}")
 
 
 def wrap_predict_sklearn(X, fct, many):

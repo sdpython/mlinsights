@@ -42,7 +42,7 @@ class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
                 past=past, delay1=delay1, delay2=delay2, use_all_past=use_all_past)
         if not hasattr(self.estimator, "fit"):
             raise TypeError(  # pragma: no cover
-                "estimator is not an estimator but {}".format(type(estimator)))
+                f"estimator is not an estimator but {type(estimator)}")
 
     def fit(self, X, y, sample_weight=None):
         """

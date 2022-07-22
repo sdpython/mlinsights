@@ -26,7 +26,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
             prefix = former_data[prefix]
         if isinstance(prefix, int):
             raise TypeError(  # pragma: no cover
-                "prefix must be a string.\ninfo={}".format(info))
+                f"prefix must be a string.\ninfo={info}")
         sug = "%s%d" % (prefix, context['n'])
         while sug in context['names']:
             context['n'] += 1
@@ -40,8 +40,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
         res = data[name]
         if isinstance(res, int):
             raise RuntimeError(  # pragma: no cover
-                "Column name is still a number and not a name: {} and {}."
-                "".format(name, data))
+                f"Column name is still a number and not a name: {name} and {data}.")
         return res
 
     if isinstance(pipe, Pipeline):
@@ -181,11 +180,11 @@ def _pipeline_info(pipe, data, context, former_data=None):
             info = [info]
         else:
             raise NotImplementedError(  # pragma: no cover
-                "Not yet implemented for keyword '{}'.".format(type(pipe)))
+                f"Not yet implemented for keyword '{type(pipe)}'.")
         return info
 
     raise NotImplementedError(  # pragma: no cover
-        "Not yet implemented for {}.".format(type(pipe)))
+        f"Not yet implemented for {type(pipe)}.")
 
 
 def pipeline2dot(pipe, data, **params):
@@ -226,7 +225,7 @@ def pipeline2dot(pipe, data, **params):
             data['X%d' % i] = 'sch0:f%d' % i
     elif not isinstance(raw_data, list):
         raise TypeError(  # pragma: no cover
-            "Unexpected data type: {}.".format(type(raw_data)))
+            f"Unexpected data type: {type(raw_data)}.")
 
     options = {
         'orientation': 'portrait',
@@ -240,7 +239,7 @@ def pipeline2dot(pipe, data, **params):
     exp = ["digraph{"]
     for opt in ['orientation', 'pad', 'nodesep', 'ranksep']:
         if opt in options:
-            exp.append("  {}={};".format(opt, options[opt]))
+            exp.append(f"  {opt}={options[opt]};")
     fontsize = 8
     info = [dict(schema_after=data)]
     names = OrderedDict()
@@ -254,8 +253,8 @@ def pipeline2dot(pipe, data, **params):
             schema = line['schema_after']
             labs = []
             for c, col in enumerate(schema):
-                columns[col] = 'sch0:f{0}'.format(c)
-                labs.append("<f{0}> {1}".format(c, col))
+                columns[col] = f'sch0:f{c}'
+                labs.append(f"<f{c}> {col}")
             node = '  sch0[label="{0}",shape=record,fontsize={1}];'.format(
                 "|".join(labs), params.get('fontsize', fontsize))
             exp.append(node)
@@ -280,20 +279,20 @@ def pipeline2dot(pipe, data, **params):
                             inp, pprint.pformat(columns), '\n'.join(exp)))
                 else:
                     nc = columns.get(inp, inp)
-                edge = '  {0} -> node{1};'.format(nc, i)
+                edge = f'  {nc} -> node{i};'
                 exp.append(edge)
 
             labs = []
             for c, out in enumerate(line['outputs']):
-                columns[out] = 'sch{0}:f{1}'.format(i, c)
-                labs.append("<f{0}> {1}".format(c, out))
+                columns[out] = f'sch{i}:f{c}'
+                labs.append(f"<f{c}> {out}")
             node = '  sch{0}[label="{1}",shape=record,fontsize={2}];'.format(
                 i, "|".join(labs), params.get('fontsize', fontsize))
             exp.append(node)
 
             for out in line['outputs']:
                 nc = columns[out]
-                edge = '  node{1} -> {0};'.format(nc, i)
+                edge = f'  node{i} -> {nc};'
                 if edge not in exp:
                     exp.append(edge)
 
@@ -345,9 +344,9 @@ def pipeline2str(pipe, indent=3):
     for coor, model, vs in enumerate_pipeline_models(pipe):
         spaces = " " * indent * (len(coor) - 1)
         if vs is None:
-            msg = "{}{}".format(spaces, model.__class__.__name__)
+            msg = f"{spaces}{model.__class__.__name__}"
         else:
             v = ','.join(map(str, vs))
-            msg = "{}{}({})".format(spaces, model.__class__.__name__, v)
+            msg = f"{spaces}{model.__class__.__name__}({v})"
         rows.append(msg)
     return "\n".join(rows)

@@ -21,7 +21,7 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
 
     This will overwrite the 'distances' array in-place.
 
-    :param norm: 'l1' or 'l2'
+    :param norm: 'L1' or 'L2'
     :param X:  numpy array, shape (n_sample, n_features)
         Input data.
     :param sample_weight: array-like, shape (n_samples,)
@@ -37,15 +37,15 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
         cluster center.
     """
     n_samples = X.shape[0]
-    if norm == 'l2':
+    if norm == 'L2':
         labels, mindist = pairwise_distances_argmin_min(
             X=X, Y=centers, metric='euclidean', metric_kwargs={'squared': True})
-    elif norm == 'l1':
+    elif norm == 'L1':
         labels, mindist = pairwise_distances_argmin_min(
             X=X, Y=centers, metric='manhattan')
     else:  # pragma no cover
         raise NotImplementedError(
-            "Not implemented for norm '{}'.".format(norm))
+            f"Not implemented for norm '{norm}'.")
     # cython k-means code assumes int32 inputs
     labels = labels.astype(numpy.int32, copy=False)
     if n_samples == distances.shape[0]:
