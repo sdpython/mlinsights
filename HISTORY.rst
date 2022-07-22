@@ -5,7 +5,13 @@
 History
 =======
 
-current - 2022-05-18 - 0.00Mb
+current - 2022-07-22 - 0.00Mb
+=============================
+
+* #105: Update for python 3.10 (2022-07-22)
+* #108: Uses f strings (2022-07-19)
+
+0.3.631 - 2022-05-19 - 0.52Mb
 =============================
 
 * #107: Updates CI for scikit-learn==1.1 (2022-05-18)
@@ -61,20 +67,8 @@ current - 2022-05-18 - 0.00Mb
 * #82: Fixes #81, skl 0.22, 0.23 together (2020-08-06)
 * #81: Make mlinsights work with scikit-learn 0.22 and 0.23 (2020-08-06)
 * #79: pipeline2dot fails with 'passthrough' (2020-07-16)
-
-0.2.463 - 2020-06-29 - 0.83Mb
-=============================
-
 * #78: Removes strong dependency on pyquickhelper (2020-06-29)
-
-0.2.450 - 2020-06-08 - 0.83Mb
-=============================
-
 * #77: Add parameter trainable to TransferTransformer (2020-06-07)
-
-0.2.447 - 2020-06-03 - 0.83Mb
-=============================
-
 * #76: ConstraintKMeans does not produce convex clusters. (2020-06-03)
 * #75: Moves kmeans with constraint from papierstat. (2020-05-27)
 * #74: Fix PipelineCache after as scikti-learn 0.23 changed the way parameters is handle in pipelines (2020-05-15)

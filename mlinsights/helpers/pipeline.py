@@ -112,7 +112,8 @@ class BaseEstimatorDebugInformation:
         """
         Tries to produce a readable message.
         """
-        rows = [f'BaseEstimatorDebugInformation({self.model.__class__.__name__})']
+        rows = [
+            f'BaseEstimatorDebugInformation({self.model.__class__.__name__})']
         for k in sorted(self.inputs):
             if k in self.outputs:
                 rows.append('  ' + k + '(')
