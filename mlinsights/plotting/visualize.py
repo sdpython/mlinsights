@@ -219,8 +219,7 @@ def pipeline2dot(pipe, data, **params):
     elif isinstance(raw_data, numpy.ndarray):
         if len(raw_data.shape) != 2:
             raise NotImplementedError(  # pragma: no cover
-                f"Unexpected training data dimension: {data.shape}."
-                f"")  # pylint: disable=E1101
+                f"Unexpected training data dimension {raw_data.shape}.")
         for i in range(raw_data.shape[1]):
             data['X%d' % i] = 'sch0:f%d' % i
     elif not isinstance(raw_data, list):
