@@ -6,17 +6,20 @@ import unittest
 import numpy
 from numpy.random import RandomState
 from sklearn import datasets
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.manifold import TSNE
-from pyquickhelper.pycode import ExtTestCase, skipif_circleci
+from pyquickhelper.pycode import (
+    ExtTestCase, skipif_circleci, ignore_warnings)
 from mlinsights.mlmodel import PredictableTSNE
 from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
 
 
 class TestPredictableTSNE(ExtTestCase):
 
+    @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
@@ -28,6 +31,7 @@ class TestPredictableTSNE(ExtTestCase):
         self.assertNotEmpty(pred)
 
     @skipif_circleci('stuck')
+    @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_knn(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
@@ -39,6 +43,7 @@ class TestPredictableTSNE(ExtTestCase):
         self.assertIsInstance(clr.estimator_, KNeighborsRegressor)
         self.assertEqual(pred.shape, (X.shape[0], 2))
 
+    @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_intercept_weights(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
@@ -48,15 +53,18 @@ class TestPredictableTSNE(ExtTestCase):
         self.assertGreater(clr.loss_, 0)
         self.assertEqual(acc.shape, (X.shape[0], 2))
 
+    @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_pickle(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
         test_sklearn_pickle(lambda: PredictableTSNE(), X, y)
 
+    @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_clone(self):
         self.maxDiff = None
         test_sklearn_clone(lambda: PredictableTSNE())
 
+    @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_relevance(self):
         state = RandomState(seed=0)
         Xs = []
