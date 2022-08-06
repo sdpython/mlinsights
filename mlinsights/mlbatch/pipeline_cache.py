@@ -2,7 +2,7 @@
 @file
 @brief Caches training.
 """
-from distutils.version import StrictVersion
+from distutils.version import StrictVersion  # pylint: disable=W0402
 from sklearn import __version__ as skl_version
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline, _fit_transform_one
