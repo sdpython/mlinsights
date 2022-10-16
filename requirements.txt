@@ -29,4 +29,5 @@ skl2onnx
 sphinx>=5.0
 sphinx_gallery
 tqdm
+traitlets
 wheel
