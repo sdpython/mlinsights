@@ -4,6 +4,7 @@
 @brief Implements a quantile non-linear regression.
 """
 import inspect
+import random
 import numpy as np
 from sklearn.base import RegressorMixin
 from sklearn.utils import check_X_y, column_or_1d
@@ -15,90 +16,101 @@ from sklearn.neural_network import MLPRegressor
 
 class LinkedMLPBase:
 
+    def _initialize(self, y, layer_units, dtype):
+        super()._initialize(y, layer_units, dtype)
+        if hasattr(self, "linked_"):
+            return
+        if self.linked is None:
+            self.linked_ = None
+            return
+        if isinstance(self.linked, int):
+
+            def _get_random(layer, selected, n_sel):
+                indices = []
+                c = self.coefs_[layer]
+                for i in range(c.shape[0]):
+                    for j in range(c.shape[1]):
+                        key = layer, "c", i, j
+                        if key in selected:
+                            continue
+                        indices.append(key)
+                c = self.intercepts_[layer]
+                for i in range(c.shape[0]):
+                    key = layer, "i", i
+                    if key in selected:
+                        continue
+                    indices.append(key)
+
+                random.shuffle(indices)
+                inds = []
+                pos = 0
+                nis = set()
+                while len(inds) < n_sel and pos < len(indices):
+                    ind = indices[pos]
+                    if ind[2] in nis:
+                        pos += 1
+                        continue
+                    inds.append(pos)
+                    nis.add(ind[2])
+                    pos += 1
+                return tuple(indices[p] for p in inds)
+
+            n_coefs = sum([c.size for c in self.coefs_] +
+                          [c.size for c in self.intercepts_])
+            linked = []
+            selected = set()
+            unchanged = 0
+            while len(linked) < n_coefs and unchanged < 10:
+                layer = random.randint(0, len(self.coefs_) - 1)
+                inds = _get_random(layer, selected, self.linked)
+                if len(inds) <= 1:
+                    unchanged += 1
+                    continue
+                unchanged = 0
+                for i in inds:
+                    selected.add(i)
+                linked.append(inds)
+            self.linked_ = linked
+            self._fix_links(self.coefs_, self.intercepts_)
+        elif isinstance(self.linked, list):
+            self.linked_ = self.linked
+            self._fix_links(self.coefs_, self.intercepts_)
+        else:
+            raise TypeError(f"Unexpected type for linked {type(self.linked)}.")
+
+    def _fix_links(self, coefs, intercepts):
+        if self.linked_ is None:
+            return
+        for links in self.linked_:
+            if len(links) <= 1:
+                raise RuntimeError(f"Unexpected value for link {links}.")
+            total = 0
+            for key in links:
+                if key[1] == "c":
+                    v = coefs[key[0]][key[2:]]
+                else:
+                    v = intercepts[key[0]][key[2]]
+                total += v
+            total /= len(links)
+            for key in links:
+                if key[1] == "c":
+                    coefs[key[0]][key[2:]] = total
+                else:
+                    intercepts[key[0]][key[2]] = total
+
     def _backprop(self, X, y, activations, deltas, coef_grads,
                   intercept_grads):
-        """
-        Computes the MLP loss function and its corresponding derivatives
-        with respect to each parameter: weights and bias vectors.
-
-        :param X: {array-like, sparse matrix}, shape (n_samples, n_features)
-            The input data.
-        :param y: array-like, shape (n_samples,)
-            The target values.
-        :param activations: list, length = n_layers - 1
-             The ith element of the list holds the values of the ith layer.
-        :param deltas: list, length = n_layers - 1
-            The ith element of the list holds the difference between the
-            activations of the i + 1 layer and the backpropagated error.
-            More specifically, deltas are gradients of loss with respect to z
-            in each layer, where z = wx + b is the value of a particular layer
-            before passing through the activation function
-        :param coef_grads: list, length = n_layers - 1
-            The ith element contains the amount of change used to update the
-            coefficient parameters of the ith layer in an iteration.
-        :param intercept_grads: list, length = n_layers - 1
-            The ith element contains the amount of change used to update the
-            intercept parameters of the ith layer in an iteration.
-        :return: loss, float
-        :return: coef_grads, list, length = n_layers - 1
-        :return: intercept_grads, list, length = n_layers - 1
-        """
-        stop
-        n_samples = X.shape[0]
-
-        # Forward propagate
-        activations = self._forward_pass(activations)
-
-        # Get loss
-        loss_func_name = self.loss
-        if loss_func_name == 'log_loss' and self.out_activation_ == 'logistic':
-            loss_func_name = 'binary_log_loss'
-        loss_function = self._get_loss_function(loss_func_name)
-        loss = loss_function(y, activations[-1])
-        # Add L2 regularization term to loss
-        values = np.sum(
-            np.array([np.dot(s.ravel(), s.ravel()) for s in self.coefs_]))
-        loss += (0.5 * self.alpha) * values / n_samples
-
-        # Backward propagate
-        last = self.n_layers_ - 2
-
-        # The calculation of delta[last] here works with following
-        # combinations of output activation and loss function:
-        # sigmoid and binary cross entropy, softmax and categorical cross
-        # entropy, and identity with squared loss
-        deltas[last] = activations[-1] - y
-
-        # We insert the following modification to modify the gradient
-        # due to the modification of the loss function.
-        deltas[last] = self._modify_loss_derivatives(deltas[last])
-
-        # recent version of scikit-learn
-        # Compute gradient for the last layer
-        self._compute_loss_grad(
-            last, n_samples, activations, deltas, coef_grads, intercept_grads)
-
-        inplace_derivative = DERIVATIVES[self.activation]
-        # Iterate over the hidden layers
-        for i in range(self.n_layers_ - 2, 0, -1):
-            deltas[i - 1] = safe_sparse_dot(deltas[i], self.coefs_[i].T)
-            inplace_derivative(activations[i], deltas[i - 1])
-
-            self._compute_loss_grad(
-                i - 1, n_samples, activations, deltas, coef_grads,
-                intercept_grads)
-
-        return loss, coef_grads, intercept_grads
+        batch_loss, coef_grads, intercept_grads = super()._backprop(
+            X, y, activations, deltas, coef_grads, intercept_grads)
+        self._fix_links(coef_grads, intercept_grads)
+        return batch_loss, coef_grads, intercept_grads
 
 
-class LinkedMLPRegressor(MLPRegressor, LinkedMLPBase):
+class LinkedMLPRegressor(LinkedMLPBase, MLPRegressor):
     """
-    Quantile MLP Regression or neural networks regression
-    trained with norm :epkg:`L1`. This class inherits from
-    :epkg:`sklearn:neural_networks:MLPRegressor`.
-    This model optimizes the absolute-loss using LBFGS or stochastic gradient
-    descent. See @see cl CustomizedMultilayerPerceptron and
-    @see fn absolute_loss.
+    A neural networks regression for which a subset a coefficients
+    share the same value. In practice, it should make the training
+    more stable. See parameter *linked*.
 
     :param hidden_layer_sizes: tuple, length = n_layers - 2, default (100,)
         The ith element represents the number of neurons in the ith
@@ -203,6 +215,8 @@ class LinkedMLPRegressor(MLPRegressor, LinkedMLPBase):
     :param n_iter_no_change: int, optional, default 10
         Maximum number of epochs to not meet ``tol`` improvement.
         Only effective when solver='sgd' or 'adam'
+    :param linked: can be a float to defined the ratio of linked coefficients,
+        or list of set of indices
 
     Fitted attributes:
 
@@ -235,7 +249,7 @@ class LinkedMLPRegressor(MLPRegressor, LinkedMLPBase):
                  nesterovs_momentum=True, early_stopping=False,
                  validation_fraction=0.1, beta_1=0.9, beta_2=0.999,
                  epsilon=1e-8, n_iter_no_change=10,
-                 max_fun=15000):
+                 max_fun=15000, linked=None):
         """
         See :epkg:`sklearn:neural_networks:MLPRegressor`
         """
@@ -252,3 +266,4 @@ class LinkedMLPRegressor(MLPRegressor, LinkedMLPBase):
                      validation_fraction=validation_fraction,
                      beta_1=beta_1, beta_2=beta_2, epsilon=epsilon,
                      n_iter_no_change=n_iter_no_change, max_fun=max_fun)
+        self.linked = linked
