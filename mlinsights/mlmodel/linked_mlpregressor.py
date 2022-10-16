@@ -9,6 +9,10 @@ from sklearn.neural_network import MLPRegressor
 
 
 class LinkedMLPBase:
+    """
+    Overloads methods from :epkg:`sklearn:neural_networks:MLPRegressor`
+    and insert the logic to train linked coefficients.
+    """
 
     def _initialize(self, y, layer_units, dtype):
         super()._initialize(y, layer_units, dtype)
