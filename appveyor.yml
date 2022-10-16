@@ -13,7 +13,6 @@ install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
   # for many packages
   - pip install llvmlite numba
-  - "%PYTHON%\\Scripts\\pip install -r requirements-win.txt"
   # install precompiled versions not available on pypi
   - "%PYTHON%\\Scripts\\pip install torch torchvision torchaudio"
   # other dependencies
