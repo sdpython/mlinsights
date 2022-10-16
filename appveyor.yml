@@ -16,7 +16,7 @@ install:
   # install precompiled versions not available on pypi
   - "%PYTHON%\\Scripts\\pip install torch torchvision torchaudio"
   # other dependencies
-  - "%PYTHON%\\Scripts\\pip install -r requirements.txt --no-deps"
+  - "%PYTHON%\\Scripts\\pip install -r requirements.txt"
   - "%PYTHON%\\Scripts\\pip install scikit-learn%SKL%"
 build: off
 

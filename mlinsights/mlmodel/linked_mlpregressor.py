@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=E1101
 """
 @file
 @brief Implements a quantile non-linear regression.
 """
-import inspect
 import random
-import numpy as np
-from sklearn.base import RegressorMixin
-from sklearn.utils import check_X_y, column_or_1d
-from sklearn.utils.validation import check_is_fitted
-from sklearn.utils.extmath import safe_sparse_dot
-from sklearn.neural_network._base import DERIVATIVES, LOSS_FUNCTIONS
 from sklearn.neural_network import MLPRegressor
 
 
