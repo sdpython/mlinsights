@@ -5,7 +5,6 @@
 import unittest
 import numpy
 from numpy.random import random
-import pandas
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.exceptions import ConvergenceWarning
