@@ -61,7 +61,7 @@ class TestQuantileRegression(ExtTestCase):
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
-        self.assertEqualArray(clr.coef_, clq.coef_)
+        self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
 
     @unittest.skipIf(
         compare_module_version(sklver, "0.24") == -1,
@@ -77,7 +77,7 @@ class TestQuantileRegression(ExtTestCase):
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
-        self.assertEqualArray(clr.coef_, clq.coef_)
+        self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
         self.assertGreater(clr.coef_.min(), 0)
         self.assertGreater(clq.coef_.min(), 0)
 
@@ -92,7 +92,7 @@ class TestQuantileRegression(ExtTestCase):
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
-        self.assertEqualArray(clr.coef_, clq.coef_)
+        self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
 
     def test_quantile_regression_diff(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
