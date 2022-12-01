@@ -12,7 +12,7 @@ init:
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
   # for many packages
-  - pip install llvmlite numba
+  - "%PYTHON%\\Scripts\\pip install llvmlite numba"
   # install precompiled versions not available on pypi
   - "%PYTHON%\\Scripts\\pip install torch torchvision torchaudio"
   # other dependencies

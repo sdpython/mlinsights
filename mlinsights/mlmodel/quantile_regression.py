@@ -29,7 +29,7 @@ class QuantileLinearRegression(LinearRegression):
     value.
     """
 
-    def __init__(self, fit_intercept=True, normalize=False, copy_X=True,
+    def __init__(self, fit_intercept=True, copy_X=True,
                  n_jobs=1, delta=0.0001, max_iter=10, quantile=0.5,
                  positive=False, verbose=False):
         """
@@ -37,13 +37,6 @@ class QuantileLinearRegression(LinearRegression):
             whether to calculate the intercept for this model. If set
             to False, no intercept will be used in calculations
             (e.g. data is expected to be already centered).
-        :param normalize: boolean, optional, default False
-            This parameter is ignored when ``fit_intercept`` is set to False.
-            If True, the regressors X will be normalized before regression by
-            subtracting the mean and dividing by the l2-norm.
-            If you wish to standardize, please use
-            :class:`sklearn.preprocessing.StandardScaler` before calling ``fit`` on
-            an estimator with ``normalize=False``.
         :param copy_X: boolean, optional, default True
             If True, X will be copied; else, it may be overwritten.
         :param n_jobs: int, optional, default 1
@@ -65,12 +58,12 @@ class QuantileLinearRegression(LinearRegression):
         """
         try:
             LinearRegression.__init__(
-                self, fit_intercept=fit_intercept, normalize=normalize,
+                self, fit_intercept=fit_intercept,
                 copy_X=copy_X, n_jobs=n_jobs, positive=positive)
         except TypeError:
             # scikit-learn<0.24
             LinearRegression.__init__(
-                self, fit_intercept=fit_intercept, normalize=normalize,
+                self, fit_intercept=fit_intercept,
                 copy_X=copy_X, n_jobs=n_jobs)
         self.max_iter = max_iter
         self.verbose = verbose
@@ -140,12 +133,12 @@ class QuantileLinearRegression(LinearRegression):
 
         try:
             clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                                   n_jobs=self.n_jobs, normalize=self.normalize,
+                                   n_jobs=self.n_jobs,
                                    positive=self.positive)
         except AttributeError:
             # scikit-learn<0.24
             clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                                   n_jobs=self.n_jobs, normalize=self.normalize)
+                                   n_jobs=self.n_jobs)
 
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0
