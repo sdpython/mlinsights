@@ -86,11 +86,11 @@ Short example:
     :showcode:
     :warningout: FutureWarning
 
-    from sklearn.datasets import load_boston
+    from sklearn.datasets import load_diabetes
     from sklearn.linear_model import LinearRegression
     from mlinsights.mlmodel import QuantileLinearRegression
 
-    data = load_boston()
+    data = load_diabetes()
     X, y = data.data, data.target
 
     clq = QuantileLinearRegression()
