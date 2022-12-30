@@ -15,8 +15,9 @@ local_template = os.path.join(os.path.abspath(
 
 set_sphinx_variables(__file__, "mlinsights", "Xavier Dupré", 2021,
                      "pydata_sphinx_theme", ['_static'],
-                     locals(), extlinks=dict(
-                         issue=('https://github.com/sdpython/mlinsights/issues/%s', 'issue')),
+                     locals(), extlinks=dict(issue=(
+                         'https://github.com/sdpython/mlinsights/issues/%s',
+                         'issue %s')),
                      title="mlinsights", book=True)
 
 blog_root = "http://www.xavierdupre.fr/app/mlinsights/helpsphinx/"
