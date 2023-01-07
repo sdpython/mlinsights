@@ -55,9 +55,9 @@ def get_extensions():
     extensions = ["direct_blas_lapack"]
     spl = sklearn.__version__.split('.')
     vskl = (int(spl[0]), int(spl[1]))
-    if vskl >= (0, 24):
+    if vskl >= (1, 2):
         extensions.append(("_piecewise_tree_regression_common",
-                           "_piecewise_tree_regression_common024"))
+                           "_piecewise_tree_regression_common120"))
     else:
         raise ImportError("Cannot build mlisinghts for scikit-learn<1.0.")
 
@@ -122,7 +122,7 @@ setup(
     package_dir=package_dir,
     package_data=package_data,
     setup_requires=["pyquicksetup", 'cython', 'scipy', 'scikit-learn'],
-    install_requires=['cython', 'scikit-learn>=1.0', 'pandas', 'scipy',
+    install_requires=['cython', 'scikit-learn>=1.2', 'pandas', 'scipy',
                       'matplotlib', 'pandas_streaming', 'numpy>=1.16'],
     ext_modules=ext_modules,  # cythonize(ext_modules),
 )

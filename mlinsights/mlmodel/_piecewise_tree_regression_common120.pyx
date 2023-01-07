@@ -229,8 +229,8 @@ def _test_criterion_init(Criterion criterion,
                          SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     criterion.init(y,
-                   &sample_weight[0], weighted_n_samples,
-                   &samples[0], start, end)
+                   sample_weight, weighted_n_samples,
+                   samples, start, end)
 
 
 def _test_criterion_check(Criterion criterion):
