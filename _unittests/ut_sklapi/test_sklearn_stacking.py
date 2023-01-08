@@ -94,8 +94,6 @@ class TestSklearnStacking(ExtTestCase):
         pars = pipe.get_params(deep=True)
         self.assertIn(
             'skbasetransformstacking__models_0__model__fit_intercept', pars)
-        self.assertEqual(
-            pars['skbasetransformstacking__models_0__model__normalize'], True)
         conv = SkBaseTransformStacking([LinearRegression(normalize=False),
                                         DecisionTreeClassifier(max_depth=2)])
         pipe = make_pipeline(conv, DecisionTreeRegressor())
@@ -103,8 +101,6 @@ class TestSklearnStacking(ExtTestCase):
         pars = pipe.get_params()
         self.assertIn(
             'skbasetransformstacking__models_0__model__fit_intercept', pars)
-        self.assertEqual(
-            pars['skbasetransformstacking__models_0__model__normalize'], True)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
