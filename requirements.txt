@@ -21,7 +21,7 @@ pydata-sphinx-theme
 pyquickhelper>=1.10
 pyquicksetup
 pylint>=2.14.0
-scikit-learn>=1.2
+git+https://github.com/scikit-learn/scikit-learn.git
 scipy
 seaborn
 skl2onnx
