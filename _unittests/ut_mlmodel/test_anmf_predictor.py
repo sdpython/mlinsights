@@ -45,8 +45,8 @@ class TestApproximateNMFPredictor(ExtTestCase):
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
         got = mod.predict(mat)
-        sc1 = mean_squared_error(mat.todense(), exp)
-        sc2 = mean_squared_error(mat.todense(), got)
+        sc1 = mean_squared_error(numpy.asarray(mat.todense()), exp)
+        sc2 = mean_squared_error(numpy.asarray(mat.todense()), got)
         self.assertGreater(sc1, sc2)
 
         mat2 = numpy.array([[1, 1, 1, 1]], dtype=numpy.float64)
@@ -68,8 +68,8 @@ class TestApproximateNMFPredictor(ExtTestCase):
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
         got = mod.predict(mat)
-        sc1 = mean_squared_error(mat.todense(), exp)
-        sc2 = mean_squared_error(mat.todense(), got)
+        sc1 = mean_squared_error(numpy.asarray(mat.todense()), exp)
+        sc2 = mean_squared_error(numpy.asarray(mat.todense()), got)
         self.assertGreater(sc1, sc2)
 
         mat2 = numpy.array([[1, 1, 1, 1]], dtype=numpy.float64)
@@ -77,8 +77,8 @@ class TestApproximateNMFPredictor(ExtTestCase):
         exp2 = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat2))
         got2 = mod.predict(mat2)
-        sc1 = mean_squared_error(mat2.todense(), exp2)
-        sc2 = mean_squared_error(mat2.todense(), got2)
+        sc1 = mean_squared_error(numpy.asarray(mat2.todense()), exp2)
+        sc2 = mean_squared_error(numpy.asarray(mat2.todense()), got2)
         self.assertGreater(sc1, sc2)
 
     def test_anmf_predictor_positive(self):
@@ -118,8 +118,8 @@ class TestApproximateNMFPredictor(ExtTestCase):
         exp = mod.estimator_nmf_.inverse_transform(
             mod.estimator_nmf_.transform(mat))
         got = mod.predict(mat)
-        sc1 = mean_squared_error(mat.todense(), exp)
-        sc2 = mean_squared_error(mat.todense(), got)
+        sc1 = mean_squared_error(numpy.asarray(mat.todense()), exp)
+        sc2 = mean_squared_error(numpy.asarray(mat.todense()), got)
         self.assertGreater(sc1, sc2)
         mx = numpy.min(got)
         self.assertGreater(mx, 0)

@@ -63,7 +63,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
 
         # Criterion interface
         self.sample_weight = None
-        self.samples_indices = None
+        self.sample_indices = None
 
         # allocation
         if self.sample_w == NULL:
@@ -93,7 +93,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
                          const DOUBLE_t[:, ::1] y,
                          const DOUBLE_t[:] sample_weight,
                          double weighted_n_samples,
-                         const SIZE_t[:] samples_indices, 
+                         const SIZE_t[:] sample_indices, 
                          SIZE_t start, SIZE_t end) nogil except -1:
         """
         Initializes the criterion.
@@ -127,7 +127,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
 
         # Filling accumulators.
         for ki in range(<int>start, <int>end):
-            ks = samples_indices[ki]
+            ks = sample_indices[ki]
             self.sample_i[ki] = ks
             self.sample_w[ki] = sample_weight[ks] if sample_weight is not None else 1.
             self.sample_wy[ki] = self.sample_w[ki] * y[ks, 0]

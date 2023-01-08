@@ -91,7 +91,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
 
         # Criterion interface
         self.sample_weight = None
-        self.samples_indices = None
+        self.sample_indices = None
 
         # allocation
         if self.sample_w == NULL:
@@ -138,21 +138,20 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         :return: an instance of :class:`LinearRegressorCriterion`
         """
         cdef SIZE_t i
-        cdef DOUBLE_t* ws
+        cdef DOUBLE_t[:] ws
         cdef double sum
-        cdef SIZE_t* parr = <SIZE_t*> calloc(y.shape[0], sizeof(SIZE_t))
+        cdef SIZE_t[:] parr = numpy.empty(y.shape[0], dtype=numpy.int64)
         for i in range(0, y.shape[0]):
             parr[i] = i
         if sample_weight is None:
             sum = <DOUBLE_t>y.shape[0]
-            ws = NULL
+            ws = None
         else:
             sum = sample_weight.sum()
-            ws = &sample_weight[0]
+            ws = sample_weight
 
         obj = LinearRegressorCriterion(1 if len(y.shape) <= 1 else y.shape[0], X)
         obj.init(y, ws, sum, parr, 0, y.shape[0])            
-        free(parr)
         return obj
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
@@ -178,7 +177,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                          const DOUBLE_t[:, ::1] y,
                          const DOUBLE_t[:] sample_weight,
                          double weighted_n_samples,
-                         const SIZE_t[:] samples, 
+                         const SIZE_t[:] sample_indices, 
                          SIZE_t start, SIZE_t end) nogil except -1:
         """
         Initializes the criterion.
@@ -212,7 +211,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         # Filling accumulators.
         idx = start * self.nbvar
         for ki in range(<int>start, <int>end):
-            ks = samples_indices[ki]
+            ks = sample_indices[ki]
             self.sample_i[ki] = ks
             self.sample_w[ki] = sample_weight[ks] if sample_weight is not None else 1.
             self.sample_wy[ki] = self.sample_w[ki] * y[ks, 0]

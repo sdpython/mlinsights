@@ -8,7 +8,10 @@ from numpy.random import random
 import pandas
 from sklearn.linear_model import LogisticRegression
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import (
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv)
 from mlinsights.mlmodel.piecewise_estimator import PiecewiseClassifier
 
 
@@ -161,19 +164,19 @@ class TestPiecewiseClassifier(ExtTestCase):
         X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
-        test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
-        test_sklearn_pickle(lambda: PiecewiseClassifier(), X, Y)
+        run_test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
+        run_test_sklearn_pickle(lambda: PiecewiseClassifier(), X, Y)
 
     def test_piecewise_classifier_clone(self):
-        test_sklearn_clone(lambda: PiecewiseClassifier(verbose=True))
+        run_test_sklearn_clone(lambda: PiecewiseClassifier(verbose=True))
 
     def test_piecewise_classifier_grid_search(self):
         X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: PiecewiseClassifier(), X, Y), ValueError)
-        res = test_sklearn_grid_search_cv(lambda: PiecewiseClassifier(),
+        res = run_test_sklearn_grid_search_cv(lambda: PiecewiseClassifier(),
                                           X, Y, binner__max_depth=[2, 3])
         self.assertIn('model', res)
         self.assertIn('score', res)

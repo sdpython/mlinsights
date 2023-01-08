@@ -12,9 +12,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import (
-    test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv,
-    DecisionTreeLogisticRegression
-)
+    run_test_sklearn_pickle, run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv, DecisionTreeLogisticRegression)
 from mlinsights.mltree import predict_leaves
 
 
@@ -63,22 +62,23 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
-        test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
-        test_sklearn_pickle(lambda: DecisionTreeLogisticRegression(
+        run_test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
+        run_test_sklearn_pickle(lambda: DecisionTreeLogisticRegression(
             fit_improve_algo=None), X, Y)
 
     def test_classifier_clone(self):
-        test_sklearn_clone(
+        run_test_sklearn_clone(
             lambda: DecisionTreeLogisticRegression(fit_improve_algo=None))
 
     def test_classifier_grid_search(self):
         X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y), ValueError)
-        res = test_sklearn_grid_search_cv(lambda: DecisionTreeLogisticRegression(fit_improve_algo=None),
-                                          X, Y, max_depth=[2, 3])
+        res = run_test_sklearn_grid_search_cv(
+            lambda: DecisionTreeLogisticRegression(fit_improve_algo=None),
+            X, Y, max_depth=[2, 3])
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)

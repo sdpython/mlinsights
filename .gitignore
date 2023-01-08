@@ -80,7 +80,7 @@ build/
 *.pidb
 *.log
 *.scc
-*.pyd
+*.so
 
 # Visual C++ cache files
 ipch/

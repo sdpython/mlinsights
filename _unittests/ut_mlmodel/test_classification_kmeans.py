@@ -15,8 +15,8 @@ except ImportError:
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import (
-    ClassifierAfterKMeans, test_sklearn_pickle, test_sklearn_clone,
-    test_sklearn_grid_search_cv)
+    ClassifierAfterKMeans, run_test_sklearn_pickle,
+    run_test_sklearn_clone, run_test_sklearn_grid_search_cv)
 
 
 class TestClassifierAfterKMeans(ExtTestCase):
@@ -58,7 +58,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         try:
-            test_sklearn_pickle(lambda: ClassifierAfterKMeans(), X, y)
+            run_test_sklearn_pickle(lambda: ClassifierAfterKMeans(), X, y)
         except AttributeError as e:
             if compare_module_version(sklver, "0.24") < 0:
                 return
@@ -66,16 +66,16 @@ class TestClassifierAfterKMeans(ExtTestCase):
 
     def test_classification_kmeans_clone(self):
         self.maxDiff = None
-        test_sklearn_clone(lambda: ClassifierAfterKMeans())
+        run_test_sklearn_clone(lambda: ClassifierAfterKMeans())
 
     @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans_grid_search(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: ClassifierAfterKMeans(), X, y), ValueError)
         try:
-            res = test_sklearn_grid_search_cv(
+            res = run_test_sklearn_grid_search_cv(
                 lambda: ClassifierAfterKMeans(),
                 X, y, c_n_clusters=[2, 3])
         except AttributeError as e:

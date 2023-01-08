@@ -43,7 +43,7 @@ def train_test_split_with_none(X, y=None, sample_weight=None, random_state=0):
     return X_train, y_train, w_train, X_test, y_test, w_test
 
 
-def test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
+def run_test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
     """
     Creates a model, fit, predict and check the prediction
     are similar after the model was pickled, unpickled.
@@ -108,7 +108,7 @@ def _get_test_instance():
     return cls()
 
 
-def test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
+def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
     """
     Tests that a cloned model is similar to the original one.
 
@@ -233,7 +233,7 @@ def assert_estimator_equal(esta, estb, ext=None):
                         list(sorted(esta.__dict__)), list(sorted(estb.__dict__))))
 
 
-def test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid_params):
+def run_test_sklearn_grid_search_cv(fct_model, X, y=None, sample_weight=None, **grid_params):
     """
     Creates a model, checks that a grid search works with it.
 

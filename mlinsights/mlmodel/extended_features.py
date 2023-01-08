@@ -46,7 +46,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         self.poly_include_bias = poly_include_bias
         self.poly_interaction_only = poly_interaction_only
 
-    def get_feature_names(self, input_features=None):
+    def get_feature_names_out(self, input_features=None):
         """
         Returns feature names for output features.
 
@@ -118,7 +118,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         :return: self : instance
         """
         self.n_input_features_ = X.shape[1]
-        self.n_output_features_ = len(self.get_feature_names())
+        self.n_output_features_ = len(self.get_feature_names_out())
 
         if self.kind == 'poly':
             return self._fit_poly(X, y)

@@ -13,7 +13,9 @@ from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import CategoriesToIntegers
 from mlinsights.mlmodel import (
-    test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv)
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv)
 
 skipped_warnings = (ConvergenceWarning, UserWarning, FitFailedWarning)
 
@@ -103,12 +105,12 @@ class TestCategoriesToIntegers(ExtTestCase):
         data = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "adult_set.txt")
         df = pandas.read_csv(data, sep="\t")
-        test_sklearn_pickle(lambda: CategoriesToIntegers(skip_errors=True), df)
+        run_test_sklearn_pickle(lambda: CategoriesToIntegers(skip_errors=True), df)
 
     @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_clone(self):
         self.maxDiff = None
-        test_sklearn_clone(lambda: CategoriesToIntegers())
+        run_test_sklearn_clone(lambda: CategoriesToIntegers())
 
     @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_grid_search(self):
@@ -119,19 +121,19 @@ class TestCategoriesToIntegers(ExtTestCase):
         y = df['income']  # pylint: disable=E1136
         pipe = make_pipeline(CategoriesToIntegers(),
                              LogisticRegression())
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: pipe, df), ValueError)
         if (compare_module_version(sklver, "0.24") >= 0 and  # pylint: disable=R1716
                 compare_module_version(pandas.__version__, "1.3") < 0):
             self.assertRaise(
-                lambda: test_sklearn_grid_search_cv(
+                lambda: run_test_sklearn_grid_search_cv(
                     lambda: pipe, X, y, categoriestointegers__single=[True, False]),
                 ValueError, "Unable to find category value")
         pipe = make_pipeline(CategoriesToIntegers(),
                              Imputer(strategy='most_frequent'),
                              LogisticRegression(n_jobs=1))
         try:
-            res = test_sklearn_grid_search_cv(
+            res = run_test_sklearn_grid_search_cv(
                 lambda: pipe, X, y, categoriestointegers__single=[True, False],
                 categoriestointegers__skip_errors=[True])
         except AttributeError as e:
