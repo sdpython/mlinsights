@@ -81,6 +81,7 @@ build/
 *.log
 *.scc
 *.so
+*.pyd
 
 # Visual C++ cache files
 ipch/

@@ -249,7 +249,7 @@ def tree_leave_neighbors(model):
     cells = numpy.full(shape, 0, numpy.int32)
     while pos[0] < len(features[keys[0]]) - 1:
         # evaluate
-        xy = numpy.zeros((1, model.n_features_))
+        xy = numpy.zeros((1, model.n_features_in_))
         for p, k in zip(pos, keys):
             xy[0, k] = (features[k][p] + features[k][p + 1]) / 2
         leave = predict_leaves(model, xy)
@@ -287,7 +287,7 @@ def tree_leave_neighbors(model):
                     edge = (cl, cl2) if cl < cl2 else (cl2, cl)
                     if edge not in neighbors:
                         neighbors[edge] = []
-                    xy = numpy.zeros((model.n_features_))
+                    xy = numpy.zeros((model.n_features_in_))
                     for p, f in zip(pos, keys):
                         xy[f] = (features[f][p] + features[f][p + 1]) / 2
                     x2 = tuple(xy)
