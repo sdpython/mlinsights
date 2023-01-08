@@ -176,8 +176,8 @@ class TestPiecewiseClassifier(ExtTestCase):
         X = X.reshape((100, 1))  # pylint: disable=E1101
         self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: PiecewiseClassifier(), X, Y), ValueError)
-        res = run_test_sklearn_grid_search_cv(lambda: PiecewiseClassifier(),
-                                          X, Y, binner__max_depth=[2, 3])
+        res = run_test_sklearn_grid_search_cv(
+            lambda: PiecewiseClassifier(), X, Y, binner__max_depth=[2, 3])
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
