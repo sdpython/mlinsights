@@ -157,7 +157,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     cdef int init(self, const DOUBLE_t[:, ::1] y,
                   const DOUBLE_t[:] sample_weight,
                   double weighted_n_samples,
-                  const SIZE_t[:] samples, 
+                  const SIZE_t[:] sample_indices, 
                   SIZE_t start, SIZE_t end) nogil except -1:
         """
         This function is overwritten to check *y* and *X* size are the same.
@@ -171,7 +171,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
         return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
-                                samples, start, end)
+                                sample_indices, start, end)
 
     cdef int init_with_X(self, const DOUBLE_t[:, ::1] X, 
                          const DOUBLE_t[:, ::1] y,

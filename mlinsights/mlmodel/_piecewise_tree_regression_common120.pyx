@@ -225,12 +225,12 @@ def _test_criterion_init(Criterion criterion,
                          const DOUBLE_t[:, ::1] y,
                          DOUBLE_t[:] sample_weight,
                          double weighted_n_samples,
-                         SIZE_t[:] samples, 
+                         SIZE_t[:] sample_indices, 
                          SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     criterion.init(y,
                    sample_weight, weighted_n_samples,
-                   samples, start, end)
+                   sample_indices, start, end)
 
 
 def _test_criterion_check(Criterion criterion):
