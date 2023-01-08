@@ -94,7 +94,7 @@ class TestSklearnStacking(ExtTestCase):
         pars = pipe.get_params(deep=True)
         self.assertIn(
             'skbasetransformstacking__models_0__model__fit_intercept', pars)
-        conv = SkBaseTransformStacking([LinearRegression(normalize=False),
+        conv = SkBaseTransformStacking([LinearRegression(),
                                         DecisionTreeClassifier(max_depth=2)])
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pipe.set_params(**pars)
