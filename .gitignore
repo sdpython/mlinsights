@@ -245,7 +245,7 @@ _doc/sphinxdoc/source/blog/rss.xml
 _doc/sphinxdoc/source/phdoc_templates/*toc.html
 _doc/sphinxdoc/source/phdoc_templates/*box.html
 _doc/sphinxdoc/source/blog/feed-icon*.png
-_doc/sphinxdoc/source/phdoc_static/reveal.js/*
+_doc/sphinxdoc/source/_static/reveal.js/*
 _doc/notebooks/.ipynb_checkpoints/*
 dist_module27/*
 auto_*.bat
@@ -253,7 +253,7 @@ auto_*.sh
 auto_*.py
 auto_*.xml
 auto_*.db3
-_doc/sphinxdoc/source/phdoc_static/require.js
+_doc/sphinxdoc/source/_static/require.js
 _doc/sphinxdoc/require.js
 ex.*
 m.temp
@@ -267,7 +267,7 @@ _doc/notebooks/nlp/completion.png
 _doc/notebooks/nlp/completion.pstat
 _unittests/run_unittests.py.out
 *.err
-_doc/sphinxdoc/source/phdoc_static/style_notebook_snippet.css
+_doc/sphinxdoc/source/_static/style_notebook_snippet.css
 dist
 _doc/sphinxdoc/source/mlinsights
 _doc/sphinxdoc/source/nbcov.png
