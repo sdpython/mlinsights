@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Install standard libraries
           command: |
-            python -m pip install scipy matplotlib numpy cython pandas
+            python -m pip install scipy matplotlib numpy cython pandas pyquicksetup
 
       - run:
           name: install dependencies
