@@ -107,19 +107,15 @@ class TestSklearnConvert(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_params(self):
-        conv = SkBaseTransformLearner(LinearRegression(normalize=True))
+        conv = SkBaseTransformLearner(LinearRegression())
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pars = pipe.get_params()
         self.assertIn('skbasetransformlearner__model__fit_intercept', pars)
-        self.assertEqual(
-            pars['skbasetransformlearner__model__normalize'], True)
-        conv = SkBaseTransformLearner(LinearRegression(normalize=True))
+        conv = SkBaseTransformLearner(LinearRegression(fit_intercept=True))
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pipe.set_params(**pars)
         pars = pipe.get_params()
         self.assertIn('skbasetransformlearner__model__fit_intercept', pars)
-        self.assertEqual(
-            pars['skbasetransformlearner__model__normalize'], True)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
@@ -129,7 +125,7 @@ class TestSklearnConvert(ExtTestCase):
                                    X2=[0.5, 0.6, 0.7, 0.5, 1.5, 1.6, 1.7, 1.8]))
         X = df.drop('y', axis=1)
         y = df['y']
-        model = SkBaseTransformLearner(LinearRegression(normalize=True))
+        model = SkBaseTransformLearner(LinearRegression())
         model.fit(X, y)
 
         pred = model.transform(X)
@@ -149,7 +145,7 @@ class TestSklearnConvert(ExtTestCase):
                                    X2=[0.5, 0.6, 0.7, 0.5, 1.5, 1.6, 1.7, 1.8]))
         X = df.drop('y', axis=1)
         y = df['y']
-        model = make_pipeline(SkBaseTransformLearner(LinearRegression(normalize=True)),
+        model = make_pipeline(SkBaseTransformLearner(LinearRegression()),
                               LogisticRegression())
         res = model.get_params(True)
         self.assertGreater(len(res), 0)

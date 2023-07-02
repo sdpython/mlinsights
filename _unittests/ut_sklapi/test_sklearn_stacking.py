@@ -88,30 +88,26 @@ class TestSklearnStacking(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_params(self):
-        conv = SkBaseTransformStacking([LinearRegression(normalize=True),
+        conv = SkBaseTransformStacking([LinearRegression(),
                                         DecisionTreeClassifier(max_depth=3)])
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pars = pipe.get_params(deep=True)
         self.assertIn(
             'skbasetransformstacking__models_0__model__fit_intercept', pars)
-        self.assertEqual(
-            pars['skbasetransformstacking__models_0__model__normalize'], True)
-        conv = SkBaseTransformStacking([LinearRegression(normalize=False),
+        conv = SkBaseTransformStacking([LinearRegression(),
                                         DecisionTreeClassifier(max_depth=2)])
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pipe.set_params(**pars)
         pars = pipe.get_params()
         self.assertIn(
             'skbasetransformstacking__models_0__model__fit_intercept', pars)
-        self.assertEqual(
-            pars['skbasetransformstacking__models_0__model__normalize'], True)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
         data = load_iris()
         X, y = data.data, data.target
         # X_train, X_test, y_train, y_test = train_test_split(X, y)
-        conv = SkBaseTransformStacking([LinearRegression(normalize=True),
+        conv = SkBaseTransformStacking([LinearRegression(),
                                         DecisionTreeClassifier(max_depth=3)])
         model = make_pipeline(conv, DecisionTreeRegressor())
         model.fit(X, y)
@@ -127,7 +123,7 @@ class TestSklearnStacking(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_clone(self):
-        conv = SkBaseTransformStacking([LinearRegression(normalize=True),
+        conv = SkBaseTransformStacking([LinearRegression(),
                                         DecisionTreeClassifier(max_depth=3)],
                                        'predict')
         cloned = clone(conv)
@@ -138,7 +134,7 @@ class TestSklearnStacking(ExtTestCase):
         data = load_iris()
         X, y = data.data, data.target
         # X_train, X_test, y_train, y_test = train_test_split(X, y)
-        conv = SkBaseTransformStacking([LinearRegression(normalize=True),
+        conv = SkBaseTransformStacking([LinearRegression(),
                                         DecisionTreeClassifier(max_depth=3)])
         model = make_pipeline(conv, DecisionTreeRegressor())
 

@@ -90,8 +90,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self.sample_work = NULL
 
         # Criterion interface
-        self.sample_weight = NULL
-        self.samples = NULL
+        self.sample_weight = None
+        self.sample_indices = None
 
         # allocation
         if self.sample_w == NULL:
@@ -138,30 +138,31 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         :return: an instance of :class:`LinearRegressorCriterion`
         """
         cdef SIZE_t i
-        cdef DOUBLE_t* ws
+        cdef DOUBLE_t[:] ws
         cdef double sum
-        cdef SIZE_t* parr = <SIZE_t*> calloc(y.shape[0], sizeof(SIZE_t))
+        cdef SIZE_t[:] parr = numpy.empty(y.shape[0], dtype=numpy.int64)
         for i in range(0, y.shape[0]):
             parr[i] = i
         if sample_weight is None:
             sum = <DOUBLE_t>y.shape[0]
-            ws = NULL
+            ws = None
         else:
             sum = sample_weight.sum()
-            ws = &sample_weight[0]
+            ws = sample_weight
 
         obj = LinearRegressorCriterion(1 if len(y.shape) <= 1 else y.shape[0], X)
         obj.init(y, ws, sum, parr, 0, y.shape[0])            
-        free(parr)
         return obj
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
-                  DOUBLE_t* sample_weight,
-                  double weighted_n_samples, SIZE_t* samples, 
+                  const DOUBLE_t[:] sample_weight,
+                  double weighted_n_samples,
+                  const SIZE_t[:] sample_indices, 
                   SIZE_t start, SIZE_t end) nogil except -1:
         """
         This function is overwritten to check *y* and *X* size are the same.
         This API changed in 0.21.
+        It changed again in scikit-learn 1.2 to replace `DOUBLE_t*` into `DOUBLE[:]`.
         """
         if y.shape[0] != self.n_samples:
             raise ValueError("n_samples={} -- y.shape={}".format(self.n_samples, y.shape))
@@ -170,12 +171,13 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
         return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
-                                samples, start, end)
+                                sample_indices, start, end)
 
     cdef int init_with_X(self, const DOUBLE_t[:, ::1] X, 
                          const DOUBLE_t[:, ::1] y,
-                         DOUBLE_t* sample_weight,
-                         double weighted_n_samples, SIZE_t* samples, 
+                         const DOUBLE_t[:] sample_weight,
+                         double weighted_n_samples,
+                         const SIZE_t[:] sample_indices, 
                          SIZE_t start, SIZE_t end) nogil except -1:
         """
         Initializes the criterion.
@@ -209,9 +211,9 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         # Filling accumulators.
         idx = start * self.nbvar
         for ki in range(<int>start, <int>end):
-            ks = samples[ki]
+            ks = sample_indices[ki]
             self.sample_i[ki] = ks
-            self.sample_w[ki] = sample_weight[ks] if sample_weight else 1.
+            self.sample_w[ki] = sample_weight[ks] if sample_weight is not None else 1.
             self.sample_wy[ki] = self.sample_w[ki] * y[ks, 0]
             self.sample_y[ki] = y[ks, 0]
             self.sample_sum_wy += y[ks, 0] * self.sample_w[ki]

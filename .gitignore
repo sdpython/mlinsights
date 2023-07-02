@@ -80,6 +80,7 @@ build/
 *.pidb
 *.log
 *.scc
+*.so
 *.pyd
 
 # Visual C++ cache files

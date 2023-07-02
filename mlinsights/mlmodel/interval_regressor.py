@@ -87,7 +87,7 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
             rnd = numpy.random.randint(0, X.shape[0] - 1, new_size)
             Xr = X[rnd]
             yr = y[rnd]
-            sr = sample_weight[rnd] if sample_weight else None
+            sr = sample_weight[rnd] if sample_weight is not None else None
             return est.fit(Xr, yr, sr)
 
         self.estimators_ = \

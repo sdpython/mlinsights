@@ -14,7 +14,7 @@ from sklearn.manifold import TSNE
 from pyquickhelper.pycode import (
     ExtTestCase, skipif_circleci, ignore_warnings)
 from mlinsights.mlmodel import PredictableTSNE
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone
+from mlinsights.mlmodel import run_test_sklearn_pickle, run_test_sklearn_clone
 
 
 class TestPredictableTSNE(ExtTestCase):
@@ -57,12 +57,12 @@ class TestPredictableTSNE(ExtTestCase):
     def test_predictable_tsne_pickle(self):
         iris = datasets.load_iris()
         X, y = iris.data[:20], iris.target[:20]
-        test_sklearn_pickle(lambda: PredictableTSNE(), X, y)
+        run_test_sklearn_pickle(lambda: PredictableTSNE(), X, y)
 
     @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_clone(self):
         self.maxDiff = None
-        test_sklearn_clone(lambda: PredictableTSNE())
+        run_test_sklearn_clone(lambda: PredictableTSNE())
 
     @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_relevance(self):
@@ -79,13 +79,13 @@ class TestPredictableTSNE(ExtTestCase):
                 Ys.extend([cl for i in range(n)])
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
-        clk = PredictableTSNE(transformer=TSNE(n_components=3),
+        clk = PredictableTSNE(transformer=TSNE(n_components=2),
                               normalizer=StandardScaler(with_mean=False),
                               keep_tsne_outputs=True)
         clk.fit(X, Y)
         pred = clk.transform(X)
         self.assertGreater(clk.loss_, 0)
-        self.assertEqual(pred.shape, (X.shape[0], 3))
+        self.assertEqual(pred.shape, (X.shape[0], 2))
 
 
 if __name__ == "__main__":

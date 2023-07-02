@@ -4,8 +4,8 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python310-Linux:
-        python.version: '3.10'
+      Python311-Linux:
+        python.version: '3.11'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
@@ -33,7 +33,7 @@ jobs:
     displayName: 'Install 7z, rar'
   - script: sudo apt-get install -y graphviz
     displayName: 'Install Graphviz'
-  - script: pip install --upgrade pip setuptools wheel
+  - script: pip install --upgrade pip setuptools wheel pyquicksetup
     displayName: 'Install tools'
   - script: pip install numpy
     displayName: 'Install numpy'
@@ -51,16 +51,9 @@ jobs:
       python -m pip install cibuildwheel
       export CIBW_MANYLINUX_X86_64_IMAGE="manylinux_2_24"
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      export CIBW_BUILD="cp39-manylinux_x86_64 cp310-manylinux_x86_64"
+      export CIBW_BUILD="cp39-manylinux_x86_64 cp310-manylinux_x86_64 cp311-manylinux_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse_2 --platform linux
     displayName: 'Build Package manylinux_x_y'
-  - script: |
-      python -m pip install cibuildwheel
-      export CIBW_MANYLINUX_X86_64_IMAGE="manylinux2014"
-      export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      export CIBW_BUILD="cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64"
-      python -m cibuildwheel --output-dir dist/wheelhouse --platform linux
-    displayName: 'Build Package manylinux2014'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-linux-$(python.version)'
@@ -71,15 +64,15 @@ jobs:
     vmImage: 'windows-latest'
   strategy:
     matrix:
-      Python310-Windows:
-        python.version: '3.10'
+      Python311-Windows:
+        python.version: '3.11'
     maxParallel: 3
   steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
-  - script: python -m pip install --upgrade pip setuptools wheel
+  - script: python -m pip install --upgrade pip setuptools wheel pyquicksetup
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
@@ -92,7 +85,7 @@ jobs:
   - script: |
       python -m pip install cibuildwheel
       set CIBW_BEFORE_BUILD=pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming
-      set CIBW_BUILD=cp37-win_amd64 cp38-win_amd64 cp39-win_amd64 cp310-win_amd64
+      set CIBW_BUILD=cp39-win_amd64 cp310-win_amd64 cp311-win_amd64
       python -m cibuildwheel --output-dir dist/wheelhouse
     displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0
@@ -115,8 +108,6 @@ jobs:
       architecture: 'x64'
   - script: gcc --version
     displayName: 'gcc version'
-  - script: brew update
-    displayName: 'brew update'
   - script: export
     displayName: 'export'
   - script: gcc --version
@@ -141,7 +132,7 @@ jobs:
   #  continueOnError: true
   #  displayName: 'Install latex'
   - bash: conda install -y -c conda-forge numpy scipy
-    displayName: Install numpy scipy
+    displayName: Install numpy scipy pyquicksetup
   - bash: conda install -y -c conda-forge llvmlite numba
     displayName: Install llvmlite numba
   - bash: conda install -y -c conda-forge pyproj cartopy shapely
@@ -159,7 +150,7 @@ jobs:
   - script: |
       python -m pip install cibuildwheel
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      export CIBW_BUILD="cp37-macosx_x86_64 cp38-macosx_x86_64 cp39-macosx_x86_64 cp310-macosx_x86_64"
+      export CIBW_BUILD="cp39-macosx_x86_64 cp310-macosx_x86_64 cp311-macosx_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse
     displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0

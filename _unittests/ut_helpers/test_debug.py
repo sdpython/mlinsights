@@ -38,7 +38,7 @@ class TestDebug(ExtTestCase):
                 self.assertNotIn(" object at 0x", text)
                 self.assertIn(") -> (", text)
             else:
-                raise Exception("should not be the case")
+                raise AssertionError("should not be the case")
 
     def test_union_features_cl(self):
         data = numpy.random.randn(4, 5)
@@ -60,7 +60,7 @@ class TestDebug(ExtTestCase):
                 self.assertNotIn(" object at 0x", text)
                 self.assertIn(") -> (", text)
             else:
-                raise Exception("should not be the case")
+                raise AssertionError("should not be the case")
 
 
 if __name__ == "__main__":

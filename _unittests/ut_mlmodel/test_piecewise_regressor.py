@@ -10,7 +10,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeRegressor
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import (
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv)
 from mlinsights.mlmodel.piecewise_estimator import PiecewiseRegressor
 
 
@@ -128,11 +131,11 @@ class TestPiecewiseRegressor(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        test_sklearn_pickle(lambda: LinearRegression(), X, Y)
-        test_sklearn_pickle(lambda: PiecewiseRegressor(), X, Y)
+        run_test_sklearn_pickle(lambda: LinearRegression(), X, Y)
+        run_test_sklearn_pickle(lambda: PiecewiseRegressor(), X, Y)
 
     def test_piecewise_regressor_clone(self):
-        test_sklearn_clone(lambda: PiecewiseRegressor(verbose=True))
+        run_test_sklearn_clone(lambda: PiecewiseRegressor(verbose=True))
 
     def test_piecewise_regressor_grid_search(self):
         X = random(100)
@@ -141,10 +144,10 @@ class TestPiecewiseRegressor(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: PiecewiseRegressor(), X, Y), ValueError)
-        res = test_sklearn_grid_search_cv(lambda: PiecewiseRegressor(),
-                                          X, Y, binner__max_depth=[2, 3])
+        res = run_test_sklearn_grid_search_cv(lambda: PiecewiseRegressor(),
+                                              X, Y, binner__max_depth=[2, 3])
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)

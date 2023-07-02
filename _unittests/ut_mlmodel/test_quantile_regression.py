@@ -11,7 +11,10 @@ from sklearn.linear_model import LinearRegression
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.texthelper import compare_module_version
 from mlinsights.mlmodel import QuantileLinearRegression
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import (
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv)
 from mlinsights.mlmodel.quantile_mlpregressor import float_sign
 
 
@@ -161,11 +164,11 @@ class TestQuantileRegression(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        test_sklearn_pickle(lambda: LinearRegression(), X, Y)
-        test_sklearn_pickle(lambda: QuantileLinearRegression(), X, Y)
+        run_test_sklearn_pickle(lambda: LinearRegression(), X, Y)
+        run_test_sklearn_pickle(lambda: QuantileLinearRegression(), X, Y)
 
     def test_quantile_regression_clone(self):
-        test_sklearn_clone(lambda: QuantileLinearRegression(delta=0.001))
+        run_test_sklearn_clone(lambda: QuantileLinearRegression(delta=0.001))
 
     def test_quantile_regression_grid_search(self):
         X = random(100)
@@ -174,11 +177,11 @@ class TestQuantileRegression(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
+        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
             lambda: QuantileLinearRegression(), X, Y),
             (ValueError, TypeError))
-        res = test_sklearn_grid_search_cv(lambda: QuantileLinearRegression(),
-                                          X, Y, delta=[0.1, 0.001])
+        res = run_test_sklearn_grid_search_cv(lambda: QuantileLinearRegression(),
+                                              X, Y, delta=[0.1, 0.001])
         self.assertIn('model', res)
         self.assertIn('score', res)
         self.assertGreater(res['score'], 0)
@@ -213,7 +216,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_quantile_check(self):
         n = 100
-        X = (numpy.arange(n) / n)
+        X = numpy.arange(n) / n
         Y = X + X * X / n
         X = X.reshape((n, 1))
         for q in [0.1, 0.5, 0.9]:

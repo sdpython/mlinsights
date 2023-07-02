@@ -41,13 +41,13 @@ class TestExtendedFeatures(ExtTestCase):
             poly = PolynomialFeatures(deg, include_bias=True)
             P_test = poly.fit_transform(X)
             self.assertEqual(P_test, P)
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
 
             ext = ExtendedFeatures(poly_degree=deg)
             e_test = ext.fit_transform(X)
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
 
             self.assertEqual(P_test, P)
             self.assertEqual(P_test.shape, e_test.shape)
@@ -74,13 +74,13 @@ class TestExtendedFeatures(ExtTestCase):
             poly = PolynomialFeatures(deg, include_bias=True)
             P_test = poly.fit_transform(X)
             self.assertEqual(P_test, P)
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
 
             ext = ExtendedFeatures(kind='poly-slow', poly_degree=deg)
             e_test = ext.fit_transform(X)
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
 
             self.assertEqual(P_test, P)
             self.assertEqual(P_test.shape, e_test.shape)
@@ -109,7 +109,7 @@ class TestExtendedFeatures(ExtTestCase):
                                       interaction_only=True)
             P_test = poly.fit_transform(X)
 
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
             self.assertEqual(P_test, P[:, fc])
 
             ext = ExtendedFeatures(poly_degree=deg,
@@ -117,9 +117,9 @@ class TestExtendedFeatures(ExtTestCase):
                                    poly_interaction_only=True)
             e_test = ext.fit_transform(X)
 
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
 
             self.assertEqual(P_test, P[:, fc])
             self.assertEqual(P_test.shape, e_test.shape)
@@ -148,7 +148,7 @@ class TestExtendedFeatures(ExtTestCase):
                                       interaction_only=True)
             P_test = poly.fit_transform(X)
 
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
             self.assertEqual(P_test, P[:, fc])
 
             ext = ExtendedFeatures(kind="poly-slow", poly_degree=deg,
@@ -156,9 +156,9 @@ class TestExtendedFeatures(ExtTestCase):
                                    poly_interaction_only=True)
             e_test = ext.fit_transform(X)
 
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
 
             self.assertEqual(P_test, P[:, fc])
             self.assertEqual(P_test.shape, e_test.shape)
@@ -187,7 +187,7 @@ class TestExtendedFeatures(ExtTestCase):
                                       interaction_only=True)
             P_test = poly.fit_transform(X)
 
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
             self.assertEqual(P_test, P[:, fc])
 
             ext = ExtendedFeatures(poly_degree=deg,
@@ -195,9 +195,9 @@ class TestExtendedFeatures(ExtTestCase):
                                    poly_interaction_only=True)
             e_test = ext.fit_transform(X)
 
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
 
             self.assertEqual(P_test, P[:, fc])
             self.assertEqual(P_test.shape, e_test.shape)
@@ -226,7 +226,7 @@ class TestExtendedFeatures(ExtTestCase):
                                       interaction_only=True)
             P_test = poly.fit_transform(X)
 
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
             self.assertEqual(P_test, P[:, fc])
 
             ext = ExtendedFeatures(kind="poly-slow", poly_degree=deg,
@@ -234,9 +234,9 @@ class TestExtendedFeatures(ExtTestCase):
                                    poly_interaction_only=True)
             e_test = ext.fit_transform(X)
 
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
 
             self.assertEqual(P_test, P[:, fc])
             self.assertEqual(P_test.shape, e_test.shape)
@@ -263,15 +263,15 @@ class TestExtendedFeatures(ExtTestCase):
             poly = PolynomialFeatures(deg, include_bias=False)
             P_test = poly.fit_transform(X)
             self.assertEqual(P_test, P[:, 1:])
-            names = poly.get_feature_names()
+            names = poly.get_feature_names_out()
 
             ext = ExtendedFeatures(poly_degree=deg, poly_include_bias=False)
             e_test = ext.fit_transform(X)
             self.assertEqual(P_test, P[:, 1:])
-            e_names = ext.get_feature_names()
+            e_names = ext.get_feature_names_out()
 
             self.assertEqual(len(names), len(e_names))
-            self.assertEqual(names, e_names)
+            self.assertEqual(list(names), list(e_names))
             self.assertEqual(P_test.shape, e_test.shape)
             self.assertEqual(P_test, e_test)
 
@@ -280,20 +280,20 @@ class TestExtendedFeatures(ExtTestCase):
         for deg in (1, 2, 3, 4):
             poly = PolynomialFeatures(deg, include_bias=True)
             X_sk = poly.fit_transform(X)
-            names_sk = poly.get_feature_names()
+            names_sk = poly.get_feature_names_out()
 
             ext = ExtendedFeatures(poly_degree=deg)
             X_ext = ext.fit_transform(X)
 
             inames = ["x%d" % i for i in range(0, X.shape[1])]
-            names_ext = ext.get_feature_names(inames)
+            names_ext = ext.get_feature_names_out(inames)
 
             self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
+            self.assertEqual(list(names_sk), list(names_ext))
 
-            names_ext = ext.get_feature_names()
+            names_ext = ext.get_feature_names_out()
             self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
+            self.assertEqual(list(names_sk), list(names_ext))
 
             self.assertEqual(X_sk.shape, X_ext.shape)
             self.assertEqual(X_sk, X_ext)
@@ -304,21 +304,21 @@ class TestExtendedFeatures(ExtTestCase):
             poly = PolynomialFeatures(deg, include_bias=True,
                                       interaction_only=True)
             X_sk = poly.fit_transform(X)
-            names_sk = poly.get_feature_names()
+            names_sk = poly.get_feature_names_out()
 
             ext = ExtendedFeatures(poly_degree=deg, poly_include_bias=True,
                                    poly_interaction_only=True)
             X_ext = ext.fit_transform(X)
 
             inames = ["x%d" % i for i in range(0, X.shape[1])]
-            names_ext = ext.get_feature_names(inames)
+            names_ext = ext.get_feature_names_out(inames)
 
             self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
+            self.assertEqual(list(names_sk), list(names_ext))
 
-            names_ext = ext.get_feature_names()
+            names_ext = ext.get_feature_names_out()
             self.assertEqual(len(names_sk), len(names_ext))
-            self.assertEqual(names_sk, names_ext)
+            self.assertEqual(list(names_sk), list(names_ext))
 
             self.assertEqual(X_sk.shape, X_ext.shape)
             self.assertEqual(X_sk, X_ext)
@@ -357,7 +357,8 @@ class TestExtendedFeatures(ExtTestCase):
         poly = PolynomialFeatures(degree=deg, include_bias=False,
                                   interaction_only=interaction_only)
         poly.fit(X)
-        self.assertEqual(poly.get_feature_names(), est.get_feature_names())
+        self.assertEqual(list(poly.get_feature_names_out()),
+                         list(est.get_feature_names_out()))
         Xt_dense1 = est.fit_transform(X)
         Xt_dense2 = poly.fit_transform(X)
         self.assertEqual(Xt_dense1, Xt_dense2)

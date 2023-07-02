@@ -55,8 +55,8 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         self.sample_wy2_left = NULL
 
         # Criterion interface
-        self.sample_weight = NULL
-        self.samples = NULL
+        self.sample_weight = None
+        self.sample_indices = None
 
         # allocations
         if self.sample_w_left == NULL:
@@ -67,8 +67,9 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
             self.sample_wy2_left = <DOUBLE_t*> calloc(n_samples, sizeof(DOUBLE_t))
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
-                  DOUBLE_t* sample_weight,
-                  double weighted_n_samples, SIZE_t* samples, 
+                  const DOUBLE_t[:] sample_weight,
+                  double weighted_n_samples,
+                  const SIZE_t[:] sample_indices, 
                   SIZE_t start, SIZE_t end) nogil except -1:
         """
         This function is overwritten to check *y* and *X* size are the same.
@@ -79,12 +80,13 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
         return self.init_with_X(y, sample_weight, weighted_n_samples,
-                                samples, start, end)
+                                sample_indices, start, end)
 
     cdef int init_with_X(self,
                          const DOUBLE_t[:, ::1] y,
-                         DOUBLE_t* sample_weight,
-                         double weighted_n_samples, SIZE_t* samples, 
+                         const DOUBLE_t[:] sample_weight,
+                         double weighted_n_samples,
+                         const SIZE_t[:] sample_indices, 
                          SIZE_t start, SIZE_t end) nogil except -1:
         """
         Initializes the criterion.
@@ -122,15 +124,15 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
 
         # Left side.
         for ki in range(<int>start, <int>start+1):
-            ks = samples[ki]
-            w = sample_weight[ks] if sample_weight else 1.
+            ks = sample_indices[ki]
+            w = sample_weight[ks] if sample_weight is not None else 1.
             y_ = y[ks, 0]
             self.sample_w_left[ki] = w
             self.sample_wy_left[ki] = w * y_
             self.sample_wy2_left[ki] = w * y_ * y_
         for ki in range(<int>start+1, <int>end):
-            ks = samples[ki]
-            w = sample_weight[ks] if sample_weight else 1.
+            ks = sample_indices[ki]
+            w = sample_weight[ks] if sample_weight is not None else 1.
             y_ = y[ks, 0]
             self.sample_w_left[ki] = self.sample_w_left[ki-1] + w 
             self.sample_wy_left[ki] = self.sample_wy_left[ki-1] + w * y_

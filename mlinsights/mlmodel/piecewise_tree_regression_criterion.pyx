@@ -62,8 +62,8 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.sample_i = NULL
 
         # Criterion interface
-        self.sample_weight = NULL
-        self.samples = NULL
+        self.sample_weight = None
+        self.sample_indices = None
 
         # allocation
         if self.sample_w == NULL:
@@ -74,8 +74,9 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             self.sample_i = <SIZE_t*> calloc(n_samples, sizeof(SIZE_t))
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
-                  DOUBLE_t* sample_weight,
-                  double weighted_n_samples, SIZE_t* samples, 
+                  const DOUBLE_t[:] sample_weight,
+                  double weighted_n_samples,
+                  const SIZE_t[:] sample_indices, 
                   SIZE_t start, SIZE_t end) nogil except -1:
         """
         This function is overwritten to check *y* and *X* size are the same.
@@ -86,12 +87,13 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
         return self.init_with_X(y, sample_weight, weighted_n_samples,
-                                samples, start, end)
+                                sample_indices, start, end)
 
     cdef int init_with_X(self,
                          const DOUBLE_t[:, ::1] y,
-                         DOUBLE_t* sample_weight,
-                         double weighted_n_samples, SIZE_t* samples, 
+                         const DOUBLE_t[:] sample_weight,
+                         double weighted_n_samples,
+                         const SIZE_t[:] sample_indices, 
                          SIZE_t start, SIZE_t end) nogil except -1:
         """
         Initializes the criterion.
@@ -125,9 +127,9 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
 
         # Filling accumulators.
         for ki in range(<int>start, <int>end):
-            ks = samples[ki]
+            ks = sample_indices[ki]
             self.sample_i[ki] = ks
-            self.sample_w[ki] = sample_weight[ks] if sample_weight else 1.
+            self.sample_w[ki] = sample_weight[ks] if sample_weight is not None else 1.
             self.sample_wy[ki] = self.sample_w[ki] * y[ks, 0]
             self.sample_sum_wy += y[ks, 0] * self.sample_w[ki]
             self.sample_sum_w += self.sample_w[ki]

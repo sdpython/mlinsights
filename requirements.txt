@@ -3,6 +3,7 @@ chardet
 coverage
 cpyquickhelper>=0.3
 cython
+ipython
 joblib
 jupyter_sphinx>=0.2
 jyquickhelper
@@ -10,6 +11,7 @@ llvmlite
 matplotlib
 memory_profiler>=0.55
 nbconvert>=6.0.2
+notebook
 numba
 numpy
 onnx
@@ -21,7 +23,7 @@ pydata-sphinx-theme
 pyquickhelper>=1.10
 pyquicksetup
 pylint>=2.14.0
-scikit-learn>=1.0
+scikit-learn>=1.3.0
 scipy
 seaborn
 skl2onnx
