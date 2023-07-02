@@ -216,7 +216,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_quantile_check(self):
         n = 100
-        X = (numpy.arange(n) / n)
+        X = numpy.arange(n) / n
         Y = X + X * X / n
         X = X.reshape((n, 1))
         for q in [0.1, 0.5, 0.9]:
