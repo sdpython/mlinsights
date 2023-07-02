@@ -51,16 +51,9 @@ jobs:
       python -m pip install cibuildwheel
       export CIBW_MANYLINUX_X86_64_IMAGE="manylinux_2_24"
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      export CIBW_BUILD="cp39-manylinux_x86_64 cp310-manylinux_x86_64"
+      export CIBW_BUILD="cp39-manylinux_x86_64 cp310-manylinux_x86_64 cp311-manylinux_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse_2 --platform linux
     displayName: 'Build Package manylinux_x_y'
-  - script: |
-      python -m pip install cibuildwheel
-      export CIBW_MANYLINUX_X86_64_IMAGE="manylinux2014"
-      export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      export CIBW_BUILD="cp37-manylinux_x86_64 cp38-manylinux_x86_64 cp39-manylinux_x86_64"
-      python -m cibuildwheel --output-dir dist/wheelhouse --platform linux
-    displayName: 'Build Package manylinux2014'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-linux-$(python.version)'
@@ -92,7 +85,7 @@ jobs:
   - script: |
       python -m pip install cibuildwheel
       set CIBW_BEFORE_BUILD=pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming
-      set CIBW_BUILD=cp37-win_amd64 cp38-win_amd64 cp39-win_amd64 cp310-win_amd64
+      set CIBW_BUILD=cp39-win_amd64 cp310-win_amd64 cp311-win_amd64
       python -m cibuildwheel --output-dir dist/wheelhouse
     displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0
@@ -159,7 +152,7 @@ jobs:
   - script: |
       python -m pip install cibuildwheel
       export CIBW_BEFORE_BUILD="pip install pybind11 cython numpy scipy pyquickhelper scikit-learn pandas pandas_streaming"
-      export CIBW_BUILD="cp37-macosx_x86_64 cp38-macosx_x86_64 cp39-macosx_x86_64 cp310-macosx_x86_64"
+      export CIBW_BUILD="cp39-macosx_x86_64 cp310-macosx_x86_64 cp311-macosx_x86_64"
       python -m cibuildwheel --output-dir dist/wheelhouse
     displayName: 'Build Package many'
   - task: PublishPipelineArtifact@0
