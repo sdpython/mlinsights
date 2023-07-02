@@ -132,7 +132,8 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             if len(ys.shape) == 1:
                 ys = ys[:, numpy.newaxis]
             ys = ys.copy()
-            ws = sample_weight[ind].copy() if sample_weight is not None else None
+            ws = sample_weight[ind].copy(
+            ) if sample_weight is not None else None
             dec = LinearRegressorCriterion.create(xs, ys, ws)
             dec.node_beta(self.betas_[i, :])
 

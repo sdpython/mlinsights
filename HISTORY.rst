@@ -5,26 +5,34 @@
 History
 =======
 
-current - 2022-07-22 - 0.00Mb
+current - 2023-07-03 - 0.00Mb
+=============================
+
+* #115: Updates tree decision criterion for scikit-learn 1.2 (2023-07-02)
+* #113: Removes normalize attributes (deprecated) (2022-11-29)
+* #110: Fixes perplexity issue with PredictableTSNE (2022-08-06)
+* #109: Use f strings in more places (2022-07-22)
+
+0.3.649 - 2022-07-22 - 2.35Mb
 =============================
 
 * #105: Update for python 3.10 (2022-07-22)
 * #108: Uses f strings (2022-07-19)
 
-0.3.631 - 2022-05-19 - 0.52Mb
+0.3.631 - 2022-05-19 - 2.21Mb
 =============================
 
 * #107: Updates CI for scikit-learn==1.1 (2022-05-18)
 * #106: Fixes failing import _joblib_parallel_args (2022-02-18)
 * #99: LICENSE file missing in PyPI release (2021-11-20)
 
-0.3.614 - 2021-10-02 - 0.52Mb
+0.3.614 - 2021-10-02 - 1.73Mb
 =============================
 
 * #103: Updates for scikit-learn>=1.0 (2021-10-02)
 * #94: Fixed Numpy boolean array indexing issue for 2dim arrays. (2021-09-27)
 
-0.3.606 - 2021-08-22 - 0.52Mb
+0.3.606 - 2021-08-22 - 2.35Mb
 =============================
 
 * #102: Implements numpy.digitalize with a DecisionTreeRegressor (2021-08-22)
@@ -37,32 +45,16 @@ current - 2022-07-22 - 0.00Mb
 * #98: Fixes #97, fix issue with deepcopy and criterion (2021-05-03)
 * #97: piecewise_decision_tree does not compile with the latest version of scikit-learn (2021-05-03)
 * #85: Fixes #70, implements DecisionTreeLogisticRegression (2021-05-02)
-
-0.3.549 - 2021-01-09 - 0.67Mb
-=============================
-
 * #93: Include build wheel for all platforms in CI (2021-01-09)
-
-0.3.543 - 2021-01-03 - 0.67Mb
-=============================
-
 * #89: Install fails: ModuleNotFoundError: No module named 'sklearn' (2021-01-03)
 * #92: QuantileMLPRegressor does not work with scikit-learn 0.24 (2021-01-01)
 * #91: Fixes regression criterion for scikit-learn 0.24 (2021-01-01)
 * #90: Fixes PipelineCache for scikit-learn 0.24 (2021-01-01)
-
-0.2.508 - 2020-09-02 - 0.43Mb
-=============================
-
 * #88: Change for scikit-learn 0.24 (2020-09-02)
 * #87: Set up CI with Azure Pipelines (2020-09-02)
 * #86: Update CI, use python 3.8 (2020-09-02)
 * #71: update kmeans l1 to the latest kmeans (signatures changed) (2020-08-31)
 * #84: style (2020-08-30)
-
-0.2.491 - 2020-08-06 - 0.83Mb
-=============================
-
 * #83: Upgrade version (2020-08-06)
 * #82: Fixes #81, skl 0.22, 0.23 together (2020-08-06)
 * #81: Make mlinsights work with scikit-learn 0.22 and 0.23 (2020-08-06)

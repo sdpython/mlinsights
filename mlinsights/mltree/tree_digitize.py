@@ -84,7 +84,8 @@ def digitize2tree(bins, right=False):
         is_left = False
         is_leaf = False
         threshold = bins[index]
-        n = tree_add_node(tree, parent, is_left, is_leaf, 0, threshold, 0, 1, 1., 0)
+        n = tree_add_node(tree, parent, is_left, is_leaf,
+                          0, threshold, 0, 1, 1., 0)
         values.append(UNUSED)
         n_nodes.append(n)
         return n
@@ -95,7 +96,8 @@ def digitize2tree(bins, right=False):
             # it means j is the parent split
             if i == j:
                 # leaf
-                n = tree_add_node(tree, parent, is_left, True, 0, 0, 0, 1, 1., 0)
+                n = tree_add_node(tree, parent, is_left,
+                                  True, 0, 0, 0, 1, 1., 0)
                 n_nodes.append(n)
                 values.append(i)
                 return n
@@ -103,7 +105,8 @@ def digitize2tree(bins, right=False):
                 # split
                 values.append(UNUSED)
                 th = bins[i]
-                n = tree_add_node(tree, parent, is_left, False, 0, th, 0, 1, 1., 0)
+                n = tree_add_node(tree, parent, is_left,
+                                  False, 0, th, 0, 1, 1., 0)
                 n_nodes.append(n)
                 add_nodes(n, i, i, True)
                 add_nodes(n, i, j, False)
@@ -113,7 +116,8 @@ def digitize2tree(bins, right=False):
                 values.append(UNUSED)
                 index = (i + j) // 2
                 th = bins[index]
-                n = tree_add_node(tree, parent, is_left, False, 0, th, 0, 1, 1., 0)
+                n = tree_add_node(tree, parent, is_left,
+                                  False, 0, th, 0, 1, 1., 0)
                 n_nodes.append(n)
                 add_nodes(n, i, index, True)
                 add_nodes(n, index, j, False)
@@ -123,7 +127,8 @@ def digitize2tree(bins, right=False):
             if i + 1 == j:
                 # leaf
                 values.append(j)
-                n = tree_add_node(tree, parent, is_left, True, 0, 0, 0, 1, 1., 0)
+                n = tree_add_node(tree, parent, is_left,
+                                  True, 0, 0, 0, 1, 1., 0)
                 n_nodes.append(n)
                 return n
             if i + 1 < j:
@@ -131,7 +136,8 @@ def digitize2tree(bins, right=False):
                 values.append(UNUSED)
                 index = (i + j) // 2
                 th = bins[index]
-                n = tree_add_node(tree, parent, is_left, False, 0, th, 0, 1, 1., 0)
+                n = tree_add_node(tree, parent, is_left,
+                                  False, 0, th, 0, 1, 1., 0)
                 n_nodes.append(n)
                 add_nodes(n, i, index, True)
                 add_nodes(n, index, j, False)

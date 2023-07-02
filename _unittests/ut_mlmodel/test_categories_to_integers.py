@@ -105,7 +105,8 @@ class TestCategoriesToIntegers(ExtTestCase):
         data = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "adult_set.txt")
         df = pandas.read_csv(data, sep="\t")
-        run_test_sklearn_pickle(lambda: CategoriesToIntegers(skip_errors=True), df)
+        run_test_sklearn_pickle(
+            lambda: CategoriesToIntegers(skip_errors=True), df)
 
     @ignore_warnings(skipped_warnings)
     def test_categories_to_integers_clone(self):

@@ -1,7 +1,10 @@
+recursive-include onnx_extended *.c *.cpp *.h *.pyx *.pxd *.pxi *.py
+include pyproject.toml
+include MANIFEST.in
+include setup.cfg
 prune _doc
 prune _unittests
 prune bin
-prune .circleci
 exclude *.bat
 exclude *.yml
 exclude *.git*

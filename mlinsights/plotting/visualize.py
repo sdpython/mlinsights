@@ -73,12 +73,12 @@ def _pipeline_info(pipe, data, context, former_data=None):
 
             info = _pipeline_info(
                 model, new_data, context, former_data=new_data)
-            #new_outputs = []
+            # new_outputs = []
             # for o in info[-1]['outputs']:
             #    add = _get_name(context, prefix=o, info=info)
             #    outputs.append(add)
             #    new_outputs.append(add)
-            #info[-1]['outputs'] = new_outputs
+            # info[-1]['outputs'] = new_outputs
             outputs.extend(info[-1]['outputs'])
             infos.extend(info)
 
