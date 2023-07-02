@@ -30,6 +30,7 @@ skl2onnx
 sphinx>=3.0
 sphinxcontrib.imagesvg
 sphinx_gallery
+stack-data
 tqdm
 traitlets
 wheel
