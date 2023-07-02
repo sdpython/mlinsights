@@ -3,6 +3,7 @@ chardet
 coverage
 cpyquickhelper>=0.3
 cython
+ipython
 joblib
 jupyter_sphinx>=0.2
 jyquickhelper
