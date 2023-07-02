@@ -11,6 +11,7 @@ llvmlite
 matplotlib
 memory_profiler>=0.55
 nbconvert>=6.0.2
+notebook
 numba
 numpy
 onnx
@@ -30,4 +31,5 @@ sphinx>=3.0
 sphinxcontrib.imagesvg
 sphinx_gallery
 tqdm
+traitlets
 wheel
