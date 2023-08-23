@@ -16,8 +16,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     :ref:`searchimageskerasrst` or :ref:`searchimagestorchrst`.
     Another example can be found there:
     `search_images_dogcat.py
-    <https://github.com/sdpython/ensae_projects/blob/master/src/
-    ensae_projects/restapi/search_images_dogcat.py>`_.
+    <https://github.com/sdpython/ensae_projects/blob/main/src/ensae_projects/restapi/search_images_dogcat.py>`_.
     """
 
     def _prepare_fit(self, data=None, features=None, metadata=None,
@@ -97,7 +96,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         """
         Processes images through the model and fits a *k-nn*.
 
-        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/master/keras/preprocessing/image.py#L719>`_
+        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
         @param      n           takes *n* images (or ``len(iter_images)``)
         @param      fLOG        logging function
         @param      kwimg       parameters used to preprocess the images
@@ -111,7 +110,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         returned by *iter_images*. It returns the neighbors
         only for the first image.
 
-        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/master/keras/preprocessing/image.py#L719>`_
+        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
         @return                 score, ind, meta
 
         *score* is an array representing the lengths to points,

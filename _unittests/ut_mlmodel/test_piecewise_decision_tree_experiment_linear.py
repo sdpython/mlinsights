@@ -34,7 +34,7 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         ys = y.astype(float).reshape((y.shape[0], 1))
         _test_criterion_init(c1, ys, w, 1., ind, 0, y.shape[0])
         _test_criterion_init(c2, ys, w, 1., ind, 0, y.shape[0])
-        # https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx#L886
+        # https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/tree/_criterion.pyx#L886
         v1 = _test_criterion_node_value(c1)
         v2 = _test_criterion_node_value(c2)
         self.assertEqual(v1, v2)

@@ -1,0 +1,91 @@
+name: Documentation and Code Coverage
+
+on:
+  push:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  run:
+    name: Build documentation on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - uses: tlylt/install-graphviz@v1
+
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
+
+      - name: Install requirements
+        run: python -m pip install -r requirements.txt
+
+      - name: Install requirements dev
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: Build
+        run: python setup.py build_ext --inplace
+
+      - name: Generate coverage report
+        run: |
+          pip install pytest
+          pip install pytest-cov
+          export PYTHONPATH=.
+          pytest --cov=./mlinsights/ --cov-report=xml --durations=10 --ignore-glob=**LONG*.py --ignore-glob=**notebook*.py -v
+          export PYTHONPATH=
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Install
+        run: python setup.py install
+
+      - name: Copy license, changelogs
+        run: |
+          cp LICENSE* ./_doc
+          cp CHANGELOGS* ./_doc
+
+      - name: Documentation
+        run: python -m sphinx ./_doc ./dist/html -n -w doc.txt
+
+      - name: Summary
+        run: cat doc.txt
+
+      - name: Check for errors and warnings
+        run: |
+          if [[ $(grep ERROR doc.txt | grep -v 'validation.cuda') ]]; then
+            echo "Documentation produces errors."
+            grep ERROR doc.txt | grep -v 'validation.cuda'
+            exit 1
+          fi
+          if [[ $(grep WARNING doc.txt | grep -v 'validation.cuda') ]]; then
+            echo "Documentation produces warnings."
+            grep WARNING doc.txt | grep -v 'validation.cuda'
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./dist/html/**

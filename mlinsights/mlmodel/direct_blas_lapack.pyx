@@ -1,7 +1,3 @@
-"""
-@file
-@brief Direct calls to libraries :epkg:`BLAS` and :epkg:`LAPACK`.
-"""
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
 from libc.stdio cimport printf

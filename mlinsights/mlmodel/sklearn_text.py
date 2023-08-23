@@ -13,7 +13,7 @@ except ImportError:  # pragma: no cover
 class NGramsMixin(VectorizerMixin):
     """
     Overloads method `_word_ngrams
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/feature_extraction/text.py#L148>`_
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to get tuples instead of string in member `vocabulary_
     <https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html>`_.
     of :epkg:`TfidfVectorizer` or :epkg:`CountVectorizer`.
@@ -74,7 +74,7 @@ class NGramsMixin(VectorizerMixin):
 class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
     """
     Inherits from @see cl NGramsMixin which overloads method `_word_ngrams
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/feature_extraction/text.py#L148>`_
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to keep more information about n-grams but still produces the same
     outputs than :epkg:`CountVectorizer`.
 
@@ -116,7 +116,7 @@ class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
 class TraceableTfidfVectorizer(TfidfVectorizer, NGramsMixin):
     """
     Inherits from @see cl NGramsMixin which overloads method `_word_ngrams
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/feature_extraction/text.py#L148>`_
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to keep more information about n-grams but still produces the same
     outputs than :epkg:`TfidfVectorizer`.
 

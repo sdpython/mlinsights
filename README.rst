@@ -1,13 +1,11 @@
 
-.. image:: https://github.com/sdpython/mlinsights/blob/master/_doc/sphinxdoc/source/_static/project_ico.png?raw=true
+.. image:: https://github.com/sdpython/mlinsights/blob/main/_doc/sphinxdoc/source/_static/project_ico.png?raw=true
     :target: https://github.com/sdpython/mlinsights/
 
-.. _l-README:
-
-mlinsights - extensions to scikit-learn
-=======================================
-
-.. image:: https://travis-ci.com/sdpython/mlinsights.svg?branch=master
+mlinsights: extensions to scikit-learn
+======================================
+   qqa
+.. image:: https://travis-ci.com/sdpython/mlinsights.svg?branch=main
     :target: https://app.travis-ci.com/github/sdpython/mlinsights/
     :alt: Build status
 
@@ -15,8 +13,8 @@ mlinsights - extensions to scikit-learn
     :target: https://ci.appveyor.com/project/sdpython/mlinsights
     :alt: Build Status Windows
 
-.. image:: https://circleci.com/gh/sdpython/mlinsights/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/sdpython/mlinsights/tree/master
+.. image:: https://circleci.com/gh/sdpython/mlinsights/tree/main.svg?style=svg
+    :target: https://circleci.com/gh/sdpython/mlinsights/tree/main
 
 .. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights%20(2)
     :target: https://dev.azure.com/xavierdupre3/mlinsights/
@@ -28,16 +26,12 @@ mlinsights - extensions to scikit-learn
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
 
-.. image:: https://codecov.io/github/sdpython/mlinsights/coverage.svg?branch=master
-    :target: https://codecov.io/github/sdpython/mlinsights?branch=master
+.. image:: https://codecov.io/github/sdpython/mlinsights/coverage.svg?branch=main
+    :target: https://codecov.io/github/sdpython/mlinsights?branch=main
 
 .. image:: http://img.shields.io/github/issues/sdpython/mlinsights.png
     :alt: GitHub Issues
     :target: https://github.com/sdpython/mlinsights/issues
-
-.. image:: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/_images/nbcov.png
-    :target: http://www.xavierdupre.fr/app/mlinsights/helpsphinx/all_notebooks_coverage.html
-    :alt: Notebook Coverage
 
 .. image:: https://pepy.tech/badge/mlinsights/month
     :target: https://pepy.tech/project/mlinsights/month
@@ -65,9 +59,7 @@ It also explores *PredictableTSNE* which trains a supervized
 model to replicate *t-SNE* results or a *PiecewiseRegression*
 which partitions the data before fitting a model on each bucket.
 
-* `GitHub/mlinsights <https://github.com/sdpython/mlinsights/>`_
-* `documentation <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html>`_
-* `Blog <http://www.xavierdupre.fr/app/mlinsights/helpsphinx/blog/main_0000.html#ap-main-0>`_
+`documentation <https://sdpython.github.io/doc/dev/mlinsights/>`_
 
 Function ``pipeline2dot`` converts a pipeline into a graph:
 
@@ -76,4 +68,4 @@ Function ``pipeline2dot`` converts a pipeline into a graph:
     from mlinsights.plotting import pipeline2dot
     dot = pipeline2dot(clf, df)
 
-.. image:: https://raw.githubusercontent.com/sdpython/mlinsights/master/_doc/sphinxdoc/source/pipeline.png
+.. image:: https://raw.githubusercontent.com/sdpython/mlinsights/main/_doc/sphinxdoc/source/pipeline.png

@@ -9,7 +9,7 @@ virtualenv:
   
 install:
   - $PYINT -m pip install --upgrade pip
-  - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper cpyquickhelper pandas_streaming --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ pandas_streaming --extra-index-url=https://pypi.python.org/simple/
   - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ scikit-learn>=0.22 --extra-index-url=https://pypi.python.org/simple/
   - $PYINT -m pip install -r requirements.txt
   - $PYINT --version

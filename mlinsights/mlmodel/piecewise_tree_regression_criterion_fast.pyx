@@ -1,6 +1,5 @@
 """
-@file
-@brief Implements a custom criterion to train a decision tree.
+Implements a custom criterion to train a decision tree.
 """
 cimport cython
 import numpy

@@ -4,26 +4,12 @@
 @brief Module *mlinsights*.
 Look for insights for machine learned models.
 """
-__version__ = "0.4.664"
+__version__ = "0.5.0"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/mlinsights"
-__url__ = "http://www.xavierdupre.fr/app/mlinsights/helpsphinx/index.html"
+__url__ = "https://sdpython.github.io/doc/dev/mlinsights/"
 __license__ = "MIT License"
-__blog__ = """
-<?xml version="1.0" encoding="UTF-8"?>
-<opml version="1.0">
-    <head>
-        <title>blog</title>
-    </head>
-    <body>
-        <outline text="mlinsights"
-            title="mlinsights"
-            type="rss"
-            xmlUrl="http://www.xavierdupre.fr/app/mlinsights/helpsphinx/_downloads/rss.xml"
-            htmlUrl="http://www.xavierdupre.fr/app/mlinsights/helpsphinx/blog/main_0000.html" />
-    </body>
-</opml>
-"""
+
 
 
 def check(log=False):

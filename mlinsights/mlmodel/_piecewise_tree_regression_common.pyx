@@ -1,6 +1,5 @@
 """
-@file
-@brief Implements a custom criterion to train a decision tree.
+Implements a custom criterion to train a decision tree.
 """
 from libc.stdlib cimport calloc, free
 from libc.stdio cimport printf
@@ -20,13 +19,13 @@ cdef class CommonRegressorCriterion(Criterion):
     <https://en.wikipedia.org/wiki/Mean_squared_error>`_.
     The code was inspired from
     `hellinger_distance_criterion.pyx 
-    <https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/master/
+    <https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/main/
     hellinger_distance_criterion.pyx>`_,    
     `Cython example of exposing C-computed arrays in Python without data copies
     <http://gael-varoquaux.info/programming/
     cython-example-of-exposing-c-computed-arrays-in-python-without-data-copies.html>`_,
     `_criterion.pyx
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pyx>`_.
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/tree/_criterion.pyx>`_.
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
 

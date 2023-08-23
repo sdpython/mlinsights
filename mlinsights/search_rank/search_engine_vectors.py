@@ -218,8 +218,7 @@ class SearchEngineVectors:
         @return                 zipfilename
 
         The function relies on function
-        `to_zip <http://www.xavierdupre.fr/app/pandas_streaming/helpsphinx/pandas_streaming/df/
-        dataframe_io.html#pandas_streaming.df.dataframe_io.to_zip>`_.
+        `to_zip <https://sdpython.github.io/doc/dev/pandas_streaming/df/dataframe_io.html#pandas_streaming.df.dataframe_io.to_zip>`_.
         It only works for :epkg:`Python` 3.6+.
         """
         if isinstance(zipfilename, str):

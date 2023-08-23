@@ -49,7 +49,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
     """
     Customized MLP Perceptron based on
     `BaseMultilayerPerceptron
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/neural_network/multilayer_perceptron.py#L40>`_.
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/neural_network/multilayer_perceptron.py#L40>`_.
     """
 
     def __init__(self, hidden_layer_sizes, activation, solver,
