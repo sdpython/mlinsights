@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import numpy
 from numpy.random import random
@@ -12,13 +9,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from pyquickhelper.pycode import ExtTestCase
 from mlinsights.mlmodel import (
-    run_test_sklearn_pickle, run_test_sklearn_clone,
-    run_test_sklearn_grid_search_cv, DecisionTreeLogisticRegression)
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv,
+    DecisionTreeLogisticRegression,
+)
 from mlinsights.mltree import predict_leaves
 
 
 class TestDecisionTreeLogisticRegression(ExtTestCase):
-
     def test_classifier_simple(self):
         X = [[0.1, 0.2], [0.2, 0.3], [-0.2, -0.3], [0.4, 0.3]]
         Y = numpy.array([0, 1, 0, 1])
@@ -35,7 +34,8 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         X = [[0.1, 0.2], [0.2, 0.3], [-0.2, -0.3], [0.4, 0.3]]
         Y = numpy.array([0, 1, 0, 1])
         dtlr = DecisionTreeLogisticRegression(
-            fit_improve_algo=None, strategy='perpendicular')
+            fit_improve_algo=None, strategy="perpendicular"
+        )
         self.assertRaise(lambda: dtlr.fit(X, Y), TypeError)
         X = numpy.array(X)
         Y = numpy.array(Y)
@@ -63,37 +63,44 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
         run_test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
-        run_test_sklearn_pickle(lambda: DecisionTreeLogisticRegression(
-            fit_improve_algo=None), X, Y)
+        run_test_sklearn_pickle(
+            lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y
+        )
 
     def test_classifier_clone(self):
         run_test_sklearn_clone(
-            lambda: DecisionTreeLogisticRegression(fit_improve_algo=None))
+            lambda: DecisionTreeLogisticRegression(fit_improve_algo=None)
+        )
 
     def test_classifier_grid_search(self):
         X = random(100)
         Y = X > 0.5  # pylint: disable=W0143
         X = X.reshape((100, 1))  # pylint: disable=E1101
-        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
-            lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y), ValueError)
+        self.assertRaise(
+            lambda: run_test_sklearn_grid_search_cv(
+                lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y
+            ),
+            ValueError,
+        )
         res = run_test_sklearn_grid_search_cv(
             lambda: DecisionTreeLogisticRegression(fit_improve_algo=None),
-            X, Y, max_depth=[2, 3])
-        self.assertIn('model', res)
-        self.assertIn('score', res)
-        self.assertGreater(res['score'], 0)
-        self.assertLesser(res['score'], 1)
+            X,
+            Y,
+            max_depth=[2, 3],
+        )
+        self.assertIn("model", res)
+        self.assertIn("score", res)
+        self.assertGreater(res["score"], 0)
+        self.assertLesser(res["score"], 1)
 
     def test_iris(self):
         data = load_iris()
         X, y = data.data, data.target
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=11)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
         dtlr = DecisionTreeLogisticRegression(fit_improve_algo=None)
         self.assertRaise(lambda: dtlr.fit(X_train, y_train), RuntimeError)
         y = y % 2
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=11)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
         dtlr.fit(X_train, y_train)
         depth = dtlr.tree_depth_
         self.assertGreater(depth, 2)
@@ -115,16 +122,15 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
     def test_iris_fit_improve(self):
         data = load_iris()
         X, y = data.data, data.target
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=11)
-        self.assertRaise(lambda: DecisionTreeLogisticRegression(
-            fit_improve_algo='fit_improve_algo'), ValueError)
-        dtlr = DecisionTreeLogisticRegression(
-            fit_improve_algo='intercept_sort_always')
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
+        self.assertRaise(
+            lambda: DecisionTreeLogisticRegression(fit_improve_algo="fit_improve_algo"),
+            ValueError,
+        )
+        dtlr = DecisionTreeLogisticRegression(fit_improve_algo="intercept_sort_always")
         self.assertRaise(lambda: dtlr.fit(X_train, y_train), RuntimeError)
         y = y % 2
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=11)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
         dtlr.fit(X_train, y_train)
         depth = dtlr.tree_depth_
         self.assertGreater(depth, 2)
@@ -147,8 +153,7 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         data = load_iris()
         X, y = data.data, data.target
         y = y % 2
-        X_train, X_test, y_train, _ = train_test_split(
-            X, y, random_state=11)
+        X_train, X_test, y_train, _ = train_test_split(X, y, random_state=11)
         dtlr = DecisionTreeLogisticRegression()
         dtlr.fit(X_train, y_train)
         path = dtlr.decision_path(X_test)
@@ -162,8 +167,7 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
     def test_classifier_strat(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [-0.2, -0.3], [0.4, 0.3]])
         Y = numpy.array([0, 1, 0, 1])
-        dtlr = DecisionTreeLogisticRegression(
-            fit_improve_algo=None, strategy='')
+        dtlr = DecisionTreeLogisticRegression(fit_improve_algo=None, strategy="")
         self.assertRaise(lambda: dtlr.fit(X, Y), ValueError)
 
 

@@ -1,8 +1,3 @@
-"""
-@file
-@brief Implements a base class which defines a pair of transforms
-applied around a predictor to modify the target as well.
-"""
 from sklearn.base import TransformerMixin, BaseEstimator
 
 
@@ -23,13 +18,11 @@ class BaseReciprocalTransformer(BaseEstimator, TransformerMixin):
         Returns a trained transform which reverse the target
         after a predictor.
         """
-        raise NotImplementedError(
-            "This must be overwritten.")  # pragma: no cover
+        raise NotImplementedError("This must be overwritten.")  # pragma: no cover
 
     def transform(self, X, y):
         """
         Transforms *X* and *y*.
         Returns transformed *X* and *y*.
         """
-        raise NotImplementedError(
-            "This must be overwritten.")  # pragma: no cover
+        raise NotImplementedError("This must be overwritten.")  # pragma: no cover

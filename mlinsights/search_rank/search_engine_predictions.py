@@ -1,8 +1,3 @@
-"""
-@file
-@brief Implements a way to get close examples based
-on the output of a machine learned model.
-"""
 from ..mlmodel import model_featurizer
 from ..helpers.parameters import format_function_call
 from .search_engine_vectors import SearchEngineVectors
@@ -10,28 +5,29 @@ from .search_engine_vectors import SearchEngineVectors
 
 class SearchEnginePredictions(SearchEngineVectors):
     """
-    Extends class @see cl SearchEngineVectors by
+    Extends class :class:`SearchEngineVectors` by
     looking for neighbors to a vector *X* by
     looking neighbors to *f(X)* and not *X*.
     *f* can be any function which converts a vector
     into another one or a machine learned model.
     In that case, *f* will be set to a default behavior.
-    See function @see fn model_featurizer.
+    See function :func:`model_featurizer`.
+
+    :param fct: function *f* applied before looking for neighbors,
+        it can also be a machine learned model
+    :param fct_params: parameters sent to function :func:`model_featurizer`
+    :param pknn: list of parameters, see :class:`sklearn.neighbors.NearestNeighbors`
     """
 
     def __init__(self, fct, fct_params=None, **knn):
-        """
-        @param      fct         function *f* applied before looking for neighbors,
-                                it can also be a machine learned model
-        @param      fct_params  parameters sent to function @see fn model_featurizer
-        @param      pknn        list of parameters, see
-                                :epkg:`sklearn:neighborsNearestNeighbors`
-        """
         super().__init__(**knn)
         self._fct_params = fct_params
         self._fct_init = fct
-        if (callable(fct) and not hasattr(fct, 'predict') and
-                not hasattr(fct, 'forward')):
+        if (
+            callable(fct)
+            and not hasattr(fct, "predict")
+            and not hasattr(fct, "forward")
+        ):
             self.fct = fct
         else:
             if fct_params is None:
@@ -46,8 +42,8 @@ class SearchEnginePredictions(SearchEngineVectors):
             pp = self.pknn.copy()
         else:
             pp = {}
-        pp['fct'] = self._fct_init
-        pp['fct_params'] = self._fct_params
+        pp["fct"] = self._fct_init
+        pp["fct_params"] = self._fct_params
         return format_function_call(self.__class__.__name__, pp)
 
     def fit(self, data=None, features=None, metadata=None):
@@ -63,13 +59,15 @@ class SearchEnginePredictions(SearchEngineVectors):
         """
         iterate = self._is_iterable(data)
         if iterate:
-            self._prepare_fit(data=data, features=features,
-                              metadata=metadata, transform=self.fct)
+            self._prepare_fit(
+                data=data, features=features, metadata=metadata, transform=self.fct
+            )
         else:
             self._prepare_fit(data=data, features=features, metadata=metadata)
             if isinstance(self.features_, list):
                 raise TypeError(  # pragma: no cover
-                    "features_ cannot be a list when training the model.")
+                    "features_ cannot be a list when training the model."
+                )
             self.features_ = self.fct(self.features_, True)
         return self._fit_knn()
 

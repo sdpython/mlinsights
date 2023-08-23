@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import numpy
 from numpy.random import random
@@ -14,18 +11,18 @@ from mlinsights.mlmodel import QuantileLinearRegression
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
     run_test_sklearn_clone,
-    run_test_sklearn_grid_search_cv)
+    run_test_sklearn_grid_search_cv,
+)
 from mlinsights.mlmodel.quantile_mlpregressor import float_sign
 
 
 class TestQuantileRegression(ExtTestCase):
-
     def test_sklver(self):
         self.assertTrue(compare_module_version(sklver, "0.22") >= 0)
 
     def test_quantile_regression_no_intercept(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
-        Y = numpy.array([1., 1.1])
+        Y = numpy.array([1.0, 1.1])
         clr = LinearRegression(fit_intercept=False)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(fit_intercept=False)
@@ -37,10 +34,11 @@ class TestQuantileRegression(ExtTestCase):
 
     @unittest.skipIf(
         compare_module_version(sklver, "0.24") == -1,
-        reason="positive was introduce in 0.24")
+        reason="positive was introduce in 0.24",
+    )
     def test_quantile_regression_no_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
-        Y = numpy.array([1., 1.1])
+        Y = numpy.array([1.0, 1.1])
         clr = LinearRegression(fit_intercept=False, positive=True)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(fit_intercept=False, positive=True)
@@ -56,7 +54,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_intercept(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
-        Y = numpy.array([1., 1.1, 1.2])
+        Y = numpy.array([1.0, 1.1, 1.2])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
@@ -68,14 +66,14 @@ class TestQuantileRegression(ExtTestCase):
 
     @unittest.skipIf(
         compare_module_version(sklver, "0.24") == -1,
-        reason="positive was introduce in 0.24")
+        reason="positive was introduce in 0.24",
+    )
     def test_quantile_regression_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
-        Y = numpy.array([1., 1.1, 1.2])
+        Y = numpy.array([1.0, 1.1, 1.2])
         clr = LinearRegression(fit_intercept=True, positive=True)
         clr.fit(X, Y)
-        clq = QuantileLinearRegression(
-            verbose=False, fit_intercept=True, positive=True)
+        clq = QuantileLinearRegression(verbose=False, fit_intercept=True, positive=True)
         clq.fit(X, Y)
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
@@ -86,8 +84,8 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_intercept_weights(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
-        Y = numpy.array([1., 1.1, 1.2])
-        W = numpy.array([1., 1., 1.])
+        Y = numpy.array([1.0, 1.1, 1.2])
+        W = numpy.array([1.0, 1.0, 1.0])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y, W)
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
@@ -99,7 +97,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_diff(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
-        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
+        Y = numpy.array([1.0, 1.1, 1.2, 10, 1.4])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
@@ -112,7 +110,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_pandas(self):
         X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
-        Y = numpy.array([1., 1.1])
+        Y = numpy.array([1.0, 1.1])
         clr = LinearRegression(fit_intercept=False)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(fit_intercept=False)
@@ -124,7 +122,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_list(self):
         X = [[0.1, 0.2], [0.2, 0.3]]
-        Y = numpy.array([1., 1.1])
+        Y = numpy.array([1.0, 1.1])
         clq = QuantileLinearRegression(fit_intercept=False)
         self.assertRaise(lambda: clq.fit(X, Y), TypeError)
 
@@ -177,24 +175,29 @@ class TestQuantileRegression(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
-            lambda: QuantileLinearRegression(), X, Y),
-            (ValueError, TypeError))
-        res = run_test_sklearn_grid_search_cv(lambda: QuantileLinearRegression(),
-                                              X, Y, delta=[0.1, 0.001])
-        self.assertIn('model', res)
-        self.assertIn('score', res)
-        self.assertGreater(res['score'], 0)
-        self.assertLesser(res['score'], 1)
+        self.assertRaise(
+            lambda: run_test_sklearn_grid_search_cv(
+                lambda: QuantileLinearRegression(), X, Y
+            ),
+            (ValueError, TypeError),
+        )
+        res = run_test_sklearn_grid_search_cv(
+            lambda: QuantileLinearRegression(), X, Y, delta=[0.1, 0.001]
+        )
+        self.assertIn("model", res)
+        self.assertIn("score", res)
+        self.assertGreater(res["score"], 0)
+        self.assertLesser(res["score"], 1)
 
     def test_quantile_regression_diff_quantile(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5], [0.6]])
-        Y = numpy.array([1., 1.11, 1.21, 10, 1.29, 1.39])
+        Y = numpy.array([1.0, 1.11, 1.21, 10, 1.29, 1.39])
         clqs = []
         scores = []
         for q in [0.25, 0.4999, 0.5, 0.5001, 0.75]:
             clq = QuantileLinearRegression(
-                verbose=False, fit_intercept=True, quantile=q)
+                verbose=False, fit_intercept=True, quantile=q
+            )
             clq.fit(X, Y)
             clqs.append(clq)
             sc = clq.score(X, Y)
@@ -221,7 +224,8 @@ class TestQuantileRegression(ExtTestCase):
         X = X.reshape((n, 1))
         for q in [0.1, 0.5, 0.9]:
             clq = QuantileLinearRegression(
-                verbose=False, fit_intercept=True, quantile=q, max_iter=10)
+                verbose=False, fit_intercept=True, quantile=q, max_iter=10
+            )
             clq.fit(X, Y)
             y = clq.predict(X)
             diff = y - Y
@@ -240,7 +244,7 @@ class TestQuantileRegression(ExtTestCase):
 
     def test_quantile_regression_intercept_D2(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
-        Y = numpy.array([[1., 0.], [1.1, 0.1], [1.2, 0.19]])
+        Y = numpy.array([[1.0, 0.0], [1.1, 0.1], [1.2, 0.19]])
         clr = LinearRegression(fit_intercept=True)
         clr.fit(X, Y)
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)

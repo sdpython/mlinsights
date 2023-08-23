@@ -1,8 +1,3 @@
-"""
-@file
-@brief Implements a transform which modifies the target
-and applies the reverse transformation on the target.
-"""
 import numpy
 from sklearn.exceptions import NotFittedError
 from sklearn.neighbors import NearestNeighbors
@@ -15,11 +10,17 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
     predict, then transform the target back before scoring.
     The transforms implements a series of predefined functions:
 
+    :param fct: function name of numerical function
+    :param fct_inv: optional if *fct* is a function name,
+        reciprocal function otherwise
+
     .. runpython::
         :showcode:
 
         import pprint
-        from mlinsights.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
+        from mlinsights.mlmodel.sklearn_transform_inv_fct import (
+            FunctionReciprocalTransformer
+        )
         pprint.pprint(FunctionReciprocalTransformer.available_fcts())
     """
 
@@ -29,33 +30,29 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
         Returns the list of predefined functions.
         """
         return {
-            'log': (numpy.log, 'exp'),
-            'exp': (numpy.exp, 'log'),
-            'log(1+x)': (lambda x: numpy.log(x + 1), 'exp(x)-1'),
-            'log1p': (numpy.log1p, 'expm1'),
-            'exp(x)-1': (lambda x: numpy.exp(x) - 1, 'log'),
-            'expm1': (numpy.expm1, 'log1p'),
+            "log": (numpy.log, "exp"),
+            "exp": (numpy.exp, "log"),
+            "log(1+x)": (lambda x: numpy.log(x + 1), "exp(x)-1"),
+            "log1p": (numpy.log1p, "expm1"),
+            "exp(x)-1": (lambda x: numpy.exp(x) - 1, "log"),
+            "expm1": (numpy.expm1, "log1p"),
         }
 
     def __init__(self, fct, fct_inv=None):
-        """
-        @param      fct         function name of numerical function
-        @param      fct_inv     optional if *fct* is a function name,
-                                reciprocal function otherwise
-        """
         BaseReciprocalTransformer.__init__(self)
         if isinstance(fct, str):
             if fct_inv is not None:
                 raise ValueError(  # pragma: no cover
-                    "If fct is a function name, fct_inv must not be specified.")
+                    "If fct is a function name, fct_inv must not be specified."
+                )
             opts = self.__class__.available_fcts()
             if fct not in opts:
                 raise ValueError(  # pragma: no cover
-                    f"Unknown fct '{fct}', it should in {list(sorted(opts))}.")
+                    f"Unknown fct '{fct}', it should in {list(sorted(opts))}."
+                )
         else:
             if fct_inv is None:
-                raise ValueError(
-                    "If fct is callable, fct_inv must be specified.")
+                raise ValueError("If fct is callable, fct_inv must be specified.")
         self.fct = fct
         self.fct_inv = fct_inv
 
@@ -101,13 +98,12 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
     nan values remain nan values. Once fitted, the transform
     has attribute ``permutation_`` which keeps
     track of the permutation to apply.
+
+    :param random_state: random state
+    :param closest: if True, finds the closest permuted element
     """
 
     def __init__(self, random_state=None, closest=False):
-        """
-        @param      random_state    random state
-        @param      closest         if True, finds the closest permuted element
-        """
         BaseReciprocalTransformer.__init__(self)
         self.random_state = random_state
         self.closest = closest
@@ -117,8 +113,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         Defines a random permutation over the targets.
         """
         if y is None:
-            raise RuntimeError(  # pragma: no cover
-                "targets cannot be empty.")
+            raise RuntimeError("targets cannot be empty.")  # pragma: no cover
         num = numpy.issubdtype(y.dtype, numpy.floating)
         perm = {}
         for u in y.ravel():
@@ -133,7 +128,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             lin = numpy.random.permutation(lin)
         else:
             rs = numpy.random.RandomState(  # pylint: disable=E1101
-                self.random_state)  # pylint: disable=E1101
+                self.random_state
+            )  # pylint: disable=E1101
             lin = rs.permutation(lin)
 
         perm_keys = list(perm.keys())
@@ -142,10 +138,11 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         self.permutation_ = perm
 
     def _check_is_fitted(self):
-        if not hasattr(self, 'permutation_'):
+        if not hasattr(self, "permutation_"):
             raise NotFittedError(  # pragma: no cover
                 f"This instance {type(self)} is not fitted yet. Call 'fit' with "
-                f"appropriate arguments before using this method.")
+                f"appropriate arguments before using this method."
+            )
 
     def get_fct_inv(self):
         """
@@ -153,14 +150,13 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         after a predictor.
         """
         self._check_is_fitted()
-        res = PermutationReciprocalTransformer(
-            self.random_state, closest=self.closest)
+        res = PermutationReciprocalTransformer(self.random_state, closest=self.closest)
         res.permutation_ = {v: k for k, v in self.permutation_.items()}
         return res
 
     def _find_closest(self, cl):
-        if not hasattr(self, 'knn_'):
-            self.knn_ = NearestNeighbors(n_neighbors=1, algorithm='kd_tree')
+        if not hasattr(self, "knn_"):
+            self.knn_ = NearestNeighbors(n_neighbors=1, algorithm="kd_tree")
             self.knn_perm_ = numpy.array(list(self.permutation_))
             self.knn_perm_ = self.knn_perm_.reshape((len(self.knn_perm_), 1))
             self.knn_.fit(self.knn_perm_)
@@ -171,7 +167,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         if self.knn_perm_.dtype in (numpy.int32, numpy.int64):
             return int(res)
         raise NotImplementedError(  # pragma: no cover
-            f"The function does not work for type {self.knn_perm_.dtype}.")
+            f"The function does not work for type {self.knn_perm_.dtype}."
+        )
 
     def transform(self, X, y):
         """
@@ -196,7 +193,8 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
                     else:
                         raise RuntimeError(
                             f"Unable to find key {yp[i]!r} in "
-                            f"{list(sorted(self.permutation_))!r}.")
+                            f"{list(sorted(self.permutation_))!r}."
+                        )
                 else:
                     cl = yp[i]
                 yp[i] = self.permutation_[cl]
@@ -204,8 +202,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         else:
             # y is probababilies or raw score
             if len(y.shape) != 2:
-                raise RuntimeError(
-                    f"yp should be a matrix but has shape {y.shape}.")
+                raise RuntimeError(f"yp should be a matrix but has shape {y.shape}.")
             cl = [(v, k) for k, v in self.permutation_.items()]
             cl.sort()
             new_perm = {}

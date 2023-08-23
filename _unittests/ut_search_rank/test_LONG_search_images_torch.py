@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@brief      test log(time=27s)
-"""
 import os
 import unittest
 import warnings
@@ -10,19 +7,22 @@ from io import StringIO
 import pandas
 import numpy
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor, skipif_circleci
+from pyquickhelper.pycode import (
+    ExtTestCase,
+    get_temp_folder,
+    skipif_appveyor,
+    skipif_circleci,
+)
 from pyquickhelper.filehelper import unzip_files
 
 
 class TestSearchPredictionsImagesTorch(ExtTestCase):
-
-    @skipif_appveyor("Fails due to: Tune using inter_op_parallelism_threads for best performance.")
+    @skipif_appveyor(
+        "Fails due to: Tune using inter_op_parallelism_threads for best performance."
+    )
     @skipif_circleci("Last for ever.")
     def test_search_predictions_torch(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
+        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
 
         from mlinsights.search_rank import SearchEnginePredictionImages
 
@@ -31,8 +31,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
             try:
                 import torchvision.models as tmodels  # pylint: disable=E0401,C0415
             except (SyntaxError, ModuleNotFoundError) as e:
-                warnings.warn(
-                    f"torch is not available: {e}")
+                warnings.warn(f"torch is not available: {e}")
                 return
             from torchvision import datasets, transforms  # pylint: disable=E0401
             from torch.utils.data import DataLoader  # pylint: disable=E0401
@@ -45,17 +44,29 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         dest = os.path.join(temp, "simages")
         os.mkdir(dest)
         zipname = os.path.join(
-            temp, "..", "..", "..", "_doc", "notebooks", "explore", "data", "dog-cat-pixabay.zip")
+            temp,
+            "..",
+            "..",
+            "..",
+            "_doc",
+            "notebooks",
+            "explore",
+            "data",
+            "dog-cat-pixabay.zip",
+        )
         files = unzip_files(zipname, where_to=dest)
         self.assertTrue(len(files) > 0)
 
         # sequence of images
-        trans = transforms.Compose([transforms.Resize((224, 224)),
-                                    transforms.CenterCrop(224),
-                                    transforms.ToTensor()])
+        trans = transforms.Compose(
+            [
+                transforms.Resize((224, 224)),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+            ]
+        )
         imgs_ = datasets.ImageFolder(temp, trans)
-        dataloader = DataLoader(imgs_, batch_size=1,
-                                shuffle=False, num_workers=1)
+        dataloader = DataLoader(imgs_, batch_size=1, shuffle=False, num_workers=1)
         img_seq = iter(dataloader)
         imgs = list(img[0] for img in img_seq)
 
@@ -65,11 +76,11 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         self.assertIn("SearchEnginePredictionImages", r)
 
         # fit
-        fLOG('[fit]')
+        fLOG("[fit]")
         se.fit(imgs_, fLOG=fLOG)
 
         # neighbors
-        fLOG('[test]', type(imgs[0]), imgs[0].shape)
+        fLOG("[test]", type(imgs[0]), imgs[0].shape)
         score, ind, meta = se.kneighbors(imgs[0])
 
         # assert
@@ -83,8 +94,9 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
 
         self.assertIsInstance(meta, (numpy.ndarray, pandas.DataFrame))
         self.assertEqual(meta.shape, (5, 2))
-        self.assertEndsWith('simages/cat-1151519__480.jpg',
-                            meta.loc[0, "name"].replace('\\', '/'))
+        self.assertEndsWith(
+            "simages/cat-1151519__480.jpg", meta.loc[0, "name"].replace("\\", "/")
+        )
 
         # neighbors 2
         score, ind, meta = se.kneighbors(imgs)

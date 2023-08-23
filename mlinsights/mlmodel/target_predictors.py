@@ -1,20 +1,18 @@
-"""
-@file
-@brief Implements a slightly different
-version of the :epkg:`sklearn:compose:TransformedTargetRegressor`.
-"""
 from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin, clone
 from sklearn.exceptions import NotFittedError
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.metrics import r2_score, accuracy_score
 from .sklearn_transform_inv import BaseReciprocalTransformer
-from .sklearn_transform_inv_fct import FunctionReciprocalTransformer, PermutationReciprocalTransformer
+from .sklearn_transform_inv_fct import (
+    FunctionReciprocalTransformer,
+    PermutationReciprocalTransformer,
+)
 
 
 def _common_get_transform(transformer, is_regression):
     if isinstance(transformer, str):
         closest = is_regression
-        if transformer == 'permute':
+        if transformer == "permute":
             return PermutationReciprocalTransformer(closest=closest)
         else:
             return FunctionReciprocalTransformer(transformer)
@@ -22,7 +20,8 @@ def _common_get_transform(transformer, is_regression):
         return clone(transformer)
     raise TypeError(
         f"Transformer {type(transformer)} must be a string or "
-        f"on object of type BaseReciprocalTransformer.")
+        f"on object of type BaseReciprocalTransformer."
+    )
 
 
 class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
@@ -36,7 +35,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
     regressor : object, default=LinearRegression()
         Regressor object such as derived from ``RegressorMixin``. This
         regressor will automatically be cloned each time prior to fitting.
-    transformer : str or object of type @see cl BaseReciprocalTransformer
+    transformer : str or object of type :class:`BaseReciprocalTransformer`
 
     Attributes
     ----------
@@ -109,10 +108,11 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         :return: y_hat : array, shape = (n_samples,)
             Predicted values.
         """
-        if not hasattr(self, 'regressor_'):
+        if not hasattr(self, "regressor_"):
             raise NotFittedError(  # pragma: no cover
                 f"This instance {type(self)} is not fitted yet. Call 'fit' with "
-                f"appropriate arguments before using this method.")
+                f"appropriate arguments before using this method."
+            )
         X_trans, _ = self.transformer_.transform(X, None)
         pred = self.regressor_.predict(X_trans)
 
@@ -129,7 +129,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         return r2_score(y, yp, sample_weight=sample_weight)
 
     def _more_tags(self):
-        return {'poor_score': True, 'no_validation': True}
+        return {"poor_score": True, "no_validation": True}
 
 
 class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
@@ -143,7 +143,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
     classifier : object, default=LogisticRegression()
         Classifier object such as derived from ``ClassifierMixin``. This
         classifier will automatically be cloned each time prior to fitting.
-    transformer : str or object of type @see cl BaseReciprocalTransformer
+    transformer : str or object of type :class:`BaseReciprocalTransformer`
 
     Attributes
     ----------
@@ -209,10 +209,11 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         return self
 
     def _check_is_fitted(self):
-        if not hasattr(self, 'classifier_'):
+        if not hasattr(self, "classifier_"):
             raise NotFittedError(  # pragma: no cover
                 f"This instance {type(self)} is not fitted yet. Call 'fit' with "
-                f"appropriate arguments before using this method.")
+                f"appropriate arguments before using this method."
+            )
 
     @property
     def classes_(self):
@@ -238,7 +239,8 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         if not hasattr(self.classifier_, method):
             raise RuntimeError(  # pragma: no cover
                 f"Unable to find method {method!r} in model "
-                f"{type(self.classifier_)}.")
+                f"{type(self.classifier_)}."
+            )
         meth = getattr(self.classifier_, method)
         X_trans, _ = self.transformer_.transform(X, None)
         pred = meth(X_trans)
@@ -255,7 +257,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         :return: y_hat, array, shape = (n_samples,)
             Predicted values.
         """
-        return self._apply(X, 'predict')
+        return self._apply(X, "predict")
 
     def predict_proba(self, X):
         """
@@ -266,7 +268,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         :return: predict probabilities, array, shape = (n_samples, n_classes)
             Predicted values.
         """
-        return self._apply(X, 'predict_proba')
+        return self._apply(X, "predict_proba")
 
     def decision_function(self, X):
         """
@@ -276,7 +278,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
             Samples.
         :return: raw score : array, shape = (n_samples, ?)
         """
-        return self._apply(X, 'decision_function')
+        return self._apply(X, "decision_function")
 
     def score(self, X, y, sample_weight=None):
         """
@@ -287,4 +289,4 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         return accuracy_score(y, yp, sample_weight=sample_weight)
 
     def _more_tags(self):
-        return {'poor_score': True, 'no_validation': True}
+        return {"poor_score": True, "no_validation": True}

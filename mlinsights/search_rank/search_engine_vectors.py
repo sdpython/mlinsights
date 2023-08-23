@@ -1,8 +1,3 @@
-"""
-@file
-@brief Implements a way to get close examples based
-on the output of a machine learned model.
-"""
 import json
 import zipfile
 import pandas
@@ -25,12 +20,11 @@ class SearchEngineVectors:
     * ``features_``: vectors used to compute the neighbors
     * ``knn_``: parameters for the :epkg:`sklearn:neighborsNearestNeighbors`
     * ``metadata_``: metadata, can be None
+
+    :param pknn: list of parameters, see :class:`sklearn.neighbors.NearestNeighbors`
     """
 
     def __init__(self, **pknn):
-        """
-        @param      pknn        list of parameters, see :epkg:`sklearn:neighborsNearestNeighbors`
-        """
         self.pknn = pknn
 
     def __repr__(self):
@@ -74,26 +68,32 @@ class SearchEngineVectors:
         if iterate:
             if data is None:
                 raise ValueError(  # pragma: no cover
-                    "iterator is True, data must be specified.")
+                    "iterator is True, data must be specified."
+                )
             if features is not None:
                 raise ValueError(  # pragma: no cover
-                    "iterator is True, features must be None.")
+                    "iterator is True, features must be None."
+                )
             if metadata is not None:
                 raise ValueError(  # pragma: no cover
-                    "iterator is True, metadata must be None.")
+                    "iterator is True, metadata must be None."
+                )
             metas = []
             arrays = []
             for row in data:
                 if not isinstance(row, tuple):
                     raise TypeError(  # pragma: no cover
-                        'data must be an iterator on tuple')
+                        "data must be an iterator on tuple"
+                    )
                 if len(row) != 2:
                     raise ValueError(  # pragma: no cover
-                        'data must be an iterator on tuple on two elements')
+                        "data must be an iterator on tuple on two elements"
+                    )
                 arr, meta = row
                 if not isinstance(meta, dict):
                     raise TypeError(  # pragma: no cover
-                        'Second element of the tuple must be a dictionary')
+                        "Second element of the tuple must be a dictionary"
+                    )
                 metas.append(meta)
                 if transform is None:
                     tradd = arr
@@ -102,24 +102,26 @@ class SearchEngineVectors:
                 if not isinstance(tradd, numpy.ndarray):
                     if transform is None:
                         raise TypeError(  # pragma: no cover
-                            f"feature should be of type numpy.array not {type(tradd)}")
+                            f"feature should be of type numpy.array not {type(tradd)}"
+                        )
                     else:
                         raise TypeError(  # pragma: no cover
                             f"output of method transform {transform!r} should be of "
-                            f"type numpy.array not {type(tradd)}.")
+                            f"type numpy.array not {type(tradd)}."
+                        )
                 arrays.append(tradd)
             self.features_ = numpy.vstack(arrays)
             self.metadata_ = pandas.DataFrame(metas)
         elif data is None:
             if not isinstance(features, numpy.ndarray):
                 raise TypeError(  # pragma: no cover
-                    "features must be an array if data is None")
+                    "features must be an array if data is None"
+                )
             self.features_ = features
             self.metadata_ = metadata
         else:
             if not isinstance(data, pandas.DataFrame):
-                raise ValueError(  # pragma: no cover
-                    "data should be a dataframe")
+                raise ValueError("data should be a dataframe")  # pragma: no cover
             self.features_ = data[features]
             self.metadata_ = data[metadata] if metadata else None
 
@@ -149,23 +151,23 @@ class SearchEngineVectors:
         """
         Finds the closest *n_neighbors*.
 
-        @param      X               features
-        @param      n_neighbors     number of neighbors to get (default is the value passed to the constructor)
-        @return                     *dist*, *ind*
+        :param X: features
+        :param n_neighbors: number of neighbors to get
+            (default is the value passed to the constructor)
+        :return: *dist*, *ind*
 
         *dist* is an array representing the lengths to points,
         *ind* contains the indices of the nearest points in the population matrix.
         """
         if isinstance(X, list):
             if len(X) == 0 or isinstance(X[0], (list, tuple)):
-                raise TypeError(  # pragma: no cover
-                    "X must be a list or a vector (1)")
+                raise TypeError("X must be a list or a vector (1)")  # pragma: no cover
             X = [X]
         if isinstance(X, numpy.ndarray) and (len(X.shape) > 1 and X.shape[0] != 1):
-            raise TypeError(  # pragma: no cover
-                "X must be a list or a vector (2)")
+            raise TypeError("X must be a list or a vector (2)")  # pragma: no cover
         dist, ind = self.knn_.kneighbors(
-            X, n_neighbors=n_neighbors, return_distance=True)
+            X, n_neighbors=n_neighbors, return_distance=True
+        )
         ind = ind.ravel()
         dist = dist.ravel()
         return dist, ind
@@ -174,10 +176,10 @@ class SearchEngineVectors:
         """
         Reorders the closest *n_neighbors*.
 
-        @param      X               features
-        @param      dist            array representing the lengths to points
-        @param      ind             indices of the nearest points in the population matrix
-        @return                     *score*, *ind*
+        :param X: features
+        :param dist: array representing the lengths to points
+        :param ind: indices of the nearest points in the population matrix
+        :return: *score*, *ind*
 
         *score* is an array representing the lengths to points,
         *ind* contains the indices of the nearest points in the population matrix.
@@ -200,7 +202,7 @@ class SearchEngineVectors:
         rind = ind
         if self.metadata_ is None:
             rmeta = None
-        elif hasattr(self.metadata_, 'iloc'):
+        elif hasattr(self.metadata_, "iloc"):
             rmeta = self.metadata_.iloc[ind, :]
         elif len(self.metadata_.shape) == 1:
             rmeta = self.metadata_[ind]
@@ -222,41 +224,39 @@ class SearchEngineVectors:
         It only works for :epkg:`Python` 3.6+.
         """
         if isinstance(zipfilename, str):
-            zf = zipfile.ZipFile(zipfilename, 'w')
+            zf = zipfile.ZipFile(zipfilename, "w")
             close = True
         else:  # pragma: no cover
             zf = zipfilename
             close = False
-        if 'index' not in kwargs:
-            kwargs['index'] = False
-        to_zip(self.features_, zf, 'SearchEngineVectors-features.npy')
-        to_zip(self.metadata_, zf, 'SearchEngineVectors-metadata.csv', **kwargs)
+        if "index" not in kwargs:
+            kwargs["index"] = False
+        to_zip(self.features_, zf, "SearchEngineVectors-features.npy")
+        to_zip(self.metadata_, zf, "SearchEngineVectors-metadata.csv", **kwargs)
         js = json.dumps(self.pknn)
-        zf.writestr('SearchEngineVectors-knn.json', js)
+        zf.writestr("SearchEngineVectors-knn.json", js)
         if close:
             zf.close()
 
     @staticmethod
     def read_zip(zipfilename, **kwargs):
         """
-        Restore the features, the metadata to a @see cl SearchEngineVectors.
+        Restores the features, the metadata to a :class:`SearchEngineVectors`.
 
-        @param      zipfilename a :epkg:`*py:zipfile:ZipFile` or a filename
-        @param      zname       a filename in th zipfile
-        @param      kwargs      parameters for :epkg:`pandas:read_csv`
-        @return                 @see cl SearchEngineVectors
-
-        It only works for :epkg:`Python` 3.6+.
+        :param zipfilename: a :epkg:`*py:zipfile:ZipFile` or a filename
+        :param zname: a filename in th zipfile
+        :param kwargs: parameters for :epkg:`pandas:read_csv`
+        :return: :class:`SearchEngineVectors`
         """
         if isinstance(zipfilename, str):
-            zf = zipfile.ZipFile(zipfilename, 'r')
+            zf = zipfile.ZipFile(zipfilename, "r")
             close = True
         else:  # pragma: no cover
             zf = zipfilename
             close = False
-        feat = read_zip(zf, 'SearchEngineVectors-features.npy')
-        meta = read_zip(zf, 'SearchEngineVectors-metadata.csv', **kwargs)
-        js = zf.read('SearchEngineVectors-knn.json')
+        feat = read_zip(zf, "SearchEngineVectors-features.npy")
+        meta = read_zip(zf, "SearchEngineVectors-metadata.csv", **kwargs)
+        js = zf.read("SearchEngineVectors-knn.json")
         knn = json.loads(js)
         if close:
             zf.close()

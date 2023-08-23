@@ -1,17 +1,18 @@
 # pylint: disable=C0302
-"""
-@file
-@brief Implements k-means with norms L1 and L2.
-"""
 import numpy
 from scipy.sparse import issparse
+
 # Source: https://github.com/scikit-learn/scikit-learn/blob/95d4f0841d57e8b5f6b2a570312e9d832e69debc/sklearn/cluster/_k_means_fast.pyx
-from sklearn.utils.sparsefuncs_fast import assign_rows_csr  # pylint: disable=W0611,E0611
+from sklearn.utils.sparsefuncs_fast import (
+    assign_rows_csr,
+)  # pylint: disable=W0611,E0611
+
 try:
     from sklearn.cluster._kmeans import _check_sample_weight
 except ImportError:  # pragma: no cover
     from sklearn.cluster._kmeans import (
-        _check_normalize_sample_weight as _check_sample_weight)
+        _check_normalize_sample_weight as _check_sample_weight,
+    )
 from sklearn.metrics.pairwise import pairwise_distances_argmin_min
 
 
@@ -37,15 +38,16 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
         cluster center.
     """
     n_samples = X.shape[0]
-    if norm == 'L2':
+    if norm == "L2":
         labels, mindist = pairwise_distances_argmin_min(
-            X=X, Y=centers, metric='euclidean', metric_kwargs={'squared': True})
-    elif norm == 'L1':
+            X=X, Y=centers, metric="euclidean", metric_kwargs={"squared": True}
+        )
+    elif norm == "L1":
         labels, mindist = pairwise_distances_argmin_min(
-            X=X, Y=centers, metric='manhattan')
+            X=X, Y=centers, metric="manhattan"
+        )
     else:  # pragma no cover
-        raise NotImplementedError(
-            f"Not implemented for norm '{norm}'.")
+        raise NotImplementedError(f"Not implemented for norm '{norm}'.")
     # cython k-means code assumes int32 inputs
     labels = labels.astype(numpy.int32, copy=False)
     if n_samples == distances.shape[0]:
@@ -55,17 +57,16 @@ def _labels_inertia_precompute_dense(norm, X, sample_weight, centers, distances)
     return labels, inertia
 
 
-def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
-                       labels, distances):
+def _assign_labels_csr(X, sample_weight, x_squared_norms, centers, labels, distances):
     """Compute label assignment and inertia for a CSR input
     Return the inertia (sum of squared distances to the centers).
     """
-    if (distances is not None and
-            distances.shape != (X.shape[0], )):
+    if distances is not None and distances.shape != (X.shape[0],):
         raise ValueError(  # pragma: no cover
             f"Dimension mismatch for distance got "
             f"{distances.shape}, expecting "
-            f"{(X.shape[0], centers.shape[0])}.")
+            f"{(X.shape[0], centers.shape[0])}."
+        )
     n_clusters = centers.shape[0]
     n_samples = X.shape[0]
     store_distances = 0
@@ -81,7 +82,8 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
 
     for center_idx in range(n_clusters):
         center_squared_norms[center_idx] = numpy.dot(
-            centers[center_idx, :], centers[center_idx, :])
+            centers[center_idx, :], centers[center_idx, :]
+        )
 
     for sample_idx in range(n_samples):
         min_dist = -1
@@ -104,8 +106,7 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers,
     return inertia
 
 
-def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
-                         labels, distances):
+def _assign_labels_array(X, sample_weight, x_squared_norms, centers, labels, distances):
     """Compute label assignment and inertia for a dense array
     Return the inertia (sum of squared distances to the centers).
     """
@@ -122,7 +123,8 @@ def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
 
     for center_idx in range(n_clusters):
         center_squared_norms[center_idx] = numpy.dot(
-            centers[center_idx, :], centers[center_idx, :])
+            centers[center_idx, :], centers[center_idx, :]
+        )
 
     for sample_idx in range(n_samples):
         min_dist = -1
@@ -146,8 +148,7 @@ def _assign_labels_array(X, sample_weight, x_squared_norms, centers,
     return inertia
 
 
-def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
-                        distances=None):
+def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers, distances=None):
     """E step of the K-means EM algorithm.
     Compute the labels and the inertia of the given samples and centers.
     This will compute the distances in-place.
@@ -179,12 +180,12 @@ def _labels_inertia_skl(X, sample_weight, x_squared_norms, centers,
     # distances will be changed in-place
     if issparse(X):
         inertia = _assign_labels_csr(
-            X, sample_weight, x_squared_norms, centers, labels,
-            distances=distances)
+            X, sample_weight, x_squared_norms, centers, labels, distances=distances
+        )
     else:
         inertia = _assign_labels_array(
-            X, sample_weight, x_squared_norms, centers, labels,
-            distances=distances)
+            X, sample_weight, x_squared_norms, centers, labels, distances=distances
+        )
     return labels, inertia
 
 

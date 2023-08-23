@@ -1,8 +1,3 @@
-"""
-@file
-@brief Implements a transformer which wraps a predictor
-to do transfer learning.
-"""
 import inspect
 from sklearn.base import BaseEstimator, TransformerMixin
 from .sklearn_testing import clone_with_fitted_parameters
@@ -14,22 +9,18 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
     This model is frozen: it cannot be trained and only
     computes the predictions.
 
-    .. index:: transfer learning, frozen model
+    :param estimator: estimator to wrap in a transformer, it is clone
+        with the training data (deep copy) when fitted
+    :param method: if None, guess what method should be called,
+        *transform* for a transformer,
+        *predict_proba* for a classifier,
+        *decision_function* if found,
+        *predict* otherwiser
+    :param copy_estimator: copy the model instead of taking a reference
+    :param trainable: the transfered model must be trained
     """
 
-    def __init__(self, estimator, method=None, copy_estimator=True,
-                 trainable=False):
-        """
-        @param      estimator           estimator to wrap in a transformer, it is cloned
-                                        with the training data (deep copy) when fitted
-        @param      method              if None, guess what method should be called,
-                                        *transform* for a transformer,
-                                        *predict_proba* for a classifier,
-                                        *decision_function* if found,
-                                        *predict* otherwiser
-        @param      copy_estimator      copy the model instead of taking a reference
-        @param      trainable           the transfered model must be trained
-        """
+    def __init__(self, estimator, method=None, copy_estimator=True, trainable=False):
         TransformerMixin.__init__(self)
         BaseEstimator.__init__(self)
         self.estimator = estimator
@@ -46,11 +37,14 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
                 method = "predict"
             else:
                 raise AttributeError(  # pragma: no cover
-                    f"Cannot find a method transform, predict_proba, decision_function, "
-                    f"predict in object {type(estimator)}.")
+                    f"Cannot find a method transform, "
+                    f"predict_proba, decision_function, "
+                    f"predict in object {type(estimator)}."
+                )
         if not hasattr(estimator, method):
             raise AttributeError(  # pragma: no cover
-                f"Cannot find method '{method}' in object {type(estimator)}")
+                f"Cannot find method '{method}' in object {type(estimator)}"
+            )
         self.method = method
 
     def fit(self, X=None, y=None, sample_weight=None):
@@ -69,17 +63,18 @@ class TransferTransformer(BaseEstimator, TransformerMixin):
         if self.copy_estimator:
             self.estimator_ = clone_with_fitted_parameters(self.estimator)
             from .sklearn_testing import assert_estimator_equal  # pylint: disable=C0415
+
             assert_estimator_equal(self.estimator_, self.estimator)
         else:
             self.estimator_ = self.estimator
         if self.trainable:
             insp = inspect.signature(self.estimator_.fit)
             pars = insp.parameters
-            if 'y' in pars and 'sample_weight' in pars:
+            if "y" in pars and "sample_weight" in pars:
                 self.estimator_.fit(X, y, sample_weight)
-            elif 'y' in pars:
+            elif "y" in pars:
                 self.estimator_.fit(X, y)
-            elif 'sample_weight' in pars:
+            elif "sample_weight" in pars:
                 self.estimator_.fit(X, sample_weight=sample_weight)
             else:
                 self.estimator_.fit(X)

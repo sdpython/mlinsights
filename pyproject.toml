@@ -124,5 +124,13 @@ line-length = 88
 max-complexity = 10
 
 [tool.ruff.per-file-ignores]
-"mlinsights/reference/__init__.py" = ["F401"]
-"mlinsights/tools/graph/__init__.py" = ["F401"]
+"_unittests/ut_plotting/test_dot.py" = ["E501"]
+"mlinsights/mlbatch/__init__.py" = ["F401"]
+"mlinsights/metrics/__init__.py" = ["F401"]
+"mlinsights/mlmodel/kmeans_l1.py" = ["E731"]
+"mlinsights/mlmodel/__init__.py" = ["F401"]
+"mlinsights/mltree/__init__.py" = ["F401"]
+"mlinsights/plotting/__init__.py" = ["F401"]
+"mlinsights/search_rank/__init__.py" = ["F401"]
+"mlinsights/sklapi/__init__.py" = ["F401"]
+"mlinsights/timeseries/__init__.py" = ["F401"]

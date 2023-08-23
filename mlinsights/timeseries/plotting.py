@@ -1,15 +1,19 @@
-"""
-@file
-@brief Timeseries plots.
-"""
 import calendar
 import datetime
 
 
-def plot_week_timeseries(time, value, normalise=True,
-                         label=None, h=0.85, value2=None,
-                         label2=None, daynames=None,
-                         xfmt="%1.0f", ax=None):
+def plot_week_timeseries(
+    time,
+    value,
+    normalise=True,
+    label=None,
+    h=0.85,
+    value2=None,
+    label2=None,
+    daynames=None,
+    xfmt="%1.0f",
+    ax=None,
+):
     """
     Shows a timeseries dispatched by days as bars.
 
@@ -57,10 +61,11 @@ def plot_week_timeseries(time, value, normalise=True,
         max_value = max(max_value, value2.max())
         value2 = value2 / max_value
     value = value / max_value
-    input_maxy = 1.
+    input_maxy = 1.0
 
     if ax is None:
         import matplotlib.pyplot as plt  # pylint: disable=C0415
+
         ax = plt.gca()
 
     import matplotlib.patches as patches  # pylint: disable=R0402,C0415
@@ -76,7 +81,8 @@ def plot_week_timeseries(time, value, normalise=True,
             delta = (ti1 - ti) if delta is None else min(delta, ti1 - ti)
             if delta == 0:
                 raise RuntimeError(  # pragma: no cover
-                    "The timeseries contains duplicated time values.")
+                    "The timeseries contains duplicated time values."
+                )
         else:
             ti1 = ti + delta
         x1, y1 = coor(ti)
@@ -85,22 +91,31 @@ def plot_week_timeseries(time, value, normalise=True,
             x2, y2 = coor(ti + delta)
         y2 = y1 + (y2 - y1) * h
         if first and label:
-            ax.plot([x1, x1 + value[i] * 0.8], [y1, y1],
-                    'b', alpha=0.5, label=label)
+            ax.plot([x1, x1 + value[i] * 0.8], [y1, y1], "b", alpha=0.5, label=label)
             first = False
         if maxx is None:
             maxx = (x1, x1 + input_maxy)
             maxy = (y1, y2)
         else:
-            maxx = (min(x1, maxx[0]),  # pylint: disable=E1136
-                    max(x1 + input_maxy, maxx[1]))  # pylint: disable=E1136
-            maxy = (min(y1, maxy[0]),  # pylint: disable=E1136
-                    max(y2, maxy[1]))  # pylint: disable=E1136
+            maxx = (
+                min(x1, maxx[0]),  # pylint: disable=E1136
+                max(x1 + input_maxy, maxx[1]),
+            )  # pylint: disable=E1136
+            maxy = (
+                min(y1, maxy[0]),  # pylint: disable=E1136
+                max(y2, maxy[1]),
+            )  # pylint: disable=E1136
 
-        rect = patches.Rectangle((x1, y1), value[i] * h, y2 - y1,
-                                 linewidth=1, edgecolor=None,
-                                 facecolor='b', fill=True,
-                                 alpha=0.5)
+        rect = patches.Rectangle(
+            (x1, y1),
+            value[i] * h,
+            y2 - y1,
+            linewidth=1,
+            edgecolor=None,
+            facecolor="b",
+            fill=True,
+            alpha=0.5,
+        )
 
         ax.add_patch(rect)
 
@@ -115,10 +130,10 @@ def plot_week_timeseries(time, value, normalise=True,
         x1i = maxx[0] + input_maxy * i
         x2i = x1i + input_maxy
         xticks.append(x1i)
-        ax.plot([x1i, x1i + input_maxy], [new_ymin, new_ymin], 'k', alpha=0.5)
-        ax.plot([x1i, x1i + input_maxy], [maxy[1], maxy[1]], 'k', alpha=0.5)
-        ax.plot([x1i, x1i], [maxy[0], maxy[1]], 'k', alpha=0.5)
-        ax.plot([x2i, x2i], [maxy[0], maxy[1]], 'k', alpha=0.5)
+        ax.plot([x1i, x1i + input_maxy], [new_ymin, new_ymin], "k", alpha=0.5)
+        ax.plot([x1i, x1i + input_maxy], [maxy[1], maxy[1]], "k", alpha=0.5)
+        ax.plot([x1i, x1i], [maxy[0], maxy[1]], "k", alpha=0.5)
+        ax.plot([x2i, x2i], [maxy[0], maxy[1]], "k", alpha=0.5)
         ax.text(x1i, new_ymin, daynames[i])
 
     # invert y axis
@@ -131,8 +146,10 @@ def plot_week_timeseries(time, value, normalise=True,
     for i in range(nby):
         dh = ys[i]
         dt = datetime.timedelta(seconds=dh)
-        tx = "%dh%02d" % (dt.seconds // 3600,
-                          60 * (dt.seconds / 3600 - dt.seconds // 3600))
+        tx = "%dh%02d" % (
+            dt.seconds // 3600,
+            60 * (dt.seconds / 3600 - dt.seconds // 3600),
+        )
         ylabels.append(tx)
     ax.set_yticklabels(ylabels)
 
@@ -153,10 +170,9 @@ def plot_week_timeseries(time, value, normalise=True,
     if len(xticks) < len(xlabels):
         xticks.append(xs[-1])
     ax.set_xticks(xticks)
-    ax.set_xticklabels(
-        [xfmt % x for x in xlabels] if xfmt else xlabels)
+    ax.set_xticklabels([xfmt % x for x in xlabels] if xfmt else xlabels)
 
-    ax.tick_params(axis='x', rotation=30)
+    ax.tick_params(axis="x", rotation=30)
 
     # value2
     if value2 is not None:
@@ -183,16 +199,16 @@ def plot_week_timeseries(time, value, normalise=True,
 
             if len(ys) > 0 and y2 < ys[-1]:
                 if first and label2 is not None:
-                    ax.plot(xs, ys, color='orange', linewidth=2, label=label2)
+                    ax.plot(xs, ys, color="orange", linewidth=2, label=label2)
                     first = False
                 else:
-                    ax.plot(xs, ys, color='orange', linewidth=2)
+                    ax.plot(xs, ys, color="orange", linewidth=2)
                 xs, ys = [], []
 
             xs.append(x2)
             ys.append((y1 + y2) / 2)
 
         if len(xs) > 0:
-            ax.plot(xs, ys, color='orange', linewidth=2)
+            ax.plot(xs, ys, color="orange", linewidth=2)
 
     return ax

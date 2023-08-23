@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a quantile linear regression.
-"""
 import numpy
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
@@ -29,9 +25,17 @@ class QuantileLinearRegression(LinearRegression):
     value.
     """
 
-    def __init__(self, fit_intercept=True, copy_X=True,
-                 n_jobs=1, delta=0.0001, max_iter=10, quantile=0.5,
-                 positive=False, verbose=False):
+    def __init__(
+        self,
+        fit_intercept=True,
+        copy_X=True,
+        n_jobs=1,
+        delta=0.0001,
+        max_iter=10,
+        quantile=0.5,
+        positive=False,
+        verbose=False,
+    ):
         """
         :param fit_intercept: boolean, optional, default True
             whether to calculate the intercept for this model. If set
@@ -58,13 +62,17 @@ class QuantileLinearRegression(LinearRegression):
         """
         try:
             LinearRegression.__init__(
-                self, fit_intercept=fit_intercept,
-                copy_X=copy_X, n_jobs=n_jobs, positive=positive)
+                self,
+                fit_intercept=fit_intercept,
+                copy_X=copy_X,
+                n_jobs=n_jobs,
+                positive=positive,
+            )
         except TypeError:
             # scikit-learn<0.24
             LinearRegression.__init__(
-                self, fit_intercept=fit_intercept,
-                copy_X=copy_X, n_jobs=n_jobs)
+                self, fit_intercept=fit_intercept, copy_X=copy_X, n_jobs=n_jobs
+            )
         self.max_iter = max_iter
         self.verbose = verbose
         self.delta = delta
@@ -112,16 +120,18 @@ class QuantileLinearRegression(LinearRegression):
             "compute z"
             deltas = numpy.ones(X.shape[0]) * delta
             epsilon, mult = QuantileLinearRegression._epsilon(
-                Y, Xm @ beta, self.quantile)
-            r = numpy.reciprocal(numpy.maximum(  # pylint: disable=E1111
-                epsilon, deltas))  # pylint: disable=E1111
+                Y, Xm @ beta, self.quantile
+            )
+            r = numpy.reciprocal(
+                numpy.maximum(epsilon, deltas)  # pylint: disable=E1111
+            )  # pylint: disable=E1111
             if mult is not None:
                 epsilon *= 1 - mult
                 r *= 1 - mult
             return r, epsilon
 
         if not isinstance(X, numpy.ndarray):
-            if hasattr(X, 'values'):
+            if hasattr(X, "values"):
                 X = X.values
             else:
                 raise TypeError("X must be an array or a dataframe.")
@@ -132,13 +142,17 @@ class QuantileLinearRegression(LinearRegression):
             Xm = X
 
         try:
-            clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                                   n_jobs=self.n_jobs,
-                                   positive=self.positive)
+            clr = LinearRegression(
+                fit_intercept=False,
+                copy_X=self.copy_X,
+                n_jobs=self.n_jobs,
+                positive=self.positive,
+            )
         except AttributeError:
             # scikit-learn<0.24
-            clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                                   n_jobs=self.n_jobs)
+            clr = LinearRegression(
+                fit_intercept=False, copy_X=self.copy_X, n_jobs=self.n_jobs
+            )
 
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0
@@ -154,7 +168,8 @@ class QuantileLinearRegression(LinearRegression):
             self.n_iter_ = i
             if self.verbose:
                 print(  # pragma: no cover
-                    f'[QuantileLinearRegression.fit] iter={i + 1} error={E}')
+                    f"[QuantileLinearRegression.fit] iter={i + 1} error={E}"
+                )
             if lastE is not None and lastE == E:
                 break
             lastE = E
@@ -176,7 +191,7 @@ class QuantileLinearRegression(LinearRegression):
             sign = numpy.sign(diff)  # pylint: disable=E1111
             mult = numpy.ones(y_true.shape[0])
             mult[sign > 0] *= quantile  # pylint: disable=W0143
-            mult[sign < 0] *= (1 - quantile)  # pylint: disable=W0143
+            mult[sign < 0] *= 1 - quantile  # pylint: disable=W0143
         else:
             mult = None
         if sample_weight is not None:
@@ -200,7 +215,8 @@ class QuantileLinearRegression(LinearRegression):
 
         if self.quantile != 0.5:
             epsilon, mult = QuantileLinearRegression._epsilon(
-                y, pred, self.quantile, sample_weight)
+                y, pred, self.quantile, sample_weight
+            )
             if mult is not None:
                 epsilon *= mult * 2
             return epsilon.sum() / X.shape[0]

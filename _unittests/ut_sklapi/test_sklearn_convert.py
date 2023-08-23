@@ -1,6 +1,3 @@
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import pickle
 from io import BytesIO
@@ -21,7 +18,6 @@ from mlinsights.sklapi import SkBaseTransformLearner
 
 
 class TestSklearnConvert(ExtTestCase):
-
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_classifiers(self):
         data = load_iris()
@@ -41,8 +37,7 @@ class TestSklearnConvert(ExtTestCase):
         score2 = pipe.score(X_test, y_test)
         self.assertEqual(score, score2)
         rp = repr(conv)
-        self.assertStartsWith(
-            'SkBaseTransformLearner(model=LogisticRegression(', rp)
+        self.assertStartsWith("SkBaseTransformLearner(model=LogisticRegression(", rp)
 
     def test_pipeline_transform(self):
         data = load_iris()
@@ -62,8 +57,7 @@ class TestSklearnConvert(ExtTestCase):
         score2 = pipe.score(X_test, y_test)
         self.assertEqual(score, score2)
         rp = repr(conv)
-        self.assertStartsWith(
-            'SkBaseTransformLearner(model=PCA(', rp)
+        self.assertStartsWith("SkBaseTransformLearner(model=PCA(", rp)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_callable(self):
@@ -85,8 +79,7 @@ class TestSklearnConvert(ExtTestCase):
         score2 = pipe.score(X_test, y_test)
         self.assertEqualFloat(score, score2, precision=1e-5)
         rp = repr(conv)
-        self.assertStartsWith(
-            'SkBaseTransformLearner(model=LogisticRegression(', rp)
+        self.assertStartsWith("SkBaseTransformLearner(model=LogisticRegression(", rp)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_regressors(self):
@@ -98,33 +91,35 @@ class TestSklearnConvert(ExtTestCase):
         pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = r2_score(y_test, pred)
-        self.assertLesser(score, 1.)
+        self.assertLesser(score, 1.0)
         score2 = pipe.score(X_test, y_test)
         self.assertEqualFloat(score, score2, precision=1e-5)
         rp = repr(conv)
-        self.assertStartsWith(
-            'SkBaseTransformLearner(model=LinearRegression(', rp)
+        self.assertStartsWith("SkBaseTransformLearner(model=LinearRegression(", rp)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_params(self):
         conv = SkBaseTransformLearner(LinearRegression())
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pars = pipe.get_params()
-        self.assertIn('skbasetransformlearner__model__fit_intercept', pars)
+        self.assertIn("skbasetransformlearner__model__fit_intercept", pars)
         conv = SkBaseTransformLearner(LinearRegression(fit_intercept=True))
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pipe.set_params(**pars)
         pars = pipe.get_params()
-        self.assertIn('skbasetransformlearner__model__fit_intercept', pars)
+        self.assertIn("skbasetransformlearner__model__fit_intercept", pars)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
-        df = pandas.DataFrame(dict(y=[0, 1, 0, 1, 0, 1, 0, 1],
-                                   X1=[0.5, 0.6, 0.52, 0.62,
-                                       0.5, 0.6, 0.51, 0.61],
-                                   X2=[0.5, 0.6, 0.7, 0.5, 1.5, 1.6, 1.7, 1.8]))
-        X = df.drop('y', axis=1)
-        y = df['y']
+        df = pandas.DataFrame(
+            dict(
+                y=[0, 1, 0, 1, 0, 1, 0, 1],
+                X1=[0.5, 0.6, 0.52, 0.62, 0.5, 0.6, 0.51, 0.61],
+                X2=[0.5, 0.6, 0.7, 0.5, 1.5, 1.6, 1.7, 1.8],
+            )
+        )
+        X = df.drop("y", axis=1)
+        y = df["y"]
         model = SkBaseTransformLearner(LinearRegression())
         model.fit(X, y)
 
@@ -139,19 +134,22 @@ class TestSklearnConvert(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_grid(self):
-        df = pandas.DataFrame(dict(y=[0, 1, 0, 1, 0, 1, 0, 1],
-                                   X1=[0.5, 0.6, 0.52, 0.62,
-                                       0.5, 0.6, 0.51, 0.61],
-                                   X2=[0.5, 0.6, 0.7, 0.5, 1.5, 1.6, 1.7, 1.8]))
-        X = df.drop('y', axis=1)
-        y = df['y']
-        model = make_pipeline(SkBaseTransformLearner(LinearRegression()),
-                              LogisticRegression())
+        df = pandas.DataFrame(
+            dict(
+                y=[0, 1, 0, 1, 0, 1, 0, 1],
+                X1=[0.5, 0.6, 0.52, 0.62, 0.5, 0.6, 0.51, 0.61],
+                X2=[0.5, 0.6, 0.7, 0.5, 1.5, 1.6, 1.7, 1.8],
+            )
+        )
+        X = df.drop("y", axis=1)
+        y = df["y"]
+        model = make_pipeline(
+            SkBaseTransformLearner(LinearRegression()), LogisticRegression()
+        )
         res = model.get_params(True)
         self.assertGreater(len(res), 0)
 
-        parameters = {
-            'skbasetransformlearner__model__fit_intercept': [False, True]}
+        parameters = {"skbasetransformlearner__model__fit_intercept": [False, True]}
         clf = GridSearchCV(model, parameters, cv=3)
         clf.fit(X, y)
 

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a *learner* or a *transform* which follows the same API
-as every :epkg:`scikit-learn` transform.
-"""
 import textwrap
 import warnings
 from .sklearn_parameters import SkLearnParameters
@@ -18,7 +13,7 @@ class SkBase:
     def __init__(self, **kwargs):
         """
         Stores the parameters, see
-        @see cl SkLearnParameters, it keeps a copy of
+        :class:`SkLearnParameters`, it keeps a copy of
         the parameters to easily implements method *get_params*
         and clones a model.
         """
@@ -104,37 +99,40 @@ class SkBase:
                 return False
         for k in sorted(p1):
             v1, v2 = p1[k], p2[k]
-            if hasattr(v1, 'test_equality'):
+            if hasattr(v1, "test_equality"):
                 b = v1.test_equality(v2, exc=exc)
                 if exc and v1 is not v2:
                     warnings.warn(  # pragma: no cover
                         f"v2 is a clone of v1 not v1 itself for key "
-                        f"{k!r} and class {type(v1)}.")
+                        f"{k!r} and class {type(v1)}."
+                    )
             elif isinstance(v1, list) and isinstance(v2, list) and len(v1) == len(v2):
                 b = True
                 for e1, e2 in zip(v1, v2):
-                    if hasattr(e1, 'test_equality'):
+                    if hasattr(e1, "test_equality"):
                         b = e1.test_equality(e2, exc=exc)
                         if not b:
                             return b
             elif isinstance(v1, dict) and isinstance(v2, dict) and set(v1) == set(v2):
                 b = True
                 for e1, e2 in zip(sorted(v1.items()), sorted(v2.items())):
-                    if hasattr(e1[1], 'test_equality'):
+                    if hasattr(e1[1], "test_equality"):
                         b = e1[1].test_equality(e2[1], exc=exc)
                         if not b:
                             return b
                     elif e1[1] != e2[1]:
                         return False
             elif hasattr(v1, "get_params") and hasattr(v2, "get_params"):
-                b = SkBase.compare_params(v1.get_params(
-                    deep=False), v2.get_params(deep=False), exc=exc)
+                b = SkBase.compare_params(
+                    v1.get_params(deep=False), v2.get_params(deep=False), exc=exc
+                )
             else:
                 b = v1 == v2
             if not b:
                 if exc:
                     raise ValueError(
-                        f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}")
+                        f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}"
+                    )
                 else:
                     return False
         return True

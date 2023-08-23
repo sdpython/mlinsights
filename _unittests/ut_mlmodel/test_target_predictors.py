@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import numpy
 from sklearn import __version__ as sklver
@@ -10,6 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.exceptions import ConvergenceWarning
+
 try:
     from sklearn.utils._testing import ignore_warnings
 except ImportError:
@@ -21,9 +19,8 @@ from mlinsights.mlmodel import TransformedTargetClassifier2, TransformedTargetRe
 
 
 class TestTargetPredictors(ExtTestCase):
-
     def test_target_regressor(self):
-        tt = TransformedTargetRegressor2(regressor=None, transformer='log')
+        tt = TransformedTargetRegressor2(regressor=None, transformer="log")
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.exp(2 * X).ravel()
         tt.fit(X, y)
@@ -31,24 +28,23 @@ class TestTargetPredictors(ExtTestCase):
         coef = tt.regressor_.coef_
         self.assertEqualArray(coef, numpy.array([2], dtype=float))
         yp = tt.predict(X)
-        self.assertEqual(yp.shape, (4, ))
+        self.assertEqual(yp.shape, (4,))
         sc = tt.score(X, y)
-        self.assertLesser(sc, 1.)
+        self.assertLesser(sc, 1.0)
 
     def test_target_regressor_permute(self):
-        tt = TransformedTargetRegressor2(regressor=None, transformer='permute')
+        tt = TransformedTargetRegressor2(regressor=None, transformer="permute")
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.exp(2 * X).ravel()
         tt.fit(X, y)
         self.assertIn("TransformedTargetRegressor2", str(tt))
         yp = tt.predict(X)
-        self.assertEqual(yp.shape, (4, ))
+        self.assertEqual(yp.shape, (4,))
         sc = tt.score(X, y)
-        self.assertLesser(sc, 1.)
+        self.assertLesser(sc, 1.0)
 
     def test_target_classifier(self):
-        tt = TransformedTargetClassifier2(
-            classifier=None, transformer='permute')
+        tt = TransformedTargetClassifier2(classifier=None, transformer="permute")
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 0, 1, 1], dtype=int)
         tt.fit(X, y)
@@ -56,13 +52,12 @@ class TestTargetPredictors(ExtTestCase):
         coef = tt.classifier_.coef_
         self.assertEqual(coef.shape, (1, 1))
         yp = tt.predict(X)
-        self.assertEqual(yp.shape, (4, ))
+        self.assertEqual(yp.shape, (4,))
         sc = tt.score(X, y)
-        self.assertLesser(sc, 1.)
+        self.assertLesser(sc, 1.0)
 
     def test_target_classifier_proba(self):
-        tt = TransformedTargetClassifier2(
-            classifier=None, transformer='permute')
+        tt = TransformedTargetClassifier2(classifier=None, transformer="permute")
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 0, 1, 1], dtype=int)
         tt.fit(X, y)
@@ -81,8 +76,7 @@ class TestTargetPredictors(ExtTestCase):
         self.assertEqualArray(yp, yp2)
 
     def test_target_classifier_decision(self):
-        tt = TransformedTargetClassifier2(
-            classifier=None, transformer='permute')
+        tt = TransformedTargetClassifier2(classifier=None, transformer="permute")
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 0, 1, 1], dtype=int)
         tt.fit(X, y)
@@ -101,7 +95,7 @@ class TestTargetPredictors(ExtTestCase):
         self.assertRaise(lambda: tt.fit(X, y), TypeError)
 
     def test_target_regressor_any(self):
-        trans = FunctionReciprocalTransformer('log')
+        trans = FunctionReciprocalTransformer("log")
         tt = TransformedTargetRegressor2(regressor=None, transformer=trans)
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.exp(2 * X).ravel()
@@ -110,19 +104,19 @@ class TestTargetPredictors(ExtTestCase):
         coef = tt.regressor_.coef_
         self.assertEqualArray(coef, numpy.array([2], dtype=float))
         yp = tt.predict(X)
-        self.assertEqual(yp.shape, (4, ))
+        self.assertEqual(yp.shape, (4,))
         sc = tt.score(X, y)
-        self.assertLesser(sc, 1.)
+        self.assertLesser(sc, 1.0)
 
     def test_target_classifier_any(self):
-        trans = FunctionReciprocalTransformer('log')
+        trans = FunctionReciprocalTransformer("log")
         tt = TransformedTargetClassifier2(classifier=None, transformer=trans)
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.exp(2 * X).ravel()
         tt.fit(X, y)
         self.assertIn("TransformedTargetClassifier2", str(tt))
         yp = tt.predict(X)
-        self.assertEqual(yp.shape, (4, ))
+        self.assertEqual(yp.shape, (4,))
 
     def test_target_classifier_permute(self):
         X = numpy.arange(4).reshape(-1, 1)
@@ -132,19 +126,16 @@ class TestTargetPredictors(ExtTestCase):
         log.fit(X, y)
         sc = log.score(X, y)
 
-        tt = TransformedTargetClassifier2(
-            classifier=None, transformer='permute')
+        tt = TransformedTargetClassifier2(classifier=None, transformer="permute")
         tt.fit(X, y)
         sc2 = tt.score(X, y)
         self.assertEqual(sc, sc2)
 
-    @ignore_warnings(category=(ConvergenceWarning, ))
+    @ignore_warnings(category=(ConvergenceWarning,))
     def test_target_classifier_permute_iris(self):
-
         data = load_iris()
         X, y = data.data, data.target
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, random_state=12)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=12)
 
         log = LogisticRegression(n_jobs=1)
         log.fit(X_train, y_train)
@@ -152,11 +143,10 @@ class TestTargetPredictors(ExtTestCase):
         r2 = r2_score(y_test, log.predict(X_test))
 
         for _ in range(10):
-            TransformedTargetClassifier2(
-                classifier=None, transformer='permute')
+            TransformedTargetClassifier2(classifier=None, transformer="permute")
             tt = TransformedTargetClassifier2(
-                classifier=LogisticRegression(n_jobs=1),
-                transformer='permute')
+                classifier=LogisticRegression(n_jobs=1), transformer="permute"
+            )
             try:
                 tt.fit(X_train, y_train)
             except AttributeError as e:

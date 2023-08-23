@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a *transform* which follows the smae API
-as every :epkg:`scikit-learn` transform.
-"""
 from .sklearn_base import SkBase
 
 

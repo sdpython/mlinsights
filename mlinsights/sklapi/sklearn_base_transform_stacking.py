@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implémente un *transform* qui suit la même API que tout :epkg:`scikit-learn` transform.
-"""
 import textwrap
 import numpy
 from .sklearn_base_transform import SkBaseTransform
@@ -68,18 +64,21 @@ class SkBaseTransformStacking(SkBaseTransform):
             raise ValueError("models cannot be None")  # pragma: no cover
         if not isinstance(models, list):
             raise TypeError(  # pragma: no cover
-                f"models must be a list not {type(models)}")
+                f"models must be a list not {type(models)}"
+            )
         if method is None:
-            method = 'predict'
+            method = "predict"
         if not isinstance(method, str):
             raise TypeError(  # pragma: no cover
-                f"Method must be a string not {type(method)}")
+                f"Method must be a string not {type(method)}"
+            )
         self.method = method
         if isinstance(method, list):
             if len(method) != len(models):  # pragma: no cover
                 raise ValueError(
                     f"models and methods must have the same "
-                    f"length: {len(models)} != {len(method)}.")
+                    f"length: {len(models)} != {len(method)}."
+                )
         else:
             method = [method for m in models]
 
@@ -92,15 +91,16 @@ class SkBaseTransformStacking(SkBaseTransform):
                 res = SkBaseTransformLearner(m.model, me)
                 new_learners.append(res)
                 return res
-            if hasattr(m, 'transform'):
+            if hasattr(m, "transform"):
                 return m
             res = SkBaseTransformLearner(m, me)
             new_learners.append(res)
             return res
 
         new_learners = []
-        res = list(map(lambda c: convert2transform(
-            c, new_learners), zip(models, method)))
+        res = list(
+            map(lambda c: convert2transform(c, new_learners), zip(models, method))
+        )
         if len(new_learners) == 0:
             # We need to do that to avoid creating new objects
             # when it is not necessary. This behavior is not
@@ -147,8 +147,8 @@ class SkBaseTransformStacking(SkBaseTransform):
         @return                 dict
         """
         res = self.P.to_dict()
-        res['models'] = self.models
-        res['method'] = self.method
+        res["models"] = self.models
+        res["method"] = self.method
         if deep:
             for i, m in enumerate(self.models):
                 par = m.get_params(deep)
@@ -162,22 +162,23 @@ class SkBaseTransformStacking(SkBaseTransform):
 
         @param      params      parameters
         """
-        if 'models' in values:
-            self.models = values['models']
-            del values['models']
-        if 'method' in values:
-            self.method = values['method']
-            del values['method']
+        if "models" in values:
+            self.models = values["models"]
+            del values["models"]
+        if "method" in values:
+            self.method = values["method"]
+            del values["method"]
         for k, v in values.items():
-            if not k.startswith('models_'):
+            if not k.startswith("models_"):
                 raise ValueError(  # pragma: no cover
-                    f"Parameter '{k}' must start with 'models_'.")
-        d = len('models_')
+                    f"Parameter '{k}' must start with 'models_'."
+                )
+        d = len("models_")
         pars = [{} for m in self.models]
         for k, v in values.items():
-            si = k[d:].split('__', 1)
+            si = k[d:].split("__", 1)
             i = int(si[0])
-            pars[i][k[d + 1 + len(si):]] = v
+            pars[i][k[d + 1 + len(si) :]] = v
         for p, m in zip(pars, self.models):
             if p:
                 m.set_params(**p)
@@ -193,7 +194,10 @@ class SkBaseTransformStacking(SkBaseTransform):
         rps = repr(self.P)
         res = "{0}([{1}], [{2}], {3})".format(
             self.__class__.__name__,
-            ", ".join(repr(m.model if hasattr(m, 'model') else m)
-                      for m in self.models),
-            ", ".join(repr(m.method if hasattr(m, 'method') else None) for m in self.models), rps)
+            ", ".join(repr(m.model if hasattr(m, "model") else m) for m in self.models),
+            ", ".join(
+                repr(m.method if hasattr(m, "method") else None) for m in self.models
+            ),
+            rps,
+        )
         return "\n".join(textwrap.wrap(res, subsequent_indent="    "))

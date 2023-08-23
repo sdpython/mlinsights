@@ -1,15 +1,10 @@
-"""
-@file
-@brief Implements a way to get close examples based
-on the output of a machine learned model.
-"""
 import numpy
 from .search_engine_predictions import SearchEnginePredictions
 
 
 class SearchEnginePredictionImages(SearchEnginePredictions):
     """
-    Extends class @see cl SearchEnginePredictions.
+    Extends class :class:`SearchEnginePredictions`.
     Vectors are coming from images. The metadata must contains
     information about path names. We assume all images can hold
     in memory. An example can found in notebook
@@ -19,8 +14,9 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     <https://github.com/sdpython/ensae_projects/blob/main/src/ensae_projects/restapi/search_images_dogcat.py>`_.
     """
 
-    def _prepare_fit(self, data=None, features=None, metadata=None,
-                     transform=None, n=None, fLOG=None):
+    def _prepare_fit(
+        self, data=None, features=None, metadata=None, transform=None, n=None, fLOG=None
+    ):
         """
         Stores data in the class itself.
 
@@ -37,34 +33,44 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         if "torch" in str(type(data)):
             self.module_ = "torch"
             from torch.utils.data import DataLoader  # pylint: disable=E0401,C0415,E0611
-            dataloader = DataLoader(
-                data, batch_size=1, shuffle=False, num_workers=0)
-            self.iter_images_ = iter_images = iter(
-                zip(dataloader, data.samples))
+
+            dataloader = DataLoader(data, batch_size=1, shuffle=False, num_workers=0)
+            self.iter_images_ = iter_images = iter(zip(dataloader, data.samples))
             if n is None:
                 n = len(data)
         elif "keras" in str(type(data)):  # pragma: no cover
             self.module_ = "keras"
             iter_images = data
             # We delay the import as keras backend is not necessarily installed.
-            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415,E0611
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415
-            if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
+            from keras.preprocessing.image import (
+                Iterator,
+            )  # pylint: disable=E0401,C0415,E0611
+            from keras_preprocessing.image import (
+                DirectoryIterator,
+                NumpyArrayIterator,
+            )  # pylint: disable=E0401,C0415
+
+            if not isinstance(
+                iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)
+            ):
                 raise NotImplementedError(  # pragma: no cover
                     f"iter_images must be a keras Iterator. "
-                    f"No option implemented for type {type(iter_images)}.")
+                    f"No option implemented for type {type(iter_images)}."
+                )
             if iter_images.batch_size != 1:
                 raise ValueError(  # pragma: no cover
-                    f"batch_size must be 1 not {iter_images.batch_size}")
+                    f"batch_size must be 1 not {iter_images.batch_size}"
+                )
             self.iter_images_ = iter_images
             if n is None:
                 n = len(iter_images)
             if not hasattr(iter_images, "filenames"):
                 raise NotImplementedError(  # pragma: no cover
-                    "Iterator does not iterate on images but numpy arrays (not implemented).")
+                    "Iterator does not iterate on images "
+                    "but numpy arrays (not implemented)."
+                )
         else:
-            raise TypeError(  # pragma: no cover
-                f"Unexpected data type {type(data)}.")
+            raise TypeError(f"Unexpected data type {type(data)}.")  # pragma: no cover
 
         def get_current_index(flow):
             "get current index"
@@ -72,24 +78,30 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
 
         def iterator_feature_meta():
             "iterators on metadata"
+
             def accessor(iter_images):
-                if hasattr(iter_images, 'filenames'):
+                if hasattr(iter_images, "filenames"):
                     # keras
-                    return (lambda i, ite: (ite, iter_images.filenames[get_current_index(iter_images)]))
+                    return lambda i, ite: (
+                        ite,
+                        iter_images.filenames[get_current_index(iter_images)],
+                    )
                 else:
                     # torch
-                    return (lambda i, ite: (ite[0], ite[1][0]))
+                    return lambda i, ite: (ite[0], ite[1][0])
+
             acc = accessor(iter_images)
 
             for i, it in zip(range(n), iter_images):
                 im, name = acc(i, it)
                 if not isinstance(name, str):
                     raise TypeError(  # pragma: no cover
-                        f"name should be a string, not {type(name)}")
+                        f"name should be a string, not {type(name)}"
+                    )
                 yield im[0], dict(name=name, i=i)
                 if fLOG and i % 10000 == 0:
-                    fLOG(
-                        f'[SearchEnginePredictionImages.fit] i={i}/{n} - {name}')
+                    fLOG(f"[SearchEnginePredictionImages.fit] i={i}/{n} - {name}")
+
         super()._prepare_fit(data=iterator_feature_meta(), transform=transform)
 
     def fit(self, iter_images, n=None, fLOG=None):  # pylint: disable=W0237
@@ -122,24 +134,36 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
                 raise NotImplementedError("Not yet implemented or Keras.")
             elif self.module_ == "torch":
                 from torch import from_numpy  # pylint: disable=E0611,E0401,C0415
+
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
-            raise RuntimeError(  # pragma: no cover
-                f"Unknown module '{self.module_}'.")
+            raise RuntimeError(f"Unknown module '{self.module_}'.")  # pragma: no cover
         elif "keras" in str(iter_images):  # pragma: no cover
             if self.module_ != "keras":
                 raise RuntimeError(  # pragma: no cover
-                    f"Keras object but {self.module_} was used to train the KNN.")
+                    f"Keras object but {self.module_} was used to train the KNN."
+                )
             # We delay the import as keras backend is not necessarily installed.
             # keras, it expects an iterator.
-            from keras.preprocessing.image import Iterator  # pylint: disable=E0401,C0415,E0611
-            from keras_preprocessing.image import DirectoryIterator, NumpyArrayIterator  # pylint: disable=E0401,C0415,E0611
-            if not isinstance(iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)):
+            from keras.preprocessing.image import (
+                Iterator,
+            )  # pylint: disable=E0401,C0415,E0611
+            from keras_preprocessing.image import (
+                DirectoryIterator,
+                NumpyArrayIterator,
+            )  # pylint: disable=E0401,C0415,E0611
+
+            if not isinstance(
+                iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)
+            ):
                 raise NotImplementedError(  # pragma: no cover
-                    f"iter_images must be a keras Iterator. No option implemented for type {type(iter_images)}.")
+                    f"iter_images must be a keras Iterator. "
+                    f"No option implemented for type {type(iter_images)}."
+                )
             if iter_images.batch_size != 1:
                 raise ValueError(  # pragma: no cover
-                    f"batch_size must be 1 not {iter_images.batch_size}")
+                    f"batch_size must be 1 not {iter_images.batch_size}"
+                )
             for img in iter_images:
                 X = img[0]
                 break
@@ -147,17 +171,20 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         elif "torch" in str(type(iter_images)):
             if self.module_ != "torch":
                 raise RuntimeError(  # pragma: no cover
-                    f"Torch object but {self.module_} was used to train the KNN.")
+                    f"Torch object but {self.module_} was used to train the KNN."
+                )
             # torch: it expects a tensor
             X = iter_images
             return super().kneighbors(X, n_neighbors=n_neighbors)
         elif isinstance(iter_images, list):
-            res = [self.kneighbors(it, n_neighbors=n_neighbors)
-                   for it in iter_images]
-            return (numpy.vstack([_[0] for _ in res]),
-                    numpy.vstack([_[1] for _ in res]),
-                    numpy.vstack([_[2] for _ in res]))
+            res = [self.kneighbors(it, n_neighbors=n_neighbors) for it in iter_images]
+            return (
+                numpy.vstack([_[0] for _ in res]),
+                numpy.vstack([_[1] for _ in res]),
+                numpy.vstack([_[2] for _ in res]),
+            )
         else:
             raise TypeError(  # pragma: no cover
                 f"Unexpected type {type(iter_images)} in "
-                f"SearchEnginePredictionImages.kneighbors")
+                f"SearchEnginePredictionImages.kneighbors"
+            )

@@ -1,6 +1,3 @@
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import numpy
 from pyquickhelper.pycode import ExtTestCase
@@ -12,7 +9,6 @@ from mlinsights.sklapi.sklearn_base_transform import SkBaseTransform
 
 
 class TestSklearnBase(ExtTestCase):
-
     def test_sklearn_base_parameters(self):
         sk = SkBase(pa1="r", pa2=2)
         p = sk.get_params()
@@ -73,14 +69,15 @@ class TestSklearnBase(ExtTestCase):
         p2 = dict(pa1="r", pa2=2, pa3=4)
         self.assertRaise(lambda: SkBase.compare_params(p1, p2), KeyError)
         self.assertRaise(lambda: SkBase.compare_params(p2, p1), KeyError)
-        p1 = dict(pa1="r", pa2=2, d1=dict(e='e', i=0))
-        p2 = dict(pa1="r", pa2=2, d1=dict(e='e', i=0))
+        p1 = dict(pa1="r", pa2=2, d1=dict(e="e", i=0))
+        p2 = dict(pa1="r", pa2=2, d1=dict(e="e", i=0))
         self.assertTrue(SkBase.compare_params(p1, p2))
-        p2['d1']['i'] = 3
+        p2["d1"]["i"] = 3
         self.assertFalse(SkBase.compare_params(p1, p2))
-        p2['d1']['i2'] = 3
-        self.assertRaise(lambda: SkBase.compare_params(
-            p1, p2), ValueError, "Values for key")
+        p2["d1"]["i2"] = 3
+        self.assertRaise(
+            lambda: SkBase.compare_params(p1, p2), ValueError, "Values for key"
+        )
 
     def test_sklearn_compare_object(self):
         p1 = SkBase(pa1="r", pa2=2)
@@ -88,37 +85,36 @@ class TestSklearnBase(ExtTestCase):
         self.assertRaise(lambda: p1.test_equality(p2), KeyError)
         self.assertRaise(lambda: p2.test_equality(p1), KeyError)
 
-        p1 = SkBase(pa1="r", pa2=2, d1=dict(e='e', i=0))
-        p2 = SkBase(pa1="r", pa2=2, d1=dict(e='e', i=0))
+        p1 = SkBase(pa1="r", pa2=2, d1=dict(e="e", i=0))
+        p2 = SkBase(pa1="r", pa2=2, d1=dict(e="e", i=0))
         self.assertTrue(p1.test_equality(p2))
-        p2 = SkBase(pa1="r", pa2=2, d1=dict(e='e', i=3))
+        p2 = SkBase(pa1="r", pa2=2, d1=dict(e="e", i=3))
         self.assertFalse(p1.test_equality(p2))
-        p2 = SkBase(pa1="r", pa2=2, d1=dict(e='e', i=3, i2=4))
+        p2 = SkBase(pa1="r", pa2=2, d1=dict(e="e", i=3, i2=4))
         self.assertRaise(lambda: p1.test_equality(p2), ValueError)
 
-        p1 = SkBase(pa1="r", pa2=2, d1=SkBase(e='e', i=0))
-        p2 = SkBase(pa1="r", pa2=2, d1=SkBase(e='e', i=0))
+        p1 = SkBase(pa1="r", pa2=2, d1=SkBase(e="e", i=0))
+        p2 = SkBase(pa1="r", pa2=2, d1=SkBase(e="e", i=0))
         self.assertTrue(p1.test_equality(p2))
 
-        p1 = SkBase(pa1="r", pa2=2, d1=SkBase(e='e', i=0))
-        p2 = SkBase(pa1="r", pa2=2, d1=SkBase(e='ef', i=0))
+        p1 = SkBase(pa1="r", pa2=2, d1=SkBase(e="e", i=0))
+        p2 = SkBase(pa1="r", pa2=2, d1=SkBase(e="ef", i=0))
         self.assertRaise(lambda: p1.test_equality(p2), ValueError)
 
-        p1 = SkBase(pa1="r", pa2=2, d1=SkBase(e='e', i=0))
-        p2 = SkBase(pa1="r", pa2=2, d1=SkBase(e='e', i=0, i2=4))
+        p1 = SkBase(pa1="r", pa2=2, d1=SkBase(e="e", i=0))
+        p2 = SkBase(pa1="r", pa2=2, d1=SkBase(e="e", i=0, i2=4))
         self.assertRaise(lambda: p1.test_equality(p2), KeyError)
 
-        p1 = SkBase(pa1="r", pa2=2, d1=[SkBase(e='e', i=0)])
-        p2 = SkBase(pa1="r", pa2=2, d1=[SkBase(e='e', i=0, i2=4)])
+        p1 = SkBase(pa1="r", pa2=2, d1=[SkBase(e="e", i=0)])
+        p2 = SkBase(pa1="r", pa2=2, d1=[SkBase(e="e", i=0, i2=4)])
         self.assertRaise(lambda: p1.test_equality(p2), KeyError)
 
-        p1 = SkBase(pa1="r", pa2=2, d1=[SkBase(e='e', i=0)])
-        p2 = SkBase(pa1="r", pa2=2, d1=[SkBase(e='e', i=0)])
+        p1 = SkBase(pa1="r", pa2=2, d1=[SkBase(e="e", i=0)])
+        p2 = SkBase(pa1="r", pa2=2, d1=[SkBase(e="e", i=0)])
         self.assertTrue(p1.test_equality(p2))
 
-        p1 = SkBase(pa1="r", pa2=2, d1=[
-                    SkBase(e='e', i=0), SkBase(e='e', i=0)])
-        p2 = SkBase(pa1="r", pa2=2, d1=[SkBase(e='e', i=0)])
+        p1 = SkBase(pa1="r", pa2=2, d1=[SkBase(e="e", i=0), SkBase(e="e", i=0)])
+        p2 = SkBase(pa1="r", pa2=2, d1=[SkBase(e="e", i=0)])
         self.assertRaise(lambda: p1.test_equality(p2), ValueError)
 
 

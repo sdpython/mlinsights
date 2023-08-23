@@ -41,7 +41,7 @@ print(expected, pred)
 
 ##########################################
 # The tree looks like the following.
-print(export_text(tree, feature_names=['x']))
+print(export_text(tree, feature_names=["x"]))
 
 #######################################
 # Benchmark
@@ -66,44 +66,53 @@ for shape in tqdm([1, 10, 100, 1000, 10000, 100000]):
 
         ti = measure_time(
             "numpy.digitize(x, bins, right=True)",
-            context={'numpy': numpy, "x": x, "bins": bins},
-            div_by_number=True, repeat=repeat, number=number)
-        ti['name'] = 'numpy'
-        ti['n_bins'] = n_bins
-        ti['shape'] = shape
+            context={"numpy": numpy, "x": x, "bins": bins},
+            div_by_number=True,
+            repeat=repeat,
+            number=number,
+        )
+        ti["name"] = "numpy"
+        ti["n_bins"] = n_bins
+        ti["shape"] = shape
         obs.append(ti)
 
         tree = digitize2tree(bins, right=True)
 
         ti = measure_time(
             "tree.predict(x)",
-            context={'numpy': numpy, "x": x.reshape((-1, 1)), "tree": tree},
-            div_by_number=True, repeat=repeat, number=number)
-        ti['name'] = 'sklearn'
-        ti['n_bins'] = n_bins
-        ti['shape'] = shape
+            context={"numpy": numpy, "x": x.reshape((-1, 1)), "tree": tree},
+            div_by_number=True,
+            repeat=repeat,
+            number=number,
+        )
+        ti["name"] = "sklearn"
+        ti["n_bins"] = n_bins
+        ti["shape"] = shape
         obs.append(ti)
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
-            onx = to_onnx(tree, x.reshape((-1, 1)),
-                          target_opset=15)
+            onx = to_onnx(tree, x.reshape((-1, 1)), target_opset=15)
 
         sess = InferenceSession(onx.SerializeToString())
 
         ti = measure_time(
             "sess.run(None, {'X': x})",
-            context={'numpy': numpy, "x": x.reshape((-1, 1)), "sess": sess},
-            div_by_number=True, repeat=repeat, number=number)
-        ti['name'] = 'ort'
-        ti['n_bins'] = n_bins
-        ti['shape'] = shape
+            context={"numpy": numpy, "x": x.reshape((-1, 1)), "sess": sess},
+            div_by_number=True,
+            repeat=repeat,
+            number=number,
+        )
+        ti["name"] = "ort"
+        ti["n_bins"] = n_bins
+        ti["shape"] = shape
         obs.append(ti)
 
 
 df = DataFrame(obs)
-piv = pivot_table(data=df, index="shape", columns=["n_bins", "name"],
-                  values=["average"])
+piv = pivot_table(
+    data=df, index="shape", columns=["n_bins", "name"], values=["average"]
+)
 print(piv)
 
 ##########################################
@@ -114,8 +123,13 @@ n_bins = list(sorted(set(df.n_bins)))
 fig, ax = plt.subplots(1, len(n_bins), figsize=(14, 4))
 
 for i, nb in enumerate(n_bins):
-    piv = pivot(data=df[df.n_bins == nb], index="shape",
-                columns="name", values="average")
-    piv.plot(title="Benchmark digitize / onnxruntime\nn_bins=%d" % nb,
-             logx=True, logy=True, ax=ax[i])
+    piv = pivot(
+        data=df[df.n_bins == nb], index="shape", columns="name", values="average"
+    )
+    piv.plot(
+        title="Benchmark digitize / onnxruntime\nn_bins=%d" % nb,
+        logx=True,
+        logy=True,
+        ax=ax[i],
+    )
 plt.show()

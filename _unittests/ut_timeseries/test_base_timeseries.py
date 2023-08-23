@@ -1,6 +1,3 @@
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import numpy
 from pyquickhelper.pycode import ExtTestCase
@@ -9,7 +6,6 @@ from mlinsights.timeseries.base import BaseTimeSeries
 
 
 class TestBaseTimeSeries(ExtTestCase):
-
     def test_base_parameters_split0(self):
         X = None
         y = numpy.arange(5) * 100

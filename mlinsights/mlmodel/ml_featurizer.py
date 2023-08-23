@@ -1,7 +1,3 @@
-"""
-@file
-@brief Featurizers for machine learned models.
-"""
 import numpy
 import pandas
 from sklearn.linear_model import LogisticRegression
@@ -12,6 +8,7 @@ class FeaturizerTypeError(TypeError):
     """
     Unable to process a type.
     """
+
     pass
 
 
@@ -43,8 +40,9 @@ def model_featurizer(model, **params):
         return model_featurizer_torch(model, **params)
     tried.append("torch")
     raise FeaturizerTypeError(  # pragma no cover
-        "Unable to process type %r, allowed:\n%s" % (
-            type(model), '\n'.join(sorted(str(_) for _ in tried))))
+        "Unable to process type %r, allowed:\n%s"
+        % (type(model), "\n".join(sorted(str(_) for _ in tried)))
+    )
 
 
 def is_vector(X):
@@ -67,7 +65,8 @@ def is_vector(X):
             return False
         return True
     raise TypeError(  # pragma no cover
-        f"Unable to guess if X is a vector, type(X)={type(X)}")
+        f"Unable to guess if X is a vector, type(X)={type(X)}"
+    )
 
 
 def wrap_predict_sklearn(X, fct, many):
@@ -84,7 +83,8 @@ def wrap_predict_sklearn(X, fct, many):
     isv = is_vector(X)
     if many == isv:
         raise ValueError(  # pragma: no cover
-            "Inconsistency X is a single vector, many is True")
+            "Inconsistency X is a single vector, many is True"
+        )
     if isv:
         X = [X]
     y = fct(X)
@@ -121,6 +121,7 @@ def model_featurizer_rfc(model, output=True):
     @return                 function
     """
     if output:
+
         def feat1(X, model, many):
             "wraps sklearn"
             return wrap_predict_sklearn(X, model.predict_proba, many)
@@ -175,7 +176,9 @@ def model_featurizer_keras(model, layer=None):  # pragma: no cover
         "wraps keras"
         return wrap_predict_keras(X, model.predict, many, shapes)
 
-    return lambda X, many, model=model, shapes=model._feed_input_shapes[0]: feat(X, model, many, shapes)
+    return lambda X, many, model=model, shapes=model._feed_input_shapes[0]: feat(
+        X, model, many, shapes
+    )
 
 
 def wrap_predict_torch(X, fct, many, shapes):

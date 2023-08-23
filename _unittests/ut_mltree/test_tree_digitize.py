@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-@brief      test log(time=2s)
-"""
 import unittest
 import numpy
 from sklearn.tree import DecisionTreeRegressor
+
 try:
     from sklearn.tree._tree import TREE_UNDEFINED  # pylint: disable=E0611
 except ImportError:
@@ -14,18 +12,15 @@ from mlinsights.mltree import digitize2tree
 
 
 class TestTreeDigitize(ExtTestCase):
-
     @unittest.skipIf(TREE_UNDEFINED is None, reason="nothing to test")
     def test_cst(self):
         self.assertEqual(TREE_UNDEFINED, -2)
 
     def test_exc(self):
         bins = numpy.array([0.0, 1.0])
-        self.assertRaise(lambda: digitize2tree(bins, right=False),
-                         RuntimeError)
+        self.assertRaise(lambda: digitize2tree(bins, right=False), RuntimeError)
         bins = numpy.array([1.0, 0.0])
-        self.assertRaise(lambda: digitize2tree(bins, right=False),
-                         RuntimeError)
+        self.assertRaise(lambda: digitize2tree(bins, right=False), RuntimeError)
 
     def test_tree_digitize1(self):
         x = numpy.array([0.2, 6.4, 3.0, 1.6])

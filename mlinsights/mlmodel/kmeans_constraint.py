@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implémente la classe @see cl ConstraintKMeans.
-"""
 import numpy
 from scipy.spatial import Delaunay  # pylint: disable=E0611
 from sklearn.cluster import KMeans
@@ -43,19 +39,31 @@ class ConstraintKMeans(KMeans):
         the strategy uses a learning rate.
 
     The first two strategies cannot reach a good compromise
-    without using function @see fn _switch_clusters which
+    without using function :func:`_switch_clusters which`
     tries every switch between clusters: two points
     change clusters. It keeps the number of points and checks
     that the inertia is reduced.
     """
 
-    _strategy_value = {'distance', 'gain', 'weights'}
+    _strategy_value = {"distance", "gain", "weights"}
 
-    def __init__(self, n_clusters=8, init='k-means++', n_init=10, max_iter=500,
-                 tol=0.0001, verbose=0,
-                 random_state=None, copy_x=True, algorithm='auto',
-                 balanced_predictions=False, strategy='gain', kmeans0=True,
-                 learning_rate=1., history=False):
+    def __init__(
+        self,
+        n_clusters=8,
+        init="k-means++",
+        n_init=10,
+        max_iter=500,
+        tol=0.0001,
+        verbose=0,
+        random_state=None,
+        copy_x=True,
+        algorithm="auto",
+        balanced_predictions=False,
+        strategy="gain",
+        kmeans0=True,
+        learning_rate=1.0,
+        history=False,
+    ):
         """
         @param      n_clusters              number of clusters
         @param      init                    used by :epkg:`k-means`
@@ -75,18 +83,25 @@ class ConstraintKMeans(KMeans):
         @param      learning_rate           learning rate, used by strategy `'weights'`
         """
         self._n_threads = 1
-        KMeans.__init__(self, n_clusters=n_clusters, init=init, n_init=n_init,
-                        max_iter=max_iter, tol=tol,
-                        verbose=verbose, random_state=random_state, copy_x=copy_x,
-                        algorithm=algorithm)
+        KMeans.__init__(
+            self,
+            n_clusters=n_clusters,
+            init=init,
+            n_init=n_init,
+            max_iter=max_iter,
+            tol=tol,
+            verbose=verbose,
+            random_state=random_state,
+            copy_x=copy_x,
+            algorithm=algorithm,
+        )
         self.balanced_predictions = balanced_predictions
         self.strategy = strategy
         self.kmeans0 = kmeans0
         self.history = history
         self.learning_rate = learning_rate
         if strategy not in ConstraintKMeans._strategy_value:
-            raise ValueError(
-                f'strategy must be in {ConstraintKMeans._strategy_value}')
+            raise ValueError(f"strategy must be in {ConstraintKMeans._strategy_value}")
 
     def fit(self, X, y=None, sample_weight=None, fLOG=None):
         """
@@ -106,10 +121,8 @@ class ConstraintKMeans(KMeans):
             KMeans.fit(self, X, y, sample_weight=sample_weight)
             state = None
         else:
-            state = numpy.random.RandomState(  # pylint: disable=E1101
-                self.random_state)
-            labels = state.randint(
-                0, self.n_clusters, X.shape[0], dtype=numpy.int32)
+            state = numpy.random.RandomState(self.random_state)  # pylint: disable=E1101
+            labels = state.randint(0, self.n_clusters, X.shape[0], dtype=numpy.int32)
             centers = numpy.empty((self.n_clusters, X.shape[1]), dtype=X.dtype)
             choice = state.randint(0, self.n_clusters, self.n_clusters)
             for i, c in enumerate(choice):
@@ -121,12 +134,23 @@ class ConstraintKMeans(KMeans):
 
         self.max_iter = max_iter
         return self.constraint_kmeans(
-            X, sample_weight=sample_weight, state=state,
+            X,
+            sample_weight=sample_weight,
+            state=state,
             learning_rate=self.learning_rate,
-            history=self.history, fLOG=fLOG)
+            history=self.history,
+            fLOG=fLOG,
+        )
 
-    def constraint_kmeans(self, X, sample_weight=None, state=None,
-                          learning_rate=1., history=False, fLOG=None):
+    def constraint_kmeans(
+        self,
+        X,
+        sample_weight=None,
+        state=None,
+        learning_rate=1.0,
+        history=False,
+        fLOG=None,
+    ):
         """
         Completes the constraint k-means.
 
@@ -137,16 +161,25 @@ class ConstraintKMeans(KMeans):
         @param      fLOG            logging function
         """
         labels, centers, inertia, weights, iter_, all_centers = constraint_kmeans(
-            X, self.labels_, sample_weight, self.cluster_centers_,
-            inertia=self.inertia_, iter=self.n_iter_,
-            max_iter=self.max_iter, verbose=self.verbose,
-            strategy=self.strategy, state=state,
-            learning_rate=learning_rate, history=history,
-            fLOG=fLOG)
+            X,
+            self.labels_,
+            sample_weight,
+            self.cluster_centers_,
+            inertia=self.inertia_,
+            iter=self.n_iter_,
+            max_iter=self.max_iter,
+            verbose=self.verbose,
+            strategy=self.strategy,
+            state=state,
+            learning_rate=learning_rate,
+            history=history,
+            fLOG=fLOG,
+        )
         self.labels_ = labels
         self.cluster_centers_ = centers
         self.cluster_centers_iter_ = (
-            None if len(all_centers) == 0 else numpy.dstack(all_centers))
+            None if len(all_centers) == 0 else numpy.dstack(all_centers)
+        )
         self.inertia_ = inertia
         self.n_iter_ = iter_
         self.weights_ = weights
@@ -162,13 +195,15 @@ class ConstraintKMeans(KMeans):
         if self.weights_ is None:
             if self.balanced_predictions:
                 labels, _, __ = constraint_predictions(
-                    X, self.cluster_centers_, strategy=self.strategy + '_p')
+                    X, self.cluster_centers_, strategy=self.strategy + "_p"
+                )
                 return labels
             return KMeans.predict(self, X, sample_weight=sample_weight)
         else:
             if self.balanced_predictions:
                 raise RuntimeError(  # pragma: no cover
-                    "balanced_predictions and weights_ cannot be used together.")
+                    "balanced_predictions and weights_ cannot be used together."
+                )
             return KMeans.predict(self, X, sample_weight=sample_weight)
 
     def transform(self, X):
@@ -181,12 +216,13 @@ class ConstraintKMeans(KMeans):
         if self.weights_ is None:
             if self.balanced_predictions:
                 labels, distances, __ = constraint_predictions(
-                    X, self.cluster_centers_, strategy=self.strategy)
+                    X, self.cluster_centers_, strategy=self.strategy
+                )
                 # We remove small distances than the chosen clusters
                 # due to the constraint, we choose max*2 instead.
                 mx = distances.max() * 2
-                for i, l in enumerate(labels):
-                    mi = distances[i, l]
+                for i, li in enumerate(labels):
+                    mi = distances[i, li]
                     mmi = distances[i, :].min()
                     if mi > mmi:
                         # numpy.nan would be best
@@ -196,7 +232,8 @@ class ConstraintKMeans(KMeans):
         else:
             if self.balanced_predictions:
                 raise RuntimeError(  # pragma: no cover
-                    "balanced_predictions and weights_ cannot be used together.")
+                    "balanced_predictions and weights_ cannot be used together."
+                )
             res = KMeans.transform(self, X)
             res *= self.weights_.reshape((1, -1))
             return res
@@ -213,13 +250,15 @@ class ConstraintKMeans(KMeans):
         if self.weights_ is None:
             if self.balanced_predictions:
                 _, __, dist_close = constraint_predictions(
-                    X, self.cluster_centers_, strategy=self.strategy)
+                    X, self.cluster_centers_, strategy=self.strategy
+                )
                 return dist_close
             res = euclidean_distances(self.cluster_centers_, X, squared=True)
         else:
             if self.balanced_predictions:
                 raise RuntimeError(  # pragma: no cover
-                    "balanced_predictions and weights_ cannot be used together.")
+                    "balanced_predictions and weights_ cannot be used together."
+                )
             res = euclidean_distances(X, self.cluster_centers_, squared=True)
             res *= self.weights_.reshape((1, -1))
         return res.max(axis=1)
@@ -236,7 +275,7 @@ class ConstraintKMeans(KMeans):
         edges = set()
         for row in triangles:
             for j in range(1, row.shape[-1]):
-                a, b = row[j - 1:j + 1]
+                a, b = row[j - 1 : j + 1]
                 if a < b:
                     edges.add((a, b))
                 else:

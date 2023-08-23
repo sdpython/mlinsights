@@ -1,7 +1,3 @@
-"""
-@file
-@brief Access to the C API of scikit-learn (decision tree)
-"""
 from libc.stdio cimport printf
 
 import numpy

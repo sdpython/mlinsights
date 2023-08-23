@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a *learner* which follows the same API
-as every :epkg:`scikit-learn` learner.
-"""
 from .sklearn_base import SkBase
 
 
@@ -49,8 +44,9 @@ class SkBaseLearner(SkBase):
         matrix with a score for each class and each sample
         for a classifier.
 
-        @param      X   Samples, {array-like, sparse matrix}, shape = (n_samples, n_features)
-        @return         array, shape = (n_samples,.), Returns predicted values.
+        :param X: Samples, {array-like, sparse matrix},
+            shape = (n_samples, n_features)
+        :return: array, shape = (n_samples,.), Returns predicted values.
         """
         raise NotImplementedError()  # pragma: no cover
 
@@ -58,9 +54,11 @@ class SkBaseLearner(SkBase):
         """
         Returns the mean accuracy on the given test data and labels.
 
-        @param      X               Training data, numpy array or sparse matrix of shape [n_samples,n_features]
-        @param      y               Target values, numpy array of shape [n_samples, n_targets] (optional)
-        @param      sample_weight   Weight values, numpy array of shape [n_samples, n_targets] (optional)
-        @return                     score : float, Mean accuracy of self.predict(X) wrt. y.
+        :param X: Training data, numpy array or sparse matrix of
+            shape [n_samples,n_features]
+        :param y: Target values, numpy array of shape [n_samples, n_targets] (optional)
+        :param sample_weight: Weight values, numpy array of
+            shape [n_samples, n_targets] (optional)
+        :return: score : float, Mean accuracy of self.predict(X) wrt. y.
         """
         raise NotImplementedError()  # pragma: no cover

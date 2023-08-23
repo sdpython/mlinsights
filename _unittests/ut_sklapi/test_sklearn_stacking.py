@@ -1,6 +1,3 @@
-"""
-@brief      test log(time=5s)
-"""
 import os
 import unittest
 from io import BytesIO
@@ -44,14 +41,14 @@ def load_wines_dataset(shuffle=False):
 
 
 class TestSklearnStacking(ExtTestCase):
-
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_classifiers(self):
         data = load_iris()
         X, y = data.data, data.target
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         conv = SkBaseTransformStacking(
-            [LogisticRegression(n_jobs=1), DecisionTreeClassifier()])
+            [LogisticRegression(n_jobs=1), DecisionTreeClassifier()]
+        )
         pipe = make_pipeline(conv, DecisionTreeClassifier())
         try:
             pipe.fit(X_train, y_train)
@@ -65,16 +62,14 @@ class TestSklearnStacking(ExtTestCase):
         score2 = pipe.score(X_test, y_test)
         self.assertEqual(score, score2)
         rp = repr(conv)
-        self.assertStartsWith(
-            'SkBaseTransformStacking([LogisticRegression(', rp)
+        self.assertStartsWith("SkBaseTransformStacking([LogisticRegression(", rp)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_two_transforms(self):
         data = load_iris()
         X, y = data.data, data.target
         X_train, X_test, y_train, y_test = train_test_split(X, y)
-        conv = SkBaseTransformStacking(
-            [Normalizer(), MinMaxScaler()])
+        conv = SkBaseTransformStacking([Normalizer(), MinMaxScaler()])
         pipe = make_pipeline(conv, DecisionTreeClassifier())
         pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
@@ -83,32 +78,32 @@ class TestSklearnStacking(ExtTestCase):
         score2 = pipe.score(X_test, y_test)
         self.assertEqual(score, score2)
         rp = repr(conv)
-        self.assertStartsWith(
-            "SkBaseTransformStacking([Normalizer(", rp)
+        self.assertStartsWith("SkBaseTransformStacking([Normalizer(", rp)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_with_params(self):
-        conv = SkBaseTransformStacking([LinearRegression(),
-                                        DecisionTreeClassifier(max_depth=3)])
+        conv = SkBaseTransformStacking(
+            [LinearRegression(), DecisionTreeClassifier(max_depth=3)]
+        )
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pars = pipe.get_params(deep=True)
-        self.assertIn(
-            'skbasetransformstacking__models_0__model__fit_intercept', pars)
-        conv = SkBaseTransformStacking([LinearRegression(),
-                                        DecisionTreeClassifier(max_depth=2)])
+        self.assertIn("skbasetransformstacking__models_0__model__fit_intercept", pars)
+        conv = SkBaseTransformStacking(
+            [LinearRegression(), DecisionTreeClassifier(max_depth=2)]
+        )
         pipe = make_pipeline(conv, DecisionTreeRegressor())
         pipe.set_params(**pars)
         pars = pipe.get_params()
-        self.assertIn(
-            'skbasetransformstacking__models_0__model__fit_intercept', pars)
+        self.assertIn("skbasetransformstacking__models_0__model__fit_intercept", pars)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pickle(self):
         data = load_iris()
         X, y = data.data, data.target
         # X_train, X_test, y_train, y_test = train_test_split(X, y)
-        conv = SkBaseTransformStacking([LinearRegression(),
-                                        DecisionTreeClassifier(max_depth=3)])
+        conv = SkBaseTransformStacking(
+            [LinearRegression(), DecisionTreeClassifier(max_depth=3)]
+        )
         model = make_pipeline(conv, DecisionTreeRegressor())
         model.fit(X, y)
 
@@ -123,9 +118,9 @@ class TestSklearnStacking(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_clone(self):
-        conv = SkBaseTransformStacking([LinearRegression(),
-                                        DecisionTreeClassifier(max_depth=3)],
-                                       'predict')
+        conv = SkBaseTransformStacking(
+            [LinearRegression(), DecisionTreeClassifier(max_depth=3)], "predict"
+        )
         cloned = clone(conv)
         conv.test_equality(cloned, exc=True)
 
@@ -134,15 +129,15 @@ class TestSklearnStacking(ExtTestCase):
         data = load_iris()
         X, y = data.data, data.target
         # X_train, X_test, y_train, y_test = train_test_split(X, y)
-        conv = SkBaseTransformStacking([LinearRegression(),
-                                        DecisionTreeClassifier(max_depth=3)])
+        conv = SkBaseTransformStacking(
+            [LinearRegression(), DecisionTreeClassifier(max_depth=3)]
+        )
         model = make_pipeline(conv, DecisionTreeRegressor())
 
         res = model.get_params(True)
         self.assertGreater(len(res), 0)
 
-        parameters = {
-            'skbasetransformstacking__models_1__model__max_depth': [2, 3]}
+        parameters = {"skbasetransformstacking__models_1__model__max_depth": [2, 3]}
         clf = GridSearchCV(model, parameters)
         clf.fit(X, y)
 
@@ -152,34 +147,41 @@ class TestSklearnStacking(ExtTestCase):
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_wines(self):
         df = load_wines_dataset(shuffle=True)
-        X = df.drop(['quality', 'color'], axis=1)
-        y = df['quality']  # pylint: disable=E1136
+        X = df.drop(["quality", "color"], axis=1)
+        y = df["quality"]  # pylint: disable=E1136
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         model = make_pipeline(
             SkBaseTransformStacking(
-                [LogisticRegression(n_jobs=1)], 'decision_function'),
-            RandomForestClassifier())
+                [LogisticRegression(n_jobs=1)], "decision_function"
+            ),
+            RandomForestClassifier(),
+        )
         try:
             model.fit(X_train, y_train)
         except AttributeError as e:
             if compare_module_version(sklver, "0.24") < 0:
                 return
             raise e
-        auc_pipe = roc_auc_score(y_test == model.predict(X_test),
-                                 model.predict_proba(X_test).max(axis=1))
+        auc_pipe = roc_auc_score(
+            y_test == model.predict(X_test), model.predict_proba(X_test).max(axis=1)
+        )
         acc = model.score(X_test, y_test)
         accu = accuracy_score(y_test, model.predict(X_test))
         self.assertGreater(auc_pipe, 0.6)
         self.assertGreater(acc, 0.5)
         self.assertGreater(accu, 0.5)
-        grid = GridSearchCV(estimator=model, param_grid={},
-                            cv=3, refit='acc',
-                            scoring=dict(acc=make_scorer(accuracy_score)))
+        grid = GridSearchCV(
+            estimator=model,
+            param_grid={},
+            cv=3,
+            refit="acc",
+            scoring=dict(acc=make_scorer(accuracy_score)),
+        )
         grid.fit(X, y)
         best = grid.best_estimator_
         step = grid.best_estimator_.steps[0][1]
         meth = step.method
-        self.assertEqual(meth, 'decision_function')
+        self.assertEqual(meth, "decision_function")
 
         res = cross_val_score(model, X, y, cv=5)
         acc1 = best.score(X_test, y_test)

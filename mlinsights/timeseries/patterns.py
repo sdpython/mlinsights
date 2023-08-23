@@ -1,16 +1,20 @@
-"""
-@file
-@brief Find patterns in timeseries.
-"""
 import numpy
 import pandas
 from sklearn.cluster import KMeans
 from .agg import aggregate_timeseries
 
 
-def find_ts_group_pattern(ttime, values, names, name_subset=None,
-                          per='week', unit='half-hour', agg='sum',
-                          estimator=None, fLOG=None):
+def find_ts_group_pattern(
+    ttime,
+    values,
+    names,
+    name_subset=None,
+    per="week",
+    unit="half-hour",
+    agg="sum",
+    estimator=None,
+    fLOG=None,
+):
     """
     Clusters times series to find similar patterns.
 
@@ -25,7 +29,7 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     @param      fLOG            logging function
     @return                     found clusters, distances
     """
-    for var, na in zip([ttime, values, names], ['ttime', 'values', 'names']):
+    for var, na in zip([ttime, values, names], ["ttime", "values", "names"]):
         if not isinstance(var, numpy.ndarray):
             raise TypeError(f"'{na}' must an array not {type(var)}")
     # builds features
@@ -34,28 +38,29 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
         set_names &= set(name_subset)
     if fLOG:
         fLOG(  # pragma: no cover
-            f'[find_ts_group_pattern] build features, {len(set_names)} groups')
+            f"[find_ts_group_pattern] build features, {len(set_names)} groups"
+        )
     gr_names = []
     to_merge = []
     for name in set_names:
         indices = names == name
         gr_ttime = ttime[indices]
         gr_values = values[indices]
-        gr = aggregate_timeseries(None, gr_ttime, gr_values,
-                                  unit=unit, agg=agg, per=per)
+        gr = aggregate_timeseries(
+            None, gr_ttime, gr_values, unit=unit, agg=agg, per=per
+        )
         gr.set_index(gr.columns[0], inplace=True)
         gr_names.append(name)
         to_merge.append(gr)
 
     if fLOG:
-        fLOG(  # pragma: no cover
-            '[find_ts_group_pattern] merge features')
+        fLOG("[find_ts_group_pattern] merge features")  # pragma: no cover
     all_merged = pandas.concat(to_merge, axis=1)
     all_merged.fillna(0, inplace=True)
     ncol = all_merged.shape[1] // len(gr_names)
     gr_feats = []
     for i, name in enumerate(gr_names):
-        feats = all_merged.iloc[:, i * ncol: (i + 1) * ncol].values.ravel()
+        feats = all_merged.iloc[:, i * ncol : (i + 1) * ncol].values.ravel()
         gr_feats.append(feats)
 
     gr_feats = numpy.vstack(gr_feats)
@@ -63,7 +68,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     # cluster
     if fLOG:
         fLOG(  # pragma: no cover
-            f'[find_ts_group_pattern] clustering, shape={gr_feats.shape}')
+            f"[find_ts_group_pattern] clustering, shape={gr_feats.shape}"
+        )
     if estimator is None:
         estimator = KMeans()
     estimator.fit(gr_feats)
@@ -73,7 +79,8 @@ def find_ts_group_pattern(ttime, values, names, name_subset=None,
     dist = estimator.transform(gr_feats)
     if fLOG:
         fLOG(  # pragma: no cover
-            f'[find_ts_group_pattern] number of clusters: {len(set(pred))}')
+            f"[find_ts_group_pattern] number of clusters: {len(set(pred))}"
+        )
 
     row_name = {n: i for i, n in enumerate(gr_names)}
     clusters = numpy.empty(ttime.shape[0], dtype=pred.dtype)

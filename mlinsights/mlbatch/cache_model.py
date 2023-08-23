@@ -1,7 +1,3 @@
-"""
-@file
-@brief Caches to cache training.
-"""
 import numpy
 
 _caches = {}
@@ -30,8 +26,7 @@ class MLCache:
         """
         key = MLCache.as_key(params)
         if key in self.cached:
-            raise KeyError(  # pragma: no cover
-                f"Key {params} already exists")
+            raise KeyError(f"Key {params} already exists")  # pragma: no cover
         self.cached[key] = value
         self.count_[key] = 0
 
@@ -77,7 +72,8 @@ class MLCache:
             elif isinstance(v, tuple):
                 if not all(map(lambda e: isinstance(e, (int, float, str)), v)):
                     raise TypeError(  # pragma: no cover
-                        f"Unable to create a key with value '{k}':{v}")
+                        f"Unable to create a key with value '{k}':{v}"
+                    )
                 return str(v)
             elif isinstance(v, numpy.ndarray):
                 # id(v) may have been better but
@@ -87,7 +83,8 @@ class MLCache:
                 sv = ""
             else:
                 raise TypeError(  # pragma: no cover
-                    f"Unable to create a key with value '{k}':{v}")
+                    f"Unable to create a key with value '{k}':{v}"
+                )
             els.append((k, sv))
         return str(els)
 
@@ -121,8 +118,7 @@ class MLCache:
         """
         global _caches  # pylint: disable=W0603,W0602
         if name in _caches:
-            raise RuntimeError(  # pragma: no cover
-                f"cache '{name}' already exists.")
+            raise RuntimeError(f"cache '{name}' already exists.")  # pragma: no cover
 
         cache = MLCache(name)
         _caches[name] = cache
