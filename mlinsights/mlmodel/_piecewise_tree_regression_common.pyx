@@ -1,7 +1,3 @@
-"""
-Implements a custom criterion to train a decision tree.
-"""
-from libc.stdlib cimport calloc, free
 from libc.stdio cimport printf
 from libc.math cimport NAN
 
@@ -15,12 +11,12 @@ from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 cdef class CommonRegressorCriterion(Criterion):
     """
-    Common class to implement various version of `mean square error 
+    Common class to implement various version of `mean square error
     <https://en.wikipedia.org/wiki/Mean_squared_error>`_.
     The code was inspired from
-    `hellinger_distance_criterion.pyx 
+    `hellinger_distance_criterion.pyx
     <https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/main/
-    hellinger_distance_criterion.pyx>`_,    
+    hellinger_distance_criterion.pyx>`_,
     `Cython example of exposing C-computed arrays in Python without data copies
     <http://gael-varoquaux.info/programming/
     cython-example-of-exposing-c-computed-arrays-in-python-without-data-copies.html>`_,
@@ -47,7 +43,8 @@ cdef class CommonRegressorCriterion(Criterion):
         inst = self.__class__(self.n_outputs, self.n_samples)
         return inst
 
-    cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos, SIZE_t new_pos) nogil:
+    cdef void _update_weights(self, SIZE_t start, SIZE_t end,
+                              SIZE_t old_pos, SIZE_t new_pos) nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
         when `pos` changes. This method should be overloaded.
@@ -60,7 +57,7 @@ cdef class CommonRegressorCriterion(Criterion):
         This method must be implemented by the subclass.
         """
         self._update_weights(self.start, self.end, self.pos, self.start)
-        self.pos = self.start        
+        self.pos = self.start
 
     cdef int reverse_reset(self) except -1 nogil:
         """
@@ -83,19 +80,21 @@ cdef class CommonRegressorCriterion(Criterion):
         self._update_weights(self.start, self.end, self.pos, new_pos)
         self.pos = new_pos
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:
+    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
+                    DOUBLE_t *weight) nogil:
         """
         Computes the mean of *y* between *start* and *end*.
         """
         raise NotImplementedError("Method _mean must be overloaded.")
-            
-    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
+
+    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
+                     DOUBLE_t weight) nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a constant.
         """
         raise NotImplementedError("Method _mean must be overloaded.")
-            
+
     cdef void children_impurity_weights(self, double* impurity_left,
                                         double* impurity_right,
                                         double* weight_left,
@@ -143,7 +142,7 @@ cdef class CommonRegressorCriterion(Criterion):
                                 double* impurity_right) noexcept nogil:
         """
         Calculates the impurity of children.
-        
+
         :param impurity_left: double pointer
             The memory address where the impurity of the left child should be
             stored.
@@ -192,7 +191,7 @@ cdef class CommonRegressorCriterion(Criterion):
         Computes the improvement in impurity
         This method computes the improvement in impurity when a split occurs.
         The weighted impurity improvement equation is the following::
-        
+
             N_t / N * (impurity - N_t_R / N_t * right_impurity
                                 - N_t_L / N_t * left_impurity)
 
@@ -220,11 +219,11 @@ cdef class CommonRegressorCriterion(Criterion):
                                  - (self.weighted_n_left / weight * impurity_left)))
 
 
-def _test_criterion_init(Criterion criterion, 
+def _test_criterion_init(Criterion criterion,
                          const DOUBLE_t[:, ::1] y,
                          DOUBLE_t[:] sample_weight,
                          double weighted_n_samples,
-                         SIZE_t[:] samples, 
+                         SIZE_t[:] samples,
                          SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     criterion.init(y, sample_weight, weighted_n_samples,
@@ -234,8 +233,10 @@ def _test_criterion_init(Criterion criterion,
 def _test_criterion_check(Criterion criterion):
     if criterion.weighted_n_node_samples == 0:
         raise ValueError(
-            "weighted_n_node_samples is null, weighted_n_left=%r, weighted_n_right=%r" % (
-                criterion.weighted_n_left, criterion.weighted_n_right))
+            f"weighted_n_node_samples is null, "
+            f"weighted_n_left={criterion.weighted_n_left!r}, "
+            f"weighted_n_right={criterion.weighted_n_right}"
+        )
 
 
 def assert_criterion_equal(Criterion c1, Criterion c2):
@@ -261,18 +262,20 @@ def _test_criterion_node_impurity(Criterion criterion):
     "Test purposes. Methods cannot be directly called from python."
     return criterion.node_impurity()
 
-    
+
 def _test_criterion_proxy_impurity_improvement(Criterion criterion):
     "Test purposes. Methods cannot be directly called from python."
     return criterion.proxy_impurity_improvement()
 
-    
+
 def _test_criterion_impurity_improvement(Criterion criterion, double impurity_parent,
                                          double impurity_left, double impurity_right):
     "Test purposes. Methods cannot be directly called from python."
-    return criterion.impurity_improvement(impurity_parent, impurity_left, impurity_right)
+    return criterion.impurity_improvement(
+        impurity_parent, impurity_left, impurity_right
+    )
 
-    
+
 def _test_criterion_node_impurity_children(Criterion criterion):
     "Test purposes. Methods cannot be directly called from python."
     cdef DOUBLE_t left, right
@@ -291,15 +294,15 @@ def _test_criterion_update(Criterion criterion, SIZE_t new_pos):
     "Test purposes. Methods cannot be directly called from python."
     return criterion.update(new_pos)
 
-    
+
 def _test_criterion_printf(Criterion crit):
-    "Test purposes. Methods cannot be directly called from python."    
+    "Test purposes. Methods cannot be directly called from python."
     printf("start=%zu pos=%zu end=%zu\n", crit.start, crit.pos, crit.end)
     cdef DOUBLE_t left, right, value
-    cdef int i;
+    cdef int i
     crit.children_impurity(&left, &right)
     crit.node_value(&value)
-    printf("value: %f total=%f left=%f right=%f\n", value, 
+    printf("value: %f total=%f left=%f right=%f\n", value,
            crit.node_impurity(), left, right)
     cdef int n = crit.y.shape[0]
     for i in range(0, n):
