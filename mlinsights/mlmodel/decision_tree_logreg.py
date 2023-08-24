@@ -107,7 +107,7 @@ class _DecisionTreeLogisticRegressionNode:
         if dtlr.verbose >= 1:
             print(
                 "[DTLR ] %s trained acc %1.2f N=%d"
-                % (  # pragma: no cover
+                % (
                     " " * self.depth,
                     self.estimator.score(X, y),
                     X.shape[0],
@@ -131,7 +131,7 @@ class _DecisionTreeLogisticRegressionNode:
             if dtlr.verbose >= 1:
                 print(
                     "[DTLR*] %s%s: n_class=%d N=%d - %d/%d"
-                    % (  # pragma: no cover
+                    % (
                         " " * self.depth,
                         side,
                         len(y_above_below),
@@ -189,14 +189,14 @@ class _DecisionTreeLogisticRegressionNode:
         :return: probabilities
         """
         if self.estimator is None:
-            raise RuntimeError("Estimator was not trained.")  # pragma: no cover
+            raise RuntimeError("Estimator was not trained.")
         prob = self.estimator.predict_proba(X)
         if dtlr.fit_improve_algo in (None, "none"):
             return prob
 
         if not isinstance(self.estimator, LinearClassifierMixin):
             # The classifier is not linear and cannot be improved.
-            if dtlr.fit_improve_algo == "intercept_sort_always":  # pragma: no cover
+            if dtlr.fit_improve_algo == "intercept_sort_always":
                 raise RuntimeError(
                     f"The model is not linear "
                     f"({self.estimator.__class__.__name__!r}), "
@@ -213,7 +213,7 @@ class _DecisionTreeLogisticRegressionNode:
         if dtlr.verbose >= 2:
             print(
                 "[DTLRI] %s imp %d <> %d, p1p2=%1.3f <> %1.3f"
-                % (  # pragma: no cover
+                % (
                     " " * self.depth,
                     n_min,
                     dtlr.min_samples_leaf,
@@ -255,7 +255,7 @@ class _DecisionTreeLogisticRegressionNode:
             if dtlr.verbose >= 1:
                 print(
                     "[DTLRI] %s change intercept %f --> %f in [%f, %f]"
-                    % (  # pragma: no cover
+                    % (
                         " " * self.depth,
                         self.estimator.intercept_,
                         beta_best,
@@ -392,9 +392,9 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         else:
             self.estimator = estimator
         if max_depth is None:
-            raise ValueError("'max_depth' cannot be None.")  # pragma: no cover
+            raise ValueError("'max_depth' cannot be None.")
         if max_depth > 1024:
-            raise ValueError("'max_depth' must be <= 1024.")  # pragma: no cover
+            raise ValueError("'max_depth' must be <= 1024.")
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
@@ -438,7 +438,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         if not isinstance(X, numpy.ndarray):
             raise TypeError("'X' must be an array.")
         if sample_weight is not None and not isinstance(sample_weight, numpy.ndarray):
-            raise TypeError("'sample_weight' must be an array.")  # pragma: no cover
+            raise TypeError("'sample_weight' must be an array.")
         self.classes_ = numpy.array(sorted(set(y)))
         if len(self.classes_) != 2:
             raise RuntimeError(
@@ -462,7 +462,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
 
     def _fit_perpendicular(self, X, y, sample_weight):
         "Implements the perpendicular strategy."
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError()
 
     def predict(self, X):
         """
@@ -481,9 +481,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         Calls *decision_function*.
         """
-        raise NotImplementedError(  # pragma: no cover
-            "Decision function is not available for this model."
-        )
+        raise NotImplementedError("Decision function is not available for this model.")
 
     @property
     def tree_depth_(self):

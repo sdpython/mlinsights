@@ -120,13 +120,11 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
                 xj_train = df_train[:, j : j + 1]
                 xj_test = df_test[:, j : j + 1]
                 if len(xj_test) == 0 or len(xi_test) == 0:
-                    raise ValueError(  # pragma: no cover
-                        f"One column is empty i={i} j={j}."
-                    )
+                    raise ValueError(f"One column is empty i={i} j={j}.")
                 mod = clone(model)
                 try:
                     mod.fit(xi_train, xj_train.ravel())
-                except Exception as e:  # pragma: no cover
+                except Exception as e:
                     raise ValueError(
                         f"Unable to compute correlation for i={i} j={j}."
                     ) from e

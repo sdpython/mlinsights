@@ -37,16 +37,12 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
             pipe.transformer_and_mapper_list
         ):
             # azureml DataTransformer
-            raise NotImplementedError(  # pragma: no cover
-                "Unable to handle this specific case."
-            )
+            raise NotImplementedError("Unable to handle this specific case.")
         elif hasattr(pipe, "mapper") and pipe.mapper:
             # azureml DataTransformer
-            for couple in enumerate_pipeline_models(  # pragma: no cover
-                pipe.mapper, coor + (0,)
-            ):  # pragma: no cover
-                yield couple  # pragma: no cover
-        elif hasattr(pipe, "built_features"):  # pragma: no cover
+            for couple in enumerate_pipeline_models(pipe.mapper, coor + (0,)):
+                yield couple
+        elif hasattr(pipe, "built_features"):
             # sklearn_pandas.dataframe_mapper.DataFrameMapper
             for i, (columns, transformers, _) in enumerate(pipe.built_features):
                 if isinstance(columns, str):
@@ -73,17 +69,15 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
                 for couple in enumerate_pipeline_models(model, coor + (i,)):
                     yield couple
         elif isinstance(pipe, TransformedTargetRegressor):
-            raise NotImplementedError(  # pragma: no cover
+            raise NotImplementedError(
                 "Not yet implemented for TransformedTargetRegressor."
             )
         elif isinstance(pipe, (TransformerMixin, ClassifierMixin, RegressorMixin)):
             pass
-        elif isinstance(pipe, BaseEstimator):  # pragma: no cover
+        elif isinstance(pipe, BaseEstimator):
             pass
         else:
-            raise TypeError(  # pragma: no cover
-                f"pipe is not a scikit-learn object: {type(pipe)}\n{pipe}"
-            )
+            raise TypeError(f"pipe is not a scikit-learn object: {type(pipe)}\n{pipe}")
 
 
 class BaseEstimatorDebugInformation:
@@ -137,9 +131,7 @@ class BaseEstimatorDebugInformation:
                 )
                 rows.append("  )")
             else:
-                raise KeyError(  # pragma: no cover
-                    f"Unable to find output for method '{k}'."
-                )
+                raise KeyError(f"Unable to find output for method '{k}'.")
         return "\n".join(rows)
 
     def display(self, data, nrows):
@@ -154,7 +146,7 @@ class BaseEstimatorDebugInformation:
         if hasattr(data, "shape"):
             rows.insert(0, f"shape={data.shape!r} type={type(data)!r}")
         else:
-            rows.insert(0, f"type={type(data)!r}")  # pragma: no cover
+            rows.insert(0, f"type={type(data)!r}")
         return "\n".join(rows)
 
 
@@ -204,7 +196,7 @@ def alter_pipeline_for_debugging(pipe):
     }
 
     if hasattr(pipe, "_debug"):
-        raise RuntimeError(  # pragma: no cover
+        raise RuntimeError(
             "The same operator cannot be used twice in "
             "the same pipeline or this method was called "
             "a second time."
@@ -216,7 +208,7 @@ def alter_pipeline_for_debugging(pipe):
         for k in model._debug.methods:
             try:
                 setattr(model, k, MethodType(new_methods[k], model))
-            except AttributeError:  # pragma: no cover
+            except AttributeError:
                 warnings.warn(
                     f"Unable to overwrite method {k!r} for class " f"{type(model)!r}."
                 )

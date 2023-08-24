@@ -16,7 +16,7 @@ from sklearn.utils.extmath import stable_cumsum
 
 try:
     from sklearn.cluster._kmeans import _check_sample_weight
-except ImportError:  # pragma: no cover
+except ImportError:
     from sklearn.cluster._kmeans import (
         _check_normalize_sample_weight as _check_sample_weight,
     )
@@ -139,7 +139,7 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
     n_samples = X.shape[0]
 
     if init_size is not None and init_size < n_samples:
-        if init_size < k:  # pragma: no cover
+        if init_size < k:
             warnings.warn(
                 "init_size=%d should be larger than k=%d. "
                 "Setting it to 3*k" % (init_size, k),
@@ -151,9 +151,7 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
         X = X[init_indices]
         n_samples = X.shape[0]
     elif n_samples < k:
-        raise ValueError(  # pragma: no cover
-            "n_samples=%d should be larger than k=%d" % (n_samples, k)
-        )
+        raise ValueError("n_samples=%d should be larger than k=%d" % (n_samples, k))
 
     if isinstance(init, str) and init == "k-means++":
         centers = _k_init(norm, X, k, random_state=random_state)
@@ -168,7 +166,7 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
         centers = init(norm, X, k, random_state=random_state)
         centers = numpy.asarray(centers, dtype=X.dtype)
     else:
-        raise ValueError(  # pragma: no cover
+        raise ValueError(
             "init parameter for the k-means should "
             "be 'k-means++' or 'random' or an ndarray, "
             "'%s' (type '%s') was passed." % (init, type(init))
@@ -180,12 +178,12 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
     def _validate_center_shape(X, k, centers):
         """Check if centers is compatible with X and n_clusters"""
         if centers.shape[0] != k:
-            raise ValueError(  # pragma: no cover
+            raise ValueError(
                 f"The shape of the initial centers {centers.shape} does not "
                 f"match the number of clusters {k}."
             )
         if centers.shape[1] != X.shape[1]:
-            raise ValueError(  # pragma: no cover
+            raise ValueError(
                 f"The shape of the initial centers {centers.shape} does not "
                 f"match the number of features of the data {X.shape[1]}."
             )
@@ -225,7 +223,7 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances, X_sort_index
         weight_in_cluster[c] += sample_weight[i]
     empty_clusters = numpy.where(weight_in_cluster == 0)[0]
 
-    if len(empty_clusters) > 0:  # pragma: no cover
+    if len(empty_clusters) > 0:
         # find points to reassign empty clusters to
         far_from_centers = distances.argsort()[::-1]
 
@@ -242,7 +240,7 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances, X_sort_index
             med = numpy.median(sub, axis=0)
             centers[i, :] = med
     else:
-        raise NotImplementedError(  # pragma: no cover
+        raise NotImplementedError(
             "Non uniform weights are not implemented yet as "
             "the cost would be very high. "
             "See https://en.wikipedia.org/wiki/Weighted_median#Algorithm."
@@ -623,7 +621,7 @@ class KMeansL1L2(KMeans):
                 self._validate_center_shape(X, init)  # pylint: disable=E1101
 
             if n_init != 1:
-                warnings.warn(  # pragma: no cover
+                warnings.warn(
                     "Explicit initial center position passed: "
                     "performing only one init in k-means instead of n_init=%d" % n_init,
                     RuntimeWarning,
@@ -636,9 +634,9 @@ class KMeansL1L2(KMeans):
         if self.n_clusters == 1:
             # elkan doesn't make sense for a single cluster, full will produce
             # the right result.
-            algorithm = "full"  # pragma: no cover
+            algorithm = "full"
         if algorithm == "auto":
-            algorithm = "full"  # pragma: no cover
+            algorithm = "full"
         if algorithm == "full":
             kmeans_single = _kmeans_single_lloyd
         else:

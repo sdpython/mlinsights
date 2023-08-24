@@ -55,9 +55,7 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
         print('ny=', ny)
     """
     if not hasattr(model, "use_all_past") or not hasattr(model, "past"):
-        raise TypeError(  # pragma: no cover
-            f"model must be of type BaseTimeSeries not {type(model)}"
-        )
+        raise TypeError(f"model must be of type BaseTimeSeries not {type(model)}")
     if same_rows:
         if model.use_all_past:
             ncol = X.shape[1] if X is not None else 0
@@ -162,33 +160,29 @@ def check_ts_X_y(model, X, y):
     """
     cfg = get_config()
     if cfg.get("assume_finite", True):
-        return  # pragma: no cover
+        return
     if X.dtype not in (numpy.float32, numpy.float64):
         raise TypeError(f"Features must be of type float32 and float64 not {X.dtype}.")
     if y is not None and y.dtype not in (numpy.float32, numpy.float64):
-        raise TypeError(  # pragma: no cover
-            f"Features must be of type float32 and float64 not {y.dtype}."
-        )
+        raise TypeError(f"Features must be of type float32 and float64 not {y.dtype}.")
     cst = model.past
     if hasattr(model, "preprocessing_") and model.preprocessing_ is not None:
         cst += model.preprocessing_.context_length
     if y is None:
         if cst > 0:
-            raise AssertionError(  # pragma: no cover
+            raise AssertionError(
                 f"y must be specified to give the model past data to predict, "
                 f"it requires at least {cst} observations."
             )
-        return  # pragma: no cover
+        return
     if y.shape[0] != X.shape[0]:
-        raise AssertionError(  # pragma: no cover
+        raise AssertionError(
             f"X and y must have the same number of rows {X.shape[0]} != {y.shape[0]}."
         )
     if len(y.shape) > 1 and y.shape[1] != 1:
-        raise AssertionError(  # pragma: no cover
-            f"y must be 1-dimensional not has shape {y.shape}."
-        )
+        raise AssertionError(f"y must be 1-dimensional not has shape {y.shape}.")
     if y.shape[0] < cst:
-        raise AssertionError(  # pragma: no cover
+        raise AssertionError(
             f"y is not enough past data to predict, "
             f"it requires at least {cst} observations."
         )

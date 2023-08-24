@@ -73,13 +73,13 @@ class SkBaseTransformLearner(SkBaseTransform):
         super().__init__(**kwargs)
         self.model = model
         if model is None:
-            raise ValueError("value cannot be None")  # pragma: no cover
+            raise ValueError("value cannot be None")
         if method is None:
             for name in ["predict_proba", "predict", "transform"]:
                 if hasattr(model.__class__, name):
                     method = name
             if method is None:
-                raise ValueError(  # pragma: no cover
+                raise ValueError(
                     f"Unable to guess a default method for '{repr(model)}'"
                 )
         self.method = method
@@ -100,13 +100,11 @@ class SkBaseTransformLearner(SkBaseTransform):
             elif method == "transform":
                 self.method_ = self.model.transform
             else:
-                raise ValueError(f"Unexpected method '{method}'")  # pragma: no cover
+                raise ValueError(f"Unexpected method '{method}'")
         elif callable(method):
             self.method_ = method
         else:
-            raise TypeError(  # pragma: no cover
-                f"Unable to find the transform method, method={method}"
-            )
+            raise TypeError(f"Unable to find the transform method, method={method}")
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -162,17 +160,13 @@ class SkBaseTransformLearner(SkBaseTransform):
             self.model = values["model"]
             del values["model"]
         elif not hasattr(self, "model") or self.model is None:
-            raise KeyError(  # pragma: no cover
-                f"Missing key 'model' in [{', '.join(sorted(values))}]"
-            )
+            raise KeyError(f"Missing key 'model' in [{', '.join(sorted(values))}]")
         if "method" in values:
             self._set_method(values["method"])
             del values["method"]
         for k in values:
             if not k.startswith("model__"):
-                raise ValueError(  # pragma: no cover
-                    f"Parameter '{k}' must start with 'model__'."
-                )
+                raise ValueError(f"Parameter '{k}' must start with 'model__'.")
         d = len("model__")
         pars = {k[d:]: v for k, v in values.items()}
         self.model.set_params(**pars)

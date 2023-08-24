@@ -35,9 +35,7 @@ def plot_gallery_images(
     if hasattr(imgs, "shape") and len(imgs.shape) == 2:
         height, width = imgs.shape
         if ax is not None and ax.shape != imgs.shape:
-            raise ValueError(  # pragma: no cover
-                f"ax.shape {ax.shape} != imgs.shape {imgs.shape}"
-            )
+            raise ValueError(f"ax.shape {ax.shape} != imgs.shape {imgs.shape}")
         imgs = imgs.ravel()
         if texts is not None:
             texts = texts.ravel()
@@ -51,9 +49,7 @@ def plot_gallery_images(
             figure["figsize"] = (12, height * 3)
         fig, ax = plt.subplots(height, width, **figure)
     elif return_figure:
-        raise ValueError(  # pragma: no cover
-            "ax is specified and return_figure is True"
-        )
+        raise ValueError("ax is specified and return_figure is True")
 
     for i, img in enumerate(imgs):
         if img is None:
@@ -73,7 +69,7 @@ def plot_gallery_images(
                     content = response.read()
                 try:
                     im = Image.open(io.BytesIO(content))
-                except OSError as e:  # pragma: no cover
+                except OSError as e:
                     raise RuntimeError(f"Unable to read image '{img}'.") from e
             else:
                 # local file

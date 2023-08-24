@@ -109,7 +109,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
             Predicted values.
         """
         if not hasattr(self, "regressor_"):
-            raise NotFittedError(  # pragma: no cover
+            raise NotFittedError(
                 f"This instance {type(self)} is not fitted yet. Call 'fit' with "
                 f"appropriate arguments before using this method."
             )
@@ -210,7 +210,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
 
     def _check_is_fitted(self):
         if not hasattr(self, "classifier_"):
-            raise NotFittedError(  # pragma: no cover
+            raise NotFittedError(
                 f"This instance {type(self)} is not fitted yet. Call 'fit' with "
                 f"appropriate arguments before using this method."
             )
@@ -237,7 +237,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         """
         self._check_is_fitted()
         if not hasattr(self.classifier_, method):
-            raise RuntimeError(  # pragma: no cover
+            raise RuntimeError(
                 f"Unable to find method {method!r} in model "
                 f"{type(self.classifier_)}."
             )

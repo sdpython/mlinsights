@@ -67,9 +67,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         :return: self
         """
         if not isinstance(X, pandas.DataFrame):
-            raise TypeError(  # pragma: no cover
-                f"this transformer only accept Dataframes, not {type(X)}"
-            )
+            raise TypeError(f"this transformer only accept Dataframes, not {type(X)}")
         if self.columns:
             columns = self.columns
         else:
@@ -83,7 +81,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             distinct = set(X[c].dropna())
             nb = len(distinct)
             if nb >= max_cat:
-                raise ValueError(  # pragma: no cover
+                raise ValueError(
                     f"Too many categories ({nb}) for one column '{c}' max_cat={max_cat}"
                 )
             self._categories[c] = dict(
@@ -128,7 +126,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         :return: DataFrame, *X* with categories.
         """
         if not isinstance(X, pandas.DataFrame):
-            raise TypeError(f"X is not a dataframe: {type(X)}")  # pragma: no cover
+            raise TypeError(f"X is not a dataframe: {type(X)}")
 
         if self.single:
             b = not self.skip_errors
@@ -143,10 +141,10 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     return numpy.nan
                 if not self.skip_errors:
                     lv = list(sorted(vec))
-                    if len(lv) > 20:  # pragma: no cover
+                    if len(lv) > 20:
                         lv = lv[:20]
                         lv.append("...")
-                    raise ValueError(  # pragma: no cover
+                    raise ValueError(
                         "Unable to find category value %r type(v)=%r "
                         "among\n%s" % (v, type(v), "\n".join(lv))
                     )
@@ -176,10 +174,10 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     if v not in vec[k]:
                         if b:
                             lv = list(sorted(vec[k]))
-                            if len(lv) > 20:  # pragma: no cover
+                            if len(lv) > 20:
                                 lv = lv[:20]
                                 lv.append("...")
-                            raise ValueError(  # pragma: no cover
+                            raise ValueError(
                                 "Unable to find category value %r: %r "
                                 "type(v)=%r among\n%s" % (k, v, type(v), "\n".join(lv))
                             )

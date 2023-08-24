@@ -48,7 +48,7 @@ class PipelineCache(Pipeline):
         for pname, pval in fit_params.items():
             if "__" not in pname:
                 if not isinstance(pval, dict):
-                    raise ValueError(  # pragma: no cover
+                    raise ValueError(
                         f"For scikit-learn < 0.23, "
                         f"Pipeline.fit does not accept the {pname} parameter. "
                         f"You can pass parameters to specific steps of your "

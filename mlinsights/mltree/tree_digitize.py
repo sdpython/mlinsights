@@ -70,9 +70,7 @@ def digitize2tree(bins, right=False):
 
     def add_root(index):
         if index < 0 or index >= len(bins):
-            raise IndexError(  # pragma: no cover
-                "Unexpected index %d / len(bins)=%d." % (index, len(bins))
-            )
+            raise IndexError("Unexpected index %d / len(bins)=%d." % (index, len(bins)))
         parent = -1
         is_left = False
         is_leaf = False
@@ -129,7 +127,7 @@ def digitize2tree(bins, right=False):
                 add_nodes(n, i, index, True)
                 add_nodes(n, index, j, False)
                 return n
-        raise NotImplementedError(  # pragma: no cover
+        raise NotImplementedError(
             f"Unexpected case where i={i!r}, j={j!r}, is_left={is_left!r}."
         )
 

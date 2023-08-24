@@ -9,7 +9,7 @@ from sklearn.neural_network._base import DERIVATIVES, LOSS_FUNCTIONS
 
 try:
     from sklearn.neural_network._multilayer_perceptron import BaseMultilayerPerceptron
-except ImportError:  # pragma: no cover
+except ImportError:
     # scikit-learn < 0.22.
     from sklearn.neural_network.multilayer_perceptron import BaseMultilayerPerceptron
 from sklearn.metrics import mean_absolute_error
@@ -129,7 +129,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         """
         if self.loss == "absolute_loss":
             return DERIVATIVE_LOSS_FUNCTIONS["absolute_loss"](last_deltas)
-        return last_deltas  # pragma: no cover
+        return last_deltas
 
     def _backprop(self, X, y, activations, deltas, coef_grads, intercept_grads):
         """
@@ -206,7 +206,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 self._compute_loss_grad(
                     i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
                 )
-        else:  # pragma: no cover
+        else:
             coef_grads, intercept_grads = temp  # pylint: disable=E0633
 
             # Iterate over the hidden layers

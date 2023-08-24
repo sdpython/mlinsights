@@ -9,7 +9,7 @@ from sklearn.utils.sparsefuncs_fast import (
 
 try:
     from sklearn.cluster._kmeans import _check_sample_weight
-except ImportError:  # pragma: no cover
+except ImportError:
     from sklearn.cluster._kmeans import (
         _check_normalize_sample_weight as _check_sample_weight,
     )
@@ -62,7 +62,7 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers, labels, dista
     Return the inertia (sum of squared distances to the centers).
     """
     if distances is not None and distances.shape != (X.shape[0],):
-        raise ValueError(  # pragma: no cover
+        raise ValueError(
             f"Dimension mismatch for distance got "
             f"{distances.shape}, expecting "
             f"{(X.shape[0], centers.shape[0])}."

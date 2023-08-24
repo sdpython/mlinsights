@@ -61,20 +61,16 @@ class SkBaseTransformStacking(SkBaseTransform):
         """
         super().__init__(**kwargs)
         if models is None:
-            raise ValueError("models cannot be None")  # pragma: no cover
+            raise ValueError("models cannot be None")
         if not isinstance(models, list):
-            raise TypeError(  # pragma: no cover
-                f"models must be a list not {type(models)}"
-            )
+            raise TypeError(f"models must be a list not {type(models)}")
         if method is None:
             method = "predict"
         if not isinstance(method, str):
-            raise TypeError(  # pragma: no cover
-                f"Method must be a string not {type(method)}"
-            )
+            raise TypeError(f"Method must be a string not {type(method)}")
         self.method = method
         if isinstance(method, list):
-            if len(method) != len(models):  # pragma: no cover
+            if len(method) != len(models):
                 raise ValueError(
                     f"models and methods must have the same "
                     f"length: {len(models)} != {len(method)}."
@@ -170,9 +166,7 @@ class SkBaseTransformStacking(SkBaseTransform):
             del values["method"]
         for k, v in values.items():
             if not k.startswith("models_"):
-                raise ValueError(  # pragma: no cover
-                    f"Parameter '{k}' must start with 'models_'."
-                )
+                raise ValueError(f"Parameter '{k}' must start with 'models_'.")
         d = len("models_")
         pars = [{} for m in self.models]
         for k, v in values.items():

@@ -42,12 +42,12 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
         BaseReciprocalTransformer.__init__(self)
         if isinstance(fct, str):
             if fct_inv is not None:
-                raise ValueError(  # pragma: no cover
+                raise ValueError(
                     "If fct is a function name, fct_inv must not be specified."
                 )
             opts = self.__class__.available_fcts()
             if fct not in opts:
-                raise ValueError(  # pragma: no cover
+                raise ValueError(
                     f"Unknown fct '{fct}', it should in {list(sorted(opts))}."
                 )
         else:
@@ -113,7 +113,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         Defines a random permutation over the targets.
         """
         if y is None:
-            raise RuntimeError("targets cannot be empty.")  # pragma: no cover
+            raise RuntimeError("targets cannot be empty.")
         num = numpy.issubdtype(y.dtype, numpy.floating)
         perm = {}
         for u in y.ravel():
@@ -139,7 +139,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
 
     def _check_is_fitted(self):
         if not hasattr(self, "permutation_"):
-            raise NotFittedError(  # pragma: no cover
+            raise NotFittedError(
                 f"This instance {type(self)} is not fitted yet. Call 'fit' with "
                 f"appropriate arguments before using this method."
             )
@@ -166,7 +166,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             return float(res)
         if self.knn_perm_.dtype in (numpy.int32, numpy.int64):
             return int(res)
-        raise NotImplementedError(  # pragma: no cover
+        raise NotImplementedError(
             f"The function does not work for type {self.knn_perm_.dtype}."
         )
 

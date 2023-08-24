@@ -5,7 +5,7 @@ from sklearn.utils._joblib import Parallel, delayed
 
 try:
     from tqdm import tqdm
-except ImportError:  # pragma: no cover
+except ImportError:
     pass
 
 
@@ -36,7 +36,7 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         BaseEstimator.__init__(self)
         RegressorMixin.__init__(self)
         if estimator is None:
-            raise ValueError("estimator cannot be null.")  # pragma: no cover
+            raise ValueError("estimator cannot be null.")
         self.estimator = estimator
         self.n_jobs = n_jobs
         self.alpha = alpha

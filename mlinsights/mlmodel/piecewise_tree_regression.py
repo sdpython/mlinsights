@@ -138,7 +138,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             if tree.children_left[i] <= i and tree.children_right[i] <= i
         ]  # pylint: disable=E1136
         if tree.n_leaves != len(self.leaves_index_):
-            raise RuntimeError(  # pragma: no cover
+            raise RuntimeError(
                 f"Unexpected number of leaves {tree.n_leaves} "
                 f"!= {len(self.leaves_index_)}."
             )

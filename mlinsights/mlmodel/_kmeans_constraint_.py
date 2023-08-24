@@ -41,7 +41,7 @@ def linearize_matrix(mat, *adds):
                 for k, am in enumerate(adds):
                     res[i, k + 3] = am[a, b]
             return res
-        raise NotImplementedError(  # pragma: no cover
+        raise NotImplementedError(
             f"This kind of sparse matrix is not handled: {type(mat)}"
         )
     else:
@@ -73,7 +73,6 @@ def constraint_kmeans(
     state=None,
     learning_rate=1.0,
     history=False,
-    fLOG=None,
 ):
     """
     Completes the constraint :epkg:`k-means`.
@@ -87,19 +86,15 @@ def constraint_kmeans(
     @param      max_iter        maximum of number of iteration
     @param      strategy        strategy used to sort observations before
                                 mapping them to clusters
-    @param      verbose         verbose
+    @param      verbose         verbosity
     @param      state           random state
     @param      learning_rate   used by strategy `'weights'`
     @param      history         return list of centers accross iterations
-    @param      fLOG            logging function (needs to be specified otherwise
-                                verbose has no effects)
     @return                     tuple (best_labels, best_centers, best_inertia,
                                 iter, all_centers)
     """
     if labels.dtype != numpy.int32:
-        raise TypeError(  # pragma: no cover
-            f"Labels must be an array of int not '{labels.dtype}'"
-        )
+        raise TypeError(f"Labels must be an array of int not '{labels.dtype}'")
 
     if strategy == "weights":
         return _constraint_kmeans_weights(
@@ -114,7 +109,6 @@ def constraint_kmeans(
             state=state,
             learning_rate=learning_rate,
             history=history,
-            fLOG=fLOG,
         )
     else:
         if isinstance(X, DataFrame):
@@ -187,8 +181,8 @@ def constraint_kmeans(
             )
 
             iter += 1
-            if verbose and fLOG:  # pragma: no cover
-                fLOG("CKMeans %d/%d inertia=%f" % (iter, max_iter, inertia))
+            if verbose:
+                print("CKMeans %d/%d inertia=%f" % (iter, max_iter, inertia))
 
             # best option so far?
             if best_inertia is None or inertia < best_inertia:
@@ -306,7 +300,7 @@ def _constraint_association(
             strategy,
             state=state,
         )
-    raise ValueError(f"Unknwon strategy '{strategy}'.")  # pragma: no cover
+    raise ValueError(f"Unknwon strategy '{strategy}'.")
 
 
 def _compute_strategy_coefficient(distances, strategy, labels):
@@ -317,7 +311,7 @@ def _compute_strategy_coefficient(distances, strategy, labels):
         ar = numpy.arange(distances.shape[0])
         dist = distances[ar, labels]
         return distances - dist[:, numpy.newaxis]
-    raise ValueError(f"Unknwon strategy '{strategy}'.")  # pragma: no cover
+    raise ValueError(f"Unknwon strategy '{strategy}'.")
 
 
 def _randomize_index(index, weights):
@@ -585,9 +579,7 @@ def _constraint_association_gain(
 
     neg = (counters < ave).sum()
     if neg > 0:
-        raise RuntimeError(  # pragma: no cover
-            f"The algorithm failed, counters={counters}"
-        )
+        raise RuntimeError(f"The algorithm failed, counters={counters}")
 
     _switch_clusters(labels, distances)
     distances_close[:] = distances[numpy.arange(X.shape[0]), labels]
@@ -607,7 +599,6 @@ def _constraint_kmeans_weights(
     state=None,
     learning_rate=1.0,
     history=False,
-    fLOG=None,
 ):
     """
     Runs KMeans iterator but weights cluster among them.
@@ -619,12 +610,10 @@ def _constraint_kmeans_weights(
     :param inertia: initialized inertia (unused)
     :param it: number of iteration already done
     :param max_iter: maximum of number of iteration
-    :param verbose: verbose
+    :param verbose: verbosity
     :param state: random state
     :param learning_rate: learning rate
     :param history: keeps all centers accross iterations
-    :param fLOG: logging function (needs to be specified otherwise
-        verbose has no effects)
     :return: tuple (best_labels, best_centers, best_inertia, weights, it)
     """
     if isinstance(X, DataFrame):
@@ -655,11 +644,11 @@ def _constraint_kmeans_weights(
         # association
         labels = _constraint_association_weights(X, centers, sw, weights)
         if len(set(labels)) != centers.shape[0]:
-            if verbose and fLOG:  # pragma: no cover
+            if verbose:
                 if isinstance(verbose, int) and verbose >= 10:
-                    fLOG(f"CKMeans new weights: w={weights!r}")
+                    print(f"CKMeans new weights: w={weights!r}")
                 else:
-                    fLOG("CKMeans new weights")
+                    print("CKMeans new weights")
             weights[:] = 1
             labels = _constraint_association_weights(X, centers, sw, weights)
 
@@ -668,7 +657,7 @@ def _constraint_kmeans_weights(
             X, centers, sw, weights, labels, total_inertia
         )
         if numpy.isnan(inertia):
-            raise RuntimeError(  # pragma: no cover
+            raise RuntimeError(
                 f"nanNobs={X.shape[0]} Nclus={centers.shape[0]}\n"
                 f"inertia={inertia}\nweights={weights}\ndiff={diff}\n"
                 f"labels={set(labels)}"
@@ -686,9 +675,9 @@ def _constraint_kmeans_weights(
         weights, _ = _adjust_weights(X, sw, weights, labels, learning_rate / (it + 10))
 
         it += 1
-        if verbose and fLOG:
+        if verbose:
             if isinstance(verbose, int) and verbose >= 10:
-                fLOG(
+                print(
                     "CKMeans %d/%d inertia=%f (%f T=%f) dw=%r w=%r"
                     % (
                         it,
@@ -702,14 +691,14 @@ def _constraint_kmeans_weights(
                 )
             elif isinstance(verbose, int) and verbose >= 5:
                 hist = Counter(labels)
-                fLOG(
+                print(
                     "CKMeans %d/%d inertia=%f (%f) hist=%r"
                     % (it, max_iter, inertia, best_inertia, hist)
                 )
             else:
-                fLOG(
+                print(
                     "CKMeans %d/%d inertia=%f (%f T=%f)"
-                    % (  # pragma: no cover
+                    % (
                         it,
                         max_iter,
                         inertia,

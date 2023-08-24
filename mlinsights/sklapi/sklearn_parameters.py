@@ -35,9 +35,7 @@ class SkLearnParameters:
         :raise: raises :class:`SkException` if error
         """
         if name.startswith("_") or name.endswith("_"):
-            raise SkException(  # pragma: no cover
-                f"Parameter name must not start by '_': '{name}'"
-            )
+            raise SkException(f"Parameter name must not start by '_': '{name}'")
 
     @property
     def Keys(self):

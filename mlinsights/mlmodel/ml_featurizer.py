@@ -33,7 +33,7 @@ def model_featurizer(model, **params):
     tried.append(RandomForestClassifier)
     if hasattr(model, "layers"):
         # It should be a keras model.
-        return model_featurizer_keras(model, **params)  # pragma: no cover
+        return model_featurizer_keras(model, **params)
     tried.append("Keras")
     if hasattr(model, "forward"):
         # It should be a torch model.
@@ -82,9 +82,7 @@ def wrap_predict_sklearn(X, fct, many):
     """
     isv = is_vector(X)
     if many == isv:
-        raise ValueError(  # pragma: no cover
-            "Inconsistency X is a single vector, many is True"
-        )
+        raise ValueError("Inconsistency X is a single vector, many is True")
     if isv:
         X = [X]
     y = fct(X)
@@ -135,7 +133,7 @@ def model_featurizer_rfc(model, output=True):
     return lambda X, many, model=model: feat2(X, model, many)
 
 
-def wrap_predict_keras(X, fct, many, shapes):  # pragma: no cover
+def wrap_predict_keras(X, fct, many, shapes):
     """
     Checks types and dimension.
     Calls *fct* and returns the approriate type.
@@ -156,7 +154,7 @@ def wrap_predict_keras(X, fct, many, shapes):  # pragma: no cover
     return fct(x).ravel()
 
 
-def model_featurizer_keras(model, layer=None):  # pragma: no cover
+def model_featurizer_keras(model, layer=None):
     """
     Builds a featurizer from a :epkg:`keras` model
     It returns a function which returns the output of one

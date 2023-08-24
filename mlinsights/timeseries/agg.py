@@ -66,7 +66,7 @@ def aggregate_timeseries(
                     pyres,
                 )
             )
-        raise ValueError(f"Unknown frequency '{per}'.")  # pragma: no cover
+        raise ValueError(f"Unknown frequency '{per}'.")
 
     agg_name = _get_column_name(df)
     df = df.copy()
@@ -74,7 +74,7 @@ def aggregate_timeseries(
         freq = datetime.timedelta(minutes=30)
         df[agg_name] = round_(df[index], freq, per)
     else:
-        raise ValueError(f"Unknown time unit '{unit}'.")  # pragma: no cover
+        raise ValueError(f"Unknown time unit '{unit}'.")
     if not isinstance(values, list):
         values = [values]
     if agg == "sum":
@@ -91,5 +91,5 @@ def aggregate_timeseries(
             if su != 0:
                 gr[c] /= su
     else:
-        raise ValueError(f"Unknown aggregation '{agg}'.")  # pragma: no cover
+        raise ValueError(f"Unknown aggregation '{agg}'.")
     return gr.sort_values(agg_name).reset_index(drop=True)

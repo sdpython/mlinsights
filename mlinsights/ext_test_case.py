@@ -2,6 +2,8 @@ import os
 import sys
 import unittest
 import warnings
+import zipfile
+from io import BytesIO
 from argparse import ArgumentParser
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
@@ -337,3 +339,70 @@ def get_parsed_args(
         )
 
     return parser.parse_args()
+
+
+def unzip_files(zipf, where_to=None, fvalid=None, fail_if_error=True):
+    """
+    Unzips files from a zip archive.
+
+    :param zipf: archive (or bytes or BytesIO)
+    :param where_to: destination folder
+        (can be None, the result is a list of tuple)
+    :param fvalid: function which takes two paths
+        (zip name, local name) and return True if the file
+        must be unzipped, False otherwise, if None, the default answer is True
+    :param fail_if_error: fails if an error is encountered
+        (typically a weird character in a filename),
+        otherwise a warning is thrown.
+    :return: list of unzipped files
+    """
+    if isinstance(zipf, bytes):
+        zipf = BytesIO(zipf)
+
+    try:
+        with zipfile.ZipFile(zipf, "r"):
+            pass
+    except zipfile.BadZipFile as e:
+        if isinstance(zipf, BytesIO):
+            raise e
+        raise IOError(f"Unable to read file '{zipf}'") from e
+
+    files = []
+    with zipfile.ZipFile(zipf, "r") as file:
+        for info in file.infolist():
+            if where_to is None:
+                try:
+                    content = file.read(info.filename)
+                except zipfile.BadZipFile as e:
+                    if fail_if_error:
+                        raise zipfile.BadZipFile(
+                            f"Unable to extract {info.filename!r} due to {e}"
+                        ) from e
+                    warnings.warn(
+                        f"Unable to extract {info.filename!r} due to {e}", UserWarning
+                    )
+                    continue
+                files.append((info.filename, content))
+                continue
+
+            tos = os.path.join(where_to, info.filename)
+            if not os.path.exists(tos):
+                if fvalid and not fvalid(info.filename, tos):
+                    continue
+
+                try:
+                    data = file.read(info.filename)
+                except zipfile.BadZipFile as e:
+                    if fail_if_error:
+                        raise zipfile.BadZipFile(
+                            f"Unable to extract {info.filename!r} due to {e}"
+                        ) from e
+                    warnings.warn(
+                        f"Unable to extract {info.filename!r} due to {e}", UserWarning
+                    )
+                    continue
+                with open(tos, "wb") as f:
+                    f.write(data)
+            elif not info.filename.endswith("/"):
+                files.append(tos)
+    return files

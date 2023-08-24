@@ -103,7 +103,7 @@ class ConstraintKMeans(KMeans):
         if strategy not in ConstraintKMeans._strategy_value:
             raise ValueError(f"strategy must be in {ConstraintKMeans._strategy_value}")
 
-    def fit(self, X, y=None, sample_weight=None, fLOG=None):
+    def fit(self, X, y=None, sample_weight=None):
         """
         Compute k-means clustering.
 
@@ -113,7 +113,6 @@ class ConstraintKMeans(KMeans):
             copy if the given data is not C-contiguous.
         :param y: Ignored
         :param sample_weight: sample weight
-        :param fLOG: logging function
         """
         max_iter = self.max_iter
         self.max_iter //= 2
@@ -139,7 +138,6 @@ class ConstraintKMeans(KMeans):
             state=state,
             learning_rate=self.learning_rate,
             history=self.history,
-            fLOG=fLOG,
         )
 
     def constraint_kmeans(
@@ -149,7 +147,6 @@ class ConstraintKMeans(KMeans):
         state=None,
         learning_rate=1.0,
         history=False,
-        fLOG=None,
     ):
         """
         Completes the constraint k-means.
@@ -158,7 +155,6 @@ class ConstraintKMeans(KMeans):
         @param      sample_weight   sample weight
         @param      state           state
         @param      history         keeps evolution of centers
-        @param      fLOG            logging function
         """
         labels, centers, inertia, weights, iter_, all_centers = constraint_kmeans(
             X,
@@ -173,7 +169,6 @@ class ConstraintKMeans(KMeans):
             state=state,
             learning_rate=learning_rate,
             history=history,
-            fLOG=fLOG,
         )
         self.labels_ = labels
         self.cluster_centers_ = centers
@@ -201,7 +196,7 @@ class ConstraintKMeans(KMeans):
             return KMeans.predict(self, X, sample_weight=sample_weight)
         else:
             if self.balanced_predictions:
-                raise RuntimeError(  # pragma: no cover
+                raise RuntimeError(
                     "balanced_predictions and weights_ cannot be used together."
                 )
             return KMeans.predict(self, X, sample_weight=sample_weight)
@@ -231,7 +226,7 @@ class ConstraintKMeans(KMeans):
             return KMeans.transform(self, X)
         else:
             if self.balanced_predictions:
-                raise RuntimeError(  # pragma: no cover
+                raise RuntimeError(
                     "balanced_predictions and weights_ cannot be used together."
                 )
             res = KMeans.transform(self, X)
@@ -256,7 +251,7 @@ class ConstraintKMeans(KMeans):
             res = euclidean_distances(self.cluster_centers_, X, squared=True)
         else:
             if self.balanced_predictions:
-                raise RuntimeError(  # pragma: no cover
+                raise RuntimeError(
                     "balanced_predictions and weights_ cannot be used together."
                 )
             res = euclidean_distances(X, self.cluster_centers_, squared=True)

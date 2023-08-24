@@ -22,7 +22,7 @@ class BaseReciprocalTimeSeriesTransformer(BaseReciprocalTransformer):
         """
         Stores the first values.
         """
-        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
+        raise NotImplementedError("Should be overwritten.")
 
     def transform(self, X, y, sample_weight=None, context=None):
         """
@@ -33,13 +33,13 @@ class BaseReciprocalTimeSeriesTransformer(BaseReciprocalTransformer):
         in the predictor is not related to the *y* series
         given to the *transform* method.
         """
-        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
+        raise NotImplementedError("Should be overwritten.")
 
     def get_fct_inv(self):
         """
         Returns the reverse tranform.
         """
-        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
+        raise NotImplementedError("Should be overwritten.")
 
 
 class BaseTimeSeries(BaseEstimator):
@@ -72,15 +72,15 @@ class BaseTimeSeries(BaseEstimator):
         self.use_all_past = use_all_past
         self.preprocessing = preprocessing
         if self.delay1 < 1:
-            raise ValueError("delay1 must be >= 1")  # pragma: no cover
+            raise ValueError("delay1 must be >= 1")
         if self.delay2 <= self.delay1:
-            raise ValueError("delay2 must be >= 1")  # pragma: no cover
+            raise ValueError("delay2 must be >= 1")
         if self.past < 0:
-            raise ValueError("past must be > 0")  # pragma: no cover
+            raise ValueError("past must be > 0")
         if preprocessing is not None and not isinstance(
             preprocessing, BaseReciprocalTimeSeriesTransformer
         ):
-            raise TypeError(  # pragma: no cover
+            raise TypeError(
                 f"preprocessing must be of type "
                 f"'BaseReciprocalTimeSeriesTransformer' "
                 f"not {type(preprocessing)}."
@@ -121,7 +121,7 @@ class BaseTimeSeries(BaseEstimator):
         The *y* series is moved by *self.delay1* in the past.
         """
         if y is None:
-            raise RuntimeError("y cannot be None")  # pragma: no cover
+            raise RuntimeError("y cannot be None")
         X, y, sample_weight = build_ts_X_y(self, X, y, sample_weight, same_rows=True)
         X, y, sample_weight = self._fit_preprocessing(X, y, sample_weight)
         return X, y, sample_weight

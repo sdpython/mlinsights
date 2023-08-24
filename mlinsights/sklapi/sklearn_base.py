@@ -28,7 +28,7 @@ class SkBase:
         @param      sample_weight   weight
         @return                     self
         """
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError()
 
     def get_params(self, deep=True):
         """
@@ -102,7 +102,7 @@ class SkBase:
             if hasattr(v1, "test_equality"):
                 b = v1.test_equality(v2, exc=exc)
                 if exc and v1 is not v2:
-                    warnings.warn(  # pragma: no cover
+                    warnings.warn(
                         f"v2 is a clone of v1 not v1 itself for key "
                         f"{k!r} and class {type(v1)}."
                     )

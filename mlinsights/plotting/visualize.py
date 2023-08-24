@@ -16,15 +16,13 @@ def _pipeline_info(pipe, data, context, former_data=None):
 
     def _get_name(context, prefix="-v-", info=None, data=None):
         if info is None:
-            raise RuntimeError("info should not be None")  # pragma: no cover
+            raise RuntimeError("info should not be None")
         if isinstance(prefix, list):
             return [_get_name(context, el, info, data) for el in prefix]
         if isinstance(prefix, int):
             prefix = former_data[prefix]
         if isinstance(prefix, int):
-            raise TypeError(  # pragma: no cover
-                f"prefix must be a string.\ninfo={info}"
-            )
+            raise TypeError(f"prefix must be a string.\ninfo={info}")
         sug = "%s%d" % (prefix, context["n"])
         while sug in context["names"]:
             context["n"] += 1
@@ -37,7 +35,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
             return name
         res = data[name]
         if isinstance(res, int):
-            raise RuntimeError(  # pragma: no cover
+            raise RuntimeError(
                 f"Column name is still a number and not a name: {name} and {data}."
             )
         return res
@@ -120,9 +118,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
         return infos
 
     if isinstance(pipe, TransformedTargetRegressor):
-        raise NotImplementedError(  # pragma: no cover
-            "Not yet implemented for TransformedTargetRegressor."
-        )
+        raise NotImplementedError("Not yet implemented for TransformedTargetRegressor.")
 
     if isinstance(pipe, TransformerMixin):
         info = {"name": pipe.__class__.__name__, "type": "transform"}
@@ -196,14 +192,12 @@ def _pipeline_info(pipe, data, context, former_data=None):
                 info["outputs"] = _get_name(context, data=data, info=info)
             info = [info]
         else:
-            raise NotImplementedError(  # pragma: no cover
+            raise NotImplementedError(
                 f"Not yet implemented for keyword '{type(pipe)}'."
             )
         return info
 
-    raise NotImplementedError(  # pragma: no cover
-        f"Not yet implemented for {type(pipe)}."
-    )
+    raise NotImplementedError(f"Not yet implemented for {type(pipe)}.")
 
 
 def pipeline2dot(pipe, data, **params):
@@ -237,13 +231,13 @@ def pipeline2dot(pipe, data, **params):
             data[c] = "sch0:f%d" % k
     elif isinstance(raw_data, numpy.ndarray):
         if len(raw_data.shape) != 2:
-            raise NotImplementedError(  # pragma: no cover
+            raise NotImplementedError(
                 f"Unexpected training data dimension {raw_data.shape}."
             )
         for i in range(raw_data.shape[1]):
             data["X%d" % i] = "sch0:f%d" % i
     elif not isinstance(raw_data, list):
-        raise TypeError(f"Unexpected data type: {type(raw_data)}.")  # pragma: no cover
+        raise TypeError(f"Unexpected data type: {type(raw_data)}.")
 
     options = {
         "orientation": "portrait",
@@ -297,7 +291,7 @@ def pipeline2dot(pipe, data, **params):
 
             for inp in line["inputs"]:
                 if isinstance(inp, int):
-                    raise IndexError(  # pragma: no cover
+                    raise IndexError(
                         "Unable to guess columns {} in\n{}\n---\n{}".format(
                             inp, pprint.pformat(columns), "\n".join(exp)
                         )

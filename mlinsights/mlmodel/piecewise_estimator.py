@@ -9,7 +9,7 @@ from sklearn.utils._joblib import Parallel, delayed
 
 try:
     from tqdm import tqdm
-except ImportError:  # pragma: no cover
+except ImportError:
     pass
 
 
@@ -19,7 +19,7 @@ def _fit_piecewise_estimator(
     ind = association == i
     if not numpy.any(ind):
         # No training example for this bucket.
-        return model  # pragma: no cover
+        return model
     Xi = X[ind, :]
     yi = y[ind]
     sw = sample_weight[ind] if sample_weight is not None else None
@@ -104,9 +104,9 @@ class PiecewiseEstimator(BaseEstimator):
     def __init__(self, binner=None, estimator=None, n_jobs=None, verbose=False):
         BaseEstimator.__init__(self)
         if estimator is None:
-            raise ValueError("estimator cannot be null.")  # pragma: no cover
+            raise ValueError("estimator cannot be null.")
         if binner is None:
-            raise TypeError(  # pragma: no cover
+            raise TypeError(
                 f"Unsupported options for binner=='tree' and model {type(estimator)}."
             )
         elif binner == "bins":
@@ -142,7 +142,7 @@ class PiecewiseEstimator(BaseEstimator):
                 ind = numpy.asarray(ind.todense()).flatten()
                 if not numpy.any(ind):
                     # No training example for this bucket.
-                    continue  # pragma: no cover
+                    continue
                 mapping[j] = ntree
                 association[ind] = ntree
                 ntree += 1
@@ -164,9 +164,7 @@ class PiecewiseEstimator(BaseEstimator):
                 d = tuple(numpy.asarray(x.todense()).ravel().astype(numpy.int32))
                 association[i] = mapping.get(d, -1)
         else:
-            raise NotImplementedError(  # pragma: no cover
-                "binner is not a decision tree or a transform"
-            )
+            raise NotImplementedError("binner is not a decision tree or a transform")
 
         return association, mapping, leaves
 
@@ -195,9 +193,7 @@ class PiecewiseEstimator(BaseEstimator):
                 d = tuple(numpy.asarray(x.todense()).ravel().astype(numpy.int32))
                 association[i] = self.mapping_.get(d, -1)
         else:
-            raise NotImplementedError(  # pragma: no cover
-                "binner is not a decision tree or a transform"
-            )
+            raise NotImplementedError("binner is not a decision tree or a transform")
         return association
 
     def fit(self, X, y, sample_weight=None):
@@ -231,7 +227,7 @@ class PiecewiseEstimator(BaseEstimator):
         if isinstance(X, pandas.DataFrame):
             X = X.values
         if isinstance(X, list):
-            raise TypeError("X cannot be a list.")  # pragma: no cover
+            raise TypeError("X cannot be a list.")
         binner = clone(self.binner)
         if sample_weight is None:
             self.binner_ = binner.fit(X, y)
@@ -285,11 +281,11 @@ class PiecewiseEstimator(BaseEstimator):
         *decision_function* as well.
         """
         if len(self.estimators_) == 0:
-            raise RuntimeError(  # pragma: no cover
+            raise RuntimeError(
                 "Estimator was apparently fitted but contains no estimator."
             )
         if not hasattr(self.estimators_[0], method):
-            raise TypeError(  # pragma: no cover
+            raise TypeError(
                 f"Estimator {type(self.estimators_[0])} "
                 f"does not have method {method!r}."
             )

@@ -67,33 +67,23 @@ class SearchEngineVectors:
         iterate = self._is_iterable(data)
         if iterate:
             if data is None:
-                raise ValueError(  # pragma: no cover
-                    "iterator is True, data must be specified."
-                )
+                raise ValueError("iterator is True, data must be specified.")
             if features is not None:
-                raise ValueError(  # pragma: no cover
-                    "iterator is True, features must be None."
-                )
+                raise ValueError("iterator is True, features must be None.")
             if metadata is not None:
-                raise ValueError(  # pragma: no cover
-                    "iterator is True, metadata must be None."
-                )
+                raise ValueError("iterator is True, metadata must be None.")
             metas = []
             arrays = []
             for row in data:
                 if not isinstance(row, tuple):
-                    raise TypeError(  # pragma: no cover
-                        "data must be an iterator on tuple"
-                    )
+                    raise TypeError("data must be an iterator on tuple")
                 if len(row) != 2:
-                    raise ValueError(  # pragma: no cover
+                    raise ValueError(
                         "data must be an iterator on tuple on two elements"
                     )
                 arr, meta = row
                 if not isinstance(meta, dict):
-                    raise TypeError(  # pragma: no cover
-                        "Second element of the tuple must be a dictionary"
-                    )
+                    raise TypeError("Second element of the tuple must be a dictionary")
                 metas.append(meta)
                 if transform is None:
                     tradd = arr
@@ -101,11 +91,11 @@ class SearchEngineVectors:
                     tradd = transform(arr, False)
                 if not isinstance(tradd, numpy.ndarray):
                     if transform is None:
-                        raise TypeError(  # pragma: no cover
+                        raise TypeError(
                             f"feature should be of type numpy.array not {type(tradd)}"
                         )
                     else:
-                        raise TypeError(  # pragma: no cover
+                        raise TypeError(
                             f"output of method transform {transform!r} should be of "
                             f"type numpy.array not {type(tradd)}."
                         )
@@ -114,14 +104,12 @@ class SearchEngineVectors:
             self.metadata_ = pandas.DataFrame(metas)
         elif data is None:
             if not isinstance(features, numpy.ndarray):
-                raise TypeError(  # pragma: no cover
-                    "features must be an array if data is None"
-                )
+                raise TypeError("features must be an array if data is None")
             self.features_ = features
             self.metadata_ = metadata
         else:
             if not isinstance(data, pandas.DataFrame):
-                raise ValueError("data should be a dataframe")  # pragma: no cover
+                raise ValueError("data should be a dataframe")
             self.features_ = data[features]
             self.metadata_ = data[metadata] if metadata else None
 
@@ -161,10 +149,10 @@ class SearchEngineVectors:
         """
         if isinstance(X, list):
             if len(X) == 0 or isinstance(X[0], (list, tuple)):
-                raise TypeError("X must be a list or a vector (1)")  # pragma: no cover
+                raise TypeError("X must be a list or a vector (1)")
             X = [X]
         if isinstance(X, numpy.ndarray) and (len(X.shape) > 1 and X.shape[0] != 1):
-            raise TypeError("X must be a list or a vector (2)")  # pragma: no cover
+            raise TypeError("X must be a list or a vector (2)")
         dist, ind = self.knn_.kneighbors(
             X, n_neighbors=n_neighbors, return_distance=True
         )
@@ -226,7 +214,7 @@ class SearchEngineVectors:
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, "w")
             close = True
-        else:  # pragma: no cover
+        else:
             zf = zipfilename
             close = False
         if "index" not in kwargs:
@@ -251,7 +239,7 @@ class SearchEngineVectors:
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, "r")
             close = True
-        else:  # pragma: no cover
+        else:
             zf = zipfilename
             close = False
         feat = read_zip(zf, "SearchEngineVectors-features.npy")

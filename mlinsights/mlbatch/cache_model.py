@@ -26,7 +26,7 @@ class MLCache:
         """
         key = MLCache.as_key(params)
         if key in self.cached:
-            raise KeyError(f"Key {params} already exists")  # pragma: no cover
+            raise KeyError(f"Key {params} already exists")
         self.cached[key] = value
         self.count_[key] = 0
 
@@ -71,9 +71,7 @@ class MLCache:
                 sv = str(v)
             elif isinstance(v, tuple):
                 if not all(map(lambda e: isinstance(e, (int, float, str)), v)):
-                    raise TypeError(  # pragma: no cover
-                        f"Unable to create a key with value '{k}':{v}"
-                    )
+                    raise TypeError(f"Unable to create a key with value '{k}':{v}")
                 return str(v)
             elif isinstance(v, numpy.ndarray):
                 # id(v) may have been better but
@@ -82,9 +80,7 @@ class MLCache:
             elif v is None:
                 sv = ""
             else:
-                raise TypeError(  # pragma: no cover
-                    f"Unable to create a key with value '{k}':{v}"
-                )
+                raise TypeError(f"Unable to create a key with value '{k}':{v}")
             els.append((k, sv))
         return str(els)
 
@@ -118,7 +114,7 @@ class MLCache:
         """
         global _caches  # pylint: disable=W0603,W0602
         if name in _caches:
-            raise RuntimeError(f"cache '{name}' already exists.")  # pragma: no cover
+            raise RuntimeError(f"cache '{name}' already exists.")
 
         cache = MLCache(name)
         _caches[name] = cache

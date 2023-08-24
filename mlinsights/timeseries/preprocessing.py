@@ -59,7 +59,7 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
     def __init__(self, estimator):
         BaseReciprocalTimeSeriesTransformer.__init__(self, estimator.context_length)
         if not isinstance(estimator, TimeSeriesDifference):
-            raise TypeError(  # pragma: no cover
+            raise TypeError(
                 f"estimator must be of type TimeSeriesDifference not "
                 f"{type(estimator)}."
             )
@@ -70,7 +70,7 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
         Checks that estimator is fitted.
         """
         if not hasattr(self.estimator, "X_"):
-            raise RuntimeError("Estimator is not fitted.")  # pragma: no cover
+            raise RuntimeError("Estimator is not fitted.")
         self.estimator_ = self.estimator
         return self
 
