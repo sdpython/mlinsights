@@ -7,19 +7,16 @@ Simple example to show how to cluster keeping
 approximatively the same number of points in every
 cluster.
 
-.. contents::
-    :local:
-
 Data
 ====
 """
 from collections import Counter
-import numpy
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_blobs
-from sklearn.cluster import KMeans
-from mlinsights.mlmodel import ConstraintKMeans
 
+import matplotlib.pyplot as plt
+import numpy
+from mlinsights.mlmodel import ConstraintKMeans
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
 
 n_samples = 100
 data = make_blobs(
@@ -89,8 +86,14 @@ km2.fit(X)
 cl1 = km1.predict(X)
 hist1 = Counter(cl1)
 
+##########################################
+#
+
 cl2 = km2.predict(X)
 hist2 = Counter(cl2)
+
+##########################################
+#
 
 fig, ax = plt.subplots(1, 2, figsize=(10, 4))
 for i in range(0, max(cl1) + 1):
@@ -146,5 +149,3 @@ for i in range(0, max(cl) + 1):
     ax[1].scatter(cls[i, 0, :], cls[i, 1, :], color=colors[i], s=ms, label="cl%d" % i)
     plot_delaunay(ax[1], edges, km.cluster_centers_)
 ax[1].set_title("Centers movement")
-
-plt.show()

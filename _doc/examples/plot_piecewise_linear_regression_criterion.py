@@ -18,11 +18,9 @@ Let's build a toy problem based on two linear models.
 """
 
 
+import matplotlib.pyplot as plt
 import numpy
 import numpy.random as npr
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeRegressor
 from mlinsights.ext_test_case import measure_time
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
@@ -31,7 +29,8 @@ from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
 from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import (
     SimpleRegressorCriterionFast,
 )
-
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
 
 X = npr.normal(size=(1000, 4))
 alpha = [4, -2]

@@ -13,12 +13,11 @@ the predict the same value (or class). Do they share a border?
 # +++++++++++++
 
 
-import numpy
 import matplotlib.pyplot as plt
-from sklearn.tree import DecisionTreeClassifier
+import numpy
+from mlinsights.mltree import predict_leaves, tree_leave_index, tree_leave_neighbors
 from sklearn.datasets import load_iris
-from mlinsights.mltree import tree_leave_index, tree_leave_neighbors, predict_leaves
-
+from sklearn.tree import DecisionTreeClassifier
 
 X = numpy.array(
     [[10, 0], [10, 1], [10, 2], [11, 0], [11, 1], [11, 2], [12, 0], [12, 1], [12, 2]]

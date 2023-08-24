@@ -1,36 +1,27 @@
 """
-
-.. _l-example-digitize:
-
 ========================
 numpy.digitize as a tree
 ========================
 
-.. index:: digitize, decision tree, onnx, onnxruntime
-
-Function :epkg:`numpy:digitize` transforms a real variable
+Function :func:`numpy.digitize` transforms a real variable
 into a discrete one by returning the buckets the variable
 falls into. This bucket can be efficiently retrieved by doing a
 binary search over the bins. That's equivalent to decision tree.
 Function :func:`digitize2tree
 <mlinsights.mltree.tree_digitize.digitize2tree>`.
 
-.. contents::
-    :local:
-
 Simple example
 ==============
 """
-import warnings
 import numpy
-from pandas import DataFrame, pivot, pivot_table
 import matplotlib.pyplot as plt
 from onnxruntime import InferenceSession
-from sklearn.tree import export_text
+from pandas import DataFrame, pivot, pivot_table
 from skl2onnx import to_onnx
-from cpyquickhelper.numbers.speed_measure import measure_time
-from mlinsights.mltree import digitize2tree
+from sklearn.tree import export_text
 from tqdm import tqdm
+from mlinsights.ext_test_case import measure_time
+from mlinsights.mltree import digitize2tree
 
 x = numpy.array([0.2, 6.4, 3.0, 1.6])
 bins = numpy.array([0.0, 1.0, 2.5, 4.0, 7.0])
@@ -41,6 +32,7 @@ print(expected, pred)
 
 ##########################################
 # The tree looks like the following.
+
 print(export_text(tree, feature_names=["x"]))
 
 #######################################
@@ -90,9 +82,7 @@ for shape in tqdm([1, 10, 100, 1000, 10000, 100000]):
         ti["shape"] = shape
         obs.append(ti)
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=FutureWarning)
-            onx = to_onnx(tree, x.reshape((-1, 1)), target_opset=15)
+        onx = to_onnx(tree, x.reshape((-1, 1)), target_opset=15)
 
         sess = InferenceSession(onx.SerializeToString())
 
@@ -132,4 +122,3 @@ for i, nb in enumerate(n_bins):
         logy=True,
         ax=ax[i],
     )
-plt.show()
