@@ -49,3 +49,5 @@ _doc/_static/viz.js
 _unittests/ut__main/*.png
 _unittests/test_constants.h
 mlinsights/_config.py
+mlinsights/mlmodel/*.cpp
+mlinsights/mltree/*.cpp

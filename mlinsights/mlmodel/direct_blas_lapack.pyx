@@ -84,9 +84,12 @@ cdef void copy2array1(const double* pC, double[::1] C) nogil:
     memcpy(&C[0], pC, size * sizeof(double))
     
                 
-cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank, const double * rcond) nogil:
+cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank, double * rcond) nogil:
     """
     Same function as :func:`dgels` but does no check.
+
+    .. note::
+        *rcond* should be `const double*` but :epkg:`Cython` does not like *const*.
     """
     cdef int col = A.shape[0]
     cdef int row = A.shape[1]
@@ -105,10 +108,13 @@ cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank, const double * 
     return info
 
 
-cdef void _dgelss_noalloc(double[:, ::1] A, double [:, ::1] B, int* rank, const double* rcond,
+cdef void _dgelss_noalloc(double[:, ::1] A, double [:, ::1] B, int* rank, double* rcond,
                           double* pS, double *pC, int* work, int* info) nogil:
     """
     Same function as :func:`dgels` but does no check.
+
+    .. note::
+        *rcond* should be `const double*` but :epkg:`Cython` does not like *const*.
     """
     cdef int col = A.shape[0]
     cdef int row = A.shape[1]

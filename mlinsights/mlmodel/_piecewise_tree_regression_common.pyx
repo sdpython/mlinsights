@@ -54,7 +54,7 @@ cdef class CommonRegressorCriterion(Criterion):
         """
         pass
 
-    cdef int reset(self) nogil except -1:
+    cdef int reset(self) except -1 nogil:
         """
         Resets the criterion at *pos=start*.
         This method must be implemented by the subclass.
@@ -62,7 +62,7 @@ cdef class CommonRegressorCriterion(Criterion):
         self._update_weights(self.start, self.end, self.pos, self.start)
         self.pos = self.start        
 
-    cdef int reverse_reset(self) nogil except -1:
+    cdef int reverse_reset(self) except -1 nogil:
         """
         Resets the criterion at *pos=end*.
         This method must be implemented by the subclass.
@@ -70,7 +70,7 @@ cdef class CommonRegressorCriterion(Criterion):
         self._update_weights(self.start, self.end, self.pos, self.end)
         self.pos = self.end
 
-    cdef int update(self, SIZE_t new_pos) nogil except -1:
+    cdef int update(self, SIZE_t new_pos) except -1 nogil:
         """
         Updates statistics by moving ``samples[pos:new_pos]`` to the left child.
         This updates the collected statistics by moving ``samples[pos:new_pos]``
@@ -129,7 +129,7 @@ cdef class CommonRegressorCriterion(Criterion):
     # functions used by a the tree optimizer
     ####################
 
-    cdef double node_impurity(self) nogil:
+    cdef double node_impurity(self) noexcept nogil:
         """
         Calculates the impurity of the node,
         the impurity of ``samples[start:end]``.
@@ -140,7 +140,7 @@ cdef class CommonRegressorCriterion(Criterion):
         return self._mse(self.start, self.end, mean, weight)
 
     cdef void children_impurity(self, double* impurity_left,
-                                double* impurity_right) nogil:
+                                double* impurity_right) noexcept nogil:
         """
         Calculates the impurity of children.
         
@@ -154,7 +154,7 @@ cdef class CommonRegressorCriterion(Criterion):
         cdef DOUBLE_t wl, wr
         self.children_impurity_weights(impurity_left, impurity_right, &wl, &wr)
 
-    cdef void node_value(self, double* dest) nogil:
+    cdef void node_value(self, double* dest) noexcept nogil:
         """
         Computes the node value, usually, the prediction
         the tree would do. Stores the value into *dest*.
@@ -165,7 +165,7 @@ cdef class CommonRegressorCriterion(Criterion):
         cdef DOUBLE_t weight
         self._mean(self.start, self.end, dest, &weight)
 
-    cdef double proxy_impurity_improvement(self) nogil:
+    cdef double proxy_impurity_improvement(self) noexcept nogil:
         """
         Computes a proxy of the impurity reduction
         This method is used to speed up the search for the best split.
@@ -187,7 +187,7 @@ cdef class CommonRegressorCriterion(Criterion):
 
     cdef double impurity_improvement(self, double impurity_parent,
                                      double impurity_left,
-                                     double impurity_right) nogil:
+                                     double impurity_right) noexcept nogil:
         """
         Computes the improvement in impurity
         This method computes the improvement in impurity when a split occurs.
@@ -227,9 +227,8 @@ def _test_criterion_init(Criterion criterion,
                          SIZE_t[:] samples, 
                          SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
-    criterion.init(y,
-                   &sample_weight[0], weighted_n_samples,
-                   &samples[0], start, end)
+    criterion.init(y, sample_weight, weighted_n_samples,
+                   samples, start, end)
 
 
 def _test_criterion_check(Criterion criterion):

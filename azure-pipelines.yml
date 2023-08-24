@@ -41,8 +41,8 @@ jobs:
     displayName: 'cython-lint'
   - script: |
       export USE_CUDA=0
-      python -m pip install -e . -v
-    displayName: 'pip install -e . -v'
+      python -m pip install -e . --config-settings="--use_cuda=0" -v
+    displayName: 'pip install -e . --config-settings="--use_cuda=0" -v'
   - script: |
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
@@ -50,7 +50,7 @@ jobs:
       # --config-settings does not work yet.
       # python -m pip wheel . --config-settings="--use_cuda=0" -v
       export USE_CUDA=0
-      python -m pip wheel . -v
+      python -m pip wheel . --config-settings="--use_cuda=0" -v
     displayName: 'build wheel'
   - script: |
       mkdir dist
@@ -104,7 +104,7 @@ jobs:
     displayName: 'cython-lint'
   - script: |
       # python -m pip install -e .
-      python setup.py build_ext --inplace
+      python setup.py build_ext --inplace --use-cuda=0
     displayName: 'build inplace'
   - bash: |
       contents=$(cat .build_path.txt)
@@ -117,7 +117,7 @@ jobs:
       python -m pytest _unittests --durations=10 -v
     displayName: 'Runs Unit Tests'
   - script: |
-      python -u setup.py bdist_wheel
+      python -u setup.py bdist_wheel --use-cuda=0
     displayName: 'Build Package'
   - script: |
       ls dist/*
@@ -166,10 +166,10 @@ jobs:
   - script: set
     displayName: 'set'
   - script: |
-        python setup.py build_ext --inplace
+        python setup.py build_ext --inplace --use-cuda=0
     displayName: 'build'
   - script: |
-        python setup.py install
+        python setup.py install --use-cuda=0
     displayName: 'build wheel'
   - powershell: |
         $contents = Get-Content -Path ".build_path.txt"
@@ -180,7 +180,7 @@ jobs:
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
-        python -u setup.py bdist_wheel
+        python -u setup.py bdist_wheel --use-cuda=0
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
     inputs:
@@ -232,17 +232,17 @@ jobs:
       python -c "import cython;print('cython', cython.__version__)"
     displayName: 'Print'
   - script: |
-      python setup.py build_ext --inplace
+      python setup.py build_ext --inplace --use-cuda=0
     displayName: 'build'
   - script: |
-      python setup.py bdist_wheel
+      python setup.py bdist_wheel --use-cuda=0
     displayName: 'build wheel'
   - script: |
       source activate myEnvironment
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
-      python -u setup.py build
+      python -u setup.py build --use-cuda=0
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
     inputs:

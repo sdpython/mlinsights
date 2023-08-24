@@ -632,6 +632,10 @@ def get_ext_modules():
             f"mlinsights/mlmodel/direct_blas_lapack.{ext}",
         ),
         CMakeExtension(
+            "mlinsights.mlmodel._piecewise_tree_regression_common",
+            f"mlinsights/mlmodel/_piecewise_tree_regression_common.{ext}",
+        ),
+        CMakeExtension(
             "mlinsights.mlmodel.piecewise_tree_regression_criterion",
             f"mlinsights/mlmodel/piecewise_tree_regression_criterion.{ext}",
         ),
