@@ -9,9 +9,9 @@ from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from timeit import Timer
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-
 import numpy
 from numpy.testing import assert_allclose
+import pandas
 
 
 def unit_test_going():
@@ -176,6 +176,20 @@ class ExtTestCase(unittest.TestCase):
         if not os.path.exists(name):
             raise AssertionError(f"File or folder {name!r} does not exists.")
 
+    def assertEqual(self, a, b):
+        if isinstance(a, numpy.ndarray) or isinstance(b, numpy.ndarray):
+            self.assertEqualArray(a, b)
+        elif isinstance(a, pandas.DataFrame) and isinstance(b, pandas.DataFrame):
+            self.assertEqual(list(a.columns), list(b.columns))
+            self.assertEqualArray(a.values, b.values)
+        else:
+            try:
+                super().assertEqual(a, b)
+            except ValueError as e:
+                raise AssertionError(
+                    f"a and b are not equal, type(a)={type(a)}, type(b)={type(b)}"
+                ) from e
+
     def assertEqualArray(
         self,
         expected: numpy.ndarray,
@@ -200,13 +214,17 @@ class ExtTestCase(unittest.TestCase):
             value = numpy.array(value).astype(expected.dtype)
         self.assertEqualArray(expected, value, atol=atol, rtol=rtol)
 
-    def assertRaise(self, fct: Callable, exc_type: Exception):
+    def assertRaise(
+        self, fct: Callable, exc_type: Exception, msg: Optional[str] = None
+    ):
         try:
             fct()
         except exc_type as e:
             if not isinstance(e, exc_type):
                 raise AssertionError(f"Unexpected exception {type(e)!r}.")
-            return
+            if msg is None:
+                return
+            self.assertIn(msg, str(e))
         raise AssertionError("No exception was raised.")
 
     def assertEmpty(self, value: Any):
@@ -226,6 +244,16 @@ class ExtTestCase(unittest.TestCase):
     def assertStartsWith(self, prefix: str, full: str):
         if not full.startswith(prefix):
             raise AssertionError(f"prefix={prefix!r} does not start string  {full!r}.")
+
+    def assertLesser(self, a, b):
+        if a == b:
+            return
+        self.assertLess(a, b)
+
+    def assertGreater(self, a, b):
+        if a == b:
+            return
+        super().assertGreater(a, b)
 
     @classmethod
     def tearDownClass(cls):

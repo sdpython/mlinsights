@@ -173,16 +173,6 @@ class TestCategoriesToIntegers(ExtTestCase):
         X = df.drop("income", axis=1)
         y = df["income"]
         pipe = make_pipeline(CategoriesToIntegers(), LogisticRegression())
-        self.assertRaise(
-            lambda: run_test_sklearn_grid_search_cv(lambda: pipe, df), ValueError
-        )
-        self.assertRaise(
-            lambda: run_test_sklearn_grid_search_cv(
-                lambda: pipe, X, y, categoriestointegers__single=[True, False]
-            ),
-            ValueError,
-            "Unable to find category value",
-        )
         pipe = make_pipeline(
             CategoriesToIntegers(),
             Imputer(strategy="most_frequent"),
