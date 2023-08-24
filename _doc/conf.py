@@ -16,6 +16,8 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx_issues",
     "matplotlib.sphinxext.plot_directive",
+    "sphinx_runpython.blocdefs.sphinx_exref_extension",
+    "sphinx_runpython.blocdefs.sphinx_mathdef_extension",
     "sphinx_runpython.docassert",
     "sphinx_runpython.epkg",
     "sphinx_runpython.gdot",
@@ -32,7 +34,7 @@ else:
     extensions.append("sphinx.ext.mathjax")
 
 templates_path = ["_templates"]
-html_logo = "_static/logo.png"
+html_logo = "_static/project_ico.png"
 source_suffix = ".rst"
 master_doc = "index"
 project = "mlinsights"
@@ -140,9 +142,7 @@ epkg_dictionary = {
         "model-optimizations/graph-optimizations.html"
     ),
     "openmp": "https://www.openmp.org/",
-    "protobuf": "https://github.com/protocolbuffers/protobuf",
     "pybind11": "https://github.com/pybind/pybind11",
-    "pyinstrument": "https://github.com/joerick/pyinstrument",
     "python": "https://www.python.org/",
     "Python C API": "https://docs.python.org/3/c-api/index.html",
     "pytorch": "https://pytorch.org/",

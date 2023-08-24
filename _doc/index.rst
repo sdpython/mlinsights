@@ -55,14 +55,20 @@ which trains a multi-layer perceptron with :epkg:`L1` norm...
 
 .. toctree::
     :maxdepth: 1
+    :caption: Documentation
 
     tutorial/index
     api/index
+    auto_examples/index
     i_ex
-    gyexamples/index
-    all_notebooks
-    blog/blogindex
-    i_index
+    i_faq
+
+.. toctree::
+    :maxdepth: 1
+    :caption: More
+    
+    license
+    README
 
 Short example:
 
