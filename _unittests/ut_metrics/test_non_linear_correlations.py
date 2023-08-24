@@ -4,15 +4,12 @@ import pandas
 from sklearn import datasets
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.metrics import non_linear_correlations
 
 
 class TestNonLinearCorrelations(ExtTestCase):
     def test_non_linear_correlations_df(self):
-        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :4]
         df = pandas.DataFrame(X)
@@ -25,21 +22,15 @@ class TestNonLinearCorrelations(ExtTestCase):
         self.assertGreater(cor.values.min(), 0)
 
     def test_non_linear_correlations_array(self):
-        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :4]
         df = pandas.DataFrame(X).values
         cor = non_linear_correlations(df, LinearRegression(fit_intercept=False))
         self.assertEqual(cor.shape, (4, 4))
-        self.assertEqual(
-            list(cor[i, i] for i in range(0, 4)), [1, 1, 1, 1]  # pylint: disable=E1126
-        )
+        self.assertEqual(list(cor[i, i] for i in range(0, 4)), [1, 1, 1, 1])
         self.assertGreater(cor.min(), 0)
 
     def test_non_linear_correlations_df_tree(self):
-        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :4]
         df = pandas.DataFrame(X)
@@ -52,8 +43,6 @@ class TestNonLinearCorrelations(ExtTestCase):
         self.assertGreater(cor.values.min(), 0)
 
     def test_non_linear_correlations_df_minmax(self):
-        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :4]
         df = pandas.DataFrame(X)
@@ -78,8 +67,6 @@ class TestNonLinearCorrelations(ExtTestCase):
         self.assertGreater(maxi.values.max(), cor.values.max())
 
     def test_non_linear_correlations_array_minmax(self):
-        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
-
         iris = datasets.load_iris()
         X = iris.data[:, :4]
         df = pandas.DataFrame(X).values

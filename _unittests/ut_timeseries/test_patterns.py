@@ -1,7 +1,7 @@
 import unittest
 import datetime
 import numpy
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.timeseries.datasets import artificial_data
 from mlinsights.timeseries.patterns import find_ts_group_pattern
 

@@ -2,7 +2,6 @@ import unittest
 import pickle
 from io import BytesIO
 import pandas
-from sklearn import __version__ as sklver
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
@@ -12,8 +11,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.pipeline import make_pipeline
 from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.sklapi import SkBaseTransformLearner
 
 
@@ -25,12 +23,7 @@ class TestSklearnConvert(ExtTestCase):
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         conv = SkBaseTransformLearner(LogisticRegression(n_jobs=1))
         pipe = make_pipeline(conv, DecisionTreeClassifier())
-        try:
-            pipe.fit(X_train, y_train)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)
@@ -45,12 +38,7 @@ class TestSklearnConvert(ExtTestCase):
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         conv = SkBaseTransformLearner(PCA())
         pipe = make_pipeline(conv, DecisionTreeClassifier())
-        try:
-            pipe.fit(X_train, y_train)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.75)
@@ -67,12 +55,7 @@ class TestSklearnConvert(ExtTestCase):
         tmod = LogisticRegression(n_jobs=1)
         conv = SkBaseTransformLearner(tmod, method=tmod.decision_function)
         pipe = make_pipeline(conv, DecisionTreeClassifier())
-        try:
-            pipe.fit(X_train, y_train)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)

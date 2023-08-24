@@ -80,7 +80,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
             args = [15000]
         else:
             args = []
-        BaseMultilayerPerceptron.__init__(  # pylint: disable=E1121
+        BaseMultilayerPerceptron.__init__(
             self,
             hidden_layer_sizes,
             activation,
@@ -187,7 +187,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         deltas[last] = self._modify_loss_derivatives(deltas[last])
 
         # Compute gradient for the last layer
-        temp = self._compute_loss_grad(  # pylint: disable=E1111
+        temp = self._compute_loss_grad(
             last, n_samples, activations, deltas, coef_grads, intercept_grads
         )
         if temp is None:
@@ -207,7 +207,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                     i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
                 )
         else:
-            coef_grads, intercept_grads = temp  # pylint: disable=E0633
+            coef_grads, intercept_grads = temp
 
             # Iterate over the hidden layers
             for i in range(self.n_layers_ - 2, 0, -1):
@@ -218,7 +218,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 (
                     coef_grads,
                     intercept_grads,
-                ) = self._compute_loss_grad(  # pylint: disable=E1111,E0633
+                ) = self._compute_loss_grad(
                     i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
                 )
 
@@ -387,7 +387,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         """
         See :epkg:`sklearn:neural_networks:MLPRegressor`
         """
-        sup = super(QuantileMLPRegressor, self)  # pylint: disable=R1725
+        sup = super(QuantileMLPRegressor, self)
         if "max_fun" not in kwargs:
             sig = inspect.signature(sup.__init__)
             if "max_fun" in sig.parameters:

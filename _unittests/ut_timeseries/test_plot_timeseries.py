@@ -2,7 +2,7 @@ import unittest
 import datetime
 import warnings
 import sys
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.timeseries.datasets import artificial_data
 from mlinsights.timeseries.agg import aggregate_timeseries
 from mlinsights.timeseries.plotting import plot_week_timeseries
@@ -15,7 +15,7 @@ class TestPlotTimeSeries(ExtTestCase):
     )
     def test_plot_data(self):
         try:
-            import matplotlib.pyplot as plt  # pylint: disable=C0415
+            import matplotlib.pyplot as plt
         except Exception as e:
             if "generated new fontManager" in str(e):
                 warnings.warn(e)

@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest
 import numpy
-import sklearn
-from sklearn.tree._criterion import MSE  # pylint: disable=E0611
+from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
-from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 from mlinsights.mlmodel._piecewise_tree_regression_common import (
     _test_criterion_init,
@@ -152,10 +150,6 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
                 p2 = _test_criterion_impurity_improvement(c2, 0.0)
             self.assertAlmostEqual(p1, p2)
 
-    @unittest.skipIf(
-        compare_module_version(sklearn.__version__, "0.21") < 0,
-        reason="Only implemented for Criterion API from sklearn >= 0.21",
-    )
     def test_decision_tree_criterion(self):
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])

@@ -4,7 +4,7 @@ import numpy.random
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.pipeline import Pipeline, FeatureUnion
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights import check, _setup_hook
 from mlinsights.helpers.pipeline import (
     alter_pipeline_for_debugging,
@@ -39,7 +39,7 @@ class TestDebug(ExtTestCase):
         for model_ in enumerate_pipeline_models(model):
             model = model_[1]
             if hasattr(model, "_debug"):
-                text = str(model._debug)  # pylint: disable=W0212
+                text = str(model._debug)
                 self.assertNotIn(" object at 0x", text)
                 self.assertIn(") -> (", text)
             else:
@@ -68,7 +68,7 @@ class TestDebug(ExtTestCase):
         for model_ in enumerate_pipeline_models(model):
             model = model_[1]
             if hasattr(model, "_debug"):
-                text = str(model._debug)  # pylint: disable=W0212
+                text = str(model._debug)
                 self.assertNotIn(" object at 0x", text)
                 self.assertIn(") -> (", text)
             else:

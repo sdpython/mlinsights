@@ -68,7 +68,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
 
         super()._prepare_fit(data=iterator_feature_meta(), transform=transform)
 
-    def fit(self, iter_images, n=None):  # pylint: disable=W0237
+    def fit(self, iter_images, n=None):
         """
         Processes images through the model and fits a *k-nn*.
 
@@ -79,7 +79,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         self._prepare_fit(data=iter_images, transform=self.fct, n=n)
         return self._fit_knn()
 
-    def kneighbors(self, iter_images, n_neighbors=None):  # pylint: disable=W0237
+    def kneighbors(self, iter_images, n_neighbors=None):
         """
         Searches for neighbors close to the first image
         returned by *iter_images*. It returns the neighbors
@@ -96,7 +96,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             if self.module_ == "keras":
                 raise NotImplementedError("Not yet implemented or Keras.")
             elif self.module_ == "torch":
-                from torch import from_numpy  # pylint: disable=E0611,E0401,C0415
+                from torch import from_numpy
 
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
@@ -110,11 +110,11 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             # keras, it expects an iterator.
             from keras.preprocessing.image import (
                 Iterator,
-            )  # pylint: disable=E0401,C0415,E0611
+            )
             from keras_preprocessing.image import (
                 DirectoryIterator,
                 NumpyArrayIterator,
-            )  # pylint: disable=E0401,C0415,E0611
+            )
 
             if not isinstance(
                 iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)

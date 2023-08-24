@@ -1,7 +1,7 @@
 import numpy
-from sklearn.tree._tree import Tree  # pylint: disable=E0611
+from sklearn.tree._tree import Tree
 from sklearn.tree import DecisionTreeRegressor
-from ._tree_digitize import tree_add_node  # pylint: disable=E0611
+from ._tree_digitize import tree_add_node
 
 
 def digitize2tree(bins, right=False):
@@ -138,9 +138,7 @@ def digitize2tree(bins, right=False):
 
     cl = DecisionTreeRegressor()
     cl.tree_ = tree
-    cl.tree_.value[:, 0, 0] = numpy.array(  # pylint: disable=E1137
-        values, dtype=numpy.float64
-    )
+    cl.tree_.value[:, 0, 0] = numpy.array(values, dtype=numpy.float64)
     cl.n_outputs = 1
     cl.n_outputs_ = 1
     try:

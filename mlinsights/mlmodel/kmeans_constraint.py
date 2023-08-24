@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy
-from scipy.spatial import Delaunay  # pylint: disable=E0611
+from scipy.spatial import Delaunay
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import euclidean_distances
 from ._kmeans_constraint_ import constraint_kmeans, constraint_predictions
@@ -120,7 +120,7 @@ class ConstraintKMeans(KMeans):
             KMeans.fit(self, X, y, sample_weight=sample_weight)
             state = None
         else:
-            state = numpy.random.RandomState(self.random_state)  # pylint: disable=E1101
+            state = numpy.random.RandomState(self.random_state)
             labels = state.randint(0, self.n_clusters, X.shape[0], dtype=numpy.int32)
             centers = numpy.empty((self.n_clusters, X.shape[1]), dtype=X.dtype)
             choice = state.randint(0, self.n_clusters, self.n_clusters)
@@ -266,7 +266,7 @@ class ConstraintKMeans(KMeans):
         graph.
         """
         tri = Delaunay(self.cluster_centers_)
-        triangles = tri.simplices  # pylint: disable=E1101
+        triangles = tri.simplices
         edges = set()
         for row in triangles:
             for j in range(1, row.shape[-1]):

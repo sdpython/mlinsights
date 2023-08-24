@@ -67,7 +67,7 @@ def constraint_kmeans(
     centers,
     inertia,
     iter,
-    max_iter,  # pylint: disable=W0622
+    max_iter,
     strategy="gain",
     verbose=0,
     state=None,
@@ -508,10 +508,10 @@ def _constraint_association_gain(
     sumi = nover - leftclose.sum()
     if sumi != 0:
         if state is None:
-            state = numpy.random.RandomState()  # pylint: disable=E1101
+            state = numpy.random.RandomState()
 
         def loopf(h, sumi):
-            if sumi < 0 and leftclose[h] > 0:  # pylint: disable=R1716
+            if sumi < 0 and leftclose[h] > 0:
                 sumi -= leftclose[h]
                 leftclose[h] = 0
             elif sumi > 0 and leftclose[h] == 0:

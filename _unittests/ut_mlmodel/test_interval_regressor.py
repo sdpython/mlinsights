@@ -2,7 +2,7 @@
 import unittest
 import numpy
 from sklearn.linear_model import LinearRegression
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import IntervalRegressor
 
 

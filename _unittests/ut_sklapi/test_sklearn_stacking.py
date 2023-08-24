@@ -5,7 +5,6 @@ import pickle
 import warnings
 import pandas
 from numpy.random import permutation
-from sklearn import __version__ as sklver
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
@@ -19,13 +18,12 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer
 from sklearn.preprocessing import Normalizer, MinMaxScaler
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.sklapi import SkBaseTransformStacking
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", DeprecationWarning)
-    from sklearn.ensemble import RandomForestClassifier  # pylint: disable=C0412
+    from sklearn.ensemble import RandomForestClassifier
 
 
 def load_wines_dataset(shuffle=False):
@@ -50,12 +48,7 @@ class TestSklearnStacking(ExtTestCase):
             [LogisticRegression(n_jobs=1), DecisionTreeClassifier()]
         )
         pipe = make_pipeline(conv, DecisionTreeClassifier())
-        try:
-            pipe.fit(X_train, y_train)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)
@@ -148,7 +141,7 @@ class TestSklearnStacking(ExtTestCase):
     def test_pipeline_wines(self):
         df = load_wines_dataset(shuffle=True)
         X = df.drop(["quality", "color"], axis=1)
-        y = df["quality"]  # pylint: disable=E1136
+        y = df["quality"]
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         model = make_pipeline(
             SkBaseTransformStacking(
@@ -156,12 +149,7 @@ class TestSklearnStacking(ExtTestCase):
             ),
             RandomForestClassifier(),
         )
-        try:
-            model.fit(X_train, y_train)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        model.fit(X_train, y_train)
         auc_pipe = roc_auc_score(
             y_test == model.predict(X_test), model.predict_proba(X_test).max(axis=1)
         )

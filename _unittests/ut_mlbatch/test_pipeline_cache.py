@@ -5,7 +5,7 @@ from sklearn.decomposition import PCA, TruncatedSVD as SVD
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlbatch.pipeline_cache import PipelineCache
 from mlinsights.mlbatch.cache_model import MLCache
 from mlinsights.mlmodel.sklearn_testing import clone_with_fitted_parameters
@@ -19,8 +19,8 @@ class TestPipelineCache(ExtTestCase):
         pipe = PipelineCache([("pca", PCA(2)), ("lr", LogisticRegression())], "cache__")
 
         if hasattr(pipe0, "_check_fit_params"):
-            pars0 = pipe0._check_fit_params()  # pylint: disable=W0212,E1101
-            pars1 = pipe._check_fit_params()  # pylint: disable=W0212,E1101
+            pars0 = pipe0._check_fit_params()
+            pars1 = pipe._check_fit_params()
             self.assertEqual(pars0, pars1)
 
         pipe0.fit(X, y)

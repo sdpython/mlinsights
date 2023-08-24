@@ -127,9 +127,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         if self.random_state is None:
             lin = numpy.random.permutation(lin)
         else:
-            rs = numpy.random.RandomState(  # pylint: disable=E1101
-                self.random_state
-            )  # pylint: disable=E1101
+            rs = numpy.random.RandomState(self.random_state)
             lin = rs.permutation(lin)
 
         perm_keys = list(perm.keys())
@@ -184,7 +182,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             # permutes classes
             yp = y.copy().ravel()
             num = numpy.issubdtype(y.dtype, numpy.floating)
-            for i in range(len(yp)):  # pylint: disable=C0200
+            for i in range(len(yp)):
                 if num and numpy.isnan(yp[i]):
                     continue
                 if yp[i] not in self.permutation_:

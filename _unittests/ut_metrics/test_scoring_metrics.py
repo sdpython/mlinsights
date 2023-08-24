@@ -5,7 +5,7 @@ import numpy
 from sklearn import datasets
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.metrics import r2_score_comparable
 
 

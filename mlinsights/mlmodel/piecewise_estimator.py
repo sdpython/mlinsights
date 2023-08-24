@@ -28,7 +28,7 @@ def _fit_piecewise_estimator(
         # Issues a classifiers requires to have at least one example
         # of each class.
         if random_state is None:
-            random_state = numpy.random.RandomState()  # pylint: disable=E1101
+            random_state = numpy.random.RandomState()
         addition = numpy.arange(len(ind))
         random_state.shuffle(addition)
         found = set(yi)
@@ -252,12 +252,8 @@ class PiecewiseEstimator(BaseEstimator):
             else len(set(self.mean_estimator_.classes_))
         )
 
-        if (
-            hasattr(self, "random_state") and self.random_state is not None
-        ):  # pylint: disable=E1101
-            rnd = numpy.random.RandomState(  # pylint: disable=E1101
-                self.random_state
-            )  # pylint: disable=E1101
+        if hasattr(self, "random_state") and self.random_state is not None:
+            rnd = numpy.random.RandomState(self.random_state)
         else:
             rnd = None
 
@@ -306,10 +302,10 @@ class PiecewiseEstimator(BaseEstimator):
             if ind is None:
                 continue
             pred[ind] = p
-            indall = numpy.logical_or(indall, ind)  # pylint: disable=E1111
+            indall = numpy.logical_or(indall, ind)
 
         # no in a bucket
-        indall = numpy.logical_not(indall)  # pylint: disable=E1111
+        indall = numpy.logical_not(indall)
         Xmissed = X[indall]
         if Xmissed.shape[0] > 0:
             meth = getattr(self.mean_estimator_, method)

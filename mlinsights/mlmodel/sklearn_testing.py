@@ -89,7 +89,7 @@ def run_test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
 
 def _get_test_instance():
     try:
-        from pyquickhelper.pycode import ExtTestCase  # pylint: disable=C0415
+        from pyquickhelper.pycode import ExtTestCase
 
         cls = ExtTestCase
     except ImportError:
@@ -129,7 +129,7 @@ def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
         ext = _get_test_instance()
     try:
         ext.assertEqual(set(p1), set(p2))
-    except AssertionError as e:  # pragma no cover
+    except AssertionError as e:
         p1 = pprint.pformat(p1)
         p2 = pprint.pformat(p2)
         raise AssertionError(f"Differences between\n----\n{p1}\n----\n{p2}") from e
@@ -143,8 +143,8 @@ def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
         else:
             try:
                 ext.assertEqual(p1[k], p2[k])
-            except AssertionError:  # pragma no cover
-                raise AssertionError(  # pylint: disable=W0707
+            except AssertionError:
+                raise AssertionError(
                     f"Difference for key '{k}'\n==1 {p1[k]}\n==2 {p2[k]}"
                 )
     return conv, cloned
@@ -152,9 +152,7 @@ def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
 
 def _assert_list_equal(l1, l2, ext):
     if len(l1) != len(l2):
-        raise AssertionError(  # pragma no cover
-            f"Lists have different length {len(l1)} != {len(l2)}"
-        )
+        raise AssertionError(f"Lists have different length {len(l1)} != {len(l2)}")
     for a, b in zip(l1, l2):
         if isinstance(a, tuple) and isinstance(b, tuple):
             _assert_tuple_equal(a, b, ext)
@@ -163,9 +161,9 @@ def _assert_list_equal(l1, l2, ext):
 
 
 def _assert_dict_equal(a, b, ext):
-    if not isinstance(a, dict):  # pragma no cover
+    if not isinstance(a, dict):
         raise TypeError(f"a is not dict but {type(a)}")
-    if not isinstance(b, dict):  # pragma no cover
+    if not isinstance(b, dict):
         raise TypeError(f"b is not dict but {type(b)}")
     rows = []
     for key in sorted(b):
@@ -187,7 +185,7 @@ def _assert_dict_equal(a, b, ext):
 
 
 def _assert_tuple_equal(t1, t2, ext):
-    if len(t1) != len(t2):  # pragma no cover
+    if len(t1) != len(t2):
         raise AssertionError(f"Lists have different length {len(t1)} != {len(t2)}")
     for a, b in zip(t1, t2):
         if isinstance(a, BaseEstimator) and isinstance(b, BaseEstimator):
@@ -215,7 +213,7 @@ def assert_estimator_equal(esta, estb, ext=None):
         if (att.endswith("_") and not att.endswith("__")) or (
             att.startswith("_") and not att.startswith("__")
         ):
-            if not hasattr(estb, att):  # pragma no cover
+            if not hasattr(estb, att):
                 raise AssertionError(
                     "Missing fitted attribute '{}' class {}\n==1 {}\n==2 {}".format(
                         att,
@@ -230,7 +228,7 @@ def assert_estimator_equal(esta, estb, ext=None):
                 ext.assertEqual(getattr(esta, att), getattr(estb, att))
     for att in estb.__dict__:
         if att.endswith("_") and not att.endswith("__"):
-            if not hasattr(esta, att):  # pragma no cover
+            if not hasattr(esta, att):
                 raise AssertionError(
                     "Missing fitted attribute\n==1 {}\n==2 {}".format(
                         list(sorted(esta.__dict__)), list(sorted(estb.__dict__))
@@ -267,9 +265,9 @@ def run_test_sklearn_grid_search_cv(
     if y_train is None and w_train is None:
         clf.fit(X_train)
     elif w_train is None:
-        clf.fit(X_train, y_train)  # pylint: disable=E1121
+        clf.fit(X_train, y_train)
     else:
-        clf.fit(X_train, y_train, w_train)  # pylint: disable=E1121
+        clf.fit(X_train, y_train, w_train)
     score = clf.score(X_test, y_test)
     ext = _get_test_instance()
     ext.assertIsInstance(score, float)

@@ -64,11 +64,11 @@ def plot_week_timeseries(
     input_maxy = 1.0
 
     if ax is None:
-        import matplotlib.pyplot as plt  # pylint: disable=C0415
+        import matplotlib.pyplot as plt
 
         ax = plt.gca()
 
-    import matplotlib.patches as patches  # pylint: disable=R0402,C0415
+    import matplotlib.patches as patches
 
     # bars
     delta = None
@@ -96,13 +96,13 @@ def plot_week_timeseries(
             maxy = (y1, y2)
         else:
             maxx = (
-                min(x1, maxx[0]),  # pylint: disable=E1136
+                min(x1, maxx[0]),
                 max(x1 + input_maxy, maxx[1]),
-            )  # pylint: disable=E1136
+            )
             maxy = (
-                min(y1, maxy[0]),  # pylint: disable=E1136
+                min(y1, maxy[0]),
                 max(y2, maxy[1]),
-            )  # pylint: disable=E1136
+            )
 
         rect = patches.Rectangle(
             (x1, y1),

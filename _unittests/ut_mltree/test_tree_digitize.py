@@ -4,10 +4,10 @@ import numpy
 from sklearn.tree import DecisionTreeRegressor
 
 try:
-    from sklearn.tree._tree import TREE_UNDEFINED  # pylint: disable=E0611
+    from sklearn.tree._tree import TREE_UNDEFINED
 except ImportError:
     TREE_UNDEFINED = None
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mltree import digitize2tree
 
 

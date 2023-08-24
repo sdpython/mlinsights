@@ -1,5 +1,5 @@
 import numpy
-from sklearn.tree._tree import TREE_LEAF  # pylint: disable=E0611
+from sklearn.tree._tree import TREE_LEAF
 
 
 def _get_tree(obj):
@@ -270,7 +270,7 @@ def tree_leave_neighbors(model):
             # outside the cube
             cl = None
         if cl is not None:
-            for k in range(len(pos)):  # pylint: disable=C0200
+            for k in range(len(pos)):
                 pos[k] += 1
                 try:
                     cl2 = cells[tuple(pos)]

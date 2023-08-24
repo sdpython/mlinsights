@@ -7,7 +7,7 @@ from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
     run_test_sklearn_clone,
@@ -60,8 +60,8 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
 
     def test_classifier_pickle(self):
         X = random(100)
-        Y = X > 0.5  # pylint: disable=W0143
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        Y = X > 0.5
+        X = X.reshape((100, 1))
         run_test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
         run_test_sklearn_pickle(
             lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y
@@ -74,8 +74,8 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
 
     def test_classifier_grid_search(self):
         X = random(100)
-        Y = X > 0.5  # pylint: disable=W0143
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        Y = X > 0.5
+        X = X.reshape((100, 1))
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(
                 lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y

@@ -3,7 +3,7 @@ import unittest
 import numpy
 from sklearn import datasets
 from sklearn.tree import DecisionTreeClassifier
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mltree import tree_leave_index, tree_node_range, tree_leave_neighbors
 from mlinsights.mltree.tree_structure import tree_find_common_node
 
@@ -31,7 +31,7 @@ class TestTreeStructure(ExtTestCase):
         }
         for le in leaves:
             ra = tree_node_range(clr, le)
-            cl = clr.tree_.value[le]  # pylint: disable=E1136
+            cl = clr.tree_.value[le]
             am = numpy.argmax(cl.ravel())
             if am in exp:
                 self.assertEqualArray(ra, exp[am])

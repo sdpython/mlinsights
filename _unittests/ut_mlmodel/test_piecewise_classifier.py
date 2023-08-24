@@ -4,7 +4,7 @@ import numpy
 from numpy.random import random
 import pandas
 from sklearn.linear_model import LogisticRegression
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
     run_test_sklearn_clone,
@@ -163,8 +163,8 @@ class TestPiecewiseClassifier(ExtTestCase):
 
     def test_piecewise_classifier_pickle(self):
         X = random(100)
-        Y = X > 0.5  # pylint: disable=W0143
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        Y = X > 0.5
+        X = X.reshape((100, 1))
         run_test_sklearn_pickle(lambda: LogisticRegression(), X, Y)
         run_test_sklearn_pickle(lambda: PiecewiseClassifier(), X, Y)
 
@@ -173,8 +173,8 @@ class TestPiecewiseClassifier(ExtTestCase):
 
     def test_piecewise_classifier_grid_search(self):
         X = random(100)
-        Y = X > 0.5  # pylint: disable=W0143
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        Y = X > 0.5
+        X = X.reshape((100, 1))
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(
                 lambda: PiecewiseClassifier(), X, Y

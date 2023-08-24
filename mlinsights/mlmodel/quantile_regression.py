@@ -122,9 +122,7 @@ class QuantileLinearRegression(LinearRegression):
             epsilon, mult = QuantileLinearRegression._epsilon(
                 Y, Xm @ beta, self.quantile
             )
-            r = numpy.reciprocal(
-                numpy.maximum(epsilon, deltas)  # pylint: disable=E1111
-            )  # pylint: disable=E1111
+            r = numpy.reciprocal(numpy.maximum(epsilon, deltas))
             if mult is not None:
                 epsilon *= 1 - mult
                 r *= 1 - mult
@@ -186,10 +184,10 @@ class QuantileLinearRegression(LinearRegression):
         diff = y_pred - y_true
         epsilon = numpy.abs(diff)
         if quantile != 0.5:
-            sign = numpy.sign(diff)  # pylint: disable=E1111
+            sign = numpy.sign(diff)
             mult = numpy.ones(y_true.shape[0])
-            mult[sign > 0] *= quantile  # pylint: disable=W0143
-            mult[sign < 0] *= 1 - quantile  # pylint: disable=W0143
+            mult[sign > 0] *= quantile
+            mult[sign < 0] *= 1 - quantile
         else:
             mult = None
         if sample_weight is not None:

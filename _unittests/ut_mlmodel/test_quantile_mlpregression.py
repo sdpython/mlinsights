@@ -6,7 +6,7 @@ import pandas
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.exceptions import ConvergenceWarning
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import QuantileMLPRegressor
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
@@ -52,7 +52,7 @@ class TestQuantileMLPRegression(ExtTestCase):
         eps1 = (random(90) - 0.5) * 0.1
         eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         run_test_sklearn_pickle(lambda: MLPRegressor(hidden_layer_sizes=(3,)), X, Y)
         run_test_sklearn_pickle(
@@ -69,7 +69,7 @@ class TestQuantileMLPRegression(ExtTestCase):
         eps1 = (random(90) - 0.5) * 0.1
         eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(

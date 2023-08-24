@@ -3,10 +3,8 @@ import unittest
 import numpy
 from numpy.random import random
 import pandas
-from sklearn import __version__ as sklver
 from sklearn.linear_model import LinearRegression
-from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import QuantileLinearRegression
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
@@ -17,9 +15,6 @@ from mlinsights.mlmodel.quantile_mlpregressor import float_sign
 
 
 class TestQuantileRegression(ExtTestCase):
-    def test_sklver(self):
-        self.assertTrue(compare_module_version(sklver, "0.22") >= 0)
-
     def test_quantile_regression_no_intercept(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
         Y = numpy.array([1.0, 1.1])
@@ -32,10 +27,6 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqual(clq.intercept_, 0)
         self.assertEqualArray(clr.intercept_, clq.intercept_)
 
-    @unittest.skipIf(
-        compare_module_version(sklver, "0.24") == -1,
-        reason="positive was introduce in 0.24",
-    )
     def test_quantile_regression_no_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
         Y = numpy.array([1.0, 1.1])
@@ -64,10 +55,6 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqualArray(clr.intercept_, clq.intercept_)
         self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
 
-    @unittest.skipIf(
-        compare_module_version(sklver, "0.24") == -1,
-        reason="positive was introduce in 0.24",
-    )
     def test_quantile_regression_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.3]])
         Y = numpy.array([1.0, 1.1, 1.2])
@@ -131,7 +118,7 @@ class TestQuantileRegression(ExtTestCase):
         eps1 = (random(900) - 0.5) * 0.1
         eps2 = random(100) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((1000, 1))  # pylint: disable=E1101
+        X = X.reshape((1000, 1))
         Y = X * 3.4 + 5.6 + eps
 
         clq = QuantileLinearRegression(verbose=False, fit_intercept=True)
@@ -160,7 +147,7 @@ class TestQuantileRegression(ExtTestCase):
         eps1 = (random(90) - 0.5) * 0.1
         eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         run_test_sklearn_pickle(lambda: LinearRegression(), X, Y)
         run_test_sklearn_pickle(lambda: QuantileLinearRegression(), X, Y)
@@ -173,7 +160,7 @@ class TestQuantileRegression(ExtTestCase):
         eps1 = (random(90) - 0.5) * 0.1
         eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(
@@ -229,9 +216,9 @@ class TestQuantileRegression(ExtTestCase):
             clq.fit(X, Y)
             y = clq.predict(X)
             diff = y - Y
-            sign = numpy.sign(diff)  # pylint: disable=E1111
-            pos = (sign > 0).sum()  # pylint: disable=W0143
-            neg = (sign < 0).sum()  # pylint: disable=W0143
+            sign = numpy.sign(diff)
+            pos = (sign > 0).sum()
+            neg = (sign < 0).sum()
             if q < 0.5:
                 self.assertGreater(neg, pos * 4)
             if q > 0.5:

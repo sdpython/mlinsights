@@ -4,7 +4,7 @@ import numpy
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 from mlinsights.mlmodel._piecewise_tree_regression_common import (
     _test_criterion_init,

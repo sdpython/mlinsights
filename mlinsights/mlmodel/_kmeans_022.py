@@ -1,11 +1,10 @@
-# pylint: disable=C0302
 import numpy
 from scipy.sparse import issparse
 
 # Source: https://github.com/scikit-learn/scikit-learn/blob/95d4f0841d57e8b5f6b2a570312e9d832e69debc/sklearn/cluster/_k_means_fast.pyx
 from sklearn.utils.sparsefuncs_fast import (
     assign_rows_csr,
-)  # pylint: disable=W0611,E0611
+)
 
 try:
     from sklearn.cluster._kmeans import _check_sample_weight

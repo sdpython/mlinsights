@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import unittest
 import numpy
-from scipy.linalg.lapack import dgelss as scipy_dgelss  # pylint: disable=E0611
-from pyquickhelper.pycode import ExtTestCase
-from mlinsights.mlmodel.direct_blas_lapack import dgelss  # pylint: disable=E0611, E0401
+from scipy.linalg.lapack import dgelss as scipy_dgelss
+from mlinsights.ext_test_case import ExtTestCase
+from mlinsights.mlmodel.direct_blas_lapack import dgelss
 
 
 class TestDirectBlasLapack(ExtTestCase):

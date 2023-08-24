@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline, FeatureUnion, make_pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.plotting import pipeline2dot, pipeline2str
 
 

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
 import numpy
-from sklearn import __version__ as sklver
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import r2_score
@@ -12,8 +11,7 @@ try:
     from sklearn.utils._testing import ignore_warnings
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
-from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.sklearn_transform_inv_fct import FunctionReciprocalTransformer
 from mlinsights.mlmodel import TransformedTargetClassifier2, TransformedTargetRegressor2
 
@@ -147,12 +145,7 @@ class TestTargetPredictors(ExtTestCase):
             tt = TransformedTargetClassifier2(
                 classifier=LogisticRegression(n_jobs=1), transformer="permute"
             )
-            try:
-                tt.fit(X_train, y_train)
-            except AttributeError as e:
-                if compare_module_version(sklver, "0.24") < 0:
-                    return
-                raise e
+            tt.fit(X_train, y_train)
             sc2 = tt.score(X_test, y_test)
             self.assertEqual(sc, sc2)
             r22 = r2_score(y_test, tt.predict(X_test))

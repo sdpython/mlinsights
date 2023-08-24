@@ -4,7 +4,7 @@ import numpy
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline, Pipeline
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import TransferTransformer
 from mlinsights.mlmodel import run_test_sklearn_pickle, run_test_sklearn_clone
 

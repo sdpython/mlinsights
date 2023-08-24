@@ -4,7 +4,7 @@ import numpy
 from scipy import sparse
 from scipy.sparse import random as sparse_random
 from sklearn.preprocessing import PolynomialFeatures
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import ExtendedFeatures
 
 
@@ -345,7 +345,7 @@ class TestExtendedFeatures(ExtTestCase):
     @unittest.skip(reason="sparse not implemented for polynomial features")
     def test_polynomial_features_sparse(self):
         dtype = numpy.float64
-        rng = numpy.random.RandomState(0)  # pylint: disable=E1101
+        rng = numpy.random.RandomState(0)
         X = rng.randint(0, 2, (100, 2))
         X_sparse = sparse.csr_matrix(X)
 

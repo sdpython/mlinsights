@@ -3,7 +3,7 @@ import unittest
 import numpy
 from scipy.sparse import csr_matrix
 from sklearn.metrics import mean_squared_error
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.anmf_predictor import ApproximateNMFPredictor
 
 

@@ -3,7 +3,7 @@ import unittest
 import numpy
 from scipy.spatial.distance import cdist
 from sklearn import datasets
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import KMeansL1L2
 from mlinsights.mlmodel._kmeans_022 import _assign_labels_array
 

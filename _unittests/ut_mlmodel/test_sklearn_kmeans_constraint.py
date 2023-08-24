@@ -1,10 +1,10 @@
 import unittest
 import pickle
-from io import BytesIO
+from io import BytesIO, StringIO
+from contextlib import redirect_stdout
 import numpy
 import scipy.sparse
 import pandas
-from sklearn import __version__ as sklver
 from sklearn.datasets import make_blobs
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_iris
@@ -19,9 +19,7 @@ try:
     from sklearn.utils._testing import ignore_warnings
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
-from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.loghelper import BufferedPrint
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel._kmeans_constraint_ import (
     linearize_matrix,
     _compute_strategy_coefficient,
@@ -229,12 +227,7 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         X_train, X_test, y_train, y_test = train_test_split(X, y)
         km = ConstraintKMeans(strategy="distance")
         pipe = make_pipeline(km, LogisticRegression())
-        try:
-            pipe.fit(X_train, y_train)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
         self.assertGreater(score, 0.8)
@@ -468,13 +461,12 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         km = ConstraintKMeans(
             n_clusters=2, verbose=10, kmeans0=False, random_state=1, strategy="weights"
         )
-        buf = BufferedPrint()
-        km.fit(mat, fLOG=buf.fprint)
+        km.fit(mat)
 
         km = ConstraintKMeans(
             n_clusters=2, verbose=5, kmeans0=False, random_state=1, strategy="weights"
         )
-        km.fit(mat, fLOG=buf.fprint)
+        km.fit(mat)
 
         self.assertEqual(km.cluster_centers_.shape, (2, 2))
         self.assertLesser(km.inertia_, 4.55)
@@ -484,13 +476,16 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         self.assertEqual(pred, numpy.array([1, 1, 1, 0]))
         dist = km.transform(mat)
         self.assertEqual(dist.shape, (4, 2))
-        score = km.score(mat)
+        f = StringIO()
+        with redirect_stdout(f):
+            score = km.score(mat, verbose=1)
         self.assertEqual(score.shape, (4,))
-        self.assertIn("CKMeans", str(buf))
+        self.assertIn("CKMeans", f.getvalue())
         km.weights_ = None
-        score = km.score(mat)
+        with redirect_stdout(f):
+            score = km.score(mat, verbose=1)
         self.assertEqual(score.shape, (2,))
-        self.assertIn("CKMeans", str(buf))
+        self.assertIn("CKMeans", f.getvalue())
 
     def test_kmeans_constraint_weights_bigger(self):
         n_samples = 100

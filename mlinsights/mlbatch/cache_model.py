@@ -101,7 +101,7 @@ class MLCache:
         """
         Enumerates all cached keys.
         """
-        for k in self.cached.keys():  # pylint: disable=C0201
+        for k in self.cached.keys():
             yield k
 
     @staticmethod
@@ -112,7 +112,7 @@ class MLCache:
         @param      name        name
         @return                 created cache
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         if name in _caches:
             raise RuntimeError(f"cache '{name}' already exists.")
 
@@ -127,7 +127,7 @@ class MLCache:
 
         @param      name        name
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         del _caches[name]
 
     @staticmethod
@@ -138,7 +138,7 @@ class MLCache:
         @param      name        name
         @return                 created cache
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         return _caches[name]
 
     @staticmethod
@@ -149,5 +149,5 @@ class MLCache:
         @param      name        name
         @return                 boolean
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         return name in _caches

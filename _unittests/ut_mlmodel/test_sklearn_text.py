@@ -2,7 +2,7 @@
 import unittest
 import numpy
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.sklearn_text import (
     TraceableTfidfVectorizer,
     TraceableCountVectorizer,

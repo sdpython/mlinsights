@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import numpy
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import (
     FunctionReciprocalTransformer,
     PermutationReciprocalTransformer,

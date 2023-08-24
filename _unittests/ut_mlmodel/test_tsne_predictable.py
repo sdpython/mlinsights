@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.manifold import TSNE
-from pyquickhelper.pycode import ExtTestCase, skipif_circleci, ignore_warnings
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import PredictableTSNE
 from mlinsights.mlmodel import run_test_sklearn_pickle, run_test_sklearn_clone
 
@@ -25,7 +25,6 @@ class TestPredictableTSNE(ExtTestCase):
         self.assertGreater(clr.loss_, 0)
         self.assertNotEmpty(pred)
 
-    @skipif_circleci("stuck")
     @ignore_warnings(ConvergenceWarning)
     def test_predictable_tsne_knn(self):
         iris = datasets.load_iris()

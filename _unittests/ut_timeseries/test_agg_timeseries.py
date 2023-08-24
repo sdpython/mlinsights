@@ -1,6 +1,6 @@
 import unittest
 import datetime
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.timeseries.datasets import artificial_data
 from mlinsights.timeseries.agg import aggregate_timeseries
 

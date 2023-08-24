@@ -151,7 +151,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         self.clus.set_params(**pc)
         self.estimator.set_params(**pe)
 
-    def __repr__(self):  # pylint: disable=W0222
+    def __repr__(self):
         """
         Overloads `repr` as *scikit-learn* now relies
         on the constructor signature.

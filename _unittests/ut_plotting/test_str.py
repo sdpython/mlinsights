@@ -6,7 +6,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.plotting import pipeline2str
 
 

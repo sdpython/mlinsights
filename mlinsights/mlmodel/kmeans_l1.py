@@ -1,4 +1,3 @@
-# pylint: disable=C0302
 import warnings
 import numpy
 from scipy.sparse import issparse
@@ -618,7 +617,7 @@ class KMeansL1L2(KMeans):
         if hasattr(init, "__array__"):
             init = check_array(init, dtype=X.dtype.type, copy=True)
             if hasattr(self, "_validate_center_shape"):
-                self._validate_center_shape(X, init)  # pylint: disable=E1101
+                self._validate_center_shape(X, init)
 
             if n_init != 1:
                 warnings.warn(

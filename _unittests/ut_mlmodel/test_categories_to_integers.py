@@ -1,13 +1,11 @@
 import os
 import unittest
 import pandas
-from sklearn import __version__ as sklver
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.impute import SimpleImputer as Imputer
 from sklearn.exceptions import ConvergenceWarning, FitFailedWarning
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import CategoriesToIntegers
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
@@ -144,7 +142,7 @@ class TestCategoriesToIntegers(ExtTestCase):
         trans.fit(df)
         newdf = trans.transform(df)
         self.assertEqual(len(newdf.columns), len(df.columns))
-        self.assertEqual(list(newdf.columns), list(df.columns))  # pylint: disable=E1101
+        self.assertEqual(list(newdf.columns), list(df.columns))
         newdf2 = trans.fit_transform(df)
         self.assertEqual(newdf, newdf2)
         rep = repr(trans)
@@ -173,42 +171,30 @@ class TestCategoriesToIntegers(ExtTestCase):
         )
         df = pandas.read_csv(data, sep="\t")
         X = df.drop("income", axis=1)
-        y = df["income"]  # pylint: disable=E1136
+        y = df["income"]
         pipe = make_pipeline(CategoriesToIntegers(), LogisticRegression())
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(lambda: pipe, df), ValueError
         )
-        if (
-            compare_module_version(sklver, "0.24") >= 0
-            and compare_module_version(  # pylint: disable=R1716
-                pandas.__version__, "1.3"
-            )
-            < 0
-        ):
-            self.assertRaise(
-                lambda: run_test_sklearn_grid_search_cv(
-                    lambda: pipe, X, y, categoriestointegers__single=[True, False]
-                ),
-                ValueError,
-                "Unable to find category value",
-            )
+        self.assertRaise(
+            lambda: run_test_sklearn_grid_search_cv(
+                lambda: pipe, X, y, categoriestointegers__single=[True, False]
+            ),
+            ValueError,
+            "Unable to find category value",
+        )
         pipe = make_pipeline(
             CategoriesToIntegers(),
             Imputer(strategy="most_frequent"),
             LogisticRegression(n_jobs=1),
         )
-        try:
-            res = run_test_sklearn_grid_search_cv(
-                lambda: pipe,
-                X,
-                y,
-                categoriestointegers__single=[True, False],
-                categoriestointegers__skip_errors=[True],
-            )
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        res = run_test_sklearn_grid_search_cv(
+            lambda: pipe,
+            X,
+            y,
+            categoriestointegers__single=[True, False],
+            categoriestointegers__skip_errors=[True],
+        )
         self.assertIn("model", res)
         self.assertIn("score", res)
         self.assertGreater(res["score"], 0)

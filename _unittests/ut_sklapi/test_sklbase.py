@@ -1,6 +1,6 @@
 import unittest
 import numpy
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.sklapi.sklearn_base import SkBase
 from mlinsights.sklapi.sklearn_base_learner import SkBaseLearner
 from mlinsights.sklapi.sklearn_base_regressor import SkBaseRegressor

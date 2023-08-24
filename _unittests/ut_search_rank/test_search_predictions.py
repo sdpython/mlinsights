@@ -5,7 +5,7 @@ import numpy
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.search_rank import SearchEnginePredictions
 
 

@@ -6,7 +6,7 @@ import pandas
 from sklearn.linear_model import LinearRegression
 from sklearn.datasets import make_regression
 from sklearn.tree import DecisionTreeRegressor
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import (
     run_test_sklearn_pickle,
     run_test_sklearn_clone,
@@ -127,7 +127,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         eps1 = (random(90) - 0.5) * 0.1
         eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         run_test_sklearn_pickle(lambda: LinearRegression(), X, Y)
         run_test_sklearn_pickle(lambda: PiecewiseRegressor(), X, Y)
@@ -140,7 +140,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         eps1 = (random(90) - 0.5) * 0.1
         eps2 = random(10) * 2
         eps = numpy.hstack([eps1, eps2])
-        X = X.reshape((100, 1))  # pylint: disable=E1101
+        X = X.reshape((100, 1))
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(lambda: PiecewiseRegressor(), X, Y),
@@ -155,9 +155,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         self.assertLesser(res["score"], 1)
 
     def test_piecewise_regressor_issue(self):
-        X, y = make_regression(
-            10000, n_features=1, n_informative=1, n_targets=1  # pylint: disable=W0632
-        )
+        X, y = make_regression(10000, n_features=1, n_informative=1, n_targets=1)
         y = y.reshape((-1, 1))
         model = PiecewiseRegressor(binner=DecisionTreeRegressor(min_samples_leaf=300))
         model.fit(X, y)
@@ -165,9 +163,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         self.assertEqual(vvc.shape, (X.shape[0],))
 
     def test_piecewise_regressor_raise(self):
-        X, y = make_regression(
-            10000, n_features=2, n_informative=2, n_targets=2  # pylint: disable=W0632
-        )
+        X, y = make_regression(10000, n_features=2, n_informative=2, n_targets=2)
         model = PiecewiseRegressor(binner=DecisionTreeRegressor(min_samples_leaf=300))
         self.assertRaise(lambda: model.fit(X, y), RuntimeError)
 

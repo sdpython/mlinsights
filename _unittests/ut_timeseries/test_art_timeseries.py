@@ -1,6 +1,6 @@
 import unittest
 import numpy
-from pyquickhelper.pycode import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.timeseries import build_ts_X_y, ARTimeSeriesRegressor
 
 

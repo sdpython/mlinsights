@@ -43,7 +43,7 @@ def aggregate_timeseries(
 
     def round_(serie, freq, per):
         fr = to_offset(freq)
-        res = pandas.DatetimeIndex(serie).floor(fr)  # pylint: disable=E1101
+        res = pandas.DatetimeIndex(serie).floor(fr)
         if per is None:
             return res
         if per == "week":
