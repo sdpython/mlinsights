@@ -2,6 +2,14 @@
 Speed up batch training
 =======================
 
-.. autosignature:: mlinsights.mlbatch.cache_model.MLCache
+MLCache
++++++++
 
-.. autosignature:: mlinsights.mlbatch.pipeline_cache.PipelineCache
+.. autoclass:: mlinsights.mlbatch.cache_model.MLCache
+    :members:
+
+PipelineCache
++++++++++++++
+
+.. autoclass:: mlinsights.mlbatch.pipeline_cache.PipelineCache
+    :members:

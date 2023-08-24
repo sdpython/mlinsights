@@ -1,4 +1,4 @@
-
+=======================
 Machine Learning Models
 =======================
 
@@ -6,85 +6,188 @@ Machine Learning Models
     :local:
 
 Helpers
-+++++++
+=======
 
-.. autosignature:: mlinsights.mlmodel.ml_featurizer.model_featurizer
+model_featurizer
+++++++++++++++++
+
+.. autofunction:: mlinsights.mlmodel.ml_featurizer.model_featurizer
 
 Clustering
+==========
+
+ConstraintKMeans
+++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.kmeans_constraint.ConstraintKMeans
+    :members:
+
+KMeansL1L2
 ++++++++++
 
-.. autosignature:: mlinsights.mlmodel.kmeans_constraint.ConstraintKMeans
-
-.. autosignature:: mlinsights.mlmodel.kmeans_l1.KMeansL1L2
+.. autoclass:: mlinsights.mlmodel.kmeans_l1.KMeansL1L2
+    :members:
 
 Trainers
-++++++++
+========
 
-.. autosignature:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
+ClassifierAfterKMeans
++++++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.interval_regressor.IntervalRegressor
+.. autoclass:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.anmf_predictor.ApproximateNMFPredictor
+IntervalRegressor
++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseClassifier
+.. autoclass:: mlinsights.mlmodel.interval_regressor.IntervalRegressor
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.piecewise_estimator.PiecewiseRegressor
+ApproximateNMFPredictor
++++++++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression.PiecewiseTreeRegressor
+.. autoclass:: mlinsights.mlmodel.anmf_predictor.ApproximateNMFPredictor
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor
+PiecewiseClassifier
++++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.quantile_regression.QuantileLinearRegression
+.. autoclass:: mlinsights.mlmodel.piecewise_estimator.PiecewiseClassifier
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.target_predictors.TransformedTargetClassifier2
+PiecewiseRegressor
+++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.target_predictors.TransformedTargetRegressor2
+.. autoclass:: mlinsights.mlmodel.piecewise_estimator.PiecewiseRegressor
+    :members:
+
+PiecewiseTreeRegressor
+++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.piecewise_tree_regression.PiecewiseTreeRegressor
+    :members:
+
+QuantileMLPRegressor
+++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.quantile_mlpregressor.QuantileMLPRegressor
+    :members:
+
+QuantileLinearRegression
+++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.quantile_regression.QuantileLinearRegression
+    :members:
+
+TransformedTargetClassifier2
+++++++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.target_predictors.TransformedTargetClassifier2
+    :members:
+
+TransformedTargetRegressor2
++++++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.target_predictors.TransformedTargetRegressor2
+    :members:
 
 Transforms
-++++++++++
+==========
 
-.. autosignature:: mlinsights.mlmodel.categories_to_integers.CategoriesToIntegers
+CategoriesToIntegers
+++++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.extended_features.ExtendedFeatures
+.. autoclass:: mlinsights.mlmodel.categories_to_integers.CategoriesToIntegers
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.sklearn_transform_inv_fct.FunctionReciprocalTransformer
+ExtendedFeatures
+++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.sklearn_transform_inv_fct.PermutationReciprocalTransformer
+.. autoclass:: mlinsights.mlmodel.extended_features.ExtendedFeatures
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.predictable_tsne.PredictableTSNE
+FunctionReciprocalTransformer
++++++++++++++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.transfer_transformer.TransferTransformer
+.. autoclass:: mlinsights.mlmodel.sklearn_transform_inv_fct.FunctionReciprocalTransformer
+    :members:
 
-.. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableCountVectorizer
+PermutationReciprocalTransformer
+++++++++++++++++++++++++++++++++
 
-.. autosignature:: mlinsights.mlmodel.sklearn_text.TraceableTfidfVectorizer
+.. autoclass:: mlinsights.mlmodel.sklearn_transform_inv_fct.PermutationReciprocalTransformer
+    :members:
+
+PredictableTSNE
++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.predictable_tsne.PredictableTSNE
+    :members:
+
+TransferTransformer
++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.transfer_transformer.TransferTransformer
+    :members:
+
+TraceableCountVectorizer
+++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.sklearn_text.TraceableCountVectorizer
+    :members:
+
+TraceableTfidfVectorizer
+++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.sklearn_text.TraceableTfidfVectorizer
+    :members:
 
 Exploration
-+++++++++++
+===========
 
 The following implementation play with :epkg:`scikit-learn`
 API, it overwrites the code handling parameters.
 
-.. autosignature:: mlinsights.sklapi.sklearn_base_transform_learner.SkBaseTransformLearner
+SkBaseTransformLearner
+++++++++++++++++++++++
 
-.. autosignature:: mlinsights.sklapi.sklearn_base_transform_stacking.SkBaseTransformStacking
+.. autoclass:: mlinsights.sklapi.sklearn_base_transform_learner.SkBaseTransformLearner
+    :members:
+
+SkBaseTransformStacking
++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.sklapi.sklearn_base_transform_stacking.SkBaseTransformStacking
+    :members:
 
 Exploration in C
-++++++++++++++++
+================
 
-The following classes require :epkg:`scikit-learn` *>= 0.21*,
+The following classes require :epkg:`scikit-learn` *>= 1.3.0*,
 otherwise, they do not get compiled.
 
-.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion
+SimpleRegressorCriterion
+++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion
+    :members:
+
+SimpleRegressorCriterionFast
+++++++++++++++++++++++++++++
 
 A similar design but a much faster implementation close to what
 :epkg:`scikit-learn` implements.
 
-.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression_criterion_fast.SimpleRegressorCriterionFast
+.. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion_fast.SimpleRegressorCriterionFast
+    :members:
+
+LinearRegressorCriterion
+++++++++++++++++++++++++
 
 The next one implements a criterion which optimizes the mean square error
 assuming the points falling into one node of the tree are approximated by
 a line. The mean square error is the error made with a linear regressor
 and not a constant anymore.
 
-.. autosignature:: mlinsights.mlmodel.piecewise_tree_regression_criterion_linear.LinearRegressorCriterion
+.. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion_linear.LinearRegressorCriterion
+    :members:

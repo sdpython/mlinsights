@@ -8,4 +8,4 @@ Blas & Lapack
 Lapack
 ++++++
 
-.. autosignature:: mlinsights.mlmodel.direct_blas_lapack.dgelss
+.. autofunction:: mlinsights.mlmodel.direct_blas_lapack.dgelss
