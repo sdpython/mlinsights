@@ -7,8 +7,6 @@ coverage
 cython
 cython-lint
 furo
-ipython
-jupyter_sphinx>=0.2
 llvmlite
 matplotlib
 memory_profiler>=0.55
@@ -19,6 +17,7 @@ pytest
 pytest-cov
 rstcheck[sphinx,toml]
 ruff
+seaborn
 sphinx
 sphinx-gallery
 sphinx-issues

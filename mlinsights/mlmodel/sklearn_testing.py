@@ -1,7 +1,6 @@
 import copy
 import pickle
 import pprint
-from unittest import TestCase
 from io import BytesIO
 from numpy import ndarray
 from numpy.testing import assert_almost_equal
@@ -88,22 +87,9 @@ def run_test_sklearn_pickle(fct_model, X, y=None, sample_weight=None, **kwargs):
 
 
 def _get_test_instance():
-    try:
-        from pyquickhelper.pycode import ExtTestCase
+    from ..ext_test_case import ExtTestCase
 
-        cls = ExtTestCase
-    except ImportError:
-
-        class _ExtTestCase(TestCase):
-            "simple test classe with a more methods"
-
-            def assertIsInstance(self, inst, cltype):
-                "checks that one instance is from one type"
-                if not isinstance(inst, cltype):
-                    raise AssertionError(f"Unexpected type {type(inst)} != {cltype}.")
-
-        cls = _ExtTestCase
-    return cls()
+    return ExtTestCase()
 
 
 def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
