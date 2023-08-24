@@ -1,11 +1,11 @@
 autopep8
 black
+chardet
 clang-format
 cmakelang
 coverage
-chardet
-coverage
 cython
+cython-lint
 furo
 ipython
 jupyter_sphinx>=0.2
