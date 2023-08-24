@@ -5,7 +5,6 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.pipeline import Pipeline, FeatureUnion
 from mlinsights.ext_test_case import ExtTestCase
-from mlinsights import check, _setup_hook
 from mlinsights.helpers.pipeline import (
     alter_pipeline_for_debugging,
     enumerate_pipeline_models,
@@ -13,10 +12,6 @@ from mlinsights.helpers.pipeline import (
 
 
 class TestDebug(ExtTestCase):
-    def test_check(self):
-        check()
-        _setup_hook()
-
     def test_union_features_reg(self):
         data = numpy.random.randn(4, 5)
         y = numpy.random.randn(4)
