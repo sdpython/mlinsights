@@ -13,7 +13,7 @@ class TestDirectBlasLapack(ExtTestCase):
         B = numpy.matmul(A, C.T)
 
         ____, x, ___, __, _, info = scipy_dgelss(A, B)
-        self.assertEqual(x.ravel()[:2], C.ravel())
+        self.assertEqualArray(x.ravel()[:2], C.ravel(), atol=1e-8)
         A = A.T.copy()
         info = dgelss(A, B)
         self.assertEqual(info, 0)

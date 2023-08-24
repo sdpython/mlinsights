@@ -17,11 +17,11 @@ class TestExtendedFeatures(ExtTestCase):
         self.assertEqual(r, exp)
 
     def test_polynomial_features(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -53,11 +53,11 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_slow(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -89,11 +89,11 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_nobias_ionly(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -130,11 +130,11 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_nobias_ionly_slow(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -174,11 +174,11 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_bias_ionly(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -215,11 +215,11 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_bias_ionly_slow(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -259,11 +259,11 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_nobias(self):
-        X1 = numpy.arange(6)[:, numpy.newaxis]
+        X1 = numpy.arange(6)[:, numpy.newaxis].astype(numpy.float64)
         P1 = numpy.hstack([numpy.ones_like(X1), X1, X1**2, X1**3])
         deg1 = 3
 
-        X2 = numpy.arange(6).reshape((3, 2))
+        X2 = numpy.arange(6).reshape((3, 2)).astype(numpy.float64)
         x1 = X2[:, :1]
         x2 = X2[:, 1:]
         P2 = numpy.hstack(
@@ -295,7 +295,7 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(P_test, e_test)
 
     def test_polynomial_features_bigger(self):
-        X = numpy.arange(30).reshape((5, 6))
+        X = numpy.arange(30).reshape((5, 6)).astype(numpy.float64)
         for deg in (1, 2, 3, 4):
             poly = PolynomialFeatures(deg, include_bias=True)
             X_sk = poly.fit_transform(X)
@@ -318,7 +318,7 @@ class TestExtendedFeatures(ExtTestCase):
             self.assertEqual(X_sk, X_ext)
 
     def test_polynomial_features_bigger_ionly(self):
-        X = numpy.arange(30).reshape((5, 6))
+        X = numpy.arange(30).reshape((5, 6)).astype(numpy.float64)
         for deg in (1, 2, 3, 4, 5):
             poly = PolynomialFeatures(deg, include_bias=True, interaction_only=True)
             X_sk = poly.fit_transform(X)
@@ -346,7 +346,7 @@ class TestExtendedFeatures(ExtTestCase):
     def test_polynomial_features_sparse(self):
         dtype = numpy.float64
         rng = numpy.random.RandomState(0)
-        X = rng.randint(0, 2, (100, 2))
+        X = rng.randint(0, 2, (100, 2)).astype(numpy.float64)
         X_sparse = sparse.csr_matrix(X)
 
         est = PolynomialFeatures(2)
