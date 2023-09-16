@@ -4,8 +4,6 @@
 # downloads onnxruntime as a binary
 # functions ort_add_dependency, ort_add_custom_op
 
-file(WRITE "../_setup_ext.txt" "")
-
 if(NOT ORT_VERSION)
   set(ORT_VERSION 1.15.1)
   set(ORT_VERSION_INT 1150)

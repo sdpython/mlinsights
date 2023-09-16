@@ -40,6 +40,7 @@ message(STATUS "--------------------------------------------")
 # Don't let cmake set a default value for CMAKE_CUDA_ARCHITECTURES
 # see https://cmake.org/cmake/help/latest/policy/CMP0104.html
 # cmake_policy(SET CMP0104 OLD) # deprecated
+file(WRITE "../_setup_ext.txt" "")
 
 list(APPEND CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}"

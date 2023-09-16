@@ -1,15 +1,7 @@
-from distutils.version import StrictVersion
-from sklearn import __version__ as skl_version
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline, _fit_transform_one
 from sklearn.utils import _print_elapsed_time
 from .cache_model import MLCache
-
-
-def isskl023():
-    "Tells if :epkg:`scikit-learn` is more recent than 0.23."
-    v1 = ".".join(skl_version.split(".")[:2])
-    return StrictVersion(v1) >= StrictVersion("0.23")
 
 
 class PipelineCache(Pipeline):
@@ -104,8 +96,4 @@ class PipelineCache(Pipeline):
                 Xt = fitted_transformer.transform(Xt)
 
             self.steps[step_idx] = (name, fitted_transformer)
-        if isskl023():
-            return Xt
-        if self._final_estimator == "passthrough":
-            return Xt, {}
-        return Xt, fit_params_steps[self.steps[-1][0]]
+        return Xt

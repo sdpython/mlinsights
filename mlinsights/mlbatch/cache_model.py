@@ -76,7 +76,7 @@ class MLCache:
             elif isinstance(v, numpy.ndarray):
                 # id(v) may have been better but
                 # it does not play well with joblib.
-                sv = hash(v.tostring())
+                sv = hash(v.tobytes())
             elif v is None:
                 sv = ""
             else:
