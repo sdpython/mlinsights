@@ -227,7 +227,7 @@ cpdef _test_criterion_init(Criterion criterion,
                            SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     if criterion.init(y, sample_weight, weighted_n_samples, samples, start, end) != 0:
-        raise AssertionError(f"Return is not 0")
+        raise AssertionError("Return is not 0.")
 
 
 def _test_criterion_check(Criterion criterion):

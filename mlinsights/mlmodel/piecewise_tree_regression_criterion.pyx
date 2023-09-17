@@ -121,7 +121,8 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.sample_sum_wy = 0.
         self.sample_sum_w = 0.
 
-        if (self.sample_w == NULL) or (self.sample_wy == NULL) or (self.sample_i == NULL):
+        if ((self.sample_w == NULL) or (self.sample_wy == NULL) or
+            (self.sample_i == NULL)):
             return -1
 
         # Filling accumulators.

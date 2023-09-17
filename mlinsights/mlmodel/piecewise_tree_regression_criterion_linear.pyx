@@ -179,6 +179,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
                                 sample_indices, start, end)
 
+    @cython.boundscheck(False)
     cdef int init_with_X(self, const DOUBLE_t[:, ::1] X,
                          const DOUBLE_t[:, ::1] y,
                          const DOUBLE_t[:] sample_weight,
