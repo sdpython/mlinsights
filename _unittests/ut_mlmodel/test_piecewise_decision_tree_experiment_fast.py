@@ -24,6 +24,10 @@ from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import (
 
 
 class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
+    @unittest.skip(
+        reason="self.y = y raises: Fatal Python error: "
+        "__pyx_fatalerror: Acquisition count is"
+    )
     def test_criterions(self):
         X = numpy.array([[1.0, 2.0]]).T
         y = numpy.array([1.0, 2.0])

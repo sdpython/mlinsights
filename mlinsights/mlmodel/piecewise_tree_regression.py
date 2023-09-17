@@ -153,8 +153,10 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
                 ys = ys[:, numpy.newaxis]
             ys = ys.copy()
             ws = sample_weight[ind].copy() if sample_weight is not None else None
+            # Fatal Python error: __pyx_fatalerror: Acquisition count is 0 (line 26868)
             dec = LinearRegressorCriterion.create(xs, ys, ws)
             dec.node_beta(self.betas_[i, :])
+        print("end")
 
     def predict(self, X, check_input=True):
         """

@@ -1,8 +1,8 @@
 cimport cython
-import numpy
-cimport numpy
+import numpy as np
+cimport numpy as cnp
 
-numpy.import_array()
+cnp.import_array()
 
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
@@ -129,8 +129,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         return inst
 
     @staticmethod
-    def create(DOUBLE_t[:, ::1] X, DOUBLE_t[:, ::1] y,
-               DOUBLE_t[::1] sample_weight=None):
+    def create(const DOUBLE_t[:, ::1] X, const DOUBLE_t[:, ::1] y,
+               const DOUBLE_t[::1] sample_weight=None):
         """
         Initializes the criterion.
 
@@ -140,9 +140,9 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         :return: an instance of :class:`LinearRegressorCriterion`
         """
         cdef SIZE_t i
-        cdef DOUBLE_t[:] ws
+        cdef const DOUBLE_t[:] ws
         cdef double sum
-        cdef SIZE_t[:] parr = numpy.empty(y.shape[0], dtype=numpy.int64)
+        cdef SIZE_t[:] parr = np.empty(y.shape[0], dtype=np.int64)
         for i in range(0, y.shape[0]):
             parr[i] = i
         if sample_weight is None:
