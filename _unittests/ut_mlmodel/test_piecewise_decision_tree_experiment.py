@@ -36,6 +36,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         self.assertEqual(w.sum(), X.shape[0])
         ind = numpy.arange(y.shape[0]).astype(numpy.int64)
         ys = y.astype(float).reshape((y.shape[0], 1))
+        ys = numpy.ascontiguousarray(ys, dtype=numpy.float64).copy()
         _test_criterion_init(c1, ys, w, 1.0, ind, 0, y.shape[0])
         _test_criterion_init(c2, ys, w, 1.0, ind, 0, y.shape[0])
         return
