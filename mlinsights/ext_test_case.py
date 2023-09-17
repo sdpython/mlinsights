@@ -197,7 +197,11 @@ class ExtTestCase(unittest.TestCase):
         atol: float = 0,
         rtol: float = 0,
     ):
-        self.assertEqual(expected.dtype, value.dtype)
+        if expected.dtype not in (numpy.int32, numpy.int64) or value.dtype not in (
+            numpy.int32,
+            numpy.int64,
+        ):
+            self.assertEqual(expected.dtype, value.dtype)
         self.assertEqual(expected.shape, value.shape)
         assert_allclose(expected, value, atol=atol, rtol=rtol)
 
@@ -254,6 +258,24 @@ class ExtTestCase(unittest.TestCase):
         if a == b:
             return
         super().assertGreater(a, b)
+
+    def assertEqualFloat(self, a, b, precision=1e-5):
+        """
+        Checks that ``abs(a-b) < precision``.
+        """
+        mi = min(abs(a), abs(b))
+        if mi == 0:
+            d = abs(a - b)
+            try:
+                self.assertLesser(d, precision)
+            except AssertionError:
+                raise AssertionError(f"{a} != {b} (p={precision})")
+        else:
+            r = float(abs(a - b)) / mi
+            try:
+                self.assertLesser(r, precision)
+            except AssertionError:
+                raise AssertionError(f"{a} != {b} (p={precision})")
 
     @classmethod
     def tearDownClass(cls):

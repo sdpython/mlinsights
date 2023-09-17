@@ -43,6 +43,23 @@ class ConstraintKMeans(KMeans):
     tries every switch between clusters: two points
     change clusters. It keeps the number of points and checks
     that the inertia is reduced.
+
+    :param n_clusters: number of clusters
+    :param init: used by :epkg:`k-means`
+    :param n_init: used by :epkg:`k-means`
+    :param max_iter: used by :epkg:`k-means`
+    :param tol: used by :epkg:`k-means`
+    :param verbose: used by :epkg:`k-means`
+    :param random_state: used by :epkg:`k-means`
+    :param copy_x: used by :epkg:`k-means`
+    :param algorithm: used by :epkg:`k-means`
+    :param balanced_predictions: produced balanced prediction
+        or the regular ones
+    :param strategy: strategy or algorithm used to abide
+        by the constraint
+    :param kmeans0: if True, applies *k-means* algorithm first
+    :param history: keeps centers accress iterations
+    :param learning_rate: learning rate, used by strategy `'weights'`
     """
 
     _strategy_value = {"distance", "gain", "weights"}
@@ -57,31 +74,13 @@ class ConstraintKMeans(KMeans):
         verbose=0,
         random_state=None,
         copy_x=True,
-        algorithm="auto",
+        algorithm="lloyd",
         balanced_predictions=False,
         strategy="gain",
         kmeans0=True,
         learning_rate=1.0,
         history=False,
     ):
-        """
-        @param      n_clusters              number of clusters
-        @param      init                    used by :epkg:`k-means`
-        @param      n_init                  used by :epkg:`k-means`
-        @param      max_iter                used by :epkg:`k-means`
-        @param      tol                     used by :epkg:`k-means`
-        @param      verbose                 used by :epkg:`k-means`
-        @param      random_state            used by :epkg:`k-means`
-        @param      copy_x                  used by :epkg:`k-means`
-        @param      algorithm               used by :epkg:`k-means`
-        @param      balanced_predictions    produced balanced prediction
-                                            or the regular ones
-        @param      strategy                strategy or algorithm used to abide
-                                            by the constraint
-        @param      kmeans0                 if True, applies *k-means* algorithm first
-        @param      history                 keeps centers accress iterations
-        @param      learning_rate           learning rate, used by strategy `'weights'`
-        """
         self._n_threads = 1
         KMeans.__init__(
             self,
@@ -151,10 +150,10 @@ class ConstraintKMeans(KMeans):
         """
         Completes the constraint k-means.
 
-        @param      X               features
-        @param      sample_weight   sample weight
-        @param      state           state
-        @param      history         keeps evolution of centers
+        :param X: features
+        :param sample_weight: sample weight
+        :param state: state
+        :param history: keeps evolution of centers
         """
         labels, centers, inertia, weights, iter_, all_centers = constraint_kmeans(
             X,
@@ -180,12 +179,12 @@ class ConstraintKMeans(KMeans):
         self.weights_ = weights
         return self
 
-    def predict(self, X, sample_weight=None):
+    def predict(self, X):
         """
         Computes the predictions.
 
-        @param      X       features.
-        @return             prediction
+        :param X: features.
+        :return: prediction
         """
         if self.weights_ is None:
             if self.balanced_predictions:
@@ -193,20 +192,20 @@ class ConstraintKMeans(KMeans):
                     X, self.cluster_centers_, strategy=self.strategy + "_p"
                 )
                 return labels
-            return KMeans.predict(self, X, sample_weight=sample_weight)
+            return KMeans.predict(self, X)
         else:
             if self.balanced_predictions:
                 raise RuntimeError(
                     "balanced_predictions and weights_ cannot be used together."
                 )
-            return KMeans.predict(self, X, sample_weight=sample_weight)
+            return KMeans.predict(self, X)
 
     def transform(self, X):
         """
         Computes the predictions.
 
-        @param      X       features.
-        @return             prediction
+        :param X: features.
+        :return: prediction
         """
         if self.weights_ is None:
             if self.balanced_predictions:
@@ -237,10 +236,10 @@ class ConstraintKMeans(KMeans):
         """
         Returns the distances to all clusters.
 
-        @param      X               features
-        @param      y               unused
-        @param      sample_weight   sample weight
-        @return                     distances
+        :param X: features
+        :param y: unused
+        :param sample_weight: sample weight
+        :return: distances
         """
         if self.weights_ is None:
             if self.balanced_predictions:

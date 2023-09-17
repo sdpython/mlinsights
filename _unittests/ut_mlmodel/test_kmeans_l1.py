@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from scipy.spatial.distance import cdist
@@ -76,11 +75,13 @@ class TestKMeansL1L2(ExtTestCase):
         cls = set(clr.predict(X))
         self.assertEqual({0, 1}, cls)
         self.assertEqual(clr.cluster_centers_.shape, (2, 2))
-        self.assertEqualArray(clr.cluster_centers_.max(), [3, 3])
+        self.assertEqualArray(
+            clr.cluster_centers_.max(axis=0), numpy.array([3, 3], dtype=numpy.float64)
+        )
         tr = clr.transform(X)
         self.assertEqual(tr.shape, (X.shape[0], 2))
         tr = clr.transform([[3, 3]])
-        self.assertEqualArray(tr.min(), [0])
+        self.assertEqualArray(tr.min(axis=1), numpy.array([0], dtype=numpy.float64))
 
     def test__assign_labels_array(self):
         X = numpy.array([[1.0, 2.0], [3.5, 4.0]])

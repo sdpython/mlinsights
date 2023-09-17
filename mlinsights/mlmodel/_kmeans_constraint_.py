@@ -208,12 +208,12 @@ def constraint_predictions(X, centers, strategy, state=None):
     to associates the same numbers of points
     in each cluster.
 
-    @param      X           features
-    @param      centers     centers of each clusters
-    @param      strategy    strategy used to sort point before
-                            mapping them to a cluster
-    @param      state       random state
-    @return                 labels, distances, distances_close
+    :param X: features
+    :param centers: centers of each clusters
+    :param strategy: strategy used to sort point before
+        mapping them to a cluster
+    :param state: random state
+    :return: labels, distances, distances_close
     """
     if isinstance(X, DataFrame):
         X = X.values

@@ -446,10 +446,10 @@ class KMeansL1L2(KMeans):
         single run.
     :param tol: float, default=1e-4
         Relative tolerance with regards to inertia to declare convergence.
-    :param precompute_distances: 'auto' or bool, default='auto'
+    :param precompute_distances: default='lloyd'
         Precompute distances (faster but takes more memory).
 
-        'auto' : do not precompute distances if n_samples * n_clusters > 12
+        'lloyd' : do not precompute distances if n_samples * n_clusters > 12
         million. This corresponds to about 100MB overhead per job using
         double precision.
 
@@ -478,11 +478,10 @@ class KMeansL1L2(KMeans):
         ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
         ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
         for more details.
-    :param algorithm: {"auto", "full", "elkan"}, default="auto"
-        K-means algorithm to use. The classical EM-style algorithm is "full".
+    :param algorithm: {"lloyd", "elkan"}, default="lloyd"
+        K-means algorithm to use. The classical EM-style algorithm is "lloyd".
         The "elkan" variation is more efficient by using the triangle
-        inequality, but currently doesn't support sparse data. "auto" chooses
-        "elkan" for dense data and "full" for sparse data.
+        inequality, but currently doesn't support sparse data.
     :param norm: {"L1", "L2"}
         The norm *L2* is identical to :epkg:`KMeans`.
         Norm *L1* uses a complete different path.
@@ -516,7 +515,7 @@ class KMeansL1L2(KMeans):
         verbose=0,
         random_state=None,
         copy_x=True,
-        algorithm="full",
+        algorithm="lloyd",
         norm="L2",
     ):
         KMeans.__init__(
@@ -532,9 +531,9 @@ class KMeansL1L2(KMeans):
             algorithm=algorithm,
         )
         self.norm = norm
-        if self.norm == "L1" and self.algorithm != "full":
+        if self.norm == "L1" and self.algorithm != "lloyd":
             raise NotImplementedError(  # pragma no cover
-                "Only algorithm 'full' is implemented with norm 'l1'."
+                "Only algorithm 'lloyd' is implemented with norm 'l1'."
             )
 
     def fit(self, X, y=None, sample_weight=None):
@@ -631,16 +630,14 @@ class KMeansL1L2(KMeans):
         best_labels, best_inertia, best_centers = None, None, None
         algorithm = self.algorithm
         if self.n_clusters == 1:
-            # elkan doesn't make sense for a single cluster, full will produce
+            # elkan doesn't make sense for a single cluster, lloyd will produce
             # the right result.
-            algorithm = "full"
-        if algorithm == "auto":
-            algorithm = "full"
-        if algorithm == "full":
+            algorithm = "lloyd"
+        if algorithm == "lloyd":
             kmeans_single = _kmeans_single_lloyd
         else:
             raise ValueError(  # pragma no cover
-                f"Algorithm must be 'auto', 'full' or 'elkan', got {str(algorithm)}"
+                f"Algorithm must be 'lloyd' or 'elkan', got {str(algorithm)}"
             )
 
         seeds = random_state.randint(numpy.iinfo(numpy.int32).max, size=n_init)

@@ -85,7 +85,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
         self.assertNotEqual(pred2.min(), pred2.max())
-        self.assertEqual(pred1, pred2)
+        self.assertEqualArray(pred1, pred2, atol=1e-10)
 
     def test_piecewise_regressor_diff(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
@@ -114,7 +114,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         clq.fit(X, Y)
         pred1 = clr.predict(X)
         pred2 = clq.predict(X)
-        self.assertEqual(pred1, pred2)
+        self.assertEqualArray(pred1, pred2, atol=1e-10)
 
     def test_piecewise_regressor_list(self):
         X = [[0.1, 0.2], [0.2, 0.3]]

@@ -59,7 +59,7 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
                 n_clusters=2, n_init=1, init=init_centers, algorithm=algo, norm=norm
             )
         except NotImplementedError as e:
-            if "Only algorithm 'full' is implemented" in str(e) and norm == "L1":
+            if "Only algorithm 'lloyd' is implemented" in str(e) and norm == "L1":
                 return
             raise e
 
@@ -75,14 +75,14 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
         assert_array_equal(kmeans.labels_, expected_labels)
         assert_almost_equal(kmeans.inertia_, expected_inertia)
         assert_array_almost_equal(kmeans.cluster_centers_, expected_centers)
-        self.assertEqualArray(kmeans.n_iter_, expected_n_iter)
+        self.assertEqual(kmeans.n_iter_, expected_n_iter)
 
     @ignore_warnings(UserWarning)
     def test_kmeans_results(self):
         for representation, algo in [
-            ("dense", "full"),
+            ("dense", "lloyd"),
             ("dense", "elkan"),
-            ("sparse", "full"),
+            ("sparse", "lloyd"),
         ]:
             for dtype in [np.float32, np.float64]:
                 for norm in ["L1", "L2"]:

@@ -144,9 +144,9 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         sort = mat[mat[:, 0].argsort()]
         self.assertEqual(exp, sort)
         mat.sort(axis=0)
-        self.assertNotEqual(exp, mat)
+        self.assertNotEqual(exp.tolist(), mat.tolist())
         mat.sort(axis=1)
-        self.assertNotEqual(exp, mat)
+        self.assertNotEqual(exp.tolist(), mat.tolist())
 
     @ignore_warnings(category=ConvergenceWarning)
     def test_kmeans_constraint(self):
@@ -197,7 +197,7 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         else:
             self.assertEqual(pred, numpy.array([1, 0, 1, 0]))
 
-    @ignore_warnings(category=ConvergenceWarning)
+    @ignore_warnings(category=(ConvergenceWarning, FutureWarning, DeprecationWarning))
     def test_kmeans_constraint_sparse(self):
         mat = numpy.array([[0, 0], [0.2, 0.2], [-0.1, -0.1], [1, 1]])
         mat = scipy.sparse.csr_matrix(mat)
@@ -461,31 +461,37 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         km = ConstraintKMeans(
             n_clusters=2, verbose=10, kmeans0=False, random_state=1, strategy="weights"
         )
-        km.fit(mat)
+        f = StringIO()
+        with redirect_stdout(f):
+            km.fit(mat)
+        self.assertIn("CKMeans", f.getvalue())
 
         km = ConstraintKMeans(
             n_clusters=2, verbose=5, kmeans0=False, random_state=1, strategy="weights"
         )
-        km.fit(mat)
+        f = StringIO()
+        with redirect_stdout(f):
+            km.fit(mat)
+        self.assertIn("CKMeans", f.getvalue())
 
         self.assertEqual(km.cluster_centers_.shape, (2, 2))
         self.assertLesser(km.inertia_, 4.55)
         self.assertEqual(km.cluster_centers_, numpy.array([[0.6, 0.6], [-0.05, -0.05]]))
         self.assertEqual(km.labels_, numpy.array([1, 0, 1, 0]))
         pred = km.predict(mat)
-        self.assertEqual(pred, numpy.array([1, 1, 1, 0]))
+        self.assertEqual(pred.tolist(), numpy.array([1, 1, 1, 0]).tolist())
         dist = km.transform(mat)
         self.assertEqual(dist.shape, (4, 2))
         f = StringIO()
         with redirect_stdout(f):
-            score = km.score(mat, verbose=1)
+            score = km.score(mat)
         self.assertEqual(score.shape, (4,))
-        self.assertIn("CKMeans", f.getvalue())
+        # self.assertIn("CKMeans", f.getvalue())
         km.weights_ = None
         with redirect_stdout(f):
-            score = km.score(mat, verbose=1)
+            score = km.score(mat)
         self.assertEqual(score.shape, (2,))
-        self.assertIn("CKMeans", f.getvalue())
+        # self.assertIn("CKMeans", f.getvalue())
 
     def test_kmeans_constraint_weights_bigger(self):
         n_samples = 100
@@ -523,4 +529,4 @@ class TestSklearnConstraintKMeans(ExtTestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)

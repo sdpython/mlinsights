@@ -114,7 +114,7 @@ jobs:
     displayName: 'Run C++ Unit Tests'
 
   - script: |
-      python -m pytest _unittests --durations=10 -v
+      python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
       python -u setup.py bdist_wheel --use-cuda=0
