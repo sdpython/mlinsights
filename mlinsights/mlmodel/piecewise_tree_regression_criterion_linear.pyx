@@ -294,16 +294,14 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             if low_rank:
                 ldb = col
             else:
-                raise RuntimeError(
-                    "The function cannot return any return when row < col."
-                )
+                return
         cython_lapack.dgelss(&row, &col, &nrhs,                 # 1-3
                              sample_f_buffer, &lda, pC, &ldb,   # 4-7
                              self.sample_pS, &rcond, &rank,     # 8-10
                              self.sample_work, &work, &info)    # 11-13
 
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-                     DOUBLE_t weight) nogil:
+                     DOUBLE_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a line.

@@ -85,15 +85,15 @@ cdef class CommonRegressorCriterion(Criterion):
         """
         Computes the mean of *y* between *start* and *end*.
         """
-        raise NotImplementedError("Method _mean must be overloaded.")
+        pass
 
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-                     DOUBLE_t weight) nogil:
+                     DOUBLE_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a constant.
         """
-        raise NotImplementedError("Method _mean must be overloaded.")
+        return 0.0
 
     cdef void children_impurity_weights(self, double* impurity_left,
                                         double* impurity_right,
@@ -226,8 +226,8 @@ def _test_criterion_init(Criterion criterion,
                          SIZE_t[:] samples,
                          SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
-    criterion.init(y, sample_weight, weighted_n_samples,
-                   samples, start, end)
+    if criterion.init(y, sample_weight, weighted_n_samples, samples, start, end) != 0:
+        raise AssertionError(f"Return is not 0")
 
 
 def _test_criterion_check(Criterion criterion):

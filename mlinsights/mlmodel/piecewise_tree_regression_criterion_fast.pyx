@@ -160,7 +160,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         mean[0] = 0. if w == 0. else m / w
 
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-                     DOUBLE_t weight) nogil:
+                     DOUBLE_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a constant.

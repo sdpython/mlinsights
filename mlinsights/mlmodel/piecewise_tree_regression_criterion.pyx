@@ -1,10 +1,11 @@
 cimport cython
-import numpy
-cimport numpy
+# import numpy as np
+cimport numpy as cnp
 
-numpy.import_array()
+cnp.import_array()
 
 from libc.stdlib cimport calloc, free
+# from libc.stdio cimport printf
 
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
@@ -107,17 +108,21 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             The first sample to be used on this node
         :param end: SIZE_t
             The last sample used on this node
+        :return: 0 if everything is fine
         """
         cdef SIZE_t ki, ks
-
         self.start = start
         self.pos = start
         self.end = end
         self.weighted_n_samples = weighted_n_samples
+        # 
         self.y = y
 
         self.sample_sum_wy = 0.
         self.sample_sum_w = 0.
+
+        if (self.sample_w == NULL) or (self.sample_wy == NULL) or (self.sample_i == NULL):
+            return -1
 
         # Filling accumulators.
         for ki in range(<int>start, <int>end):
@@ -129,8 +134,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             self.sample_sum_w += self.sample_w[ki]
 
         self.weighted_n_node_samples = self.sample_sum_w
-        self.reset()
-        return 0
+        return self.reset()
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos,
                               SIZE_t new_pos) nogil:
@@ -164,7 +168,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
 
     @cython.boundscheck(False)
     cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-                     DOUBLE_t weight) nogil:
+                     DOUBLE_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a constant.

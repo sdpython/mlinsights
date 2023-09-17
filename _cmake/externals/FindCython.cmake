@@ -67,9 +67,14 @@ find_package_handle_standard_args(
 function(compile_cython filename pyx_file_cpp)
   message(STATUS "cython cythonize '${filename}'")
   set(fullfilename "${CMAKE_CURRENT_SOURCE_DIR}/${filename}")
+
+  # dict(boundscheck=False, cdivision=True,
+  #      wraparound=False,
+  #      cdivision_warnings=False, embedsignature=True,
+  #      initializedcheck=False)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${pyx_file_cpp}
-    COMMAND ${Python3_EXECUTABLE} -m cython -3 --cplus ${fullfilename}
+    COMMAND ${Python3_EXECUTABLE} -m cython -3 --cplus ${fullfilename} -X boundscheck=False -X cdivision=True -X wraparound=False -X cdivision_warnings=False -X embedsignature=True -X initializedcheck=False
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${filename})
   message(STATUS "cython cythonize '${filename}' - done")
 endfunction()

@@ -84,7 +84,7 @@ cdef void copy2array1(const double* pC, double[::1] C) nogil:
     memcpy(&C[0], pC, size * sizeof(double))
 
 
-cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank, double * rcond) nogil:
+cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank, double * rcond) except -1 nogil:
     """
     Same function as :func:`dgels` but does no check.
 
