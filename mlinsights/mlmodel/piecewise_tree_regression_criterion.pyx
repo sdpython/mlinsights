@@ -115,7 +115,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.pos = start
         self.end = end
         self.weighted_n_samples = weighted_n_samples
-        # 
+        # Fatal Python error: __pyx_fatalerror: Acquisition count is 0
         self.y = y
 
         self.sample_sum_wy = 0.

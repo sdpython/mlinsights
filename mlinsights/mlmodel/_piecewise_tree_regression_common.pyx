@@ -219,12 +219,12 @@ cdef class CommonRegressorCriterion(Criterion):
                                  - (self.weighted_n_left / weight * impurity_left)))
 
 
-def _test_criterion_init(Criterion criterion,
-                         const DOUBLE_t[:, ::1] y,
-                         DOUBLE_t[:] sample_weight,
-                         double weighted_n_samples,
-                         SIZE_t[:] samples,
-                         SIZE_t start, SIZE_t end):
+cpdef _test_criterion_init(Criterion criterion,
+                           const DOUBLE_t[:, ::1] y,
+                           DOUBLE_t[:] sample_weight,
+                           double weighted_n_samples,
+                           SIZE_t[:] samples,
+                           SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
     if criterion.init(y, sample_weight, weighted_n_samples, samples, start, end) != 0:
         raise AssertionError(f"Return is not 0")
