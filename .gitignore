@@ -37,6 +37,8 @@ onnxruntime_*.json
 _doc/LICENSE.rst
 _doc/LICENSE.txt
 _doc/CHANGELOGS.rst
+_doc/examples/*.dot
+_doc/examples/*.png
 _doc/examples/_cache/*
 _doc/auto_examples/*
 _doc/examples/*.xlsx
