@@ -239,25 +239,23 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         hidden layer.
     :param activation: {'identity', 'logistic', 'tanh', 'relu'}, default 'relu'
         Activation function for the hidden layer.
-        - 'identity', no-op activation, useful to implement linear bottleneck,
-          returns :math:`f(x) = x`
-        - 'logistic', the logistic sigmoid function,
-          returns :math:`f(x) = 1 / (1 + exp(-x))`.
-        - 'tanh', the hyperbolic tan function,
-          returns :math:`f(x) = tanh(x)`.
-        - 'relu', the rectified linear unit function,
-          returns :math:`f(x) = \\max(0, x)`.
+        'identity', no-op activation, useful to implement linear bottleneck,
+        returns :math:`f(x) = x`,
+        'logistic', the logistic sigmoid function,
+        returns :math:`f(x) = 1 / (1 + exp(-x))`.
+        'tanh', the hyperbolic tan function, returns :math:`f(x) = tanh(x)`.
+        'relu', the rectified linear unit function,
+        returns :math:`f(x) = \\max(0, x)`.
     :param solver: ``{'lbfgs', 'sgd', 'adam'}``, default 'adam'
-        The solver for weight optimization.
-        - *'lbfgs'* is an optimizer in the family of quasi-Newton methods.
-        - *'sgd'* refers to stochastic gradient descent.
-        - *'adam'* refers to a stochastic gradient-based optimizer proposed by
-          Kingma, Diederik, and Jimmy Ba
+        The solver for weight optimization,
+        *'lbfgs'* is an optimizer in the family of quasi-Newton methods.
+        *'sgd'* refers to stochastic gradient descent.
+        *'adam'* refers to a stochastic gradient-based optimizer proposed by
+        Kingma, Diederik, and Jimmy Ba
         Note: The default solver 'adam' works pretty well on relatively
         large datasets (with thousands of training samples or more) in terms of
-        both training time and validation score.
-        For small datasets, however, 'lbfgs' can converge faster and perform
-        better.
+        both training time and validation score. For small datasets, however,
+        'lbfgs' can converge faster and perform better.
     :param alpha: float, optional, default 0.0001
         :epkg:`L2` penalty (regularization term) parameter.
     :param batch_size: int, optional, default 'auto'
@@ -266,17 +264,15 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         When set to "auto", `batch_size=min(200, n_samples)`
     :param learning_rate: {'constant', 'invscaling', 'adaptive'}, default 'constant'
         Learning rate schedule for weight updates.
-        - 'constant' is a constant learning rate given by
-          'learning_rate_init'.
-        - 'invscaling' gradually decreases the learning rate ``learning_rate_``
-          at each time step 't' using an inverse scaling exponent of 'power_t'.
-          effective_learning_rate = learning_rate_init / pow(t, power_t)
-        - 'adaptive' keeps the learning rate constant to
-          'learning_rate_init' as long as training loss keeps decreasing.
-          Each time two consecutive epochs fail to decrease training loss by at
-          least tol, or fail to increase validation score by at least tol if
-          'early_stopping' is on, the current learning rate is divided by 5.
-        Only used when solver='sgd'.
+        'constant' is a constant learning rate given by 'learning_rate_init',
+        'invscaling' gradually decreases the learning rate ``learning_rate_``
+        at each time step 't' using an inverse scaling exponent of 'power_t'.
+        effective_learning_rate = learning_rate_init / pow(t, power_t),
+        'adaptive' keeps the learning rate constant to 'learning_rate_init'
+        as long as training loss keeps decreasing. Each time two consecutive
+        epochs fail to decrease training loss by at least tol, or fail to
+        increase validation score by at least tol if 'early_stopping' is on,
+        the current learning rate is divided by 5. Only used when solver='sgd'.
     :param learning_rate_init: double, optional, default 0.001
         The initial learning rate used. It controls the step-size
         in updating the weights. Only used when solver='sgd' or 'adam'.
@@ -337,25 +333,26 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
     :param n_iter_no_change: int, optional, default 10
         Maximum number of epochs to not meet ``tol`` improvement.
         Only effective when solver='sgd' or 'adam'
+    :param kwargs: additional parameters sent to the constructor of the parent
 
     Fitted attributes:
 
     * `loss_`: float
-        The current loss computed with the loss function.
+      The current loss computed with the loss function.
     * `coefs_`: list, length n_layers - 1
-        The ith element in the list represents the weight matrix corresponding
-        to layer i.
+      The ith element in the list represents the weight matrix corresponding
+      to layer i.
     * `intercepts_`: list, length n_layers - 1
-        The ith element in the list represents the bias vector corresponding to
-        layer i + 1.
+      The ith element in the list represents the bias vector corresponding to
+      layer i + 1.
     * `n_iter_`: int,
-        The number of iterations the solver has ran.
+      The number of iterations the solver has ran.
     * `n_layers_`: int
-        Number of layers.
+      Number of layers.
     * `n_outputs_`: int
-        Number of outputs.
+      Number of outputs.
     * `out_activation_`: string
-        Name of the output activation function.
+      Name of the output activation function.
     """
 
     def __init__(

@@ -20,11 +20,10 @@ class PipelineCache(Pipeline):
         If True, the time elapsed while fitting each step will be printed as it
         is completed.
 
-    Other attributes:
-
-    :param named_steps: bunch object, a dictionary with attribute access
-        Read-only attribute to access any step parameter by user given name.
-        Keys are step names and values are steps parameters.
+    The attribute *named_steps* is a bunch object, a dictionary
+    with attribute access Read-only attribute to access any step
+    parameter by user given name. Keys are step names and values
+    are steps parameters.
     """
 
     def __init__(self, steps, cache_name=None, verbose=False):

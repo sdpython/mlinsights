@@ -325,6 +325,7 @@ def pipeline2str(pipe, indent=3):
     Exports a *scikit-learn* pipeline to text.
 
     :param pipe: *scikit-learn* pipeline
+    :param indent: indent
     :return: str
 
     .. runpython::

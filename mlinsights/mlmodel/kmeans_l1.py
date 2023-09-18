@@ -446,17 +446,6 @@ class KMeansL1L2(KMeans):
         single run.
     :param tol: float, default=1e-4
         Relative tolerance with regards to inertia to declare convergence.
-    :param precompute_distances: default='lloyd'
-        Precompute distances (faster but takes more memory).
-
-        'lloyd' : do not precompute distances if n_samples * n_clusters > 12
-        million. This corresponds to about 100MB overhead per job using
-        double precision.
-
-        True : always precompute distances.
-
-        False : never precompute distances.
-
     :param verbose: int, default=0
         Verbosity mode.
     :param random_state: int, RandomState instance, default=None
@@ -471,13 +460,6 @@ class KMeansL1L2(KMeans):
         numerical differences may be introduced by subtracting and then adding
         the data mean, in this case it will also not ensure that data is
         C-contiguous which may cause a significant slowdown.
-    :param n_jobs: int, default=None
-        The number of jobs to use for the computation. This works by computing
-        each of the n_init runs in parallel.
-
-        ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-        ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-        for more details.
     :param algorithm: {"lloyd", "elkan"}, default="lloyd"
         K-means algorithm to use. The classical EM-style algorithm is "lloyd".
         The "elkan" variation is more efficient by using the triangle

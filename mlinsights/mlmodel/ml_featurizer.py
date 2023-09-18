@@ -18,11 +18,11 @@ def model_featurizer(model, **params):
     a vector into features produced by the model.
     It can be the output itself or intermediate results.
     The model can come from :epkg:`scikit-learn`,
-    :epkg:`keras` or :epkg:`torch`.
+    :epkg:`torch`.
 
-    @param      model       model
-    @param      params      additional parameters
-    @return                 function
+    :param model: model
+    :param params: additional parameters
+    :return: function
     """
     tried = []
     if isinstance(model, LogisticRegression):

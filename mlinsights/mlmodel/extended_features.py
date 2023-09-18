@@ -119,6 +119,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
 
         :param X: array-like, shape (n_samples, n_features)
             The data.
+        :param y: targets
         :return: self : instance
         """
         self.n_input_features_ = X.shape[1]
@@ -144,9 +145,6 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         :param X: array-like, shape [n_samples, n_features]
             The data to transform, row by row.
             rns
-        :param XP: numpy.ndarray, shape [n_samples, NP]
-            The matrix of features, where NP is the number of polynomial
-            features generated from the combination of inputs.
         """
         n_features = X.shape[1]
         if n_features != self.n_input_features_:

@@ -153,6 +153,7 @@ class ConstraintKMeans(KMeans):
         :param X: features
         :param sample_weight: sample weight
         :param state: state
+        :param learning_rate: learning rate
         :param history: keeps evolution of centers
         """
         labels, centers, inertia, weights, iter_, all_centers = constraint_kmeans(

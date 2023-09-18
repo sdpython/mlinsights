@@ -8,7 +8,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     Vectors are coming from images. The metadata must contains
     information about path names. We assume all images can hold
     in memory. An example can found in notebook
-    :ref:`searchimageskerasrst` or :ref:`searchimagestorchrst`.
+    :ref:`searchimagestorchrst`.
 
     Stores data in the class itself.
 
@@ -46,15 +46,8 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
             "iterators on metadata"
 
             def accessor(iter_images):
-                if hasattr(iter_images, "filenames"):
-                    # keras
-                    return lambda i, ite: (
-                        ite,
-                        iter_images.filenames[get_current_index(iter_images)],
-                    )
-                else:
-                    # torch
-                    return lambda i, ite: (ite[0], ite[1][0])
+                # torch
+                return lambda i, ite: (ite[0], ite[1][0])
 
             acc = accessor(iter_images)
 
@@ -72,9 +65,9 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         """
         Processes images through the model and fits a *k-nn*.
 
-        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
-        @param      n           takes *n* images (or ``len(iter_images)``)
-        @param      kwimg       parameters used to preprocess the images
+        :param iter_images: `Iterator
+            <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
+        :param n: takes *n* images (or ``len(iter_images)``)
         """
         self._prepare_fit(data=iter_images, transform=self.fct, n=n)
         return self._fit_knn()
@@ -85,50 +78,21 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
         returned by *iter_images*. It returns the neighbors
         only for the first image.
 
-        @param      iter_images `Iterator <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
-        @return                 score, ind, meta
+        :param iter_images: `Iterator
+            <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
+        :return: score, ind, meta
 
         *score* is an array representing the lengths to points,
         *ind* contains the indices of the nearest points in the population matrix,
         *meta* is the metadata.
         """
         if isinstance(iter_images, numpy.ndarray):
-            if self.module_ == "keras":
-                raise NotImplementedError("Not yet implemented or Keras.")
-            elif self.module_ == "torch":
+            if self.module_ == "torch":
                 from torch import from_numpy
 
                 X = from_numpy(iter_images[numpy.newaxis, :, :, :])
                 return super().kneighbors(X, n_neighbors=n_neighbors)
             raise RuntimeError(f"Unknown module '{self.module_}'.")
-        elif "keras" in str(iter_images):
-            if self.module_ != "keras":
-                raise RuntimeError(
-                    f"Keras object but {self.module_} was used to train the KNN."
-                )
-            # We delay the import as keras backend is not necessarily installed.
-            # keras, it expects an iterator.
-            from keras.preprocessing.image import (
-                Iterator,
-            )
-            from keras_preprocessing.image import (
-                DirectoryIterator,
-                NumpyArrayIterator,
-            )
-
-            if not isinstance(
-                iter_images, (Iterator, DirectoryIterator, NumpyArrayIterator)
-            ):
-                raise NotImplementedError(
-                    f"iter_images must be a keras Iterator. "
-                    f"No option implemented for type {type(iter_images)}."
-                )
-            if iter_images.batch_size != 1:
-                raise ValueError(f"batch_size must be 1 not {iter_images.batch_size}")
-            for img in iter_images:
-                X = img[0]
-                break
-            return super().kneighbors(X, n_neighbors=n_neighbors)
         elif "torch" in str(type(iter_images)):
             if self.module_ != "torch":
                 raise RuntimeError(

@@ -16,7 +16,7 @@ class SearchEnginePredictions(SearchEngineVectors):
     :param fct: function *f* applied before looking for neighbors,
         it can also be a machine learned model
     :param fct_params: parameters sent to function :func:`model_featurizer`
-    :param pknn: list of parameters, see :class:`sklearn.neighbors.NearestNeighbors`
+    :param knn: list of parameters, see :class:`sklearn.neighbors.NearestNeighbors`
     """
 
     def __init__(self, fct, fct_params=None, **knn):

@@ -30,19 +30,15 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
     Useful for applying a non-linear transformation in regression
     problems.
 
-    Parameters
-    ----------
-    regressor : object, default=LinearRegression()
+    :param regressor: object, default=LinearRegression()
         Regressor object such as derived from ``RegressorMixin``. This
         regressor will automatically be cloned each time prior to fitting.
-    transformer : str or object of type :class:`BaseReciprocalTransformer`
+    :param transformer: str or object of type :class:`BaseReciprocalTransformer`
 
-    Attributes
-    ----------
-    regressor_ : object
-        Fitted regressor.
-    transformer_ : object
-        Transformer used in ``fit`` and ``predict``.
+    Attributes:
+
+    * regressor_: object, fitted regressor.
+    * transformer_: object, Transformer used in ``fit`` and ``predict``.
 
     Examples
     --------
@@ -138,23 +134,19 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
     Useful for applying permutation transformation in classification
     problems.
 
-    Parameters
-    ----------
-    classifier : object, default=LogisticRegression()
+    :param classifier: object, default=LogisticRegression()
         Classifier object such as derived from ``ClassifierMixin``. This
         classifier will automatically be cloned each time prior to fitting.
-    transformer : str or object of type :class:`BaseReciprocalTransformer`
+    :param transformer: str or object of type :class:`BaseReciprocalTransformer`
+        Transforms the features.
 
-    Attributes
-    ----------
-    classifier_ : object
-        Fitted classifier.
-    transformer_ : object
-        Transformer used in ``fit``, ``predict``, ``decision_function``,
-        ``predict_proba``.
+    Attributes:
 
-    Examples
-    --------
+    * classifier_ : object, Fitted classifier.
+    * transformer_ : object Transformer used in ``fit``, ``predict``,
+        ``decision_function``, ``predict_proba``.
+
+    Examples:
 
     .. runpython::
         :showcode:
@@ -164,7 +156,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         from mlinsights.mlmodel import TransformedTargetClassifier2
 
         tt = TransformedTargetClassifier2(classifier=LogisticRegression(),
-                                         transformer='permute')
+                                          transformer='permute')
         X = numpy.arange(4).reshape(-1, 1)
         y = numpy.array([0, 1, 0, 1])
         print(tt.fit(X, y))

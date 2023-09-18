@@ -6,7 +6,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class CategoriesToIntegers(BaseEstimator, TransformerMixin):
     """
     Does something similar to what
-    `DictVectorizer <http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.DictVectorizer.html>`_
+    `DictVectorizer
+    <http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.DictVectorizer.html>`_
     does but in a transformer. The method *fit* retains all categories,
     the method *transform* transforms categories into integers.
     Categories are sorted by columns. If the method *transform* tries to convert
@@ -32,7 +33,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
 
             import pandas
             from mlinsights.mlmodel import CategoriesToIntegers
-            df = pandas.DataFrame( [{"cat": "a"}, {"cat": "b"}] )
+            df = pandas.DataFrame([{"cat": "a"}, {"cat": "b"}])
             trans = CategoriesToIntegers()
             trans.fit(df)
             newdf = trans.transform(df)
@@ -64,6 +65,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             Training data
         :param y: iterable, default=None
             Training targets.
+        :param fit_params: additional fit params
         :return: self
         """
         if not isinstance(X, pandas.DataFrame):
@@ -112,7 +114,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
 
         return schema, position, new_vector
 
-    def transform(self, X, y=None, **fit_params):
+    def transform(self, X, y=None):
         """
         Transforms categories in numerical features based on the list
         of categories found by method *fit*.
@@ -204,6 +206,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             Training data
         :param y: iterable, default=None
             Training targets.
+        :param fit_params: additional fitting parameters
         :return: Dataframe, *X* with categories.
         """
         return self.fit(X, y=y, **fit_params).transform(X, y)

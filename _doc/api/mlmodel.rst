@@ -170,7 +170,6 @@ SimpleRegressorCriterion
 ++++++++++++++++++++++++
 
 .. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion
-    :members:
 
 SimpleRegressorCriterionFast
 ++++++++++++++++++++++++++++
@@ -179,7 +178,6 @@ A similar design but a much faster implementation close to what
 :epkg:`scikit-learn` implements.
 
 .. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion_fast.SimpleRegressorCriterionFast
-    :members:
 
 LinearRegressorCriterion
 ++++++++++++++++++++++++
@@ -190,4 +188,3 @@ a line. The mean square error is the error made with a linear regressor
 and not a constant anymore.
 
 .. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion_linear.LinearRegressorCriterion
-    :members:

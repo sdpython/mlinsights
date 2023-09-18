@@ -23,7 +23,7 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
     :param normalize: normalizes the outputs, centers and normalizes
         the output of the *t-SNE* and applies that same
         normalization to he prediction of the estimator
-    :param keep_tsne_output: if True, keep raw outputs of
+    :param keep_tsne_outputs: if True, keep raw outputs of
         :epkg:`TSNE` is stored in member `tsne_outputs_`
     """
 
