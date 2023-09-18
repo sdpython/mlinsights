@@ -216,7 +216,7 @@ ax.legend()
 
 
 df_train = pandas.DataFrame(dict(X=X_train.ravel(), y=y_train))
-g = sns.jointplot("X", "y", data=df_train, kind="reg", color="m", height=7)
+g = sns.jointplot(x="X", y="y", data=df_train, kind="reg", color="m", height=7)
 g.ax_joint.plot(X_test, y_test, "ro")
 
 

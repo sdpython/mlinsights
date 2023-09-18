@@ -94,7 +94,7 @@ ax.legend()
 
 
 model2 = DecisionTreeRegressor(
-    min_samples_leaf=100, criterion=SimpleRegressorCriterion(X_train)
+    min_samples_leaf=100, criterion=SimpleRegressorCriterion(1, X_train.shape[0])
 )
 model2.fit(X_train, y_train)
 
@@ -216,7 +216,7 @@ measure_time("model2.fit(X_train, y_train)", globals())
 
 
 model3 = DecisionTreeRegressor(
-    min_samples_leaf=100, criterion=SimpleRegressorCriterionFast(X_train)
+    min_samples_leaf=100, criterion=SimpleRegressorCriterionFast(1, X_train.shape[0])
 )
 model3.fit(X_train, y_train)
 pred = model3.predict(X_test)
@@ -282,7 +282,7 @@ except Exception as e:
 
 
 model3 = DecisionTreeRegressor(
-    min_samples_leaf=100, criterion=SimpleRegressorCriterionFast(X_train3)
+    min_samples_leaf=100, criterion=SimpleRegressorCriterionFast(1, X_train3.shape[0])
 )
 measure_time("model3.fit(X_train3, y_train3)", globals())
 
@@ -309,48 +309,55 @@ measure_time("model3.fit(X_train3, y_train3)", globals())
 # into buckets and the prediction function of the decision tree which now
 # needs to return a dot product.
 
-
-piece = PiecewiseTreeRegressor(criterion="mselin", min_samples_leaf=100)
-piece.fit(X_train, y_train)
-
-
-#################################
-#
-
-
-pred = piece.predict(X_test)
-pred[:5]
+fixed = False
+if fixed:
+    # It does not work yet.
+    piece = PiecewiseTreeRegressor(criterion="mselin", min_samples_leaf=100)
+    piece.fit(X_train, y_train)
 
 
 #################################
 #
 
 
-fig, ax = plt.subplots(1, 1)
-ax.plot(X_test[:, 0], y_test, ".", label="data")
-ax.plot(X_test[:, 0], pred, ".", label="predictions")
-ax.set_title("DecisionTreeRegressor\nwith criterion adapted to linear regression")
-ax.legend()
+if fixed:
+    pred = piece.predict(X_test)
+    pred[:5]
+
+
+#################################
+#
+
+
+if fixed:
+    fig, ax = plt.subplots(1, 1)
+    ax.plot(X_test[:, 0], y_test, ".", label="data")
+    ax.plot(X_test[:, 0], pred, ".", label="predictions")
+    ax.set_title("DecisionTreeRegressor\nwith criterion adapted to linear regression")
+    ax.legend()
 
 #################################
 # The coefficients for the linear regressions are kept into the following attribute:
 
 
-piece.betas_
+if fixed:
+    piece.betas_
 
 
 #################################
 # Mapped to the following leaves:
 
 
-piece.leaves_index_, piece.leaves_mapping_
+if fixed:
+    piece.leaves_index_, piece.leaves_mapping_
 
 
 #################################
 # We can get the leave each observation falls into:
 
 
-piece.predict_leaves(X_test)[:5]
+if fixed:
+    piece.predict_leaves(X_test)[:5]
 
 
 #################################
@@ -358,13 +365,15 @@ piece.predict_leaves(X_test)[:5]
 # linear regressions each time a split is evaluated.
 
 
-measure_time("piece.fit(X_train, y_train)", globals())
+if fixed:
+    measure_time("piece.fit(X_train, y_train)", globals())
 
 
 #################################
 #
 
-measure_time("piece.fit(X_train3, y_train3)", globals())
+if fixed:
+    measure_time("piece.fit(X_train3, y_train3)", globals())
 
 
 #################################

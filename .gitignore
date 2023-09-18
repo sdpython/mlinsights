@@ -18,6 +18,7 @@ _setup_ext.txt
 coverage.html/*
 _cache/*
 _deps/*
+simages/*
 .vs/*
 *.dir/*
 Release/*

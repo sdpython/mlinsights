@@ -89,9 +89,9 @@ df.head(n=5)
 #
 
 
-ax = seaborn.scatterplot("x1", "x2", "bucket", data=df, palette="Set1", s=400)
+ax = seaborn.scatterplot(x="x1", y="x2", hue="bucket", data=df, palette="Set1", s=400)
 seaborn.scatterplot(
-    "x1", "x2", "label", data=df, palette="Set1", marker="o", ax=ax, s=100
+    x="x1", y="x2", hue="label", data=df, palette="Set1", marker="o", ax=ax, s=100
 )
 ax.set_title("buckets")
 

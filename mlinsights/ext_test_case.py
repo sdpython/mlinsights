@@ -4,6 +4,7 @@ import unittest
 import warnings
 import zipfile
 from io import BytesIO
+from urllib.request import urlopen
 from argparse import ArgumentParser
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
@@ -442,6 +443,20 @@ def unzip_files(
     :param verbose: display file names
     :return: list of unzipped files
     """
+    if zipf.startswith("https:"):
+        filename = zipf.split("/")[-1]
+        dest_zip = os.path.join(where_to, filename)
+        if not os.path.exists(dest_zip):
+            if verbose:
+                print(f"[unzip_files] downloads into {dest_zip!r} from {zipf!r}")
+            with urlopen(zipf, timeout=10) as u:
+                content = u.read()
+            with open(dest_zip, "wb") as f:
+                f.write(content)
+        elif verbose:
+            print(f"[unzip_files] already downloaded {dest_zip!r}")
+        zipf = dest_zip
+
     if isinstance(zipf, bytes):
         zipf = BytesIO(zipf)
 

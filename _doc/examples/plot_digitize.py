@@ -84,7 +84,9 @@ for shape in tqdm([1, 10, 100, 1000, 10000, 100000]):
 
         onx = to_onnx(tree, x.reshape((-1, 1)), target_opset=15)
 
-        sess = InferenceSession(onx.SerializeToString())
+        sess = InferenceSession(
+            onx.SerializeToString(), providers=["CPUExecutionProvider"]
+        )
 
         ti = measure_time(
             "sess.run(None, {'X': x})",

@@ -68,7 +68,8 @@ len(model.features), len(model.classifier)
 if not os.path.exists("simages/category"):
     os.makedirs("simages/category")
 
-files = unzip_files("data/dog-cat-pixabay.zip", where_to="simages/category")
+url = "https://github.com/sdpython/mlinsights/raw/ref/_doc/examples/data/dog-cat-pixabay.zip"
+files = unzip_files(url, where_to="simages/category")
 len(files), files[0]
 
 ##########################################
