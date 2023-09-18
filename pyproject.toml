@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = ["numpy", "onnx>=1.14.0", "scipy"]
 description = "Extends the list of supported operators in onnx reference implementation and onnxruntime, or implements faster versions in C++."
-keywords = ["onnx", "onnxruntime", "CUDA", "openmp", "cmake", "cython", "pybind11"]
+keywords = ["onnx", "cmake", "cython", "scikit-learn", "machine-learning"]
 license = {file = "LICENSE.txt"}
 name = "mlinsights"
 readme = "README.rst"
@@ -55,11 +55,12 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
-    "scikit-learn",
+    "scikit-learn>=1.3.0",
     "skl2onnx>=1.14.1",
     "sphinx",
     "sphinx-gallery",
     "sphinx-issues",
+    "sphinx-runpython",
     "tqdm",
     "wheel",
 ]
@@ -70,6 +71,7 @@ requires = [
     "cmake",
     "numpy",
     "pybind11",
+    "scikit-learn>=1.3.0",
     "scipy",
     "setuptools",
     "wheel",

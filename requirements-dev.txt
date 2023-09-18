@@ -18,10 +18,14 @@ pytest-cov
 rstcheck[sphinx,toml]
 ruff
 seaborn
+skl2onnx>=1.14.1
 sphinx
 sphinx-gallery
 sphinx-issues
-git+https://github.com/sdpython/sphinx-runpython.git
+sphinx-runpython
 tomli
+torch
+torchvision
+torchaudio
 tqdm
 wheel

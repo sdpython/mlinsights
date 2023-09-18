@@ -64,7 +64,7 @@ with open(dot_file, "w", encoding="utf-8") as f:
 
 
 cmd = "dot -G=300 -Tpng {0} -o{0}.png".format(dot_file)
-run_cmd(cmd, wait=True, fLOG=print)
+run_cmd(cmd, wait=True)
 
 
 img = Image.open("graph.dot.png")
@@ -143,7 +143,7 @@ with open(dot_file, "w", encoding="utf-8") as f:
     f.write(dot)
 
 cmd = "dot -G=300 -Tpng {0} -o{0}.png".format(dot_file)
-run_cmd(cmd, wait=True, fLOG=print)
+run_cmd(cmd, wait=True)
 
 img = Image.open("graph2.dot.png")
 img
@@ -170,7 +170,7 @@ with open(dot_file, "w", encoding="utf-8") as f:
     f.write(dot)
 
 cmd = "dot -G=300 -Tpng {0} -o{0}.png".format(dot_file)
-run_cmd(cmd, wait=True, fLOG=print)
+run_cmd(cmd, wait=True)
 
 img = Image.open("graph3.dot.png")
 img
