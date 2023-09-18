@@ -4,6 +4,7 @@ from io import BytesIO
 import pickle
 import warnings
 import pandas
+import numpy
 from numpy.random import permutation
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
@@ -135,7 +136,7 @@ class TestSklearnStacking(ExtTestCase):
         clf.fit(X, y)
 
         pred = clf.predict(X)
-        self.assertEqualArray(y, pred)
+        self.assertEqualArray(y.astype(numpy.float64), pred)
 
     @ignore_warnings(ConvergenceWarning)
     def test_pipeline_wines(self):

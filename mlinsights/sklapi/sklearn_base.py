@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Dict
 import textwrap
 import warnings
 from .sklearn_parameters import SkLearnParameters
@@ -75,14 +76,16 @@ class SkBase:
         return SkBase.compare_params(p1, p2, exc=exc)
 
     @staticmethod
-    def compare_params(p1, p2, exc=True):
+    def compare_params(
+        p1: Dict[str, Any], p2: Dict[str, Any], exc: bool = True
+    ) -> bool:
         """
         Compares two sets of parameters.
 
-        @param      p1      dictionary
-        @param      p2      dictionary
-        @param      exc     raises an exception if error is met
-        @return             boolean
+        :param p1: dictionary
+        :param p2: dictionary
+        :param exc: raises an exception if error is met
+        :return: boolean
         """
         if p1 == p2:
             return True
@@ -90,8 +93,7 @@ class SkBase:
             if k not in p2:
                 if exc:
                     raise KeyError(f"Key '{k}' was removed.")
-                else:
-                    return False
+                return False
         for k in p2:
             if k not in p1:
                 if exc:
@@ -133,8 +135,7 @@ class SkBase:
                     raise ValueError(
                         f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}"
                     )
-                else:
-                    return False
+                return False
         return True
 
     def __repr__(self):

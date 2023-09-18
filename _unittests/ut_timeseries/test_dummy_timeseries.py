@@ -13,7 +13,7 @@ class TestDummyTimeSeries(ExtTestCase):
         self.assertRaise(lambda: bs.fit(X, y), TypeError)
         y = y.astype(numpy.float64)
         np = bs.predict(X, y)
-        self.assertEqual(np.ravel()[2:], numpy.arange(1, 9))
+        self.assertEqual(np.ravel()[2:], numpy.arange(1, 9).astype(numpy.float64))
 
     def test_dummy_timesieres_regressor_1(self):
         X = None
@@ -22,7 +22,7 @@ class TestDummyTimeSeries(ExtTestCase):
         bs = DummyTimeSeriesRegressor(past=1)
         bs.fit(X, y)
         np = bs.predict(X, y)
-        self.assertEqual(np.ravel()[1:], numpy.arange(0, 9))
+        self.assertEqual(np.ravel()[1:], numpy.arange(0, 9).astype(numpy.float64))
 
     def test_dummy_timesieres_regressor_score(self):
         X = None
@@ -31,7 +31,7 @@ class TestDummyTimeSeries(ExtTestCase):
         bs = DummyTimeSeriesRegressor(past=1)
         bs.fit(X, y)
         np = bs.predict(X, y)
-        self.assertEqual(np.ravel()[1:], numpy.arange(0, 9))
+        self.assertEqual(np.ravel()[1:], numpy.arange(0, 9).astype(numpy.float64))
         sc = bs.score(X, y)
         self.assertEqual(sc, 1)
         sc = bs.score(
@@ -57,10 +57,9 @@ class TestDummyTimeSeries(ExtTestCase):
                 np = bs.predict(None, y[i:])
                 self.assertEqual(np.shape[0] + 1, y[i:].shape[0])
         np = bs.predict(X, y).ravel()
-        self.assertEqual(np[1:], numpy.arange(1, 9))
+        self.assertEqual(np[1:], numpy.arange(1, 9).astype(numpy.float64))
         self.assertTrue(numpy.isnan(np[0]))
 
 
 if __name__ == "__main__":
-    TestDummyTimeSeries().test_dummy_timesieres_regressor_score()
-    unittest.main()
+    unittest.main(verbosity=2)

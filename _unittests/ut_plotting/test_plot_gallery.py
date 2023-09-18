@@ -11,15 +11,14 @@ from mlinsights.plotting import plot_gallery_images
 
 class TestPlotGallery(ExtTestCase):
     def test_plot_gallery(self):
+        this = os.path.dirname(__file__)
         with tempfile.TemporaryDirectory() as temp:
             zipimg = os.path.join(
-                temp,
-                "..",
+                this,
                 "..",
                 "..",
                 "_doc",
-                "notebooks",
-                "explore",
+                "examples",
                 "data",
                 "dog-cat-pixabay.zip",
             )
@@ -33,15 +32,14 @@ class TestPlotGallery(ExtTestCase):
             plt.close("all")
 
     def test_plot_gallery_matrix(self):
+        this = os.path.dirname(__file__)
         with tempfile.TemporaryDirectory() as temp:
             zipimg = os.path.join(
-                temp,
-                "..",
+                this,
                 "..",
                 "..",
                 "_doc",
-                "notebooks",
-                "explore",
+                "examples",
                 "data",
                 "dog-cat-pixabay.zip",
             )

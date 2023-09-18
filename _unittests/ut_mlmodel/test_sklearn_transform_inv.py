@@ -37,7 +37,7 @@ class TestSklearnTransformInv(ExtTestCase):
         inv = tr.get_fct_inv()
         x2, y2 = inv.transform(x1, y1)
         self.assertEqualArray(X, x2)
-        self.assertEqualArray(Y, y2)
+        self.assertEqualArray(Y, y2, atol=1e-10)
 
     def test_sklearn_transform_inv_err(self):
         self.assertRaise(

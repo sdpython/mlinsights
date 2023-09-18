@@ -23,9 +23,9 @@ class TestQuantileRegression(ExtTestCase):
         clq = QuantileLinearRegression(fit_intercept=False)
         clq.fit(X, Y)
         self.assertEqual(clr.intercept_, 0)
-        self.assertEqualArray(clr.coef_, clq.coef_)
+        self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
         self.assertEqual(clq.intercept_, 0)
-        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualFloat(clr.intercept_, clq.intercept_)
 
     def test_quantile_regression_no_intercept_positive(self):
         X = numpy.array([[0.1, 0.2], [0.2, 0.3]])
@@ -38,7 +38,7 @@ class TestQuantileRegression(ExtTestCase):
         self.assertEqual(clq.intercept_, 0)
         self.assertGreater(clr.coef_.min(), 0)
         self.assertGreater(clq.coef_.min(), 0)
-        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualFloat(clr.intercept_, clq.intercept_)
         self.assertEqualArray(clr.coef_[0], clq.coef_[0])
         self.assertGreater(clr.coef_[1:].min(), 3)
         self.assertGreater(clq.coef_[1:].min(), 3)
@@ -52,7 +52,7 @@ class TestQuantileRegression(ExtTestCase):
         clq.fit(X, Y)
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
-        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualArray(clr.intercept_, clq.intercept_, atol=1e-10)
         self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
 
     def test_quantile_regression_intercept_positive(self):
@@ -64,7 +64,7 @@ class TestQuantileRegression(ExtTestCase):
         clq.fit(X, Y)
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
-        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualArray(clr.intercept_, clq.intercept_, atol=1e-10)
         self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
         self.assertGreater(clr.coef_.min(), 0)
         self.assertGreater(clq.coef_.min(), 0)
@@ -79,7 +79,7 @@ class TestQuantileRegression(ExtTestCase):
         clq.fit(X, Y, W)
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
-        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualArray(clr.intercept_, clq.intercept_, atol=1e-10)
         self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
 
     def test_quantile_regression_diff(self):
@@ -91,7 +91,7 @@ class TestQuantileRegression(ExtTestCase):
         clq.fit(X, Y)
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
-        self.assertNotEqualArray(clr.coef_, clq.coef_)
+        self.assertNotEqualArray(clr.coef_, clq.coef_, atol=1e-10)
         self.assertNotEqualArray(clr.intercept_, clq.intercept_)
         self.assertLesser(clq.n_iter_, 10)
 
@@ -103,9 +103,9 @@ class TestQuantileRegression(ExtTestCase):
         clq = QuantileLinearRegression(fit_intercept=False)
         clq.fit(X, Y)
         self.assertEqual(clr.intercept_, 0)
-        self.assertEqualArray(clr.coef_, clq.coef_)
+        self.assertEqualArray(clr.coef_, clq.coef_, atol=1e-10)
         self.assertEqual(clq.intercept_, 0)
-        self.assertEqualArray(clr.intercept_, clq.intercept_)
+        self.assertEqualFloat(clr.intercept_, clq.intercept_)
 
     def test_quantile_regression_list(self):
         X = [[0.1, 0.2], [0.2, 0.3]]
@@ -134,7 +134,7 @@ class TestQuantileRegression(ExtTestCase):
 
         self.assertNotEqual(clr.intercept_, 0)
         self.assertNotEqual(clq.intercept_, 0)
-        self.assertNotEqualArray(clr.coef_, clq.coef_)
+        self.assertNotEqualArray(clr.coef_, clq.coef_, atol=1e-10)
         self.assertNotEqualArray(clr.intercept_, clq.intercept_)
         self.assertLesser(clq.n_iter_, 10)
 

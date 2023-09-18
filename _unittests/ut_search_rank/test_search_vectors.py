@@ -5,7 +5,7 @@ import unittest
 import pandas
 import numpy
 from sklearn.linear_model import LogisticRegression
-from mlinsights.ext_test_case import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.search_rank import SearchEngineVectors
 
 
@@ -13,6 +13,7 @@ class TestSearchVectors(ExtTestCase):
     def test_import(self):
         self.assertTrue(LogisticRegression is not None)
 
+    @ignore_warnings(UserWarning)
     def test_search_vectors(self):
         res = []
         for i in range(20):
@@ -75,6 +76,7 @@ class TestSearchVectors(ExtTestCase):
         self.assertEqual(score[0], 0)
         self.assertTrue(meta is None)
 
+    @ignore_warnings(UserWarning)
     def test_search_vectors_zip(self):
         with tempfile.TemporaryDirectory() as temp:
             res = []

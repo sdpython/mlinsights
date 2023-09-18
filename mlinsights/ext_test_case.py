@@ -205,6 +205,34 @@ class ExtTestCase(unittest.TestCase):
         self.assertEqual(expected.shape, value.shape)
         assert_allclose(expected, value, atol=atol, rtol=rtol)
 
+    def assertNotEqualArray(
+        self,
+        expected: numpy.ndarray,
+        value: numpy.ndarray,
+        atol: float = 0,
+        rtol: float = 0,
+    ):
+        if expected.dtype not in (numpy.int32, numpy.int64) or value.dtype not in (
+            numpy.int32,
+            numpy.int64,
+        ):
+            self.assertEqual(expected.dtype, value.dtype)
+        self.assertEqual(expected.shape, value.shape)
+        try:
+            assert_allclose(expected, value, atol=atol, rtol=rtol)
+        except AssertionError:
+            return True
+        raise AssertionError(f"Both arrays are equal, atol={atol}, rtol={rtol}.")
+
+    def assertEqualDataFrame(self, d1, d2, **kwargs):
+        """
+        Checks that two dataframes are equal.
+        Calls :epkg:`pandas:testing:assert_frame_equal`.
+        """
+        from pandas.testing import assert_frame_equal
+
+        assert_frame_equal(d1, d2, **kwargs)
+
     def assertAlmostEqual(
         self,
         expected: numpy.ndarray,
@@ -229,6 +257,7 @@ class ExtTestCase(unittest.TestCase):
             if msg is None:
                 return
             self.assertIn(msg, str(e))
+            return
         raise AssertionError("No exception was raised.")
 
     def assertEmpty(self, value: Any):
@@ -391,7 +420,13 @@ def get_parsed_args(
     return parser.parse_args()
 
 
-def unzip_files(zipf, where_to=None, fvalid=None, fail_if_error=True):
+def unzip_files(
+    zipf: str,
+    where_to: Optional[str] = None,
+    fvalid: Optional[Callable] = None,
+    fail_if_error=True,
+    verbose: int = 0,
+):
     """
     Unzips files from a zip archive.
 
@@ -404,6 +439,7 @@ def unzip_files(zipf, where_to=None, fvalid=None, fail_if_error=True):
     :param fail_if_error: fails if an error is encountered
         (typically a weird character in a filename),
         otherwise a warning is thrown.
+    :param verbose: display file names
     :return: list of unzipped files
     """
     if isinstance(zipf, bytes):
@@ -420,6 +456,8 @@ def unzip_files(zipf, where_to=None, fvalid=None, fail_if_error=True):
     files = []
     with zipfile.ZipFile(zipf, "r") as file:
         for info in file.infolist():
+            if verbose > 1:
+                print(f"[unzip_files] found file {info.filename!r}")
             if where_to is None:
                 try:
                     content = file.read(info.filename)
@@ -438,6 +476,8 @@ def unzip_files(zipf, where_to=None, fvalid=None, fail_if_error=True):
             tos = os.path.join(where_to, info.filename)
             if not os.path.exists(tos):
                 if fvalid and not fvalid(info.filename, tos):
+                    if verbose > 1:
+                        print(f"[unzip_files] skip file {info.filename!r}")
                     continue
 
                 try:
@@ -451,8 +491,11 @@ def unzip_files(zipf, where_to=None, fvalid=None, fail_if_error=True):
                         f"Unable to extract {info.filename!r} due to {e}", UserWarning
                     )
                     continue
+                if verbose > 0:
+                    print(f"[unzip_files] write file {tos!r}")
                 with open(tos, "wb") as f:
                     f.write(data)
+                files.append(tos)
             elif not info.filename.endswith("/"):
                 files.append(tos)
     return files
