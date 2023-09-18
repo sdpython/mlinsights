@@ -48,11 +48,6 @@ pygments_style = "sphinx"
 todo_include_todos = True
 issues_github_path = "sdpython/mlinsights"
 
-
-def setup(app):
-    app.add_config_value("HAS_CUDA", "0")
-
-
 html_theme = "furo"
 html_theme_path = ["_static"]
 html_theme_options = {}
