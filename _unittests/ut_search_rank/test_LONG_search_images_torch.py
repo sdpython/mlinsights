@@ -28,21 +28,20 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
         model = tmodels.squeezenet1_1(pretrained=True)
 
         # images
+        this = os.path.dirname(__file__)
         with tempfile.TemporaryDirectory() as temp:
-            dest = os.path.join(temp, "simages")
-            os.mkdir(dest)
-            zipname = os.path.join(
-                temp,
-                "..",
+            sub = os.path.join(temp, "simages")
+            os.mkdir(sub)
+            zipimg = os.path.join(
+                this,
                 "..",
                 "..",
                 "_doc",
-                "notebooks",
-                "explore",
+                "examples",
                 "data",
                 "dog-cat-pixabay.zip",
             )
-            files = unzip_files(zipname, where_to=dest)
+            files = unzip_files(zipimg, where_to=sub)
             self.assertTrue(len(files) > 0)
 
             # sequence of images

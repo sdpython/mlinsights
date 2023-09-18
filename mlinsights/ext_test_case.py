@@ -307,6 +307,10 @@ class ExtTestCase(unittest.TestCase):
             except AssertionError:
                 raise AssertionError(f"{a} != {b} (p={precision})")
 
+    def assertEndsWith(self, suffix: str, text: str):
+        if not text.endswith(suffix):
+            raise AssertionError(f"Unable to find {suffix!r} in {text!r}.")
+
     @classmethod
     def tearDownClass(cls):
         for name, line, w in cls._warns:

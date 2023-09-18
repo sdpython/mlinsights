@@ -2,7 +2,7 @@ import os
 import sys
 from sphinx_runpython.github_link import make_linkcode_resolve
 from sphinx_runpython.conf_helper import has_dvipng, has_dvisvgm
-from mlinsights import __version__, has_cuda
+from mlinsights import __version__
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -50,7 +50,7 @@ issues_github_path = "sdpython/mlinsights"
 
 
 def setup(app):
-    app.add_config_value("HAS_CUDA", "1" if has_cuda() else "0", "env")
+    app.add_config_value("HAS_CUDA", "0")
 
 
 html_theme = "furo"

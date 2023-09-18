@@ -210,5 +210,5 @@ def alter_pipeline_for_debugging(pipe):
                 setattr(model, k, MethodType(new_methods[k], model))
             except AttributeError:
                 warnings.warn(
-                    f"Unable to overwrite method {k!r} for class " f"{type(model)!r}."
+                    f"Unable to overwrite method {k!r} for class {type(model)!r}."
                 )
