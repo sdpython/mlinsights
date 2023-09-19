@@ -11,6 +11,7 @@ def ts_mape(expected_y, predicted_y, sample_weight=None):
 
     :param expected_y: expected values
     :param predicted_y: predictions
+    :param sample_weight: sample weight
     :return: metrics
     """
     if len(expected_y) != len(predicted_y):

@@ -46,10 +46,6 @@ def digitize2tree(bins, right=False):
         print(expected, pred)
         print("Tree:")
         print(export_text(tree, feature_names=['x']))
-
-    See also example :ref:`l-example-digitize`.
-
-    .. versionadded:: 0.4
     """
     if not right:
         raise RuntimeError(f"right must be True not right={right!r}")

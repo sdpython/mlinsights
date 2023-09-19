@@ -117,12 +117,11 @@ class SearchEngineVectors:
         """
         Every vector comes with a list of metadata.
 
-        @param      data        a dataframe or None if the
-                                the features and the metadata
-                                are specified with an array and a
-                                dictionary
-        @param      features    features columns or an array
-        @param      metadata    data
+        :param data: a dataframe or None if the,
+            the features and the metadata are specified with an array and a
+            dictionary
+        :param features: features columns or an array
+        :param metadata: data
         """
         self._prepare_fit(data=data, features=features, metadata=metadata)
         return self._fit_knn()

@@ -21,7 +21,8 @@ def plot_week_timeseries(
     :param value: values to display as bars.
     :param normalise: normalise data before showing it
     :param label: label of the series
-    :param values2: second series to show as a line
+    :param h: scale factor
+    :param value2: second series to show as a line
     :param label2: label of the second series
     :param daynames: names to use for week day names (default is English)
     :param xfmt: format number of the X axis

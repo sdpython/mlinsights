@@ -11,7 +11,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
     Applies a *k-means* (see :epkg:`sklearn:cluster:KMeans`)
     for each class, then adds the distance to each cluster
     as a feature for a classifier.
-    See notebook :ref:`logisticregressionclusteringrst`.
+    See example :ref:`l-logisitic-regression-clustering`.
 
     :param estimator: :class:`sklearn.linear_model.LogisiticRegression` by default
     :param clus: clustering applied on each class,

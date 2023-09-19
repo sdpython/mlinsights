@@ -23,6 +23,29 @@ class QuantileLinearRegression(LinearRegression):
     :math:`|f(X_i) - Y_i|^+= \\max(f(X_i) - Y_i, 0)`.
     :math:`f(i)` is the prediction, :math:`Y_i` the expected
     value.
+
+    :param fit_intercept: boolean, optional, default True
+        whether to calculate the intercept for this model. If set
+        to False, no intercept will be used in calculations
+        (e.g. data is expected to be already centered).
+    :param copy_X: boolean, optional, default True
+        If True, X will be copied; else, it may be overwritten.
+    :param n_jobs: int, optional, default 1
+        The number of jobs to use for the computation.
+        If -1 all CPUs are used. This will only provide speedup for
+        n_targets > 1 and sufficient large problems.
+    :param max_iter: int, optional, default 1
+        The number of iteration to do at training time.
+        This parameter is specific to the quantile regression.
+    :param delta: float, optional, default 0.0001
+        Used to ensure matrices has an inverse
+        (*M + delta*I*).
+    :param quantile: float, by default 0.5,
+        determines which quantile to use
+        to estimate the regression.
+    :param positive: when set to True, forces the coefficients to be positive.
+    :param verbose: bool, optional, default False
+        Prints error at each iteration of the optimisation.
     """
 
     def __init__(
@@ -36,30 +59,6 @@ class QuantileLinearRegression(LinearRegression):
         positive=False,
         verbose=False,
     ):
-        """
-        :param fit_intercept: boolean, optional, default True
-            whether to calculate the intercept for this model. If set
-            to False, no intercept will be used in calculations
-            (e.g. data is expected to be already centered).
-        :param copy_X: boolean, optional, default True
-            If True, X will be copied; else, it may be overwritten.
-        :param n_jobs: int, optional, default 1
-            The number of jobs to use for the computation.
-            If -1 all CPUs are used. This will only provide speedup for
-            n_targets > 1 and sufficient large problems.
-        :param max_iter: int, optional, default 1
-            The number of iteration to do at training time.
-            This parameter is specific to the quantile regression.
-        :param delta: float, optional, default 0.0001
-            Used to ensure matrices has an inverse
-            (*M + delta*I*).
-        :param quantile: float, by default 0.5,
-            determines which quantile to use
-            to estimate the regression.
-        :param positive: when set to True, forces the coefficients to be positive.
-        :param verbose: bool, optional, default False
-            Prints error at each iteration of the optimisation.
-        """
         try:
             LinearRegression.__init__(
                 self,

@@ -23,6 +23,8 @@ def find_ts_group_pattern(
     :param names: column which holds group name
     :param name_subset: subset of groups to study, None for all
     :param per: aggragation per week
+    :param unit: unit
+    :param agg: aggregation function
     :param estimator: estimator used to find pattern,
         :class:`sklearn.cluster.KMeans` and 10 groups
     :param verbose: verbosity

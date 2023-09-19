@@ -11,11 +11,12 @@ class SearchEnginePredictions(SearchEngineVectors):
     *f* can be any function which converts a vector
     into another one or a machine learned model.
     In that case, *f* will be set to a default behavior.
-    See function :func:`model_featurizer`.
+    See function :func:`mlinsights.mlmodel.ml_featurizer.model_featurizer`.
 
     :param fct: function *f* applied before looking for neighbors,
         it can also be a machine learned model
-    :param fct_params: parameters sent to function :func:`model_featurizer`
+    :param fct_params: parameters sent to function
+        :func:`mlinsights.mlmodel.ml_featurizer.model_featurizer`
     :param knn: list of parameters, see :class:`sklearn.neighbors.NearestNeighbors`
     """
 
@@ -50,12 +51,12 @@ class SearchEnginePredictions(SearchEngineVectors):
         """
         Every vector comes with a list of metadata.
 
-        @param      data        a :epkg:`dataframe` or None if the
-                                the features and the metadata
-                                are specified with an array and a
-                                dictionary
-        @param      features    features columns or an array
-        @param      metadata    data
+        :param data: a :epkg:`dataframe` or None if the
+            the features and the metadata are specified with an array and a
+            dictionary
+        :param features: features columns or an array
+        :param metadata: data
+        :return: self
         """
         iterate = self._is_iterable(data)
         if iterate:

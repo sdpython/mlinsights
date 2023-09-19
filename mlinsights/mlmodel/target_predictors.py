@@ -58,7 +58,7 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         print(tt.score(X, y))
         print(tt.regressor_.coef_)
 
-    See notebook :ref:`sklearntransformedtargetrst` for a more complete example.
+    See notebook :ref:`l-sklearn-transformed-target` for a more complete example.
     """
 
     def __init__(self, regressor=None, transformer=None):
@@ -163,7 +163,7 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         print(tt.score(X, y))
         print(tt.classifier_.coef_)
 
-    See notebook :ref:`sklearntransformedtargetrst` for a more complete example.
+    See notebook :ref:`l-sklearn-transformed-target` for a more complete example.
     """
 
     def __init__(self, classifier=None, transformer=None):

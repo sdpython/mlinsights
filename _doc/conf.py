@@ -89,14 +89,19 @@ nitpick_ignore = [
     ("py:class", "pipeline.Pipeline"),
     ("py:class", "default=sklearn.utils.metadata_routing.UNCHANGED"),
     ("py:class", "sklearn.ensemble.RandomForestRegressor"),
+    ("py:class", "sklearn.set_config"),
     ("py:class", "unittest.case.TestCase"),
+    ("py:func", "metadata_routing"),
+    ("py:func", "sklearn.set_config"),
 ]
 
 nitpick_ignore_regex = [
     ("py:class", ".*numpy[.].*"),
+    ("py:class", ".*sklearn[.].*"),
     ("py:func", ".*[.]PyCapsule[.].*"),
     ("py:func", ".*numpy[.].*"),
     ("py:func", ".*scipy[.].*"),
+    ("py:func", ".*sklearn[.].*"),
 ]
 
 sphinx_gallery_conf = {
@@ -117,6 +122,7 @@ epkg_dictionary = {
     "cudnn": "https://developer.nvidia.com/cudnn",
     "CUDAExecutionProvider": "https://onnxruntime.ai/docs/execution-providers/",
     "custom_gemm.cu": "https://github.com/sdpython/mlinsights/blob/main/mlinsights/ortops/tutorial/cuda/custom_gemm.cu",
+    "Cython": "https://cython.org/",
     "cython": "https://cython.org/",
     "decision tree": "https://en.wikipedia.org/wiki/Decision_tree",
     "dataframe": "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html",
@@ -130,8 +136,13 @@ epkg_dictionary = {
     "L1": "https://en.wikipedia.org/wiki/Norm_(mathematics)#Absolute-value_norm",
     "L2": "https://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm",
     "matplotlib": "https://matplotlib.org/",
+    "MLPRegressor": "https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html",
     "nccl": "https://developer.nvidia.com/nccl",
-    "numpy": "https://numpy.org/",
+    "numpy": (
+        "https://www.numpy.org/",
+        ("https://docs.scipy.org/doc/numpy/reference/generated/numpy.{0}.html", 1),
+        ("https://docs.scipy.org/doc/numpy/reference/generated/numpy.{0}.{1}.html", 2),
+    ),
     "numba": "https://numba.pydata.org/",
     "nvidia-smi": "https://developer.nvidia.com/nvidia-system-management-interface",
     "nvprof": "https://docs.nvidia.com/cuda/profiler-users-guide/index.html",
@@ -185,3 +196,68 @@ epkg_dictionary = {
         ("https://docs.python.org/3/library/{0}.html#{0}.{1}.{2}", 3),
     ),
 }
+
+preamble = """
+\\usepackage{etex}
+\\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
+\\usepackage{cmap} % fix search and cut-and-paste in Acrobat
+\\usepackage[raccourcis]{fast-diagram}
+\\usepackage{titlesec}
+\\usepackage{amsmath}
+\\usepackage{amssymb}
+\\usepackage{amsfonts}
+\\usepackage{graphics}
+\\usepackage{epic}
+\\usepackage{eepic}
+%\\usepackage{pict2e}
+%%% Redefined titleformat
+\\setlength{\\parindent}{0cm}
+\\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
+\\newcommand{\\hsp}{\\hspace{20pt}}
+\\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
+\\newcommand{\\cro}[1]{\\left[#1\\right]}
+\\newcommand{\\pa}[1]{\\left(#1\\right)}
+\\newcommand{\\R}{\\mathbb{R}}
+\\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}}
+%\\titleformat{\\chapter}[hang]{\\Huge\\bfseries\\sffamily}{\\thechapter\\hsp}{0pt}{\\Huge\\bfseries\\sffamily}
+
+\\usepackage[all]{xy}
+\\newcommand{\\vecteur}[2]{\\pa{#1,\\dots,#2}}
+\\newcommand{\\N}[0]{\\mathbb{N}}
+\\newcommand{\\indicatrice}[1]{ {1\\!\\!1}_{\\acc{#1}} }
+\\newcommand{\\infegal}[0]{\\leqslant}
+\\newcommand{\\supegal}[0]{\\geqslant}
+\\newcommand{\\ensemble}[2]{\\acc{#1,\\dots,#2}}
+\\newcommand{\\fleche}[1]{\\overrightarrow{ #1 }}
+\\newcommand{\\intervalle}[2]{\\left\\{#1,\\cdots,#2\\right\\}}
+\\newcommand{\\independant}[0]{\\perp \\!\\!\\! \\perp}
+\\newcommand{\\esp}{\\mathbb{E}}
+\\newcommand{\\espf}[2]{\\mathbb{E}_{#1}\\pa{#2}}
+\\newcommand{\\var}{\\mathbb{V}}
+\\newcommand{\\pr}[1]{\\mathbb{P}\\pa{#1}}
+\\newcommand{\\loi}[0]{{\\cal L}}
+\\newcommand{\\vecteurno}[2]{#1,\\dots,#2}
+\\newcommand{\\norm}[1]{\\left\\Vert#1\\right\\Vert}
+\\newcommand{\\norme}[1]{\\left\\Vert#1\\right\\Vert}
+\\newcommand{\\scal}[2]{\\left<#1,#2\\right>}
+\\newcommand{\\dans}[0]{\\rightarrow}
+\\newcommand{\\partialfrac}[2]{\\frac{\\partial #1}{\\partial #2}}
+\\newcommand{\\partialdfrac}[2]{\\dfrac{\\partial #1}{\\partial #2}}
+\\newcommand{\\trace}[1]{tr\\pa{#1}}
+\\newcommand{\\sac}[0]{|}
+\\newcommand{\\abs}[1]{\\left|#1\\right|}
+\\newcommand{\\loinormale}[2]{{\\cal N} \\pa{#1,#2}}
+\\newcommand{\\loibinomialea}[1]{{\\cal B} \\pa{#1}}
+\\newcommand{\\loibinomiale}[2]{{\\cal B} \\pa{#1,#2}}
+\\newcommand{\\loimultinomiale}[1]{{\\cal M} \\pa{#1}}
+\\newcommand{\\variance}[1]{\\mathbb{V}\\pa{#1}}
+\\newcommand{\\intf}[1]{\\left\\lfloor #1 \\right\\rfloor}
+"""
+
+latex_elements = {
+    "papersize": "a4",
+    "pointsize": "10pt",
+    "title": project,
+}
+imgmath_latex_preamble = preamble
+latex_elements["preamble"] = imgmath_latex_preamble

@@ -41,6 +41,7 @@ _doc/examples/*.dot
 _doc/examples/*.png
 _doc/examples/_cache/*
 _doc/auto_examples/*
+_doc/examples/simages/*
 _doc/examples/*.xlsx
 _doc/examples/plot*.csv
 _doc/examples/plot*.onnx

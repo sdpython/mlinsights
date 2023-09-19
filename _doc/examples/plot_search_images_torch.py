@@ -22,8 +22,10 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader, ConcatDataset
 from mlinsights.ext_test_case import unzip_files
 from mlinsights.plotting import plot_gallery_images
+from torchvision.models.squeezenet import SqueezeNet1_0_Weights
 
-model = models.squeezenet1_0(pretrained=True)
+
+model = models.squeezenet1_0(weights=SqueezeNet1_0_Weights.IMAGENET1K_V1)
 model
 
 
@@ -221,7 +223,7 @@ len(list(img_seq))
 # the set of neighbors.
 
 
-model = models.squeezenet1_0(pretrained=True)
+model = models.squeezenet1_0(weights=SqueezeNet1_0_Weights.IMAGENET1K_V1)
 
 
 ######################################################################
@@ -258,6 +260,7 @@ img_seq = iter(dataloader)
 imgs = list(img[0] for img in img_seq)
 
 all_outputs = [model.forward(img).detach().numpy().ravel() for img in imgs]
+
 #######################################
 #
 
@@ -281,7 +284,7 @@ score, index
 
 
 names = os.listdir("simages/category")
-names = [os.path.join("simages/category", n) for n in names]
+names = [os.path.join("simages/category", n) for n in names if ".zip" not in n]
 disp = [names[5]] + [names[i] for i in index.ravel()]
 disp
 

@@ -1,4 +1,6 @@
 """
+.. _l-logisitic-regression-clustering:
+
 LogisticRegression and Clustering
 =================================
 

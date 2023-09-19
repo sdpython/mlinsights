@@ -31,7 +31,7 @@ Prediction
 The following function builds a regular dataset from
 a timeseries so that it can be used by machine learning models.
 
-.. autofunction:: mlinsights.timeseries.selection.build_ts_X_y
+.. autofunction:: mlinsights.timeseries.utils.build_ts_X_y
 
 The first class defined the template for all timeseries
 estimators. It deals with a timeseries ine one dimension

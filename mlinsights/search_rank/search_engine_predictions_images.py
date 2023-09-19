@@ -9,17 +9,6 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
     information about path names. We assume all images can hold
     in memory. An example can found in notebook
     :ref:`searchimagestorchrst`.
-
-    Stores data in the class itself.
-
-    :param data: a dataframe or None if the
-        the features and the metadata
-        are specified with an array and a dictionary
-    :param features: features columns or an array
-    :param metadata: data
-    :param transform: transform each vector before using it
-    :param n: takes *n* images (or ``len(iter_images)``)
-    :param verbose: verbosity
     """
 
     def _prepare_fit(
@@ -80,6 +69,7 @@ class SearchEnginePredictionImages(SearchEnginePredictions):
 
         :param iter_images: `Iterator
             <https://github.com/fchollet/keras/blob/main/keras/preprocessing/image.py#L719>`_
+        :param n_neighbors: number of neigbhors
         :return: score, ind, meta
 
         *score* is an array representing the lengths to points,

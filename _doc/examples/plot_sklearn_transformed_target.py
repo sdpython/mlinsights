@@ -1,4 +1,6 @@
 """
+.. _l-sklearn-transformed-target:
+
 Transformed Target
 ==================
 
