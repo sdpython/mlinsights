@@ -67,7 +67,8 @@ class NGramsMixin(VectorizerMixin):
 
 class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
     """
-    Inherits from :class:`NGramsMixin` which overloads method `_word_ngrams
+    Inherits from :class:`NGramsMixin <mlinsights.mlmodel.sklearn_text.NGramsMixin>`
+    which overloads method `_word_ngrams
     <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to keep more information about n-grams but still produces the same
     outputs than :epkg:`CountVectorizer`.

@@ -4,11 +4,12 @@ from .search_engine_predictions import SearchEnginePredictions
 
 class SearchEnginePredictionImages(SearchEnginePredictions):
     """
-    Extends class :class:`SearchEnginePredictions`.
+    Extends class :class:`SearchEnginePredictions
+    <mlinsights.search_rank.search_engine_predictions.SearchEnginePredictions>`.
     Vectors are coming from images. The metadata must contains
     information about path names. We assume all images can hold
     in memory. An example can found in notebook
-    :ref:`searchimagestorchrst`.
+    :ref:`l-search-images-torch-example`.
     """
 
     def _prepare_fit(

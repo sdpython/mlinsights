@@ -37,6 +37,12 @@ ClassifierAfterKMeans
 .. autoclass:: mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans
     :members:
 
+CustomizedMultilayerPerceptron
+++++++++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.quantile_mlpregressor.CustomizedMultilayerPerceptron
+    :members:
+
 IntervalRegressor
 +++++++++++++++++
 
@@ -93,6 +99,18 @@ TransformedTargetRegressor2
 
 Transforms
 ==========
+
+NGramsMixin
++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.sklearn_text.NGramsMixin
+    :members:
+
+BaseReciprocalTransformer
++++++++++++++++++++++++++
+
+.. autoclass:: mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer
+    :members:
 
 CategoriesToIntegers
 ++++++++++++++++++++
@@ -170,6 +188,7 @@ SimpleRegressorCriterion
 ++++++++++++++++++++++++
 
 .. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion
+    :members:
 
 SimpleRegressorCriterionFast
 ++++++++++++++++++++++++++++
@@ -178,6 +197,7 @@ A similar design but a much faster implementation close to what
 :epkg:`scikit-learn` implements.
 
 .. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion_fast.SimpleRegressorCriterionFast
+    :members:
 
 LinearRegressorCriterion
 ++++++++++++++++++++++++
@@ -185,6 +205,21 @@ LinearRegressorCriterion
 The next one implements a criterion which optimizes the mean square error
 assuming the points falling into one node of the tree are approximated by
 a line. The mean square error is the error made with a linear regressor
-and not a constant anymore.
+and not a constant anymore. The documentation will be completed later.
 
-.. autoclass:: mlinsights.mlmodel.piecewise_tree_regression_criterion_linear.LinearRegressorCriterion
+`mlinsights.mlmodel.piecewise_tree_regression_criterion_linear.LinearRegressorCriterion`
+
+`mlinsights.mlmodel.piecewise_tree_regression_criterion_linear_fast.SimpleRegressorCriterionFast`
+
+Losses
+++++++
+
+.. autofunction:: mlinsights.mlmodel.quantile_mlpregressor.absolute_loss
+
+Hidden API
+==========
+
+_switch_clusters
+++++++++++++++++
+
+.. autofunction:: mlinsights.mlmodel._kmeans_constraint_._switch_clusters

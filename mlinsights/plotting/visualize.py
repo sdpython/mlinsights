@@ -203,7 +203,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
 def pipeline2dot(pipe, data, **params):
     """
     Exports a *scikit-learn* pipeline to
-    :epkg:`DOT` language. See :ref:`visualizepipelinerst`
+    :epkg:`DOT` language. See :ref:`l-visualize-pipeline-example`
     for an example.
 
     :param pipe: *scikit-learn* pipeline

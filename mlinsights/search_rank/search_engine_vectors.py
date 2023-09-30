@@ -228,11 +228,13 @@ class SearchEngineVectors:
     @staticmethod
     def read_zip(zipfilename, **kwargs):
         """
-        Restores the features, the metadata to a :class:`SearchEngineVectors`.
+        Restores the features, the metadata to a :class:`SearchEngineVectors
+        <mlinsights.search_rank.search_engine_vectors.SearchEngineVectors>`.
 
         :param zipfilename: a :epkg:`*py:zipfile:ZipFile` or a filename
         :param kwargs: parameters for :epkg:`pandas:read_csv`
-        :return: :class:`SearchEngineVectors`
+        :return: :class:`SearchEngineVectors
+            <mlinsights.search_rank.search_engine_vectors.SearchEngineVectors>`
         """
         if isinstance(zipfilename, str):
             zf = zipfile.ZipFile(zipfilename, "r")

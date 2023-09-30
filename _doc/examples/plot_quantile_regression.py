@@ -1,4 +1,6 @@
 """
+.. _l-quantile-regression-example:
+
 Quantile Regression
 ===================
 

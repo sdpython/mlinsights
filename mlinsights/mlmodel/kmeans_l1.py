@@ -44,7 +44,6 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
     :param random_state: int, RandomState instance
         The generator used to initialize the centers. Use an int to make the
         randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :param n_local_trials: integer, optional
         The number of seeding trials for each center (except the first),
         of which the one reducing inertia the most is greedily chosen.
@@ -126,7 +125,6 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
     :param random_state: int, RandomState instance or None (default)
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :param init_size: int, optional
         Number of samples to randomly sample for speeding up the
         initialization (sometimes at the expense of accuracy): the
@@ -294,7 +292,6 @@ def _kmeans_single_lloyd(
     :param random_state: int, RandomState instance or None (default)
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :return: centroid : float ndarray with shape (k, n_features)
         Centroids found at the last iteration of k-means.
     :return: label : integer ndarray with shape (n_samples,)
@@ -418,7 +415,7 @@ def _tolerance(norm, X, tol):
 class KMeansL1L2(KMeans):
     """
     K-Means clustering with either norm L1 or L2.
-    See notebook :ref:`kmeansl1rst` for an example.
+    See notebook :ref:`l-kmeans-l1-example` for an example.
 
     :param n_clusters: int, default=8
         The number of clusters to form as well as the number of
@@ -451,7 +448,6 @@ class KMeansL1L2(KMeans):
     :param random_state: int, RandomState instance, default=None
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :param copy_x: bool, default=True
         When pre-computing distances it is more numerically accurate to center
         the data first.  If copy_x is True (default), then the original data is

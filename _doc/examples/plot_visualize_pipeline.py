@@ -1,4 +1,6 @@
 """
+.. _l-visualize-pipeline-example:
+
 Visualize a scikit-learn pipeline
 =================================
 

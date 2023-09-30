@@ -9,7 +9,7 @@ class QuantileLinearRegression(LinearRegression):
     Quantile Linear Regression or linear regression
     trained with norm :epkg:`L1`. This class inherits from
     :epkg:`sklearn:linear_models:LinearRegression`.
-    See notebook :ref:`quantileregressionrst`.
+    See example :ref:`l-quantile-regression-example`.
 
     Norm :epkg:`L1` is chosen if ``quantile=0.5``, otherwise,
     for *quantile=*:math:`\\rho`,

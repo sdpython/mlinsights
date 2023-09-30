@@ -119,8 +119,8 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         :param deep: unused here
         :return: dict
 
-        :meth:`set_params <mlinsights.mlmodel.classification_kmeans.
-        ClassifierAfterKMeans.set_params>`
+        :meth:`set_params
+        <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`
         describes the pattern parameters names follow.
         """
         res = {}

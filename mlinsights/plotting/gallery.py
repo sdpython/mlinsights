@@ -23,11 +23,6 @@ def plot_gallery_images(
     :return: axes or (figure, axes) if *return_figure* is True
 
     .. image:: gal.jpg
-
-    See also notebook :ref:`searchimageskerasrst` or
-    :ref:`searchimagestorchrst` for an example.
-    *imgs* can also be a matrix to force the function to
-    use the same coordinates.
     """
     if "plt" not in sys.modules:
         import matplotlib.pyplot as plt

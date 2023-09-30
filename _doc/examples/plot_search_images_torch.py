@@ -1,4 +1,6 @@
 """
+.. _l-search-images-torch-example:
+
 Search images with deep learning (torch)
 ========================================
 

@@ -6,7 +6,8 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
     """
     Builds standard *X, y* based in the given one.
 
-    :param model: a timeseries model (:class:`BaseTimeSeries`)
+    :param model: a timeseries model (:class:`BaseTimeSeries
+        <mlinsights.timeseries.base.BaseTimeSeries>`)
     :param X: times series, used as features, [n_obs, n_features],
         X may be empty (None)
     :param y: timeseries (one single vector),  [n_obs]
@@ -156,7 +157,7 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
 def check_ts_X_y(model, X, y):
     """
     Checks that datasets *(X, y)* was built with function
-    :func:`build_ts_X_y`.
+    :func:`build_ts_X_y <mlinsights.timeseries.utils.build_ts_X_y>`.
     """
     cfg = get_config()
     if cfg.get("assume_finite", True):

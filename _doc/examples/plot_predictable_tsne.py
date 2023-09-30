@@ -1,4 +1,6 @@
 """
+.. _l-predictable-tsne-example:
+
 Predictable t-SNE
 =================
 

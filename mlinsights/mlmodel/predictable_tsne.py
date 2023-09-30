@@ -14,7 +14,7 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
     `fit_transform <https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE.fit_transform>`_.
     This example proposes a way to train a machine learned model
     which approximates the outputs of a :epkg:`TSNE` transformer.
-    Notebooks :ref:`predictabletsnerst` gives an example on how to
+    Example :ref:`l-predictable-tsne-example` gives an example on how to
     use this class.
 
     :param normalizer: None by default

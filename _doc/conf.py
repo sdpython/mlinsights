@@ -77,6 +77,7 @@ intersphinx_mapping = {
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "python": (f"https://docs.python.org/{sys.version_info.major}", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    "sklearn": ("https://scikit-learn.org/stable/", None),
     "torch": ("https://pytorch.org/docs/stable/", None),
 }
 
@@ -102,6 +103,8 @@ nitpick_ignore_regex = [
     ("py:func", ".*numpy[.].*"),
     ("py:func", ".*scipy[.].*"),
     ("py:func", ".*sklearn[.].*"),
+    ("py:func", ".*metadata_routing.*"),
+    ("py:func", ".*<locals>.*"),
 ]
 
 sphinx_gallery_conf = {

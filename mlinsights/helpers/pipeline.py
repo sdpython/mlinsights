@@ -20,7 +20,7 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
     :param vs: subset of variables for the model, None for all
     :return: iterator on models ``tuple(coordinate, model)``
 
-    See notebook :ref:`visualizepipelinerst`.
+    See example :ref:`l-visualize-pipeline-example`.
     """
     if coor is None:
         coor = (0,)
@@ -161,7 +161,7 @@ def alter_pipeline_for_debugging(pipe):
     The object *pipe* is modified, it should be copied
     before calling this function if you need the object
     untouched after that. The prediction is slower.
-    See notebook :ref:`visualizepipelinerst`.
+    See notebook :ref:`l-visualize-pipeline-example`.
     """
 
     def transform(self, X, *args, **kwargs):

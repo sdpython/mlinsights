@@ -30,10 +30,11 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
     Useful for applying a non-linear transformation in regression
     problems.
 
-    :param regressor: object, default=LinearRegression()
+    :param regressor: object, `default=LinearRegression()`
         Regressor object such as derived from ``RegressorMixin``. This
         regressor will automatically be cloned each time prior to fitting.
-    :param transformer: str or object of type :class:`BaseReciprocalTransformer`
+    :param transformer: str or object of type :class:`BaseReciprocalTransformer
+        <mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer>`
 
     Attributes:
 
@@ -137,7 +138,8 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
     :param classifier: object, default=LogisticRegression()
         Classifier object such as derived from ``ClassifierMixin``. This
         classifier will automatically be cloned each time prior to fitting.
-    :param transformer: str or object of type :class:`BaseReciprocalTransformer`
+    :param transformer: str or object of type :class:`BaseReciprocalTransformer
+        <mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer>`
         Transforms the features.
 
     Attributes:

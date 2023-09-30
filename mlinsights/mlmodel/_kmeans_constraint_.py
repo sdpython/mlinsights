@@ -340,8 +340,8 @@ def _switch_clusters(labels, distances):
     Tries to switch clusters.
     Modifies *labels* inplace.
 
-    @param      labels      labels
-    @param      distances   distances
+    :param labels: labels
+    :param distances: distances
     """
     perm = numpy.random.permutation(numpy.arange(0, labels.shape[0]))
     niter = 0

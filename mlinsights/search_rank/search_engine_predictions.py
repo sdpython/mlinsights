@@ -5,8 +5,9 @@ from .search_engine_vectors import SearchEngineVectors
 
 class SearchEnginePredictions(SearchEngineVectors):
     """
-    Extends class :class:`SearchEngineVectors` by
-    looking for neighbors to a vector *X* by
+    Extends class :class:`SearchEngineVectors
+    <mlinsights.search_rank.search_engine_vectors.SearchEngineVectors>`
+    by looking for neighbors to a vector *X* by
     looking neighbors to *f(X)* and not *X*.
     *f* can be any function which converts a vector
     into another one or a machine learned model.

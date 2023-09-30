@@ -39,7 +39,8 @@ class ConstraintKMeans(KMeans):
         the strategy uses a learning rate.
 
     The first two strategies cannot reach a good compromise
-    without using function :func:`_switch_clusters` which
+    without using function :func:`_switch_clusters
+    <mlinsights.mlmodel._kmeans_constraint_._switch_clusters>` which
     tries every switch between clusters: two points
     change clusters. It keeps the number of points and checks
     that the inertia is reduced.

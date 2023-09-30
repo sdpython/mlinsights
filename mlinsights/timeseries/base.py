@@ -60,7 +60,8 @@ class BaseTimeSeries(BaseEstimator):
     :param preprocessing: preprocessing to apply before predicting,
         only the timeseries itselves, it can be
         a difference, it must be of type
-        :class:`BaseReciprocalTimeSeriesTransformer`
+        :class:`BaseReciprocalTimeSeriesTransformer
+        <mlinsights.timeseries.base.BaseReciprocalTimeSeriesTransformer>`
     """
 
     def __init__(

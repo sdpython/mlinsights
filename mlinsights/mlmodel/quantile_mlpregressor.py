@@ -231,8 +231,10 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
     trained with norm :epkg:`L1`. This class inherits from
     :epkg:`sklearn:neural_networks:MLPRegressor`.
     This model optimizes the absolute-loss using LBFGS or stochastic gradient
-    descent. See :class:`CustomizedMultilayerPerceptron` and
-    :func:`absolute_loss`.
+    descent. See :class:`CustomizedMultilayerPerceptron
+    <mlinsights.mlmodel.quantile_mlpregressor.CustomizedMultilayerPerceptron>` and
+    :func:`absolute_loss
+    <mlinsights.mlmodel.quantile_mlpregressor.absolute_loss>`.
 
     :param hidden_layer_sizes: tuple, length = n_layers - 2, default (100,)
         The ith element represents the number of neurons in the ith
@@ -304,7 +306,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
     :param warm_start: bool, optional, default False
         When set to True, reuse the solution of the previous
         call to fit as initialization, otherwise, just erase the
-        previous solution. See :term:`the Glossary <warm_start>`.
+        previous solution.
     :param momentum: float, default 0.9
         Momentum for gradient descent update.  Should be between 0 and 1. Only
         used when solver='sgd'.

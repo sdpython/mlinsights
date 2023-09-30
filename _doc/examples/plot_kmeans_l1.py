@@ -1,4 +1,6 @@
 """
+.. _l-kmeans-l1-example:
+
 KMeans with norm L1
 ===================
 

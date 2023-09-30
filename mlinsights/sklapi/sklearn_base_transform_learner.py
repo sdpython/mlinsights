@@ -10,7 +10,8 @@ class SkBaseTransformLearner(SkBaseTransform):
     method *predict* into *transform*. This way,
     two learners can be inserted into the same pipeline.
     There is another a,d shorter implementation
-    with class :class:`TransferTransformer`.
+    with class :class:`TransferTransformer
+    <mlinsights.mlmodel.transfer_transformer.TransferTransformer>`.
 
     .. exref::
         :title: Use two learners into a same pipeline
