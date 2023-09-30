@@ -338,9 +338,12 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         km.fit(mat)
         self.assertEqual(km.cluster_centers_.shape, (3, 2))
         lab = km.labels_
-        self.assertEqual(lab[1], lab[2])
-        self.assertEqual(lab[0], lab[5])
-        self.assertEqual(lab[3], lab[4])
+        try:
+            self.assertEqual(lab[1], lab[2])
+            self.assertEqual(lab[0], lab[5])
+            self.assertEqual(lab[3], lab[4])
+        except AssertionError as e:
+            raise AssertionError(f"Issue with labels {lab}") from e
         pred = km.predict(mat)
         self.assertEqualArray(pred, lab)
 
