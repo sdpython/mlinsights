@@ -67,9 +67,21 @@ class TestDocumentationExamples(ExtTestCase):
             if name.startswith("plot_") and name.endswith(".py"):
                 short_name = os.path.split(os.path.splitext(name)[0])[-1]
 
-                def _test_(self, name=name):
-                    res = self.run_test(fold, name, verbose=VERBOSE)
-                    self.assertTrue(res)
+                if sys.platform == "win32" and (
+                    "plot_search_images_torch" in name
+                    or "plot_visualize_pipeline" in name
+                ):
+
+                    @unittest.skip("notebook with questions or issues with windows")
+                    def _test_(self, name=name):
+                        res = self.run_test(fold, name, verbose=VERBOSE)
+                        self.assertTrue(res)
+
+                else:
+
+                    def _test_(self, name=name):
+                        res = self.run_test(fold, name, verbose=VERBOSE)
+                        self.assertTrue(res)
 
                 setattr(cls, f"test_{short_name}", _test_)
 
