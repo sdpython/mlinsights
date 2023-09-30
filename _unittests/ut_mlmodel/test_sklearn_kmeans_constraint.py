@@ -322,7 +322,7 @@ class TestSklearnConstraintKMeans(ExtTestCase):
 
     def test_kmeans_constraint_gain3(self):
         mat = numpy.array(
-            [[0, 0], [0.2, 0.2], [-0.1, -0.1], [1, 1], [1.1, 0.9], [-1.1, 1.0]]
+            [[0, 0], [-0.1, 0.1], [0.1, 0.1], [0.8, 0.8], [1.1, 0.9], [1.1, 1.0]]
         )
         # Choose random_state=2 to get the labels [1 1 0 2 2 0].
         # This configuration can only be modified with a permutation
@@ -338,10 +338,11 @@ class TestSklearnConstraintKMeans(ExtTestCase):
         km.fit(mat)
         self.assertEqual(km.cluster_centers_.shape, (3, 2))
         lab = km.labels_
+        print(lab)
         try:
-            self.assertEqual(lab[1], lab[2])
-            self.assertEqual(lab[0], lab[5])
-            self.assertEqual(lab[3], lab[4])
+            self.assertEqual(lab[0], lab[1])
+            self.assertEqual(lab[2], lab[3])
+            self.assertEqual(lab[4], lab[5])
         except AssertionError as e:
             raise AssertionError(f"Issue with labels {lab}") from e
         pred = km.predict(mat)
