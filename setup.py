@@ -32,7 +32,7 @@ def get_requirements(here):
     except FileNotFoundError:
         requirements = []
     if len(requirements) == 0 or requirements == [""]:
-        requirements = ["numpy", "scipy", "onnx"]
+        requirements = ["numpy", "scipy", "onnx", "scikit-learn"]
     return requirements
 
 

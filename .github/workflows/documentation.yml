@@ -44,7 +44,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Build
-        run: python setup.py build_ext --inplace --use-cuda=0
+        run: python setup.py build_ext --inplace
 
       - name: Generate coverage report
         run: |
@@ -60,7 +60,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Install
-        run: python setup.py install --use-cuda=0
+        run: python setup.py install
 
       - name: Copy license, changelogs
         run: |

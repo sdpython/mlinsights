@@ -104,7 +104,7 @@ jobs:
     displayName: 'cython-lint'
   - script: |
       # python -m pip install -e .
-      python setup.py build_ext --inplace --use-cuda=0
+      python setup.py build_ext --inplace
     displayName: 'build inplace'
   - bash: |
       contents=$(cat .build_path.txt)
@@ -117,7 +117,7 @@ jobs:
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
-      python -u setup.py bdist_wheel --use-cuda=0
+      python -u setup.py bdist_wheel
     displayName: 'Build Package'
   - script: |
       ls dist/*
@@ -166,10 +166,10 @@ jobs:
   - script: set
     displayName: 'set'
   - script: |
-        python setup.py build_ext --inplace --use-cuda=0
+        python setup.py build_ext --inplace
     displayName: 'build'
   - script: |
-        python setup.py install --use-cuda=0
+        python setup.py install
     displayName: 'build wheel'
   - powershell: |
         $contents = Get-Content -Path ".build_path.txt"
@@ -180,7 +180,7 @@ jobs:
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
-        python -u setup.py bdist_wheel --use-cuda=0
+        python -u setup.py bdist_wheel
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
     inputs:
@@ -232,17 +232,17 @@ jobs:
       python -c "import cython;print('cython', cython.__version__)"
     displayName: 'Print'
   - script: |
-      python setup.py build_ext --inplace --use-cuda=0
+      python setup.py build_ext --inplace
     displayName: 'build'
   - script: |
-      python setup.py bdist_wheel --use-cuda=0
+      python setup.py bdist_wheel
     displayName: 'build wheel'
   - script: |
       source activate myEnvironment
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
-      python -u setup.py build --use-cuda=0
+      python -u setup.py build
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
     inputs:
