@@ -17,6 +17,7 @@ extensions = [
     "sphinx_issues",
     "matplotlib.sphinxext.plot_directive",
     "sphinx_runpython.blocdefs.sphinx_exref_extension",
+    "sphinx_runpython.blocdefs.sphinx_faqref_extension",
     "sphinx_runpython.blocdefs.sphinx_mathdef_extension",
     "sphinx_runpython.docassert",
     "sphinx_runpython.epkg",

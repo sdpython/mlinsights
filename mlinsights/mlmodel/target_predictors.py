@@ -30,16 +30,15 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
     Useful for applying a non-linear transformation in regression
     problems.
 
-    :param regressor: object, `default=LinearRegression()`
+    Parameters
+    ----------
+
+    regressor : object, `default=LinearRegression()`
         Regressor object such as derived from ``RegressorMixin``. This
         regressor will automatically be cloned each time prior to fitting.
-    :param transformer: str or object of type :class:`BaseReciprocalTransformer
+
+    transformer : str or object of type :class:`BaseReciprocalTransformer
         <mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer>`
-
-    Attributes:
-
-    * regressor_: object, fitted regressor.
-    * transformer_: object, Transformer used in ``fit`` and ``predict``.
 
     Examples
     --------
@@ -59,7 +58,11 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
         print(tt.score(X, y))
         print(tt.regressor_.coef_)
 
-    See notebook :ref:`l-sklearn-transformed-target` for a more complete example.
+    See example :ref:`l-sklearn-transformed-target` for a more complete example.
+
+    The class holds two attributes `regressor_`, the fitted regressor,
+    `transformer_` transformer used in ``fit``, ``predict``,
+    ``decision_function``, ``predict_proba``.
     """
 
     def __init__(self, regressor=None, transformer=None):
@@ -135,18 +138,16 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
     Useful for applying permutation transformation in classification
     problems.
 
-    :param classifier: object, default=LogisticRegression()
+    Parameters
+    ----------
+
+    classifier : object, default=LogisticRegression()
         Classifier object such as derived from ``ClassifierMixin``. This
         classifier will automatically be cloned each time prior to fitting.
-    :param transformer: str or object of type :class:`BaseReciprocalTransformer
+
+    transformer : str or object of type :class:`BaseReciprocalTransformer
         <mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer>`
         Transforms the features.
-
-    Attributes:
-
-    * classifier_ : object, Fitted classifier.
-    * transformer_ : object Transformer used in ``fit``, ``predict``,
-        ``decision_function``, ``predict_proba``.
 
     Examples:
 
@@ -165,7 +166,11 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
         print(tt.score(X, y))
         print(tt.classifier_.coef_)
 
-    See notebook :ref:`l-sklearn-transformed-target` for a more complete example.
+    See example :ref:`l-sklearn-transformed-target` for a more complete example.
+
+    The class holds two attributes `classifier_`, the fitted classifier,
+    `transformer_` transformer used in ``fit``, ``predict``,
+    ``decision_function``, ``predict_proba``.
     """
 
     def __init__(self, classifier=None, transformer=None):
