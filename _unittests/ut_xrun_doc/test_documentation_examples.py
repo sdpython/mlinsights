@@ -67,7 +67,7 @@ class TestDocumentationExamples(ExtTestCase):
             if name.startswith("plot_") and name.endswith(".py"):
                 short_name = os.path.split(os.path.splitext(name)[0])[-1]
 
-                if sys.platform == "win32" and (
+                if sys.platform != "linux" and (
                     "plot_search_images_torch" in name
                     or "plot_visualize_pipeline" in name
                 ):
