@@ -40,9 +40,6 @@ class TransformedTargetRegressor2(BaseEstimator, RegressorMixin):
     transformer : str or object of type :class:`BaseReciprocalTransformer
         <mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer>`
 
-    Examples
-    --------
-
     .. runpython::
         :showcode:
 
@@ -148,8 +145,6 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
     transformer : str or object of type :class:`BaseReciprocalTransformer
         <mlinsights.mlmodel.sklearn_transform_inv.BaseReciprocalTransformer>`
         Transforms the features.
-
-    Examples:
 
     .. runpython::
         :showcode:
