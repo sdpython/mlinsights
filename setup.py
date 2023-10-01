@@ -260,7 +260,6 @@ class cmake_build_class_extension(Command):
         self.cuda_version = None
         self.parallel = None
         self.manylinux = None
-        self.ort_version = DEFAULT_ORT_VERSION
         self.cuda_build = "DEFAULT"
         self.cuda_link = "STATIC"
 
@@ -281,10 +280,6 @@ class cmake_build_class_extension(Command):
             print(f"-- setup: use env {att.upper()}={v in t_values}")
             setattr(self, att, v in t_values)
 
-        if self.ort_version is None:
-            self.ort_version = os.environ.get("ORT_VERSION", None)
-            if self.ort_version not in ("", None):
-                print(f"-- setup: use env ORT_VERSION={self.ort_version}")
         if self.cuda_build is None:
             self.cuda_build = os.environ.get("CUDA_BUILD", None)
             if self.cuda_build not in ("", None):
@@ -382,7 +377,6 @@ class cmake_build_class_extension(Command):
             f"-DPYTHON_VERSION={vers}",
             f"-DPYTHON_VERSION_MM={versmm}",
             f"-DPYTHON_MODULE_EXTENSION={module_ext}",
-            f"-DORT_VERSION={self.ort_version}",
             f"-DMLINSIGHTS_VERSION={get_version_str(here, None)}",
             f"-DPYTHON_MANYLINUX={1 if is_manylinux else 0}",
         ]
@@ -391,7 +385,7 @@ class cmake_build_class_extension(Command):
 
         if self.use_nvtx:
             cmake_args.append("-DUSE_NVTX=1")
-        cmake_args.append(f"-DUSE_CUDA={1 if self.use_cuda else 0}")
+        cmake_args.append("-DUSE_CUDA=0")  # {1 if self.use_cuda else 0}")
         if self.use_cuda:
             cmake_args.append(f"-DCUDA_BUILD={self.cuda_build}")
             cmake_args.append(f"-DCUDA_LINK={self.cuda_link}")

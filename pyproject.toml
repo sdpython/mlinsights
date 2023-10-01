@@ -139,16 +139,8 @@ exclude = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["onnx_extended._command_lines"]
-disable_error_code = [
-    "attr-defined",
-    "operator",
-    "arg-type",
-    "assignment",
-    "var-annotated",
-    "return-value",
-    "name-defined",
-]
+module = ["mlinsights.ext_test_case"]
+disable_error_code = ["override", "index"]
 
 [tool.ruff]
 exclude = [".eggs", ".git", "build", "dist"]

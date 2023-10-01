@@ -5,7 +5,7 @@ import warnings
 import zipfile
 from io import BytesIO
 from urllib.request import urlopen
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from timeit import Timer
@@ -107,7 +107,7 @@ def measure_time(
                 "div_by_number must be set to True of max_time is defined."
             )
         i = 1
-        total_time = 0
+        total_time = 0.0
         results = []
         while True:
             for j in (1, 2):
@@ -168,7 +168,7 @@ def measure_time(
 
 
 class ExtTestCase(unittest.TestCase):
-    _warns = []
+    _warns: List[type] = []
 
     def assertExists(self, name):
         if not os.path.exists(name):
@@ -245,7 +245,7 @@ class ExtTestCase(unittest.TestCase):
         self.assertEqualArray(expected, value, atol=atol, rtol=rtol)
 
     def assertRaise(
-        self, fct: Callable, exc_type: Exception, msg: Optional[str] = None
+        self, fct: Callable, exc_type: type[Exception], msg: Optional[str] = None
     ):
         try:
             fct()
@@ -340,7 +340,7 @@ def get_parsed_args(
     tries: int = 2,
     expose: Optional[str] = None,
     **kwargs: Dict[str, Tuple[Union[int, str, float], str]],
-) -> ArgumentParser:
+) -> Namespace:
     """
     Returns parsed arguments for examples in this package.
 
@@ -428,7 +428,7 @@ def unzip_files(
     fvalid: Optional[Callable] = None,
     fail_if_error=True,
     verbose: int = 0,
-):
+) -> List[Union[str, Tuple[str, Any]]]:
     """
     Unzips files from a zip archive.
 
@@ -445,6 +445,8 @@ def unzip_files(
     :return: list of unzipped files
     """
     if zipf.startswith("https:"):
+        if where_to is None:
+            raise ValueError(f"where_to must be specified for url {zipf!r}.")
         filename = zipf.split("/")[-1]
         dest_zip = os.path.join(where_to, filename)
         if not os.path.exists(dest_zip):
@@ -469,7 +471,7 @@ def unzip_files(
             raise e
         raise IOError(f"Unable to read file '{zipf}'") from e
 
-    files = []
+    files: List[Union[str, Tuple[str, Any]]] = []
     with zipfile.ZipFile(zipf, "r") as file:
         for info in file.infolist():
             if verbose > 1:
