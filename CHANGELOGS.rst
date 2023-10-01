@@ -6,6 +6,7 @@ Change Logs
 0.5.0
 =====
 
+* :pr:`118` major refactoring, changes CI, builds against scikit-learn 1.3 
 * :pr:`115` Updates tree decision criterion for scikit-learn 1.2 (2023-07-02)
 * :pr:`113` Removes normalize attributes (deprecated) (2022-11-29)
 * :pr:`110` Fixes perplexity issue with PredictableTSNE (2022-08-06)

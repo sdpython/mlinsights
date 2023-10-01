@@ -68,7 +68,7 @@ which trains a multi-layer perceptron with :epkg:`L1` norm...
     :caption: More
     
     license
-    README
+    CHANGELOGS
 
 Short example:
 
