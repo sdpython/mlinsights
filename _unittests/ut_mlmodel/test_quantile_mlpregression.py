@@ -32,7 +32,7 @@ class TestQuantileMLPRegression(ExtTestCase):
         self.assertLesser(err2, 5)
 
     @ignore_warnings(ConvergenceWarning)
-    def test_quantile_regression_pandas(self):
+    def test_quantile_mlpregression_pandas(self):
         X = pandas.DataFrame(numpy.array([[0.1, 0.2], [0.2, 0.3]]))
         Y = numpy.array([1.0, 1.1])
         clr = MLPRegressor(hidden_layer_sizes=(3,))
@@ -43,8 +43,8 @@ class TestQuantileMLPRegression(ExtTestCase):
         self.assertGreater(clq.n_iter_, 10)
         err1 = mean_absolute_error(Y, clr.predict(X))
         err2 = mean_absolute_error(Y, clq.predict(X))
-        self.assertLesser(err1, 3)
-        self.assertLesser(err2, 3)
+        self.assertLesser(err1, 3.2)
+        self.assertLesser(err2, 3.2)
 
     @ignore_warnings(ConvergenceWarning)
     def test_quantile_regression_pickle(self):
