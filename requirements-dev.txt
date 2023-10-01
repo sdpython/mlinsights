@@ -12,6 +12,7 @@ matplotlib
 memory_profiler>=0.55
 notebook
 numba
+pandas_streaming
 pybind11
 pytest
 pytest-cov
