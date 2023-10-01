@@ -33,7 +33,7 @@ if(NOT ${CYTHON_version_result} EQUAL 0)
   message(STATUS "CYTHON_version_error=${CYTHON_version_error}")
   message(STATUS "CYTHON_version_result=${CYTHON_version_result}")
   if(NOT ${CYTHON_version_result} EQUAL 0)
-    message(FATAL_ERROR ("Unable to find cython for '${PYTHON_EXECUTABLE}'."))
+    message(FATAL_ERROR("Unable to find cython for '${PYTHON_EXECUTABLE}'."))
   endif()
   set(Cython_VERSION ${CYTHON_version_error})
 else()
@@ -46,11 +46,10 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
   RESULT_VARIABLE NUMPY_NOT_FOUND)
 if(NUMPY_NOT_FOUND)
-  message(
-    FATAL_ERROR
-      "Numpy headers not found with "
-      "Python3_EXECUTABLE='${Python3_EXECUTABLE}' and "
-      "Cython_VERSION=${Cython_VERSION}.")
+  message(FATAL_ERROR
+          "Numpy headers not found with "
+          "Python3_EXECUTABLE='${Python3_EXECUTABLE}' and "
+          "Cython_VERSION=${Cython_VERSION}.")
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -60,16 +59,14 @@ find_package_handle_standard_args(
   REQUIRED_VARS NUMPY_INCLUDE_DIR)
 
 #
-# ! compile_cython : compile a pyx file into cpp
+#! compile_cython : compile a pyx file into cpp
 #
-# \arg:filename extension name \arg:pyx_file_cpp output pyx file name
+# \arg:filename extension name
+# \arg:pyx_file_cpp output pyx file name
 #
 function(compile_cython filename pyx_file_cpp)
   message(STATUS "cython cythonize '${filename}'")
   set(fullfilename "${CMAKE_CURRENT_SOURCE_DIR}/${filename}")
-
-  # dict(boundscheck=False, cdivision=True, wraparound=False,
-  # cdivision_warnings=False, embedsignature=True, initializedcheck=False)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/${pyx_file_cpp}
     COMMAND
@@ -81,10 +78,12 @@ function(compile_cython filename pyx_file_cpp)
 endfunction()
 
 #
-# ! cython_add_module : compile a pyx file into cpp
+#! cython_add_module : compile a pyx file into cpp
 #
-# \arg:name extension name \arg:pyx_file pyx file name \arg:omp_lib omp library
-# to link with \argn: additional c++ files to compile
+# \arg:name extension name
+# \arg:pyx_file pyx file name
+# \arg:omp_lib omp library to link with
+# \argn: additional c++ files to compile
 #
 function(cython_add_module name pyx_file omp_lib)
   set(options "")
@@ -104,23 +103,27 @@ function(cython_add_module name pyx_file omp_lib)
   python3_add_library(${name} MODULE ${ARGN})
 
   target_include_directories(
-    ${name}
-    PRIVATE ${Python3_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIR}
-            ${Python3_NumPy_INCLUDE_DIRS} ${NUMPY_INCLUDE_DIR}
-            ${OMP_INCLUDE_DIR})
+    ${name} PRIVATE
+    ${Python3_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIR}
+    ${Python3_NumPy_INCLUDE_DIRS}
+    ${NUMPY_INCLUDE_DIR}
+    ${OMP_INCLUDE_DIR})
 
   message(STATUS "    LINK ${name} <- ${Python3_LIBRARY_RELEASE} "
                  "${Python3_NumPy_LIBRARIES} ${omp_lib}")
   target_link_libraries(
-    ${name}
-    PRIVATE ${Python3_LIBRARY_RELEASE} # use ${Python3_LIBRARIES} if python
-                                       # debug
-            ${Python3_NumPy_LIBRARIES} ${omp_lib})
+    ${name} PRIVATE
+    ${Python3_LIBRARY_RELEASE}  # use ${Python3_LIBRARIES} if python debug
+    ${Python3_NumPy_LIBRARIES}
+    ${omp_lib})
 
   target_compile_definitions(${name} PUBLIC NPY_NO_DEPRECATED_API)
 
-  set_target_properties(${name} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
-                                           SUFFIX "${PYTHON_MODULE_EXTENSION}")
+  set_target_properties(
+    ${name} PROPERTIES
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}")
 
   # install(TARGETS ${name} LIBRARY DESTINATION ${pyx_dir})
 

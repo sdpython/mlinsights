@@ -32,7 +32,7 @@ def get_requirements(here):
     except FileNotFoundError:
         requirements = []
     if len(requirements) == 0 or requirements == [""]:
-        requirements = ["numpy", "scipy", "onnx", "scikit-learn"]
+        requirements = ["numpy", "scipy", "scikit-learn"]
     return requirements
 
 
@@ -247,6 +247,11 @@ class cmake_build_class_extension(Command):
             "(SHARED), default is STATIC."
             "STATIC",
         ),
+        (
+            "manylinux=",
+            None,
+            "Enforces the compilation with manylinux, " "default is set to 0.",
+        ),
     ]
 
     def initialize_options(self):
@@ -254,6 +259,7 @@ class cmake_build_class_extension(Command):
         self.use_cuda = None
         self.cuda_version = None
         self.parallel = None
+        self.manylinux = None
         self.ort_version = DEFAULT_ORT_VERSION
         self.cuda_build = "DEFAULT"
         self.cuda_link = "STATIC"
@@ -263,7 +269,7 @@ class cmake_build_class_extension(Command):
         # boolean
         b_values = {0, 1, "1", "0", True, False}
         t_values = {1, "1", True}
-        for att in ["use_nvtx", "use_cuda"]:
+        for att in ["use_nvtx", "use_cuda", "manylinux"]:
             v = getattr(self, att)
             if v is not None:
                 continue
@@ -274,6 +280,7 @@ class cmake_build_class_extension(Command):
                 raise ValueError(f"Unable to interpret value {v} for {att.upper()!r}.")
             print(f"-- setup: use env {att.upper()}={v in t_values}")
             setattr(self, att, v in t_values)
+
         if self.ort_version is None:
             self.ort_version = os.environ.get("ORT_VERSION", None)
             if self.ort_version not in ("", None):
@@ -288,6 +295,8 @@ class cmake_build_class_extension(Command):
                 print(f"-- setup: use env CUDA_VERSION={self.cuda_version}")
         if self.use_nvtx is None:
             self.use_nvtx = False
+        if self.manylinux is None:
+            self.manylinux = False
 
     def finalize_options(self):
         self._parent.finalize_options(self)
@@ -299,8 +308,11 @@ class cmake_build_class_extension(Command):
             self.use_cuda = find_cuda()
         if self.use_cuda not in b_values:
             raise ValueError(f"use_cuda={self.use_cuda!r} must be in {b_values}.")
+
         self.use_nvtx = self.use_nvtx in {1, "1", True, "True"}
         self.use_cuda = self.use_cuda in {1, "1", True, "True"}
+        self.manylinux = self.manylinux in {1, "1", True, "True"}
+
         if self.cuda_version in (None, ""):
             self.cuda_version = None
         build = {"DEFAULT", "H100", "H100opt"}
@@ -341,6 +353,29 @@ class cmake_build_class_extension(Command):
         if here == "":
             here = "."
 
+        manylinux_tags = [
+            "manylinux1_x86_64",
+            "manylinux1_i686",
+            "manylinux2010_x86_64",
+            "manylinux2010_i686",
+            "manylinux2014_x86_64",
+            "manylinux2014_i686",
+            "manylinux2014_aarch64",
+            "manylinux2014_armv7l",
+            "manylinux2014_ppc64",
+            "manylinux2014_ppc64le",
+            "manylinux2014_s390x",
+            "manylinux_2_24_x86_64",
+            "manylinux_2_24_aarch64",
+            "manylinux_2_28_x86_64",
+            "manylinux_2_28_aarch64",
+            "manylinux_2_35_x86_64",
+            "manylinux_2_35_aarch64",
+        ]
+        is_manylinux = (
+            self.manylinux or os.environ.get("AUDITWHEEL_PLAT", None) in manylinux_tags
+        )
+
         cmake_args = [
             f"-DPYTHON_EXECUTABLE={path}",
             f"-DCMAKE_BUILD_TYPE={cfg}",
@@ -348,7 +383,8 @@ class cmake_build_class_extension(Command):
             f"-DPYTHON_VERSION_MM={versmm}",
             f"-DPYTHON_MODULE_EXTENSION={module_ext}",
             f"-DORT_VERSION={self.ort_version}",
-            f"-Dmlinsights_VERSION={get_version_str(here, None)}",
+            f"-DMLINSIGHTS_VERSION={get_version_str(here, None)}",
+            f"-DPYTHON_MANYLINUX={1 if is_manylinux else 0}",
         ]
         if self.parallel is not None:
             cmake_args.append(f"-j{self.parallel}")
@@ -404,6 +440,11 @@ class cmake_build_class_extension(Command):
 
         # Builds the project.
         build_path = os.path.abspath(build_temp)
+        build_lib = getattr(self, "build_lib", build_path)
+        cmake_args = cmake_args + [
+            f"-DSETUP_BUILD_PATH={os.path.abspath(build_path)}",
+            f"-DSETUP_BUILD_LIB={os.path.abspath(build_lib)}",
+        ]
         with open(
             os.path.join(os.path.dirname(__file__), ".build_path.txt"),
             "w",
@@ -435,7 +476,7 @@ class cmake_build_class_extension(Command):
             cmd, cwd=build_path, capture_output=True, cuda_version=self.cuda_version
         )
         print("-- setup: done.")
-        return build_path, getattr(self, "build_lib", build_path)
+        return build_path, build_lib
 
     def process_extensions(self, cfg: str, build_path: str, build_lib: str):
         """
@@ -479,59 +520,6 @@ class cmake_build_class_extension(Command):
             print(f"-- setup: copy-2 {look!r} to {dest!r}")
             shutil.copy(look, dest)
 
-    def _process_setup_ext_line(self, cfg, build_path, line):
-        line = line.strip(" \n\r")
-        if not line:
-            return
-        spl = line.split(",")
-        if len(spl) != 3:
-            raise RuntimeError(f"Unable to process line {line!r}.")
-        if spl[0] == "copy":
-            if is_windows():
-                ext = "dll"
-                prefix = ""
-            elif is_darwin():
-                ext = "dylib"
-                prefix = "lib"
-            else:
-                ext = "so"
-                prefix = "lib"
-            src, dest = spl[1:]
-            shortened = dest.split("mlinsights")[-1].strip("/\\")
-            fulldest = f"mlinsights/{shortened}"
-            assumed_name = f"{prefix}{src}.{ext}"
-            if is_windows():
-                fullname = os.path.join(build_path, cfg, assumed_name)
-            else:
-                fullname = os.path.join(build_path, assumed_name)
-            if not os.path.exists(fullname):
-                raise FileNotFoundError(
-                    f"Unable to find library {fullname!r} (line={line!r})."
-                )
-            print(f"-- setup: copy-1 {fullname!r} to {fulldest!r}")
-            shutil.copy(fullname, fulldest)
-        else:
-            raise RuntimeError(f"Unable to interpret line {line!r}.")
-
-    def process_setup_ext(self, cfg, build_path, filename):
-        """
-        Copies the additional files done after cmake was executed
-        into python subfolders. These files are listed in file
-        `_setup_ext.txt` produced by cmake.
-
-        :param cfg: configuration (Release, ...)
-        :param build_path: where it was built
-        :param filename: path of file `_setup_ext.txt`.
-        """
-        this = os.path.abspath(os.path.dirname(__file__))
-        fullname = os.path.join(this, filename)
-        if not os.path.exists(fullname):
-            raise FileNotFoundError(f"Unable to find filename {fullname!r}.")
-        with open(fullname, "r") as f:
-            lines = f.readlines()
-        for line in lines:
-            self._process_setup_ext_line(cfg, build_path, line)
-
     def run_cmake(self):
         # Ensure that CMake is present and working
         try:
@@ -542,8 +530,6 @@ class cmake_build_class_extension(Command):
         cfg = "Release"
         cmake_args = self.get_cmake_args(cfg)
         build_path, build_lib = self.build_cmake(cfg, cmake_args)
-        print("-- process_setup_ext")
-        self.process_setup_ext(cfg, build_path, "_setup_ext.txt")
         if hasattr(self, "extensions"):
             print("-- process_extensions")
             self.process_extensions(cfg, build_path, build_lib)
@@ -617,6 +603,8 @@ def get_ext_modules():
                 "False",
             ):
                 add_cuda = False
+        elif "--use-cuda=0" in sys.argv:
+            add_cuda = False
         elif os.environ.get("USE_CUDA", None) in {0, "0", False}:
             add_cuda = False
         if add_cuda:
@@ -660,7 +648,6 @@ def get_ext_modules():
 # beginning of setup
 ######################
 
-DEFAULT_ORT_VERSION = "1.15.1"
 here = os.path.dirname(__file__)
 if here == "":
     here = "."

@@ -20,7 +20,7 @@ classifiers = [
 ]
 dependencies = ["numpy", "onnx>=1.14.0", "scipy"]
 description = "Extends the list of supported operators in onnx reference implementation and onnxruntime, or implements faster versions in C++."
-keywords = ["onnx", "cmake", "cython", "scikit-learn", "machine-learning"]
+keywords = ["onnx", "cython", "scikit-learn", "machine-learning"]
 license = {file = "LICENSE.txt"}
 name = "mlinsights"
 readme = "README.rst"
@@ -67,6 +67,8 @@ dev = [
 
 [build-system]
 requires = [
+    "abi3audit; sys_platform == 'linux'",
+    "auditwheel-symbols; sys_platform == 'linux'",
     "Cython",
     "cmake",
     "numpy",
@@ -87,6 +89,7 @@ ignore_directives = [
     "gdot",
     "ifconfig",
     "image-sg",
+    "plot",
     "runpython",
 ]
 ignore_roles = ["epkg", "pr"]
@@ -105,20 +108,47 @@ manylinux-x86_64-image = "manylinux2014"
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* pypy* *musllinux*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp312-* pypy* *musllinux*"
+manylinux-x86_64-image = "manylinux2014"
+before-build = "pip install auditwheel-symbols abi3audit"
+build-verbosity = 1
+repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit {wheel} ; auditwheel repair -w {dest_dir} {wheel} || exit 0"
+# repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} || exit 0"
 
 [tool.cibuildwheel.macos]
 archs = ["x86_64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp310-* pypy* pp*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp312-* pypy* pp*"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* pypy*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp312-* pypy*"
 
 [tool.cython-lint]
 max-line-length = 88
+
+[tool.mypy]
+ignore_missing_imports = true
+packages = ["mlinsights"]
+exclude = [
+    "^_doc/examples",  # skips examples in the documentation
+    "^_unittests",  # skips unit tests
+    "^build",  # skips build
+    "^dist",  # skips dist
+]
+
+[[tool.mypy.overrides]]
+module = ["onnx_extended._command_lines"]
+disable_error_code = [
+    "attr-defined",
+    "operator",
+    "arg-type",
+    "assignment",
+    "var-annotated",
+    "return-value",
+    "name-defined",
+]
 
 [tool.ruff]
 exclude = [".eggs", ".git", "build", "dist"]

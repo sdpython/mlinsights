@@ -1,12 +1,12 @@
-autopep8
 black
 chardet
 clang-format
 cmakelang
 coverage
-cython
+cython>=3.0
 cython-lint
-furo
+furo; sys_platform == 'linux'
+isort
 llvmlite
 matplotlib
 memory_profiler>=0.55
@@ -15,14 +15,16 @@ numba
 pybind11
 pytest
 pytest-cov
+pytest-subtests
 rstcheck[sphinx,toml]
 ruff
 seaborn
 skl2onnx>=1.14.1
-sphinx
-sphinx-gallery
-sphinx-issues
-sphinx-runpython
+sphinx<7.2; sys_platform == 'linux'  # furo still fails with sphinx==7.2.0 (issue unused furo.css)
+sphinx-gallery; sys_platform == 'linux'
+sphinx-issues; sys_platform == 'linux'
+git+https://github.com/sdpython/sphinx-runpython.git
+toml; python_version < '3.11'
 tomli
 torch
 torchvision

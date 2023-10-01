@@ -2,6 +2,12 @@ name: Build Wheel MacOS
 
 on:
   push:
+#    branches:
+#      - main
+#      - 'releases/**'
+  pull_request:
+    types:
+      - closed
     branches:
       - main
       - 'releases/**'
@@ -30,9 +36,6 @@ jobs:
 
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
-        # to supply options, put them in 'env', like:
-        #env:
-        #  CIBW_BUILD: cp311*
 
       - uses: actions/upload-artifact@v3
         with:

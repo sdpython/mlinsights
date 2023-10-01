@@ -82,7 +82,11 @@ endfunction()
 #
 function(cuda_pybind11_add_module name pybindfile)
   local_pybind11_add_module(${name} OpenMP::OpenMP_CXX ${pybindfile} ${ARGN})
-  target_compile_definitions(${name} PRIVATE CUDA_VERSION=${CUDA_VERSION_INT})
+  target_compile_definitions(
+    ${name}
+    PRIVATE
+    CUDA_VERSION=${CUDA_VERSION_INT}
+    PYTHON_MANYLINUX=${PYTHON_MANYLINUX})
   target_include_directories(${name} PRIVATE ${CUDA_INCLUDE_DIRS})
   message(STATUS "    LINK ${name} <- stdc++ ${CUDA_LIBRARIES}")
   target_link_libraries(${name} PRIVATE stdc++ ${CUDA_LIBRARIES})
