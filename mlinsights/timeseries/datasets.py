@@ -1,7 +1,3 @@
-"""
-@file
-@brief Datasets for timeseries.
-"""
 import datetime
 import numpy
 import pandas
@@ -11,10 +7,10 @@ def artificial_data(dt1, dt2, minutes=1):
     """
     Generates articial data every minutes.
 
-    @param      dt1     first date
-    @param      dt2     second date
-    @param      minutes interval between two observations
-    @return             dataframe
+    :param dt1: first date
+    :param dt2: second date
+    :param minutes: interval between two observations
+    :return: dataframe
 
     .. runpython::
         :showcode:
@@ -47,9 +43,9 @@ def artificial_data(dt1, dt2, minutes=1):
             y = sat(x)
         else:
             y = fxweek(x)
-        data.append({'time': dt1, 'y': y})
+        data.append({"time": dt1, "y": y})
         dt1 += dt
     df = pandas.DataFrame(data)
-    df['y'] += numpy.random.randn(df.shape[0]) * 0.1
-    df['time'] = pandas.DatetimeIndex(df['time'])
+    df["y"] += numpy.random.randn(df.shape[0]) * 0.1
+    df["time"] = pandas.DatetimeIndex(df["time"])
     return df

@@ -1,7 +1,3 @@
-"""
-@file
-@brief Timeseries preprocessing.
-"""
 import numpy
 from .base import BaseReciprocalTimeSeriesTransformer
 
@@ -9,12 +5,11 @@ from .base import BaseReciprocalTimeSeriesTransformer
 class TimeSeriesDifference(BaseReciprocalTimeSeriesTransformer):
     """
     Computes timeseries differences.
+
+    :param degree: number of differences
     """
 
     def __init__(self, degree=1):
-        """
-        @param      degree      number of differences
-        """
         BaseReciprocalTimeSeriesTransformer.__init__(self, degree)
 
     @property
@@ -28,10 +23,10 @@ class TimeSeriesDifference(BaseReciprocalTimeSeriesTransformer):
         """
         Stores the first values.
         """
-        self.X_ = X[:self.degree].copy()
-        self.y_ = y[:self.degree].copy()
+        self.X_ = X[: self.degree].copy()
+        self.y_ = y[: self.degree].copy()
         for n in range(1, self.degree):
-            self.y_[n:] -= self.y_[n - 1:-1]
+            self.y_[n:] -= self.y_[n - 1 : -1]
         return self
 
     def transform(self, X, y, sample_weight=None):
@@ -56,28 +51,26 @@ class TimeSeriesDifference(BaseReciprocalTimeSeriesTransformer):
 
 class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
     """
-    Computes the reverse of @see cl TimeSeriesDifference.
+    Computes the reverse of :class:`TimeSeriesDifference`.
+
+    :param estimator: of type :class:`TimeSeriesDifference`
     """
 
     def __init__(self, estimator):
-        """
-        @param      estimator   of type @see cl TimeSeriesDifference
-        """
-        BaseReciprocalTimeSeriesTransformer.__init__(
-            self, estimator.context_length)
+        BaseReciprocalTimeSeriesTransformer.__init__(self, estimator.context_length)
         if not isinstance(estimator, TimeSeriesDifference):
-            raise TypeError(  # pragma: no cover
+            raise TypeError(
                 f"estimator must be of type TimeSeriesDifference not "
-                f"{type(estimator)}.")
+                f"{type(estimator)}."
+            )
         self.estimator = estimator
 
     def fit(self, X=None, y=None, sample_weight=None):
         """
         Checks that estimator is fitted.
         """
-        if not hasattr(self.estimator, 'X_'):
-            raise RuntimeError(  # pragma: no cover
-                "Estimator is not fitted.")
+        if not hasattr(self.estimator, "X_"):
+            raise RuntimeError("Estimator is not fitted.")
         self.estimator_ = self.estimator
         return self
 
@@ -107,7 +100,7 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
         ny[r0:, :] = y
 
         for i in range(self.estimator_.degree):
-            numpy.cumsum(ny[r0 - i - 1:, :], axis=0, out=ny[r0 - i - 1:, :])
+            numpy.cumsum(ny[r0 - i - 1 :, :], axis=0, out=ny[r0 - i - 1 :, :])
         if squeeze:
             ny = numpy.squeeze(ny)
         if sample_weight is None:

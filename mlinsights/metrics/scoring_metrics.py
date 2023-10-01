@@ -1,18 +1,12 @@
-"""
-@file
-@brief Metrics to compare machine learning.
-"""
 import numpy
 from sklearn.metrics import r2_score
 
-_known_functions = {
-    'exp': numpy.exp,
-    'log': numpy.log
-}
+_known_functions = {"exp": numpy.exp, "log": numpy.log}
 
 
-def comparable_metric(metric_function, y_true, y_pred,
-                      tr="log", inv_tr='exp', **kwargs):
+def comparable_metric(
+    metric_function, y_true, y_pred, tr="log", inv_tr="exp", **kwargs
+):
     """
     Applies function on either the true target or/and the predictions
     before computing r2 score.
@@ -33,8 +27,7 @@ def comparable_metric(metric_function, y_true, y_pred,
     if inv_tr is not None and not callable(inv_tr):
         raise TypeError("Argument inv_tr must be callable.")
     if tr is None and inv_tr is None:
-        raise ValueError(
-            "tr and inv_tr cannot be both None at the same time.")
+        raise ValueError("tr and inv_tr cannot be both None at the same time.")
     if tr is None:
         return metric_function(y_true, inv_tr(y_pred), **kwargs)
     if inv_tr is None:
@@ -42,9 +35,15 @@ def comparable_metric(metric_function, y_true, y_pred,
     return metric_function(tr(y_true), inv_tr(y_pred), **kwargs)
 
 
-def r2_score_comparable(y_true, y_pred, *, sample_weight=None,
-                        multioutput='uniform_average',
-                        tr=None, inv_tr=None):
+def r2_score_comparable(
+    y_true,
+    y_pred,
+    *,
+    sample_weight=None,
+    multioutput="uniform_average",
+    tr=None,
+    inv_tr=None,
+):
     """
     Applies function on either the true target or/and the predictions
     before computing r2 score.
@@ -87,7 +86,12 @@ def r2_score_comparable(y_true, y_pred, *, sample_weight=None,
         print('r2 log comparable', r2_score_comparable(
             y_test, model2.predict(X_test), inv_tr="exp"))
     """
-    return comparable_metric(r2_score, y_true, y_pred,
-                             sample_weight=sample_weight,
-                             multioutput=multioutput,
-                             tr=tr, inv_tr=inv_tr)
+    return comparable_metric(
+        r2_score,
+        y_true,
+        y_pred,
+        sample_weight=sample_weight,
+        multioutput=multioutput,
+        tr=tr,
+        inv_tr=inv_tr,
+    )

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a *transform* which follows the smae API
-as every :epkg:`scikit-learn` transform.
-"""
 from .sklearn_base import SkBase
 
 
@@ -45,9 +40,10 @@ class SkBaseTransform(SkBase):
         """
         Trains and transforms the data.
 
-        @param      X               features
-        @param      y               targets
-        @return                     self
+        :param X: features
+        :param y: targets
+        :param kwargs: additional fitting parameters
+        :return: self
         """
         self.fit(X, y=y, **kwargs)
         return self.transform(X)

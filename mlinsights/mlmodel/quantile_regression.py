@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a quantile linear regression.
-"""
 import numpy
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
@@ -13,7 +9,7 @@ class QuantileLinearRegression(LinearRegression):
     Quantile Linear Regression or linear regression
     trained with norm :epkg:`L1`. This class inherits from
     :epkg:`sklearn:linear_models:LinearRegression`.
-    See notebook :ref:`quantileregressionrst`.
+    See example :ref:`l-quantile-regression-example`.
 
     Norm :epkg:`L1` is chosen if ``quantile=0.5``, otherwise,
     for *quantile=*:math:`\\rho`,
@@ -27,44 +23,55 @@ class QuantileLinearRegression(LinearRegression):
     :math:`|f(X_i) - Y_i|^+= \\max(f(X_i) - Y_i, 0)`.
     :math:`f(i)` is the prediction, :math:`Y_i` the expected
     value.
+
+    :param fit_intercept: boolean, optional, default True
+        whether to calculate the intercept for this model. If set
+        to False, no intercept will be used in calculations
+        (e.g. data is expected to be already centered).
+    :param copy_X: boolean, optional, default True
+        If True, X will be copied; else, it may be overwritten.
+    :param n_jobs: int, optional, default 1
+        The number of jobs to use for the computation.
+        If -1 all CPUs are used. This will only provide speedup for
+        n_targets > 1 and sufficient large problems.
+    :param max_iter: int, optional, default 1
+        The number of iteration to do at training time.
+        This parameter is specific to the quantile regression.
+    :param delta: float, optional, default 0.0001
+        Used to ensure matrices has an inverse
+        (*M + delta*I*).
+    :param quantile: float, by default 0.5,
+        determines which quantile to use
+        to estimate the regression.
+    :param positive: when set to True, forces the coefficients to be positive.
+    :param verbose: bool, optional, default False
+        Prints error at each iteration of the optimisation.
     """
 
-    def __init__(self, fit_intercept=True, copy_X=True,
-                 n_jobs=1, delta=0.0001, max_iter=10, quantile=0.5,
-                 positive=False, verbose=False):
-        """
-        :param fit_intercept: boolean, optional, default True
-            whether to calculate the intercept for this model. If set
-            to False, no intercept will be used in calculations
-            (e.g. data is expected to be already centered).
-        :param copy_X: boolean, optional, default True
-            If True, X will be copied; else, it may be overwritten.
-        :param n_jobs: int, optional, default 1
-            The number of jobs to use for the computation.
-            If -1 all CPUs are used. This will only provide speedup for
-            n_targets > 1 and sufficient large problems.
-        :param max_iter: int, optional, default 1
-            The number of iteration to do at training time.
-            This parameter is specific to the quantile regression.
-        :param delta: float, optional, default 0.0001
-            Used to ensure matrices has an inverse
-            (*M + delta*I*).
-        :param quantile: float, by default 0.5,
-            determines which quantile to use
-            to estimate the regression.
-        :param positive: when set to True, forces the coefficients to be positive.
-        :param verbose: bool, optional, default False
-            Prints error at each iteration of the optimisation.
-        """
+    def __init__(
+        self,
+        fit_intercept=True,
+        copy_X=True,
+        n_jobs=1,
+        delta=0.0001,
+        max_iter=10,
+        quantile=0.5,
+        positive=False,
+        verbose=False,
+    ):
         try:
             LinearRegression.__init__(
-                self, fit_intercept=fit_intercept,
-                copy_X=copy_X, n_jobs=n_jobs, positive=positive)
+                self,
+                fit_intercept=fit_intercept,
+                copy_X=copy_X,
+                n_jobs=n_jobs,
+                positive=positive,
+            )
         except TypeError:
             # scikit-learn<0.24
             LinearRegression.__init__(
-                self, fit_intercept=fit_intercept,
-                copy_X=copy_X, n_jobs=n_jobs)
+                self, fit_intercept=fit_intercept, copy_X=copy_X, n_jobs=n_jobs
+            )
         self.max_iter = max_iter
         self.verbose = verbose
         self.delta = delta
@@ -112,16 +119,16 @@ class QuantileLinearRegression(LinearRegression):
             "compute z"
             deltas = numpy.ones(X.shape[0]) * delta
             epsilon, mult = QuantileLinearRegression._epsilon(
-                Y, Xm @ beta, self.quantile)
-            r = numpy.reciprocal(numpy.maximum(  # pylint: disable=E1111
-                epsilon, deltas))  # pylint: disable=E1111
+                Y, Xm @ beta, self.quantile
+            )
+            r = numpy.reciprocal(numpy.maximum(epsilon, deltas))
             if mult is not None:
                 epsilon *= 1 - mult
                 r *= 1 - mult
             return r, epsilon
 
         if not isinstance(X, numpy.ndarray):
-            if hasattr(X, 'values'):
+            if hasattr(X, "values"):
                 X = X.values
             else:
                 raise TypeError("X must be an array or a dataframe.")
@@ -132,13 +139,17 @@ class QuantileLinearRegression(LinearRegression):
             Xm = X
 
         try:
-            clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                                   n_jobs=self.n_jobs,
-                                   positive=self.positive)
+            clr = LinearRegression(
+                fit_intercept=False,
+                copy_X=self.copy_X,
+                n_jobs=self.n_jobs,
+                positive=self.positive,
+            )
         except AttributeError:
             # scikit-learn<0.24
-            clr = LinearRegression(fit_intercept=False, copy_X=self.copy_X,
-                                   n_jobs=self.n_jobs)
+            clr = LinearRegression(
+                fit_intercept=False, copy_X=self.copy_X, n_jobs=self.n_jobs
+            )
 
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0
@@ -153,8 +164,7 @@ class QuantileLinearRegression(LinearRegression):
             E = epsilon.sum()
             self.n_iter_ = i
             if self.verbose:
-                print(  # pragma: no cover
-                    f'[QuantileLinearRegression.fit] iter={i + 1} error={E}')
+                print(f"[QuantileLinearRegression.fit] iter={i + 1} error={E}")
             if lastE is not None and lastE == E:
                 break
             lastE = E
@@ -173,10 +183,10 @@ class QuantileLinearRegression(LinearRegression):
         diff = y_pred - y_true
         epsilon = numpy.abs(diff)
         if quantile != 0.5:
-            sign = numpy.sign(diff)  # pylint: disable=E1111
+            sign = numpy.sign(diff)
             mult = numpy.ones(y_true.shape[0])
-            mult[sign > 0] *= quantile  # pylint: disable=W0143
-            mult[sign < 0] *= (1 - quantile)  # pylint: disable=W0143
+            mult[sign > 0] *= quantile
+            mult[sign < 0] *= 1 - quantile
         else:
             mult = None
         if sample_weight is not None:
@@ -200,7 +210,8 @@ class QuantileLinearRegression(LinearRegression):
 
         if self.quantile != 0.5:
             epsilon, mult = QuantileLinearRegression._epsilon(
-                y, pred, self.quantile, sample_weight)
+                y, pred, self.quantile, sample_weight
+            )
             if mult is not None:
                 epsilon *= mult * 2
             return epsilon.sum() / X.shape[0]

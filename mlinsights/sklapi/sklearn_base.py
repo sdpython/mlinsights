@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a *learner* or a *transform* which follows the same API
-as every :epkg:`scikit-learn` transform.
-"""
+from typing import Any, Dict
 import textwrap
 import warnings
 from .sklearn_parameters import SkLearnParameters
@@ -18,7 +14,7 @@ class SkBase:
     def __init__(self, **kwargs):
         """
         Stores the parameters, see
-        @see cl SkLearnParameters, it keeps a copy of
+        :class:`SkLearnParameters`, it keeps a copy of
         the parameters to easily implements method *get_params*
         and clones a model.
         """
@@ -33,7 +29,7 @@ class SkBase:
         @param      sample_weight   weight
         @return                     self
         """
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError()
 
     def get_params(self, deep=True):
         """
@@ -80,14 +76,16 @@ class SkBase:
         return SkBase.compare_params(p1, p2, exc=exc)
 
     @staticmethod
-    def compare_params(p1, p2, exc=True):
+    def compare_params(
+        p1: Dict[str, Any], p2: Dict[str, Any], exc: bool = True
+    ) -> bool:
         """
         Compares two sets of parameters.
 
-        @param      p1      dictionary
-        @param      p2      dictionary
-        @param      exc     raises an exception if error is met
-        @return             boolean
+        :param p1: dictionary
+        :param p2: dictionary
+        :param exc: raises an exception if error is met
+        :return: boolean
         """
         if p1 == p2:
             return True
@@ -95,8 +93,7 @@ class SkBase:
             if k not in p2:
                 if exc:
                     raise KeyError(f"Key '{k}' was removed.")
-                else:
-                    return False
+                return False
         for k in p2:
             if k not in p1:
                 if exc:
@@ -104,39 +101,41 @@ class SkBase:
                 return False
         for k in sorted(p1):
             v1, v2 = p1[k], p2[k]
-            if hasattr(v1, 'test_equality'):
+            if hasattr(v1, "test_equality"):
                 b = v1.test_equality(v2, exc=exc)
                 if exc and v1 is not v2:
-                    warnings.warn(  # pragma: no cover
+                    warnings.warn(
                         f"v2 is a clone of v1 not v1 itself for key "
-                        f"{k!r} and class {type(v1)}.")
+                        f"{k!r} and class {type(v1)}."
+                    )
             elif isinstance(v1, list) and isinstance(v2, list) and len(v1) == len(v2):
                 b = True
                 for e1, e2 in zip(v1, v2):
-                    if hasattr(e1, 'test_equality'):
+                    if hasattr(e1, "test_equality"):
                         b = e1.test_equality(e2, exc=exc)
                         if not b:
                             return b
             elif isinstance(v1, dict) and isinstance(v2, dict) and set(v1) == set(v2):
                 b = True
                 for e1, e2 in zip(sorted(v1.items()), sorted(v2.items())):
-                    if hasattr(e1[1], 'test_equality'):
+                    if hasattr(e1[1], "test_equality"):
                         b = e1[1].test_equality(e2[1], exc=exc)
                         if not b:
                             return b
                     elif e1[1] != e2[1]:
                         return False
             elif hasattr(v1, "get_params") and hasattr(v2, "get_params"):
-                b = SkBase.compare_params(v1.get_params(
-                    deep=False), v2.get_params(deep=False), exc=exc)
+                b = SkBase.compare_params(
+                    v1.get_params(deep=False), v2.get_params(deep=False), exc=exc
+                )
             else:
                 b = v1 == v2
             if not b:
                 if exc:
                     raise ValueError(
-                        f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}")
-                else:
-                    return False
+                        f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}"
+                    )
+                return False
         return True
 
     def __repr__(self):

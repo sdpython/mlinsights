@@ -10,15 +10,18 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.exceptions import ConvergenceWarning
 from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import LinkedMLPRegressor
-from mlinsights.mlmodel import test_sklearn_pickle, test_sklearn_clone, test_sklearn_grid_search_cv
+from mlinsights.mlmodel import (
+    test_sklearn_pickle,
+    test_sklearn_clone,
+    test_sklearn_grid_search_cv,
+)
 
 
 class TestLinkedMLPRegression(ExtTestCase):
-
     @ignore_warnings(ConvergenceWarning)
     def test_regression_diff(self):
         X = numpy.array([[0.1], [0.2], [0.3], [0.4], [0.5]])
-        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
+        Y = numpy.array([1.0, 1.1, 1.2, 10, 1.4])
         clr = MLPRegressor(hidden_layer_sizes=(3,))
         clr.fit(X, Y)
         clq = LinkedMLPRegressor(hidden_layer_sizes=(3,))
@@ -32,9 +35,10 @@ class TestLinkedMLPRegression(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_regression_linked_int(self):
-        X = numpy.array([[0.1, 0.11], [0.2, 0.21], [0.3, 0.31],
-                         [0.4, 0.41], [0.5, 0.51]])
-        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
+        X = numpy.array(
+            [[0.1, 0.11], [0.2, 0.21], [0.3, 0.31], [0.4, 0.41], [0.5, 0.51]]
+        )
+        Y = numpy.array([1.0, 1.1, 1.2, 10, 1.4])
         clr = MLPRegressor(hidden_layer_sizes=(3,))
         clr.fit(X, Y)
         clq = LinkedMLPRegressor(hidden_layer_sizes=(3,), linked=2)
@@ -48,15 +52,18 @@ class TestLinkedMLPRegression(ExtTestCase):
 
     @ignore_warnings(ConvergenceWarning)
     def test_regression_linked(self):
-        linked = [((0, 'c', 1, 2), (0, 'i', 0)),
-                  ((1, 'c', 0, 0), (1, 'c', 2, 0)),
-                  ((0, 'c', 1, 1), (0, 'c', 0, 2)),
-                  ((0, 'i', 2), (0, 'c', 0, 0)),
-                  ((1, 'i', 0), (1, 'c', 1, 0)),
-                  ((0, 'i', 1), (0, 'c', 0, 1))]
-        X = numpy.array([[0.1, 0.11], [0.2, 0.21], [0.3, 0.31],
-                         [0.4, 0.41], [0.5, 0.51]])
-        Y = numpy.array([1., 1.1, 1.2, 10, 1.4])
+        linked = [
+            ((0, "c", 1, 2), (0, "i", 0)),
+            ((1, "c", 0, 0), (1, "c", 2, 0)),
+            ((0, "c", 1, 1), (0, "c", 0, 2)),
+            ((0, "i", 2), (0, "c", 0, 0)),
+            ((1, "i", 0), (1, "c", 1, 0)),
+            ((0, "i", 1), (0, "c", 0, 1)),
+        ]
+        X = numpy.array(
+            [[0.1, 0.11], [0.2, 0.21], [0.3, 0.31], [0.4, 0.41], [0.5, 0.51]]
+        )
+        Y = numpy.array([1.0, 1.1, 1.2, 10, 1.4])
         clr = MLPRegressor(hidden_layer_sizes=(3,))
         clr.fit(X, Y)
         clq = LinkedMLPRegressor(hidden_layer_sizes=(3,), linked=linked)
@@ -79,10 +86,8 @@ class TestLinkedMLPRegression(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        test_sklearn_pickle(lambda: MLPRegressor(
-            hidden_layer_sizes=(3,)), X, Y)
-        test_sklearn_pickle(lambda: LinkedMLPRegressor(
-            hidden_layer_sizes=(3,)), X, Y)
+        test_sklearn_pickle(lambda: MLPRegressor(hidden_layer_sizes=(3,)), X, Y)
+        test_sklearn_pickle(lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)), X, Y)
 
     @ignore_warnings(ConvergenceWarning)
     def test_regression_clone(self):
@@ -96,14 +101,22 @@ class TestLinkedMLPRegression(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        self.assertRaise(lambda: test_sklearn_grid_search_cv(
-            lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)), X, Y), ValueError)
-        res = test_sklearn_grid_search_cv(lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)),
-                                          X, Y, learning_rate_init=[0.001, 0.0001])
-        self.assertIn('model', res)
-        self.assertIn('score', res)
-        self.assertGreater(res['score'], -1)
-        self.assertLesser(res['score'], 11)
+        self.assertRaise(
+            lambda: test_sklearn_grid_search_cv(
+                lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)), X, Y
+            ),
+            ValueError,
+        )
+        res = test_sklearn_grid_search_cv(
+            lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)),
+            X,
+            Y,
+            learning_rate_init=[0.001, 0.0001],
+        )
+        self.assertIn("model", res)
+        self.assertIn("score", res)
+        self.assertGreater(res["score"], -1)
+        self.assertLesser(res["score"], 11)
 
 
 if __name__ == "__main__":

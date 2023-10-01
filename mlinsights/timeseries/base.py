@@ -1,7 +1,3 @@
-"""
-@file
-@brief Base class for timeseries.
-"""
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from ..mlmodel.sklearn_transform_inv import BaseReciprocalTransformer
 from .metrics import ts_mape
@@ -26,7 +22,7 @@ class BaseReciprocalTimeSeriesTransformer(BaseReciprocalTransformer):
         """
         Stores the first values.
         """
-        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
+        raise NotImplementedError("Should be overwritten.")
 
     def transform(self, X, y, sample_weight=None, context=None):
         """
@@ -37,13 +33,13 @@ class BaseReciprocalTimeSeriesTransformer(BaseReciprocalTransformer):
         in the predictor is not related to the *y* series
         given to the *transform* method.
         """
-        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
+        raise NotImplementedError("Should be overwritten.")
 
     def get_fct_inv(self):
         """
         Returns the reverse tranform.
         """
-        raise NotImplementedError("Should be overwritten.")  # pragma: no cover
+        raise NotImplementedError("Should be overwritten.")
 
 
 class BaseTimeSeries(BaseEstimator):
@@ -54,39 +50,42 @@ class BaseTimeSeries(BaseEstimator):
     :math:`\\hat{Y_{t+d} = f(Y_{t-1}, ..., Y_{t-p})}`
     with *d* in *[delay1, delay2[* and
     :math:`1 \\leqslant p \\leqslant past`.
+
+    :param past: values to use to predict
+    :param delay1: the model computes the first prediction for
+        *time=t + delay1*
+    :param delay2: the model computes the last prediction for
+        *time=t + delay2* excluded
+    :param use_all_past: use all past features, not only the timeseries
+    :param preprocessing: preprocessing to apply before predicting,
+        only the timeseries itselves, it can be
+        a difference, it must be of type
+        :class:`BaseReciprocalTimeSeriesTransformer
+        <mlinsights.timeseries.base.BaseReciprocalTimeSeriesTransformer>`
     """
 
-    def __init__(self, past=1, delay1=1, delay2=2,
-                 use_all_past=False, preprocessing=None):
-        """
-        @param      past            values to use to predict
-        @param      delay1          the model computes the first prediction for
-                                    *time=t + delay1*
-        @param      delay2          the model computes the last prediction for
-                                    *time=t + delay2* excluded
-        @param      use_all_past    use all past features, not only the timeseries
-        @param      preprocessing   preprocessing to apply before predicting,
-                                    only the timeseries itselves, it can be
-                                    a difference, it must be of type
-                                    @see cl BaseReciprocalTimeSeriesTransformer
-        """
+    def __init__(
+        self, past=1, delay1=1, delay2=2, use_all_past=False, preprocessing=None
+    ):
         self.past = past
         self.delay1 = delay1
         self.delay2 = delay2
         self.use_all_past = use_all_past
         self.preprocessing = preprocessing
         if self.delay1 < 1:
-            raise ValueError("delay1 must be >= 1")  # pragma: no cover
+            raise ValueError("delay1 must be >= 1")
         if self.delay2 <= self.delay1:
-            raise ValueError("delay2 must be >= 1")  # pragma: no cover
+            raise ValueError("delay2 must be >= 1")
         if self.past < 0:
-            raise ValueError("past must be > 0")  # pragma: no cover
-        if (preprocessing is not None and
-                not isinstance(preprocessing, BaseReciprocalTimeSeriesTransformer)):
-            raise TypeError(  # pragma: no cover
+            raise ValueError("past must be > 0")
+        if preprocessing is not None and not isinstance(
+            preprocessing, BaseReciprocalTimeSeriesTransformer
+        ):
+            raise TypeError(
                 f"preprocessing must be of type "
                 f"'BaseReciprocalTimeSeriesTransformer' "
-                f"not {type(preprocessing)}.")
+                f"not {type(preprocessing)}."
+            )
 
     def _fit_preprocessing(self, X, y, sample_weight=None):
         """
@@ -123,9 +122,8 @@ class BaseTimeSeries(BaseEstimator):
         The *y* series is moved by *self.delay1* in the past.
         """
         if y is None:
-            raise RuntimeError("y cannot be None")  # pragma: no cover
-        X, y, sample_weight = build_ts_X_y(
-            self, X, y, sample_weight, same_rows=True)
+            raise RuntimeError("y cannot be None")
+        X, y, sample_weight = build_ts_X_y(self, X, y, sample_weight, same_rows=True)
         X, y, sample_weight = self._fit_preprocessing(X, y, sample_weight)
         return X, y, sample_weight
 
@@ -133,7 +131,7 @@ class BaseTimeSeries(BaseEstimator):
         """
         Tells if there is one preprocessing.
         """
-        return hasattr(self, 'preprocessing_') and self.preprocessing_ is not None
+        return hasattr(self, "preprocessing_") and self.preprocessing_ is not None
 
     def _applies_preprocessing(self, X, y, sample_weight):
         """
@@ -163,13 +161,12 @@ class TimeSeriesRegressorMixin(RegressorMixin):
 
     def score(self, X, y, sample_weight=None):
         """
-        Scores the prediction using
-        @see fn ts_mape
+        Scores the prediction using :func:`ts_mape`.
 
         :param X: features
         :param y: expected values
         :param sample_weight: sample weight
-        :return: see @see fn ts_mape
+        :return: see :func:`ts_mape`
         """
         pred = self.predict(X, y)
         return ts_mape(y, pred, sample_weight=sample_weight)

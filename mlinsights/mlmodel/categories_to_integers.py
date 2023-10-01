@@ -1,8 +1,3 @@
-"""
-@file
-@brief Implements a transformation which can be put in a pipeline to transform categories in
-integers.
-"""
 import numpy
 import pandas
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -11,12 +6,21 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class CategoriesToIntegers(BaseEstimator, TransformerMixin):
     """
     Does something similar to what
-    `DictVectorizer <http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.DictVectorizer.html>`_
+    `DictVectorizer
+    <http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.DictVectorizer.html>`_
     does but in a transformer. The method *fit* retains all categories,
     the method *transform* transforms categories into integers.
     Categories are sorted by columns. If the method *transform* tries to convert
     a categories which was not seen by method *fit*, it can raise an exception
     or ignore it and replace it by zero.
+
+    :param columns: specify a columns selection
+    :param remove: modalities to remove
+    :param skip_errors: skip when a new categories appear (no 1)
+    :param single: use a single column per category, do not multiply them for each value
+
+    The logging function displays a message when a new dense and big matrix
+    is created when it should be sparse. A sparse matrix should be allocated instead.
 
     .. exref::
         :title: DictVectorizer or CategoriesToIntegers
@@ -29,7 +33,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
 
             import pandas
             from mlinsights.mlmodel import CategoriesToIntegers
-            df = pandas.DataFrame( [{"cat": "a"}, {"cat": "b"}] )
+            df = pandas.DataFrame([{"cat": "a"}, {"cat": "b"}])
             trans = CategoriesToIntegers()
             trans.fit(df)
             newdf = trans.transform(df)
@@ -37,19 +41,11 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, columns=None, remove=None, skip_errors=False, single=False):
-        """
-        @param      columns         specify a columns selection
-        @param      remove          modalities to remove
-        @param      skip_errors     skip when a new categories appear (no 1)
-        @param      single          use a single column per category, do not multiply them for each value
-
-        The logging function displays a message when a new dense and big matrix
-        is created when it should be sparse. A sparse matrix should be allocated instead.
-        """
         BaseEstimator.__init__(self)
         TransformerMixin.__init__(self)
-        self.columns = columns if isinstance(
-            columns, list) or columns is None else [columns]
+        self.columns = (
+            columns if isinstance(columns, list) or columns is None else [columns]
+        )
         self.skip_errors = skip_errors
         self.remove = remove
         self.single = single
@@ -69,16 +65,15 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             Training data
         :param y: iterable, default=None
             Training targets.
+        :param fit_params: additional fit params
         :return: self
         """
         if not isinstance(X, pandas.DataFrame):
-            raise TypeError(  # pragma: no cover
-                f"this transformer only accept Dataframes, not {type(X)}")
+            raise TypeError(f"this transformer only accept Dataframes, not {type(X)}")
         if self.columns:
             columns = self.columns
         else:
-            columns = [c for c, d in zip(
-                X.columns, X.dtypes) if d in (object,)]
+            columns = [c for c, d in zip(X.columns, X.dtypes) if d in (object,)]
 
         self._fit_columns = columns
         max_cat = max(len(X) // 2 + 1, 10000)
@@ -88,10 +83,12 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             distinct = set(X[c].dropna())
             nb = len(distinct)
             if nb >= max_cat:
-                raise ValueError(  # pragma: no cover
-                    f"Too many categories ({nb}) for one column '{c}' max_cat={max_cat}")
-            self._categories[c] = dict((c, i)
-                                       for i, c in enumerate(list(sorted(distinct))))
+                raise ValueError(
+                    f"Too many categories ({nb}) for one column '{c}' max_cat={max_cat}"
+                )
+            self._categories[c] = dict(
+                (c, i) for i, c in enumerate(list(sorted(distinct)))
+            )
         self._schema = self._build_schema()
         return self
 
@@ -107,8 +104,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         new_vector = {}
         last = 0
         for c, v in self._categories.items():
-            sch = [(_[1], f"{c}={_[1]}")
-                   for _ in sorted((n, d) for d, n in v.items())]
+            sch = [(_[1], f"{c}={_[1]}") for _ in sorted((n, d) for d, n in v.items())]
             if self.remove:
                 sch = [d for d in sch if d[1] not in self.remove]
             position[c] = last
@@ -118,7 +114,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
 
         return schema, position, new_vector
 
-    def transform(self, X, y=None, **fit_params):
+    def transform(self, X, y=None):
         """
         Transforms categories in numerical features based on the list
         of categories found by method *fit*.
@@ -132,8 +128,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         :return: DataFrame, *X* with categories.
         """
         if not isinstance(X, pandas.DataFrame):
-            raise TypeError(  # pragma: no cover
-                f"X is not a dataframe: {type(X)}")
+            raise TypeError(f"X is not a dataframe: {type(X)}")
 
         if self.single:
             b = not self.skip_errors
@@ -148,12 +143,13 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     return numpy.nan
                 if not self.skip_errors:
                     lv = list(sorted(vec))
-                    if len(lv) > 20:  # pragma: no cover
+                    if len(lv) > 20:
                         lv = lv[:20]
                         lv.append("...")
-                    raise ValueError(  # pragma: no cover
+                    raise ValueError(
                         "Unable to find category value %r type(v)=%r "
-                        "among\n%s" % (v, type(v), '\n'.join(lv)))
+                        "among\n%s" % (v, type(v), "\n".join(lv))
+                    )
                 return numpy.nan
 
             sch, pos, new_vector = self._schema
@@ -180,13 +176,13 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     if v not in vec[k]:
                         if b:
                             lv = list(sorted(vec[k]))
-                            if len(lv) > 20:  # pragma: no cover
+                            if len(lv) > 20:
                                 lv = lv[:20]
                                 lv.append("...")
-                            raise ValueError(  # pragma: no cover
+                            raise ValueError(
                                 "Unable to find category value %r: %r "
-                                "type(v)=%r among\n%s" % (
-                                    k, v, type(v), '\n'.join(lv)))
+                                "type(v)=%r among\n%s" % (k, v, type(v), "\n".join(lv))
+                            )
                     else:
                         p = pos[k] + vec[k][v]
                     res[i, p] = 1.0
@@ -210,6 +206,7 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
             Training data
         :param y: iterable, default=None
             Training targets.
+        :param fit_params: additional fitting parameters
         :return: Dataframe, *X* with categories.
         """
         return self.fit(X, y=y, **fit_params).transform(X, y)

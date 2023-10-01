@@ -1,13 +1,7 @@
-"""
-@file
-@brief Helpers to investigate a tree structure.
-
-.. versionadded:: 0.4
-"""
 import numpy
-from sklearn.tree._tree import Tree  # pylint: disable=E0611
+from sklearn.tree._tree import Tree
 from sklearn.tree import DecisionTreeRegressor
-from ._tree_digitize import tree_add_node  # pylint: disable=E0611
+from ._tree_digitize import tree_add_node
 
 
 def digitize2tree(bins, right=False):
@@ -52,14 +46,9 @@ def digitize2tree(bins, right=False):
         print(expected, pred)
         print("Tree:")
         print(export_text(tree, feature_names=['x']))
-
-    See also example :ref:`l-example-digitize`.
-
-    .. versionadded:: 0.4
     """
     if not right:
-        raise RuntimeError(
-            f"right must be True not right={right!r}")
+        raise RuntimeError(f"right must be True not right={right!r}")
     ascending = len(bins) <= 1 or bins[0] < bins[1]
 
     if not ascending:
@@ -77,15 +66,12 @@ def digitize2tree(bins, right=False):
 
     def add_root(index):
         if index < 0 or index >= len(bins):
-            raise IndexError(  # pragma: no cover
-                "Unexpected index %d / len(bins)=%d." % (
-                    index, len(bins)))
+            raise IndexError("Unexpected index %d / len(bins)=%d." % (index, len(bins)))
         parent = -1
         is_left = False
         is_leaf = False
         threshold = bins[index]
-        n = tree_add_node(
-            tree, parent, is_left, is_leaf, 0, threshold, 0, 1, 1.)
+        n = tree_add_node(tree, parent, is_left, is_leaf, 0, threshold, 0, 1, 1.0, 0)
         values.append(UNUSED)
         n_nodes.append(n)
         return n
@@ -96,7 +82,7 @@ def digitize2tree(bins, right=False):
             # it means j is the parent split
             if i == j:
                 # leaf
-                n = tree_add_node(tree, parent, is_left, True, 0, 0, 0, 1, 1.)
+                n = tree_add_node(tree, parent, is_left, True, 0, 0, 0, 1, 1.0, 0)
                 n_nodes.append(n)
                 values.append(i)
                 return n
@@ -104,8 +90,7 @@ def digitize2tree(bins, right=False):
                 # split
                 values.append(UNUSED)
                 th = bins[i]
-                n = tree_add_node(tree, parent, is_left,
-                                  False, 0, th, 0, 1, 1.)
+                n = tree_add_node(tree, parent, is_left, False, 0, th, 0, 1, 1.0, 0)
                 n_nodes.append(n)
                 add_nodes(n, i, i, True)
                 add_nodes(n, i, j, False)
@@ -115,8 +100,7 @@ def digitize2tree(bins, right=False):
                 values.append(UNUSED)
                 index = (i + j) // 2
                 th = bins[index]
-                n = tree_add_node(tree, parent, is_left,
-                                  False, 0, th, 0, 1, 1.)
+                n = tree_add_node(tree, parent, is_left, False, 0, th, 0, 1, 1.0, 0)
                 n_nodes.append(n)
                 add_nodes(n, i, index, True)
                 add_nodes(n, index, j, False)
@@ -126,7 +110,7 @@ def digitize2tree(bins, right=False):
             if i + 1 == j:
                 # leaf
                 values.append(j)
-                n = tree_add_node(tree, parent, is_left, True, 0, 0, 0, 1, 1.)
+                n = tree_add_node(tree, parent, is_left, True, 0, 0, 0, 1, 1.0, 0)
                 n_nodes.append(n)
                 return n
             if i + 1 < j:
@@ -134,14 +118,14 @@ def digitize2tree(bins, right=False):
                 values.append(UNUSED)
                 index = (i + j) // 2
                 th = bins[index]
-                n = tree_add_node(tree, parent, is_left,
-                                  False, 0, th, 0, 1, 1.)
+                n = tree_add_node(tree, parent, is_left, False, 0, th, 0, 1, 1.0, 0)
                 n_nodes.append(n)
                 add_nodes(n, i, index, True)
                 add_nodes(n, index, j, False)
                 return n
-        raise NotImplementedError(  # pragma: no cover
-            f"Unexpected case where i={i!r}, j={j!r}, is_left={is_left!r}.")
+        raise NotImplementedError(
+            f"Unexpected case where i={i!r}, j={j!r}, is_left={is_left!r}."
+        )
 
     index = len(bins) // 2
     add_root(index)
@@ -150,8 +134,7 @@ def digitize2tree(bins, right=False):
 
     cl = DecisionTreeRegressor()
     cl.tree_ = tree
-    cl.tree_.value[:, 0, 0] = numpy.array(  # pylint: disable=E1137
-        values, dtype=numpy.float64)
+    cl.tree_.value[:, 0, 0] = numpy.array(values, dtype=numpy.float64)
     cl.n_outputs = 1
     cl.n_outputs_ = 1
     try:

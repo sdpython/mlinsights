@@ -1,9 +1,3 @@
-"""
-@file
-@brief Access to the C API of scikit-learn (decision tree)
-"""
-from libc.stdio cimport printf
-
 import numpy
 cimport numpy
 numpy.import_array()
@@ -24,16 +18,19 @@ cdef SIZE_t _tree_add_node(Tree tree,
                            double threshold,
                            double impurity,
                            SIZE_t n_node_samples,
-                           double weighted_n_node_samples):
+                           double weighted_n_node_samples,
+                           char missing_go_to_left):
     if parent == -1:
         parent = TREE_UNDEFINED
     return tree._add_node(parent, is_left, is_leaf, feature,
                           threshold, impurity,
-                          n_node_samples, weighted_n_node_samples)
+                          n_node_samples, weighted_n_node_samples,
+                          missing_go_to_left)
 
 
 def tree_add_node(tree, parent, is_left, is_leaf, feature, threshold,
-                  impurity, n_node_samples, weighted_n_node_samples):
+                  impurity, n_node_samples, weighted_n_node_samples,
+                  missing_go_to_left):
     """
     Adds a node to tree.
 
@@ -45,6 +42,8 @@ def tree_add_node(tree, parent, is_left, is_leaf, feature, threshold,
     :param impurity: impurity
     :param n_node_samples: number of samples this node represents
     :param weighted_n_node_samples: node weight
+    :param missing_go_to_left: whether features have missing values
     """
     return _tree_add_node(tree, parent, is_left, is_leaf, feature, threshold,
-                          impurity, n_node_samples, weighted_n_node_samples)
+                          impurity, n_node_samples, weighted_n_node_samples,
+                          missing_go_to_left)

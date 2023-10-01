@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements class @see cl SkBaseClassifier.
-"""
 from sklearn.metrics import accuracy_score
 from .sklearn_base_learner import SkBaseLearner
 
@@ -22,10 +18,12 @@ class SkBaseClassifier(SkBaseLearner):
         """
         Returns the mean accuracy on the given test data and labels.
 
-        @param      X               Training data, numpy array or sparse matrix of shape [n_samples,n_features]
-        @param      y               Target values, numpy array of shape [n_samples, n_targets] (optional)
-        @param      sample_weight   Weight values, numpy array of shape [n_samples, n_targets] (optional)
-        @return                     score : float, Mean accuracy of self.predict(X) wrt. y.
+        :param X: Training data, numpy array or sparse matrix of
+            shape [n_samples,n_features]
+        :param y: Target values, numpy array of shape [n_samples, n_targets] (optional)
+        :param sample_weight: Weight values, numpy array of
+            shape [n_samples, n_targets] (optional)
+        :return: score : float, Mean accuracy of self.predict(X) wrt. y.
         """
         return accuracy_score(y, self.predict(X), sample_weight=sample_weight)
 
@@ -33,7 +31,8 @@ class SkBaseClassifier(SkBaseLearner):
         """
         Returns probability estimates for the test data X.
 
-        @param      X       Training data, numpy array or sparse matrix of shape [n_samples,n_features]
-        @return             array, shape = (n_samples,.), Returns predicted values.
+        :param X: Training data, numpy array or sparse matrix of
+            shape [n_samples,n_features]
+        :return: array, shape = (n_samples,.), Returns predicted values.
         """
         raise NotImplementedError()

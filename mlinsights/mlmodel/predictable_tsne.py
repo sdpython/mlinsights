@@ -1,7 +1,3 @@
-"""
-@file
-@brief Implements a predicatable *t-SNE*.
-"""
 import inspect
 from sklearn.base import BaseEstimator, TransformerMixin, clone
 from sklearn.manifold import TSNE
@@ -18,7 +14,7 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
     `fit_transform <https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE.fit_transform>`_.
     This example proposes a way to train a machine learned model
     which approximates the outputs of a :epkg:`TSNE` transformer.
-    Notebooks :ref:`predictabletsnerst` gives an example on how to
+    Example :ref:`l-predictable-tsne-example` gives an example on how to
     use this class.
 
     :param normalizer: None by default
@@ -27,12 +23,18 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
     :param normalize: normalizes the outputs, centers and normalizes
         the output of the *t-SNE* and applies that same
         normalization to he prediction of the estimator
-    :param keep_tsne_output: if True, keep raw outputs of
+    :param keep_tsne_outputs: if True, keep raw outputs of
         :epkg:`TSNE` is stored in member `tsne_outputs_`
     """
 
-    def __init__(self, normalizer=None, transformer=None, estimator=None,
-                 normalize=True, keep_tsne_outputs=False):
+    def __init__(
+        self,
+        normalizer=None,
+        transformer=None,
+        estimator=None,
+        normalize=True,
+        keep_tsne_outputs=False,
+    ):
         TransformerMixin.__init__(self)
         BaseEstimator.__init__(self)
         if estimator is None:
@@ -44,15 +46,18 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         self.normalizer = normalizer
         self.keep_tsne_outputs = keep_tsne_outputs
         if normalizer is not None and not hasattr(normalizer, "transform"):
-            raise AttributeError(  # pragma: no cover
-                f"normalizer {type(normalizer)} does not have a 'transform' method.")
+            raise AttributeError(
+                f"normalizer {type(normalizer)} does not have a 'transform' method."
+            )
         if not hasattr(transformer, "fit_transform"):
-            raise AttributeError(  # pragma: no cover
+            raise AttributeError(
                 f"transformer {type(transformer)} does not have a "
-                f"'fit_transform' method.")
+                f"'fit_transform' method."
+            )
         if not hasattr(estimator, "predict"):
-            raise AttributeError(  # pragma: no cover
-                f"estimator {type(estimator)} does not have a 'predict' method.")
+            raise AttributeError(
+                f"estimator {type(estimator)} does not have a 'predict' method."
+            )
         self.normalize = normalize
 
     def fit(self, X, y, sample_weight=None):
@@ -76,16 +81,17 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         * `tsne_outputs_`: t-SNE outputs if *keep_tsne_outputs* is True
         * `mean_`: average of the *t-SNE* output on each dimension
         * `inv_std_`: inverse of the standard deviation of the *t-SNE*
-            output on each dimension
-        * `loss_`: loss (:epkg:`sklearn:metrics:mean_squared_error`) between the predictions
-            and the outputs of t-SNE
+          output on each dimension
+        * `loss_`: loss (:epkg:`sklearn:metrics:mean_squared_error`)
+          between the predictions
+          and the outputs of t-SNE
         """
         params = dict(y=y, sample_weight=sample_weight)
 
         if self.normalizer is not None:
             sig = inspect.signature(self.normalizer.transform)
             pars = {}
-            for p in ['sample_weight', 'y']:
+            for p in ["sample_weight", "y"]:
                 if p in sig.parameters and p in params:
                     pars[p] = params[p]
             self.normalizer_ = clone(self.normalizer).fit(X, **pars)
@@ -94,27 +100,30 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
             self.normalizer_ = None
 
         self.transformer_ = clone(self.transformer)
-        if (hasattr(self.transformer_, 'perplexity') and
-                self.transformer_.perplexity >= X.shape[0]):
+        if (
+            hasattr(self.transformer_, "perplexity")
+            and self.transformer_.perplexity >= X.shape[0]
+        ):
             self.transformer_.perplexity = X.shape[0] - 1
 
         sig = inspect.signature(self.transformer.fit_transform)
         pars = {}
-        for p in ['sample_weight', 'y']:
+        for p in ["sample_weight", "y"]:
             if p in sig.parameters and p in params:
                 pars[p] = params[p]
         target = self.transformer_.fit_transform(X, **pars)
 
         sig = inspect.signature(self.estimator.fit)
-        if 'sample_weight' in sig.parameters:
+        if "sample_weight" in sig.parameters:
             self.estimator_ = clone(self.estimator).fit(
-                X, target, sample_weight=sample_weight)
+                X, target, sample_weight=sample_weight
+            )
         else:
             self.estimator_ = clone(self.estimator).fit(X, target)
         mean = target.mean(axis=0)
         var = target.std(axis=0)
         self.mean_ = mean
-        self.inv_std_ = 1. / var
+        self.inv_std_ = 1.0 / var
         exp = (target - mean) * self.inv_std_
         got = (self.estimator_.predict(X) - mean) * self.inv_std_
         self.loss_ = mean_squared_error(exp, got)

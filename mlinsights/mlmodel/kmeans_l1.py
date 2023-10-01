@@ -1,8 +1,3 @@
-# pylint: disable=C0302
-"""
-@file
-@brief Implements k-means with norms L1 and L2.
-"""
 import warnings
 import numpy
 from scipy.sparse import issparse
@@ -10,26 +5,30 @@ from sklearn.cluster import KMeans
 from sklearn.cluster._kmeans import _tolerance as _tolerance_skl
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.metrics.pairwise import (
-    euclidean_distances, manhattan_distances,
-    pairwise_distances_argmin_min)
+    euclidean_distances,
+    manhattan_distances,
+    pairwise_distances_argmin_min,
+)
 from sklearn.utils import check_random_state, check_array
 from sklearn.utils.validation import _num_samples, check_is_fitted
 from sklearn.utils.extmath import stable_cumsum
+
 try:
     from sklearn.cluster._kmeans import _check_sample_weight
-except ImportError:  # pragma: no cover
+except ImportError:
     from sklearn.cluster._kmeans import (
-        _check_normalize_sample_weight as _check_sample_weight)
+        _check_normalize_sample_weight as _check_sample_weight,
+    )
 try:
     from sklearn.utils._param_validation import StrOptions
 except ImportError:
+
     def StrOptions(*args):
         "Dummy replacement for a class introduced in scikit-learn==1.1."
         return None
 
-from ._kmeans_022 import (
-    _labels_inertia_skl,
-    _labels_inertia_precompute_dense)
+
+from ._kmeans_022 import _labels_inertia_skl, _labels_inertia_precompute_dense
 
 
 def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
@@ -45,7 +44,6 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
     :param random_state: int, RandomState instance
         The generator used to initialize the centers. Use an int to make the
         randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :param n_local_trials: integer, optional
         The number of seeding trials for each center (except the first),
         of which the one reducing inertia the most is greedily chosen.
@@ -71,13 +69,14 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
         centers[0] = X[center_id]
 
     # Initialize list of closest distances and calculate current potential
-    if norm == 'L2':
+    if norm == "L2":
         dist_fct = lambda x, y: euclidean_distances(x, y, squared=True)
-    elif norm == 'L1':
+    elif norm == "L1":
         dist_fct = lambda x, y: manhattan_distances(x, y)
     else:
         raise NotImplementedError(  # pragma no cover
-            f"norm must be 'L1' or 'L2' not '{norm}'.")
+            f"norm must be 'L1' or 'L2' not '{norm}'."
+        )
 
     closest_dist_sq = dist_fct(centers[0, numpy.newaxis], X)
     current_pot = closest_dist_sq.sum()
@@ -87,17 +86,16 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
         # Choose center candidates by sampling with probability proportional
         # to the squared distance to the closest existing center
         rand_vals = random_state.random_sample(n_local_trials) * current_pot
-        candidate_ids = numpy.searchsorted(stable_cumsum(closest_dist_sq),
-                                           rand_vals)
-        numpy.clip(candidate_ids, None, closest_dist_sq.size - 1,
-                   out=candidate_ids)
+        candidate_ids = numpy.searchsorted(stable_cumsum(closest_dist_sq), rand_vals)
+        numpy.clip(candidate_ids, None, closest_dist_sq.size - 1, out=candidate_ids)
 
         # Compute distances to center candidates
         distance_to_candidates = dist_fct(X[candidate_ids], X)
 
         # update closest distances squared and potential for each candidate
-        numpy.minimum(closest_dist_sq, distance_to_candidates,
-                      out=distance_to_candidates)
+        numpy.minimum(
+            closest_dist_sq, distance_to_candidates, out=distance_to_candidates
+        )
         candidates_pot = distance_to_candidates.sum(axis=1)
 
         # Decide which candidate is the best
@@ -115,8 +113,7 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
     return centers
 
 
-def _init_centroids(norm, X, k, init, random_state=None,
-                    init_size=None):
+def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
     """Compute the initial centroids
 
     :param norm: 'L1' or 'L2'
@@ -128,7 +125,6 @@ def _init_centroids(norm, X, k, init, random_state=None,
     :param random_state: int, RandomState instance or None (default)
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :param init_size: int, optional
         Number of samples to randomly sample for speeding up the
         initialization (sometimes at the expense of accuracy): the
@@ -140,25 +136,26 @@ def _init_centroids(norm, X, k, init, random_state=None,
     n_samples = X.shape[0]
 
     if init_size is not None and init_size < n_samples:
-        if init_size < k:  # pragma: no cover
+        if init_size < k:
             warnings.warn(
                 "init_size=%d should be larger than k=%d. "
                 "Setting it to 3*k" % (init_size, k),
-                RuntimeWarning, stacklevel=2)
+                RuntimeWarning,
+                stacklevel=2,
+            )
             init_size = 3 * k
         init_indices = random_state.randint(0, n_samples, init_size)
         X = X[init_indices]
         n_samples = X.shape[0]
     elif n_samples < k:
-        raise ValueError(  # pragma: no cover
-            "n_samples=%d should be larger than k=%d" % (n_samples, k))
+        raise ValueError("n_samples=%d should be larger than k=%d" % (n_samples, k))
 
-    if isinstance(init, str) and init == 'k-means++':
+    if isinstance(init, str) and init == "k-means++":
         centers = _k_init(norm, X, k, random_state=random_state)
-    elif isinstance(init, str) and init == 'random':
+    elif isinstance(init, str) and init == "random":
         seeds = random_state.permutation(n_samples)[:k]
         centers = X[seeds]
-    elif hasattr(init, '__array__'):
+    elif hasattr(init, "__array__"):
         # ensure that the centers have the same dtype as X
         # this is a requirement of fused types of cython
         centers = numpy.array(init, dtype=X.dtype)
@@ -166,10 +163,11 @@ def _init_centroids(norm, X, k, init, random_state=None,
         centers = init(norm, X, k, random_state=random_state)
         centers = numpy.asarray(centers, dtype=X.dtype)
     else:
-        raise ValueError(  # pragma: no cover
+        raise ValueError(
             "init parameter for the k-means should "
             "be 'k-means++' or 'random' or an ndarray, "
-            "'%s' (type '%s') was passed." % (init, type(init)))
+            "'%s' (type '%s') was passed." % (init, type(init))
+        )
 
     if issparse(centers):
         centers = centers.toarray()
@@ -177,20 +175,21 @@ def _init_centroids(norm, X, k, init, random_state=None,
     def _validate_center_shape(X, k, centers):
         """Check if centers is compatible with X and n_clusters"""
         if centers.shape[0] != k:
-            raise ValueError(  # pragma: no cover
+            raise ValueError(
                 f"The shape of the initial centers {centers.shape} does not "
-                f"match the number of clusters {k}.")
+                f"match the number of clusters {k}."
+            )
         if centers.shape[1] != X.shape[1]:
-            raise ValueError(  # pragma: no cover
+            raise ValueError(
                 f"The shape of the initial centers {centers.shape} does not "
-                f"match the number of features of the data {X.shape[1]}.")
+                f"match the number of features of the data {X.shape[1]}."
+            )
 
     _validate_center_shape(X, k, centers)
     return centers
 
 
-def _centers_dense(X, sample_weight, labels, n_clusters, distances,
-                   X_sort_index):
+def _centers_dense(X, sample_weight, labels, n_clusters, distances, X_sort_index):
     """
     M step of the K-means EM algorithm.
     Computation of cluster centers / means.
@@ -221,7 +220,7 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances,
         weight_in_cluster[c] += sample_weight[i]
     empty_clusters = numpy.where(weight_in_cluster == 0)[0]
 
-    if len(empty_clusters) > 0:  # pragma: no cover
+    if len(empty_clusters) > 0:
         # find points to reassign empty clusters to
         far_from_centers = distances.argsort()[::-1]
 
@@ -238,16 +237,25 @@ def _centers_dense(X, sample_weight, labels, n_clusters, distances,
             med = numpy.median(sub, axis=0)
             centers[i, :] = med
     else:
-        raise NotImplementedError(  # pragma: no cover
+        raise NotImplementedError(
             "Non uniform weights are not implemented yet as "
             "the cost would be very high. "
-            "See https://en.wikipedia.org/wiki/Weighted_median#Algorithm.")
+            "See https://en.wikipedia.org/wiki/Weighted_median#Algorithm."
+        )
     return centers
 
 
-def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
-                         init='k-means++', verbose=False,
-                         random_state=None, tol=1e-4):
+def _kmeans_single_lloyd(
+    norm,
+    X,
+    sample_weight,
+    n_clusters,
+    max_iter=300,
+    init="k-means++",
+    verbose=False,
+    random_state=None,
+    tol=1e-4,
+):
     """
     A single run of k-means, assumes preparation completed prior.
 
@@ -284,7 +292,6 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
     :param random_state: int, RandomState instance or None (default)
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :return: centroid : float ndarray with shape (k, n_features)
         Centroids found at the last iteration of k-means.
     :return: label : integer ndarray with shape (n_samples,)
@@ -302,8 +309,7 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
 
     best_labels, best_inertia, best_centers = None, None, None
     # init
-    centers = _init_centroids(
-        norm, X, n_clusters, init, random_state=random_state)
+    centers = _init_centroids(norm, X, n_clusters, init, random_state=random_state)
     if verbose:  # pragma no cover
         print("Initialization complete")
 
@@ -317,11 +323,13 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
         centers_old = centers.copy()
         # labels assignment is also called the E-step of EM
         labels, inertia = _labels_inertia(
-            norm, X, sample_weight, centers, distances=distances)
+            norm, X, sample_weight, centers, distances=distances
+        )
 
         # computation of the means is also called the M-step of EM
-        centers = _centers_dense(X, sample_weight, labels, n_clusters, distances,
-                                 X_sort_index)
+        centers = _centers_dense(
+            X, sample_weight, labels, n_clusters, distances, X_sort_index
+        )
 
         if verbose:  # pragma no cover
             print("Iteration %2d, inertia %.3f" % (i, inertia))
@@ -331,20 +339,21 @@ def _kmeans_single_lloyd(norm, X, sample_weight, n_clusters, max_iter=300,
             best_centers = centers.copy()
             best_inertia = inertia
 
-        center_shift_total = numpy.sum(
-            numpy.abs(centers_old - centers).ravel())
+        center_shift_total = numpy.sum(numpy.abs(centers_old - centers).ravel())
         if center_shift_total <= tol:
             if verbose:  # pragma no cover
-                print("Converged at iteration %d: "
-                      "center shift %r within tolerance %r"
-                      % (i, center_shift_total, tol))
+                print(
+                    "Converged at iteration %d: "
+                    "center shift %r within tolerance %r" % (i, center_shift_total, tol)
+                )
             break
 
     if center_shift_total > 0:
         # rerun E-step in case of non-convergence so that predicted labels
         # match cluster centers
         best_labels, best_inertia = _labels_inertia(
-            norm, X, sample_weight, best_centers, distances=distances)
+            norm, X, sample_weight, best_centers, distances=distances
+        )
 
     return best_labels, best_inertia, best_centers, i + 1
 
@@ -369,10 +378,10 @@ def _labels_inertia(norm, X, sample_weight, centers, distances=None):
     :return: inertia : float
         Sum of squared distances of samples to their closest cluster center.
     """
-    if norm == 'l2':
+    if norm == "l2":
         return _labels_inertia_skl(
-            X, sample_weight=sample_weight, centers=centers,
-            x_squared_norms=None)
+            X, sample_weight=sample_weight, centers=centers, x_squared_norms=None
+        )
 
     sample_weight = _check_sample_weight(sample_weight, X)
     # set the default value of centers to -1 to be able to detect any anomaly
@@ -382,27 +391,31 @@ def _labels_inertia(norm, X, sample_weight, centers, distances=None):
     # distances will be changed in-place
     if issparse(X):
         raise NotImplementedError(  # pragma no cover
-            "Sparse matrix is not implemented for norm 'L1'.")
+            "Sparse matrix is not implemented for norm 'L1'."
+        )
     return _labels_inertia_precompute_dense(
-        norm=norm, X=X, sample_weight=sample_weight,
-        centers=centers, distances=distances)
+        norm=norm,
+        X=X,
+        sample_weight=sample_weight,
+        centers=centers,
+        distances=distances,
+    )
 
 
 def _tolerance(norm, X, tol):
     """Return a tolerance which is independent of the dataset"""
-    if norm == 'L2':
+    if norm == "L2":
         return _tolerance_skl(X, tol)
-    if norm == 'L1':
+    if norm == "L1":
         variances = numpy.sum(numpy.abs(X), axis=0) / X.shape[0]
         return variances.sum()
-    raise NotImplementedError(  # pragma no cover
-        f"not implemented for norm '{norm}'.")
+    raise NotImplementedError(f"not implemented for norm '{norm}'.")  # pragma no cover
 
 
 class KMeansL1L2(KMeans):
     """
     K-Means clustering with either norm L1 or L2.
-    See notebook :ref:`kmeansl1rst` for an example.
+    See notebook :ref:`l-kmeans-l1-example` for an example.
 
     :param n_clusters: int, default=8
         The number of clusters to form as well as the number of
@@ -430,23 +443,11 @@ class KMeansL1L2(KMeans):
         single run.
     :param tol: float, default=1e-4
         Relative tolerance with regards to inertia to declare convergence.
-    :param precompute_distances: 'auto' or bool, default='auto'
-        Precompute distances (faster but takes more memory).
-
-        'auto' : do not precompute distances if n_samples * n_clusters > 12
-        million. This corresponds to about 100MB overhead per job using
-        double precision.
-
-        True : always precompute distances.
-
-        False : never precompute distances.
-
     :param verbose: int, default=0
         Verbosity mode.
     :param random_state: int, RandomState instance, default=None
         Determines random number generation for centroid initialization. Use
         an int to make the randomness deterministic.
-        See :term:`Glossary <random_state>`.
     :param copy_x: bool, default=True
         When pre-computing distances it is more numerically accurate to center
         the data first.  If copy_x is True (default), then the original data is
@@ -455,18 +456,10 @@ class KMeansL1L2(KMeans):
         numerical differences may be introduced by subtracting and then adding
         the data mean, in this case it will also not ensure that data is
         C-contiguous which may cause a significant slowdown.
-    :param n_jobs: int, default=None
-        The number of jobs to use for the computation. This works by computing
-        each of the n_init runs in parallel.
-
-        ``None`` means 1 unless in a :obj:`joblib.parallel_backend` context.
-        ``-1`` means using all processors. See :term:`Glossary <n_jobs>`
-        for more details.
-    :param algorithm: {"auto", "full", "elkan"}, default="auto"
-        K-means algorithm to use. The classical EM-style algorithm is "full".
+    :param algorithm: {"lloyd", "elkan"}, default="lloyd"
+        K-means algorithm to use. The classical EM-style algorithm is "lloyd".
         The "elkan" variation is more efficient by using the triangle
-        inequality, but currently doesn't support sparse data. "auto" chooses
-        "elkan" for dense data and "full" for sparse data.
+        inequality, but currently doesn't support sparse data.
     :param norm: {"L1", "L2"}
         The norm *L2* is identical to :epkg:`KMeans`.
         Norm *L1* uses a complete different path.
@@ -486,23 +479,40 @@ class KMeansL1L2(KMeans):
     """
 
     _parameter_constraints = {
-        **getattr(KMeans, '_parameter_constraints', {}),
+        **getattr(KMeans, "_parameter_constraints", {}),
         "norm": [StrOptions({"L1", "L2"})],
     }
 
-    def __init__(self, n_clusters=8, init='k-means++', n_init=10,
-                 max_iter=300, tol=1e-4,
-                 verbose=0, random_state=None, copy_x=True,
-                 algorithm='full', norm='L2'):
-
-        KMeans.__init__(self, n_clusters=n_clusters, init=init, n_init=n_init,
-                        max_iter=max_iter, tol=tol,
-                        verbose=verbose, random_state=random_state,
-                        copy_x=copy_x, algorithm=algorithm)
+    def __init__(
+        self,
+        n_clusters=8,
+        init="k-means++",
+        n_init=10,
+        max_iter=300,
+        tol=1e-4,
+        verbose=0,
+        random_state=None,
+        copy_x=True,
+        algorithm="lloyd",
+        norm="L2",
+    ):
+        KMeans.__init__(
+            self,
+            n_clusters=n_clusters,
+            init=init,
+            n_init=n_init,
+            max_iter=max_iter,
+            tol=tol,
+            verbose=verbose,
+            random_state=random_state,
+            copy_x=copy_x,
+            algorithm=algorithm,
+        )
         self.norm = norm
-        if self.norm == 'L1' and self.algorithm != 'full':
+        if self.norm == "L1" and self.algorithm != "lloyd":
             raise NotImplementedError(  # pragma no cover
-                "Only algorithm 'full' is implemented with norm 'l1'.")
+                "Only algorithm 'lloyd' is implemented with norm 'l1'."
+            )
 
     def fit(self, X, y=None, sample_weight=None):
         """
@@ -520,13 +530,14 @@ class KMeansL1L2(KMeans):
         :return: self
             Fitted estimator.
         """
-        if self.norm == 'L2':
+        if self.norm == "L2":
             KMeans.fit(self, X=X, y=y, sample_weight=sample_weight)
-        elif self.norm == 'L1':
+        elif self.norm == "L1":
             self._fit_l1(X=X, y=y, sample_weight=sample_weight)
         else:
             raise NotImplementedError(  # pragma no cover
-                f"Norm is not 'L1' or 'L2' but '{self.norm}'.")
+                f"Norm is not 'L1' or 'L2' but '{self.norm}'."
+            )
         return self
 
     def _fit_l1(self, X, y=None, sample_weight=None):
@@ -551,62 +562,77 @@ class KMeansL1L2(KMeans):
         if n_init <= 0:
             raise ValueError(  # pragma no cover
                 "Invalid number of initializations."
-                " n_init=%d must be bigger than zero." % n_init)
+                " n_init=%d must be bigger than zero." % n_init
+            )
 
         if self.max_iter <= 0:
             raise ValueError(  # pragma no cover
-                'Number of iterations should be a positive number,'
-                ' got %d instead' % self.max_iter)
+                "Number of iterations should be a positive number,"
+                " got %d instead" % self.max_iter
+            )
 
         # avoid forcing order when copy_x=False
         order = "C" if self.copy_x else None
-        X = check_array(X, accept_sparse='csr', dtype=[numpy.float64, numpy.float32],
-                        order=order, copy=self.copy_x)
+        X = check_array(
+            X,
+            accept_sparse="csr",
+            dtype=[numpy.float64, numpy.float32],
+            order=order,
+            copy=self.copy_x,
+        )
         # verify that the number of samples given is larger than k
         if _num_samples(X) < self.n_clusters:
             raise ValueError(  # pragma no cover
-                "n_samples=%d should be >= n_clusters=%d" % (
-                    _num_samples(X), self.n_clusters))
+                "n_samples=%d should be >= n_clusters=%d"
+                % (_num_samples(X), self.n_clusters)
+            )
 
         tol = _tolerance(self.norm, X, self.tol)
 
         # Validate init array
         init = self.init
-        if hasattr(init, '__array__'):
+        if hasattr(init, "__array__"):
             init = check_array(init, dtype=X.dtype.type, copy=True)
-            if hasattr(self, '_validate_center_shape'):
-                self._validate_center_shape(  # pylint: disable=E1101
-                    X, init)
+            if hasattr(self, "_validate_center_shape"):
+                self._validate_center_shape(X, init)
 
             if n_init != 1:
-                warnings.warn(  # pragma: no cover
-                    'Explicit initial center position passed: '
-                    'performing only one init in k-means instead of n_init=%d'
-                    % n_init, RuntimeWarning, stacklevel=2)
+                warnings.warn(
+                    "Explicit initial center position passed: "
+                    "performing only one init in k-means instead of n_init=%d" % n_init,
+                    RuntimeWarning,
+                    stacklevel=2,
+                )
                 n_init = 1
 
         best_labels, best_inertia, best_centers = None, None, None
         algorithm = self.algorithm
         if self.n_clusters == 1:
-            # elkan doesn't make sense for a single cluster, full will produce
+            # elkan doesn't make sense for a single cluster, lloyd will produce
             # the right result.
-            algorithm = "full"  # pragma: no cover
-        if algorithm == "auto":
-            algorithm = "full"  # pragma: no cover
-        if algorithm == "full":
+            algorithm = "lloyd"
+        if algorithm == "lloyd":
             kmeans_single = _kmeans_single_lloyd
         else:
             raise ValueError(  # pragma no cover
-                f"Algorithm must be 'auto', 'full' or 'elkan', got {str(algorithm)}")
+                f"Algorithm must be 'lloyd' or 'elkan', got {str(algorithm)}"
+            )
 
         seeds = random_state.randint(numpy.iinfo(numpy.int32).max, size=n_init)
 
         for seed in seeds:
             # run a k-means once
             labels, inertia, centers, n_iter_ = kmeans_single(
-                self.norm, X, sample_weight, n_clusters=self.n_clusters,
-                max_iter=self.max_iter, init=init, verbose=self.verbose,
-                tol=tol, random_state=seed)
+                self.norm,
+                X,
+                sample_weight,
+                n_clusters=self.n_clusters,
+                max_iter=self.max_iter,
+                init=init,
+                verbose=self.verbose,
+                tol=tol,
+                random_state=seed,
+            )
             # determine if these results are the best so far
             if best_inertia is None or inertia < best_inertia:
                 best_labels = labels.copy()
@@ -621,7 +647,9 @@ class KMeansL1L2(KMeans):
                 f"found smaller than "
                 f"n_clusters ({self.n_clusters}). Possibly "
                 f"due to duplicate points in X.",
-                ConvergenceWarning, stacklevel=2)
+                ConvergenceWarning,
+                stacklevel=2,
+            )
 
         self.cluster_centers_ = best_centers
         self.labels_ = best_labels
@@ -642,12 +670,13 @@ class KMeansL1L2(KMeans):
         :return: X_new : array, shape [n_samples, k]
             X transformed in the new space.
         """
-        if self.norm == 'L2':
+        if self.norm == "L2":
             return KMeans.transform(self, X)
-        if self.norm == 'L1':
+        if self.norm == "L1":
             return self._transform_l1(X)
         raise NotImplementedError(  # pragma no cover
-            f"Norm is not L1 or L2 but '{self.norm}'.")
+            f"Norm is not L1 or L2 but '{self.norm}'."
+        )
 
     def _transform_l1(self, X):
         """
@@ -674,12 +703,13 @@ class KMeansL1L2(KMeans):
         :return: labels : array, shape [n_samples,]
             Index of the cluster each sample belongs to.
         """
-        if self.norm == 'L2':
+        if self.norm == "L2":
             return KMeans.predict(self, X)
-        if self.norm == 'L1':
+        if self.norm == "L1":
             return self._predict_l1(X, sample_weight=sample_weight)
         raise NotImplementedError(  # pragma no cover
-            f"Norm is not L1 or L2 but '{self.norm}'.")
+            f"Norm is not L1 or L2 but '{self.norm}'."
+        )
 
     def _predict_l1(self, X, sample_weight=None, return_distances=False):
         """
@@ -692,7 +722,8 @@ class KMeansL1L2(KMeans):
         :return: labels or `labels, distances`
         """
         labels, mindist = pairwise_distances_argmin_min(
-            X=X, Y=self.cluster_centers_, metric='manhattan')
+            X=X, Y=self.cluster_centers_, metric="manhattan"
+        )
         labels = labels.astype(numpy.int32, copy=False)
         if return_distances:
             return labels, mindist

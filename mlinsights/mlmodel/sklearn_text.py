@@ -1,11 +1,8 @@
-"""
-@file
-@brief Overloads :epkg:`TfidfVectorizer` and :epkg:`CountVectorizer`.
-"""
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+
 try:
     from sklearn.feature_extraction.text import _VectorizerMixin as VectorizerMixin
-except ImportError:  # pragma: no cover
+except ImportError:
     # scikit-learn < 0.23
     from sklearn.feature_extraction.text import VectorizerMixin
 
@@ -13,12 +10,12 @@ except ImportError:  # pragma: no cover
 class NGramsMixin(VectorizerMixin):
     """
     Overloads method `_word_ngrams
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/feature_extraction/text.py#L148>`_
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to get tuples instead of string in member `vocabulary_
     <https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html>`_.
     of :epkg:`TfidfVectorizer` or :epkg:`CountVectorizer`.
     It contains the list of n-grams used to process documents.
-    See @see cl TraceableCountVectorizer and @see cl TraceableTfidfVectorizer
+    See :class:`TraceableCountVectorizer` and :class:`TraceableTfidfVectorizer`
     for example.
     """
 
@@ -28,12 +25,11 @@ class NGramsMixin(VectorizerMixin):
         if tokens is not None:
             new_tokens = []
             for token in tokens:
-                new_tokens.append(
-                    (token,) if isinstance(token, str) else token)
+                new_tokens.append((token,) if isinstance(token, str) else token)
             tokens = new_tokens
 
         if stop_words is not None:
-            tokens = [(w, ) for w in tokens if w not in stop_words]
+            tokens = [(w,) for w in tokens if w not in stop_words]
 
         # handle token n-grams
         min_n, max_n = self.ngram_range
@@ -60,21 +56,20 @@ class NGramsMixin(VectorizerMixin):
                     elif isinstance(token, tuple):
                         new_tokens.extend(token)
                     else:
-                        raise TypeError(  # pragma: no cover
-                            f"Unable to build a n-grams out of {tokens}.")
+                        raise TypeError(f"Unable to build a n-grams out of {tokens}.")
                 return tuple(new_tokens)
 
-            for n in range(min_n,
-                           min(max_n + 1, n_original_tokens + 1)):
+            for n in range(min_n, min(max_n + 1, n_original_tokens + 1)):
                 for i in range(n_original_tokens - n + 1):
-                    tokens_append(space_join(original_tokens[i: i + n]))
+                    tokens_append(space_join(original_tokens[i : i + n]))
         return tokens
 
 
 class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
     """
-    Inherits from @see cl NGramsMixin which overloads method `_word_ngrams
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/feature_extraction/text.py#L148>`_
+    Inherits from :class:`NGramsMixin <mlinsights.mlmodel.sklearn_text.NGramsMixin>`
+    which overloads method `_word_ngrams
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to keep more information about n-grams but still produces the same
     outputs than :epkg:`CountVectorizer`.
 
@@ -106,7 +101,7 @@ class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
         print(pformat(mod2.vocabulary_)[:100])
 
     A weirder example with
-    @see cl TraceableTfidfVectorizer shows more differences.
+    :class:`TraceableTfidfVectorizer` shows more differences.
     """
 
     def _word_ngrams(self, tokens, stop_words=None):
@@ -115,8 +110,9 @@ class TraceableCountVectorizer(CountVectorizer, NGramsMixin):
 
 class TraceableTfidfVectorizer(TfidfVectorizer, NGramsMixin):
     """
-    Inherits from @see cl NGramsMixin which overloads method `_word_ngrams
-    <https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/feature_extraction/text.py#L148>`_
+    Inherits from :class:`NGramsMixin <mlinsights.mlmodel.sklearn_text.NGramsMixin>`
+    which overloads method `_word_ngrams
+    <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/feature_extraction/text.py#L148>`_
     to keep more information about n-grams but still produces the same
     outputs than :epkg:`TfidfVectorizer`.
 

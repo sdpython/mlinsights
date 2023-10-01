@@ -9,7 +9,7 @@ virtualenv:
   
 install:
   - $PYINT -m pip install --upgrade pip
-  - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper pyquickhelper cpyquickhelper pandas_streaming --extra-index-url=https://pypi.python.org/simple/
+  - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ pandas_streaming --extra-index-url=https://pypi.python.org/simple/
   - $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ scikit-learn>=0.22 --extra-index-url=https://pypi.python.org/simple/
   - $PYINT -m pip install -r requirements.txt
   - $PYINT --version
@@ -19,9 +19,7 @@ before_script:
   - $PYINT -u setup.py build_ext --inplace
 
 script:
-  - { CMD: "$PYINT -u setup.py unittests --covtoken=1ac0b95d-6722-4f29-804a-e4e0d5295497", NAME: "UT" }
-  - { CMD: "$PYINT -u setup.py unittests_LONG", NAME: "UT_DEEP_LONG" }
-  - { CMD: "$PYINT -u setup.py unittests_SKIP", NAME: "UT_SKIP" }
+  - { CMD: "$PYINT -m pytest _unittests", NAME: "UT" }
 
 after_script:
   - $PYINT -u ./setup.py bdist_wheel
