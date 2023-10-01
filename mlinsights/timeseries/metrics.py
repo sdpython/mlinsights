@@ -1,7 +1,3 @@
-"""
-@file
-@brief Timeseries metrics.
-"""
 import numpy
 
 
@@ -13,13 +9,13 @@ def ts_mape(expected_y, predicted_y, sample_weight=None):
     predictor would do by using the previous day
     as a prediction.
 
-    @param      expected_y          expected values
-    @param      predicted_y         predictions
-    @return                         metrics
+    :param expected_y: expected values
+    :param predicted_y: predictions
+    :param sample_weight: sample weight
+    :return: metrics
     """
     if len(expected_y) != len(predicted_y):
-        raise ValueError(  # pragma: no cover
-            f'Size mismatch {len(expected_y)} != {len(predicted_y)}.')
+        raise ValueError(f"Size mismatch {len(expected_y)} != {len(predicted_y)}.")
     expected_y = numpy.squeeze(expected_y)
     predicted_y = numpy.squeeze(predicted_y)
     mask = numpy.isnan(predicted_y)
@@ -32,9 +28,11 @@ def ts_mape(expected_y, predicted_y, sample_weight=None):
         dy2 = numpy.sum(numpy.abs(predicted_y[1:] - expected_y[1:]))
     else:
         dy1 = numpy.sum(
-            (numpy.abs(expected_y[:-1] - expected_y[1:]) * sample_weight[1:]))
+            (numpy.abs(expected_y[:-1] - expected_y[1:]) * sample_weight[1:])
+        )
         dy2 = numpy.sum(
-            (numpy.abs(predicted_y[1:] - expected_y[1:]) * sample_weight[1:]))
+            (numpy.abs(predicted_y[1:] - expected_y[1:]) * sample_weight[1:])
+        )
     dy1 = dy1.sum()
     dy2 = dy2.sum()
     if dy1 == 0:

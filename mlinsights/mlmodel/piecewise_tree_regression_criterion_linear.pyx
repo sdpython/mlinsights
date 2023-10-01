@@ -1,16 +1,11 @@
-"""
-@file
-@brief Implements a custom criterion to train a decision tree.
-"""
 cimport cython
-import numpy
-cimport numpy
+import numpy as np
+cimport numpy as cnp
 
-numpy.import_array()
+cnp.import_array()
 
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
-from libc.math cimport NAN
 
 cimport scipy.linalg.cython_lapack as cython_lapack
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
@@ -46,7 +41,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     cdef SIZE_t work
 
     def __dealloc__(self):
-        """Destructor."""        
+        """Destructor."""
         free(self.sample_w)
         free(self.sample_y)
         free(self.sample_wy)
@@ -103,17 +98,23 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         if self.sample_i == NULL:
             self.sample_i = <SIZE_t*> calloc(self.n_samples, sizeof(SIZE_t))
         if self.sample_f == NULL:
-            self.sample_f = <DOUBLE_t*> calloc(self.n_samples * (self.n_features + 1), sizeof(DOUBLE_t))
+            self.sample_f = <DOUBLE_t*> calloc(
+                self.n_samples * (self.n_features + 1), sizeof(DOUBLE_t)
+            )
 
         self.nbvar = self.n_features + 1
         self.nbrows = self.n_samples
-        self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 + 
+        self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 +
                              max(max(self.nbrows, self.nbvar),
                                  min(self.nbrows, self.nbvar) * <SIZE_t>2))
         if self.sample_f_buffer == NULL:
-            self.sample_f_buffer = <DOUBLE_t*> calloc(self.n_samples * self.nbvar, sizeof(DOUBLE_t))
+            self.sample_f_buffer = <DOUBLE_t*> calloc(
+                self.n_samples * self.nbvar, sizeof(DOUBLE_t)
+            )
         if self.sample_pC == NULL:
-            self.sample_pC = <DOUBLE_t*> calloc(max(self.nbrows, self.nbvar), sizeof(DOUBLE_t))
+            self.sample_pC = <DOUBLE_t*> calloc(
+                max(self.nbrows, self.nbvar), sizeof(DOUBLE_t)
+            )
         if self.sample_work == NULL:
             self.sample_work = <DOUBLE_t*> calloc(self.work, sizeof(DOUBLE_t))
         if self.sample_pS == NULL:
@@ -128,19 +129,20 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         return inst
 
     @staticmethod
-    def create(DOUBLE_t[:, ::1] X, DOUBLE_t[:, ::1] y, DOUBLE_t[::1] sample_weight=None):
+    def create(const DOUBLE_t[:, ::1] X, const DOUBLE_t[:, ::1] y,
+               const DOUBLE_t[::1] sample_weight=None):
         """
         Initializes the criterion.
-        
+
         :param X: features
         :param y: target
         :param sample_weight: sample weight
         :return: an instance of :class:`LinearRegressorCriterion`
         """
         cdef SIZE_t i
-        cdef DOUBLE_t[:] ws
+        cdef const DOUBLE_t[:] ws
         cdef double sum
-        cdef SIZE_t[:] parr = numpy.empty(y.shape[0], dtype=numpy.int64)
+        cdef SIZE_t[:] parr = np.empty(y.shape[0], dtype=np.int64)
         for i in range(0, y.shape[0]):
             parr[i] = i
         if sample_weight is None:
@@ -151,34 +153,39 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             ws = sample_weight
 
         obj = LinearRegressorCriterion(1 if len(y.shape) <= 1 else y.shape[0], X)
-        obj.init(y, ws, sum, parr, 0, y.shape[0])            
+        obj.init(y, ws, sum, parr, 0, y.shape[0])
         return obj
 
     cdef int init(self, const DOUBLE_t[:, ::1] y,
                   const DOUBLE_t[:] sample_weight,
                   double weighted_n_samples,
-                  const SIZE_t[:] sample_indices, 
-                  SIZE_t start, SIZE_t end) nogil except -1:
+                  const SIZE_t[:] sample_indices,
+                  SIZE_t start, SIZE_t end) except -1 nogil:
         """
         This function is overwritten to check *y* and *X* size are the same.
         This API changed in 0.21.
         It changed again in scikit-learn 1.2 to replace `DOUBLE_t*` into `DOUBLE[:]`.
         """
         if y.shape[0] != self.n_samples:
-            raise ValueError("n_samples={} -- y.shape={}".format(self.n_samples, y.shape))
+            raise ValueError(
+                "n_samples={} -- y.shape={}".format(self.n_samples, y.shape)
+            )
         if y.shape[0] != self.sample_X.shape[0]:
-            raise ValueError("X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape))
+            raise ValueError(
+                "X.shape={} -- y.shape={}".format(self.sample_X.shape, y.shape)
+            )
         if y.shape[1] != 1:
             raise ValueError("This class only works for a single vector.")
         return self.init_with_X(self.sample_X, y, sample_weight, weighted_n_samples,
                                 sample_indices, start, end)
 
-    cdef int init_with_X(self, const DOUBLE_t[:, ::1] X, 
+    @cython.boundscheck(False)
+    cdef int init_with_X(self, const DOUBLE_t[:, ::1] X,
                          const DOUBLE_t[:, ::1] y,
                          const DOUBLE_t[:] sample_weight,
                          double weighted_n_samples,
-                         const SIZE_t[:] sample_indices, 
-                         SIZE_t start, SIZE_t end) nogil except -1:
+                         const SIZE_t[:] sample_indices,
+                         SIZE_t start, SIZE_t end) except -1 nogil:
         """
         Initializes the criterion.
 
@@ -203,7 +210,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self.pos = start
         self.end = end
         self.weighted_n_samples = weighted_n_samples
-        self.y = y    
+        self.y = y
 
         self.sample_sum_wy = 0.
         self.sample_sum_w = 0.
@@ -228,10 +235,13 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self.reset()
         if self.weighted_n_node_samples == 0:
             raise ValueError(
-                "self.weighted_n_node_samples is null, first weight is %r." % self.sample_w[0])
+                f"self.weighted_n_node_samples is null, "
+                f"first weight is {self.sample_w[0]}."
+            )
         return 0
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean, DOUBLE_t *weight) nogil:
+    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
+                    DOUBLE_t *weight) nogil:
         """
         Computes mean between *start* and *end*.
         """
@@ -277,20 +287,21 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         cdef int lda = row
         cdef int ldb = row
         cdef DOUBLE_t rcond = -1
-        cdef int rank        
+        cdef int rank
         cdef int work = <int>self.work
 
         if row < col:
             if low_rank:
                 ldb = col
             else:
-                raise RuntimeError("The function cannot return any return when row < col.")
+                return
         cython_lapack.dgelss(&row, &col, &nrhs,                 # 1-3
                              sample_f_buffer, &lda, pC, &ldb,   # 4-7
                              self.sample_pS, &rcond, &rank,     # 8-10
                              self.sample_work, &work, &info)    # 11-13
 
-    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean, DOUBLE_t weight) nogil:
+    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
+                     DOUBLE_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a line.
@@ -323,7 +334,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         """
         Stores the results of the linear regression
         in an allocated numpy array.
-        
+
         :param dest: allocated double pointer, size must be *>= self.nbvar*
         """
         self._reglin(self.start, self.end, 1)

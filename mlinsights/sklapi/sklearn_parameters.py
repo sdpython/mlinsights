@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Defines class @see cl SkLearnParameters.
-"""
 import textwrap
 
 
-class SkException (Exception):
+class SkException(Exception):
 
     """
     custom exception
     """
+
     pass
 
 
@@ -33,13 +30,12 @@ class SkLearnParameters:
         """
         Verifies a parameter and its value.
 
-        @param      name        name
-        @param      value       value
-        @raises                 raises @see cl SkException if error
+        :param name: name
+        :param value: value
+        :raise: raises :class:`SkException` if error
         """
         if name.startswith("_") or name.endswith("_"):
-            raise SkException(  # pragma: no cover
-                f"Parameter name must not start by '_': '{name}'")
+            raise SkException(f"Parameter name must not start by '_': '{name}'")
 
     @property
     def Keys(self):
@@ -52,13 +48,14 @@ class SkLearnParameters:
         """
         usual
         """
+
         def fmt(v):
             "formatting function"
             if isinstance(v, str):
                 return f"'{v}'"
             return repr(v)
-        text = ", ".join(f"{k}={fmt(getattr(self, k))}"
-                         for k in sorted(self.Keys))
+
+        text = ", ".join(f"{k}={fmt(getattr(self, k))}" for k in sorted(self.Keys))
         return "\n".join(textwrap.wrap(text, subsequent_indent="    "))
 
     def to_dict(self):

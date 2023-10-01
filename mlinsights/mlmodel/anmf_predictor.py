@@ -1,7 +1,3 @@
-"""
-@file
-@brief Featurizers for machine learned models.
-"""
 import numpy
 from sklearn.base import BaseEstimator, RegressorMixin, MultiOutputMixin
 from sklearn.decomposition import NMF, TruncatedSVD
@@ -81,12 +77,13 @@ class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
         then a multi-output regressor.
         """
         params = self.get_params()
-        if 'force_positive' in params:
-            del params['force_positive']
+        if "force_positive" in params:
+            del params["force_positive"]
         self.estimator_nmf_ = NMF(**params)
         self.estimator_nmf_.fit(X)
         self.estimator_svd_ = TruncatedSVD(
-            n_components=self.estimator_nmf_.n_components_)
+            n_components=self.estimator_nmf_.n_components_
+        )
         self.estimator_svd_.fit(self.estimator_nmf_.components_)
         return self
 
@@ -98,7 +95,6 @@ class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
         proj = self.estimator_svd_.transform(X)
         pred = self.estimator_svd_.inverse_transform(proj)
         if self.force_positive:
-            zeros = numpy.zeros(
-                (1, pred.shape[1]), dtype=pred.dtype)  # pylint: disable=E1101,E1136
-            pred = numpy.maximum(pred, zeros)  # pylint: disable=E1111
+            zeros = numpy.zeros((1, pred.shape[1]), dtype=pred.dtype)
+            pred = numpy.maximum(pred, zeros)
         return pred

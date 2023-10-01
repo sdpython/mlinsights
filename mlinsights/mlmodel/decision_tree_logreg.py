@@ -1,9 +1,5 @@
-"""
-@file
-@brief Builds a tree of logistic regressions.
-"""
 import numpy
-import scipy.sparse as sparse  # pylint: disable=R0402
+import scipy.sparse as sparse
 from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.linear_model._base import LinearClassifierMixin
@@ -13,22 +9,23 @@ def logistic(x):
     """
     Computes :math:`\\frac{1}{1 + e^{-x}}`.
     """
-    return 1. / (1. + numpy.exp(-x))
+    return 1.0 / (1.0 + numpy.exp(-x))
 
 
-def likelihood(x, y, theta=1., th=0.):
+def likelihood(x, y, theta=1.0, th=0.0):
     """
-    Computes :math:`\\sum_i y_i f(\\theta (x_i - x_0)) + (1 - y_i) (1 - f(\\theta (x_i - x_0)))`
+    Computes
+    :math:`\\sum_i y_i f(\\theta (x_i - x_0)) + (1 - y_i) (1 - f(\\theta (x_i - x_0)))`
     where :math:`f(x_i)` is :math:`\\frac{1}{1 + e^{-x}}`.
     """
     lr = logistic((x - th) * theta)
-    return y * lr + (1. - y) * (1 - lr)
+    return y * lr + (1.0 - y) * (1 - lr)
 
 
 class _DecisionTreeLogisticRegressionNode:
     """
     Describes the tree structure hold by class
-    @see cl DecisionTreeLogisticRegression.
+    :class:`DecisionTreeLogisticRegression`.
     See also notebook :ref:`decisiontreelogregrst`.
     """
 
@@ -61,7 +58,7 @@ class _DecisionTreeLogisticRegressionNode:
         """
         prob = self.estimator.predict_proba(X)
         above = prob[:, 1] > self.threshold
-        below = ~ above
+        below = ~above
         n_above = above.sum()
         n_below = below.sum()
         if self.above is not None and n_above > 0:
@@ -82,7 +79,7 @@ class _DecisionTreeLogisticRegressionNode:
         mat[indices, self.index] = 1
         prob = self.estimator.predict_proba(X)
         above = prob[:, 1] > self.threshold
-        below = ~ above
+        below = ~above
         n_above = above.sum()
         n_below = below.sum()
         indices_above = indices[above]
@@ -99,19 +96,24 @@ class _DecisionTreeLogisticRegressionNode:
         logistic regressions on both subsamples. This method only
         works on a linear classifier.
 
-        @param      X               features
-        @param      y               binary labels
-        @param      sample_weight   weights of every sample
-        @param      dtlr            @see cl DecisionTreeLogisticRegression
-        @param      total_N         total number of observation
-        @return                     last index
+        :param X: features
+        :param y: binary labels
+        :param sample_weight: weights of every sample
+        :param dtlr: :class:`DecisionTreeLogisticRegression`
+        :param total_N: total number of observation
+        :return: last index
         """
         self.estimator.fit(X, y, sample_weight=sample_weight)
         if dtlr.verbose >= 1:
-            print("[DTLR ] %s trained acc %1.2f N=%d" % (  # pragma: no cover
-                " " * self.depth, self.estimator.score(X, y), X.shape[0]))
-        prob = self.fit_improve(dtlr, total_N, X, y,
-                                sample_weight=sample_weight)
+            print(
+                "[DTLR ] %s trained acc %1.2f N=%d"
+                % (
+                    " " * self.depth,
+                    self.estimator.score(X, y),
+                    X.shape[0],
+                )
+            )
+        prob = self.fit_improve(dtlr, total_N, X, y, sample_weight=sample_weight)
 
         if self.depth + 1 > dtlr.max_depth:
             return self.index
@@ -119,7 +121,7 @@ class _DecisionTreeLogisticRegressionNode:
             return self.index
 
         above = prob[:, 1] > self.threshold
-        below = ~ above
+        below = ~above
         n_above = above.sum()
         n_below = below.sum()
         y_above = set(y[above])
@@ -127,28 +129,36 @@ class _DecisionTreeLogisticRegressionNode:
 
         def _fit_side(index, y_above_below, above_below, n_above_below, side):
             if dtlr.verbose >= 1:
-                print("[DTLR*] %s%s: n_class=%d N=%d - %d/%d" % (  # pragma: no cover
-                    " " * self.depth, side,
-                    len(y_above_below), above_below.shape[0],
-                    n_above_below, total_N))
-            if (len(y_above_below) > 1 and
-                    above_below.shape[0] > dtlr.min_samples_leaf * 2 and
-                    (float(n_above_below) / total_N >=
-                        dtlr.min_weight_fraction_leaf * 2) and
-                    n_above_below < total_N):
+                print(
+                    "[DTLR*] %s%s: n_class=%d N=%d - %d/%d"
+                    % (
+                        " " * self.depth,
+                        side,
+                        len(y_above_below),
+                        above_below.shape[0],
+                        n_above_below,
+                        total_N,
+                    )
+                )
+            if (
+                len(y_above_below) > 1
+                and above_below.shape[0] > dtlr.min_samples_leaf * 2
+                and (
+                    float(n_above_below) / total_N >= dtlr.min_weight_fraction_leaf * 2
+                )
+                and n_above_below < total_N
+            ):
                 estimator = clone(dtlr.estimator)
                 sw = sample_weight[above_below] if sample_weight is not None else None
                 node = _DecisionTreeLogisticRegressionNode(
-                    estimator, self.threshold, depth=self.depth + 1, index=index)
-                last_index = node.fit(
-                    X[above_below], y[above_below], sw, dtlr, total_N)
+                    estimator, self.threshold, depth=self.depth + 1, index=index
+                )
+                last_index = node.fit(X[above_below], y[above_below], sw, dtlr, total_N)
                 return node, last_index
             return None, index
 
-        self.above, last = _fit_side(
-            self.index + 1, y_above, above, n_above, "above")
-        self.below, last = _fit_side(
-            last + 1, y_below, below, n_below, "below")
+        self.above, last = _fit_side(self.index + 1, y_above, above, n_above, "above")
+        self.below, last = _fit_side(last + 1, y_below, below, n_below, "below")
         return last
 
     @property
@@ -171,43 +181,52 @@ class _DecisionTreeLogisticRegressionNode:
         The algorithm has a significant cost as it sorts every observation
         and chooses the best intercept.
 
-        @param      dtlr            @see cl DecisionTreeLogisticRegression
-        @param      total_N         total number of observations
-        @param      X               features
-        @param      y               labels
-        @param      sample_weight   sample weight
-        @return                     probabilities
+        :param dtlr: :class:`DecisionTreeLogisticRegression`
+        :param total_N: total number of observations
+        :param X: features
+        :param y: labels
+        :param sample_weight: sample weight
+        :return: probabilities
         """
         if self.estimator is None:
-            raise RuntimeError(
-                "Estimator was not trained.")  # pragma: no cover
+            raise RuntimeError("Estimator was not trained.")
         prob = self.estimator.predict_proba(X)
-        if dtlr.fit_improve_algo in (None, 'none'):
+        if dtlr.fit_improve_algo in (None, "none"):
             return prob
 
         if not isinstance(self.estimator, LinearClassifierMixin):
             # The classifier is not linear and cannot be improved.
-            if dtlr.fit_improve_algo == 'intercept_sort_always':  # pragma: no cover
+            if dtlr.fit_improve_algo == "intercept_sort_always":
                 raise RuntimeError(
                     f"The model is not linear "
                     f"({self.estimator.__class__.__name__!r}), "
-                    f"intercept cannot be improved.")
+                    f"intercept cannot be improved."
+                )
             return prob
 
         above = prob[:, 1] > self.threshold
-        below = ~ above
+        below = ~above
         n_above = above.sum()
         n_below = below.sum()
         n_min = min(n_above, n_below)
         p1p2 = float(n_above * n_below) / X.shape[0] ** 2
         if dtlr.verbose >= 2:
-            print("[DTLRI] %s imp %d <> %d, p1p2=%1.3f <> %1.3f" % (  # pragma: no cover
-                " " * self.depth, n_min, dtlr.min_samples_leaf,
-                p1p2, dtlr.p1p2))
-        if (n_min >= dtlr.min_samples_leaf and
-                float(n_min) / total_N >= dtlr.min_weight_fraction_leaf and
-                p1p2 > dtlr.p1p2 and
-                dtlr.fit_improve_algo != 'intercept_sort_always'):
+            print(
+                "[DTLRI] %s imp %d <> %d, p1p2=%1.3f <> %1.3f"
+                % (
+                    " " * self.depth,
+                    n_min,
+                    dtlr.min_samples_leaf,
+                    p1p2,
+                    dtlr.p1p2,
+                )
+            )
+        if (
+            n_min >= dtlr.min_samples_leaf
+            and float(n_min) / total_N >= dtlr.min_weight_fraction_leaf
+            and p1p2 > dtlr.p1p2
+            and dtlr.fit_improve_algo != "intercept_sort_always"
+        ):
             return prob
 
         coef = self.estimator.coef_
@@ -223,7 +242,7 @@ class _DecisionTreeLogisticRegressionNode:
         besti = None
         beta_best = None
         for i in range(begin, N - begin):
-            beta = - sorted_df[i]
+            beta = -sorted_df[i]
             like = numpy.sum(likelihood(decision_function + beta, y)) / N
             w = float(i * (N - i)) / N**2
             like += w * dtlr.gamma
@@ -234,9 +253,16 @@ class _DecisionTreeLogisticRegressionNode:
 
         if beta_best is not None:
             if dtlr.verbose >= 1:
-                print("[DTLRI] %s change intercept %f --> %f in [%f, %f]" % (  # pragma: no cover
-                    " " * self.depth, self.estimator.intercept_, beta_best,
-                    - sorted_df[-1], - sorted_df[0]))
+                print(
+                    "[DTLRI] %s change intercept %f --> %f in [%f, %f]"
+                    % (
+                        " " * self.depth,
+                        self.estimator.intercept_,
+                        beta_best,
+                        -sorted_df[-1],
+                        -sorted_df[0],
+                    )
+                )
             self.estimator.intercept_ = beta_best
             prob = self.estimator.predict_proba(X)
         return prob
@@ -337,13 +363,26 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
     """
 
     _fit_improve_algo_values = (
-        None, 'none', 'auto', 'intercept_sort', 'intercept_sort_always')
+        None,
+        "none",
+        "auto",
+        "intercept_sort",
+        "intercept_sort_always",
+    )
 
-    def __init__(self, estimator=None,
-                 max_depth=20, min_samples_split=2,
-                 min_samples_leaf=2, min_weight_fraction_leaf=0.0,
-                 fit_improve_algo='auto', p1p2=0.09,
-                 gamma=1., verbose=0, strategy='parallel'):
+    def __init__(
+        self,
+        estimator=None,
+        max_depth=20,
+        min_samples_split=2,
+        min_samples_leaf=2,
+        min_weight_fraction_leaf=0.0,
+        fit_improve_algo="auto",
+        p1p2=0.09,
+        gamma=1.0,
+        verbose=0,
+        strategy="parallel",
+    ):
         "constructor"
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
@@ -353,10 +392,9 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         else:
             self.estimator = estimator
         if max_depth is None:
-            raise ValueError("'max_depth' cannot be None.")  # pragma: no cover
+            raise ValueError("'max_depth' cannot be None.")
         if max_depth > 1024:
-            raise ValueError(
-                "'max_depth' must be <= 1024.")  # pragma: no cover
+            raise ValueError("'max_depth' must be <= 1024.")
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
@@ -367,10 +405,14 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         self.verbose = verbose
         self.strategy = strategy
 
-        if self.fit_improve_algo not in DecisionTreeLogisticRegression._fit_improve_algo_values:
+        if (
+            self.fit_improve_algo
+            not in DecisionTreeLogisticRegression._fit_improve_algo_values
+        ):
             raise ValueError(
                 f"fit_improve_algo={self.fit_improve_algo!r} "
-                f"not in {DecisionTreeLogisticRegression._fit_improve_algo_values}.")
+                f"not in {DecisionTreeLogisticRegression._fit_improve_algo_values}."
+            )
 
     def fit(self, X, y, sample_weight=None):
         """
@@ -387,43 +429,40 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         Fitted attributes:
 
         * `classes_`: classes
-        * `tree_`: tree structure, see @see cl _DecisionTreeLogisticRegressionNode
+        * `tree_`: tree structure, see :class:`_DecisionTreeLogisticRegressionNode`
         * `n_nodes_`: number of nodes
         """
         if not isinstance(X, numpy.ndarray):
-            if hasattr(X, 'values'):
+            if hasattr(X, "values"):
                 X = X.values
         if not isinstance(X, numpy.ndarray):
             raise TypeError("'X' must be an array.")
-        if (sample_weight is not None and
-                not isinstance(sample_weight, numpy.ndarray)):
-            raise TypeError(
-                "'sample_weight' must be an array.")  # pragma: no cover
+        if sample_weight is not None and not isinstance(sample_weight, numpy.ndarray):
+            raise TypeError("'sample_weight' must be an array.")
         self.classes_ = numpy.array(sorted(set(y)))
         if len(self.classes_) != 2:
             raise RuntimeError(
                 f"The model only supports binary classification but labels are "
-                f"{self.classes_}.")
+                f"{self.classes_}."
+            )
 
-        if self.strategy == 'parallel':
+        if self.strategy == "parallel":
             return self._fit_parallel(X, y, sample_weight)
-        if self.strategy == 'perpendicular':
+        if self.strategy == "perpendicular":
             return self._fit_perpendicular(X, y, sample_weight)
-        raise ValueError(
-            f"Unknown strategy '{self.strategy}'.")
+        raise ValueError(f"Unknown strategy '{self.strategy}'.")
 
     def _fit_parallel(self, X, y, sample_weight):
         "Implements the parallel strategy."
         cls = (y == self.classes_[1]).astype(numpy.int32)
         estimator = clone(self.estimator)
         self.tree_ = _DecisionTreeLogisticRegressionNode(estimator, 0.5)
-        self.n_nodes_ = self.tree_.fit(
-            X, cls, sample_weight, self, X.shape[0]) + 1
+        self.n_nodes_ = self.tree_.fit(X, cls, sample_weight, self, X.shape[0]) + 1
         return self
 
     def _fit_perpendicular(self, X, y, sample_weight):
         "Implements the perpendicular strategy."
-        raise NotImplementedError()  # pragma: no cover
+        raise NotImplementedError()
 
     def predict(self, X):
         """
@@ -442,8 +481,7 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         Calls *decision_function*.
         """
-        raise NotImplementedError(  # pragma: no cover
-            "Decision function is not available for this model.")
+        raise NotImplementedError("Decision function is not available for this model.")
 
     @property
     def tree_depth_(self):

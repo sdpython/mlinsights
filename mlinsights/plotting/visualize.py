@@ -1,7 +1,3 @@
-"""
-@file
-@brief Helpers to visualize a pipeline.
-"""
 import pprint
 from collections import OrderedDict
 import numpy
@@ -17,21 +13,21 @@ def _pipeline_info(pipe, data, context, former_data=None):
     Internal function to convert a pipeline into
     some graph.
     """
-    def _get_name(context, prefix='-v-', info=None, data=None):
+
+    def _get_name(context, prefix="-v-", info=None, data=None):
         if info is None:
-            raise RuntimeError("info should not be None")  # pragma: no cover
+            raise RuntimeError("info should not be None")
         if isinstance(prefix, list):
             return [_get_name(context, el, info, data) for el in prefix]
         if isinstance(prefix, int):
             prefix = former_data[prefix]
         if isinstance(prefix, int):
-            raise TypeError(  # pragma: no cover
-                f"prefix must be a string.\ninfo={info}")
-        sug = "%s%d" % (prefix, context['n'])
-        while sug in context['names']:
-            context['n'] += 1
-            sug = "%s%d" % (prefix, context['n'])
-        context['names'][sug] = info
+            raise TypeError(f"prefix must be a string.\ninfo={info}")
+        sug = "%s%d" % (prefix, context["n"])
+        while sug in context["names"]:
+            context["n"] += 1
+            sug = "%s%d" % (prefix, context["n"])
+        context["names"][sug] = info
         return sug
 
     def _get_name_simple(name, data):
@@ -39,8 +35,9 @@ def _pipeline_info(pipe, data, context, former_data=None):
             return name
         res = data[name]
         if isinstance(res, int):
-            raise RuntimeError(  # pragma: no cover
-                f"Column name is still a number and not a name: {name} and {data}.")
+            raise RuntimeError(
+                f"Column name is still a number and not a name: {name} and {data}."
+            )
         return res
 
     if isinstance(pipe, Pipeline):
@@ -71,36 +68,34 @@ def _pipeline_info(pipe, data, context, former_data=None):
                 for v in vs:
                     new_data[v] = data.get(v, v)
 
-            info = _pipeline_info(
-                model, new_data, context, former_data=new_data)
+            info = _pipeline_info(model, new_data, context, former_data=new_data)
             # new_outputs = []
             # for o in info[-1]['outputs']:
             #    add = _get_name(context, prefix=o, info=info)
             #    outputs.append(add)
             #    new_outputs.append(add)
             # info[-1]['outputs'] = new_outputs
-            outputs.extend(info[-1]['outputs'])
+            outputs.extend(info[-1]["outputs"])
             infos.extend(info)
 
         final_hat = False
         if pipe.remainder == "passthrough":
-
-            done = [set(d['inputs']) for d in info]
+            done = [set(d["inputs"]) for d in info]
             merged = done[0]
             for d in done[1:]:
                 merged.union(d)
-            new_data = OrderedDict(
-                [(k, v) for k, v in data.items() if k not in merged])
+            new_data = OrderedDict([(k, v) for k, v in data.items() if k not in merged])
 
             info = _pipeline_info(
-                "passthrough", new_data, context, former_data=new_data)
-            outputs.extend(info[-1]['outputs'])
+                "passthrough", new_data, context, former_data=new_data
+            )
+            outputs.extend(info[-1]["outputs"])
             infos.extend(info)
             final_hat = True
 
         if len(pipe.transformers) > 1 or final_hat:
-            info = {'name': 'union', 'inputs': outputs, 'type': 'transform'}
-            info['outputs'] = [_get_name(context, info=info)]
+            info = {"name": "union", "inputs": outputs, "type": "transform"}
+            info["outputs"] = [_get_name(context, info=info)]
             infos.append(info)
         return infos
 
@@ -110,94 +105,112 @@ def _pipeline_info(pipe, data, context, former_data=None):
         for _, model in pipe.transformer_list:
             info = _pipeline_info(model, data, context)
             new_outputs = []
-            for o in info[-1]['outputs']:
+            for o in info[-1]["outputs"]:
                 add = _get_name(context, prefix=o, info=info)
                 outputs.append(add)
                 new_outputs.append(add)
-            info[-1]['outputs'] = new_outputs
+            info[-1]["outputs"] = new_outputs
             infos.extend(info)
         if len(pipe.transformer_list) > 1:
-            info = {'name': 'union', 'inputs': outputs, 'type': 'transform'}
-            info['outputs'] = [_get_name(context, info=info)]
+            info = {"name": "union", "inputs": outputs, "type": "transform"}
+            info["outputs"] = [_get_name(context, info=info)]
             infos.append(info)
         return infos
 
     if isinstance(pipe, TransformedTargetRegressor):
-        raise NotImplementedError(  # pragma: no cover
-            "Not yet implemented for TransformedTargetRegressor.")
+        raise NotImplementedError("Not yet implemented for TransformedTargetRegressor.")
 
     if isinstance(pipe, TransformerMixin):
-        info = {'name': pipe.__class__.__name__, 'type': 'transform'}
+        info = {"name": pipe.__class__.__name__, "type": "transform"}
         if len(data) == 1:
-            info['outputs'] = data
-            info['inputs'] = data
+            info["outputs"] = data
+            info["inputs"] = data
             info = [info]
         else:
-            info['inputs'] = [_get_name(context, info=info)]
-            info['outputs'] = [_get_name(context, info=info)]
-            info = [{'name': 'union', 'outputs': info['inputs'],
-                     'inputs': data, 'type': 'transform'}, info]
+            info["inputs"] = [_get_name(context, info=info)]
+            info["outputs"] = [_get_name(context, info=info)]
+            info = [
+                {
+                    "name": "union",
+                    "outputs": info["inputs"],
+                    "inputs": data,
+                    "type": "transform",
+                },
+                info,
+            ]
         return info
 
     if isinstance(pipe, ClassifierMixin):
-        info = {'name': pipe.__class__.__name__, 'type': 'classifier'}
-        exp = ['PredictedLabel', 'Probabilities']
+        info = {"name": pipe.__class__.__name__, "type": "classifier"}
+        exp = ["PredictedLabel", "Probabilities"]
         if len(data) == 1:
-            info['outputs'] = exp
-            info['inputs'] = data
+            info["outputs"] = exp
+            info["inputs"] = data
             info = [info]
         else:
-            info['outputs'] = exp
-            info['inputs'] = [_get_name(context, info=info)]
-            info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
-                     'type': 'transform'}, info]
+            info["outputs"] = exp
+            info["inputs"] = [_get_name(context, info=info)]
+            info = [
+                {
+                    "name": "union",
+                    "outputs": info["inputs"],
+                    "inputs": data,
+                    "type": "transform",
+                },
+                info,
+            ]
         return info
 
     if isinstance(pipe, RegressorMixin):
-        info = {'name': pipe.__class__.__name__, 'type': 'regressor'}
-        exp = ['Prediction']
+        info = {"name": pipe.__class__.__name__, "type": "regressor"}
+        exp = ["Prediction"]
         if len(data) == 1:
-            info['outputs'] = exp
-            info['inputs'] = data
+            info["outputs"] = exp
+            info["inputs"] = data
             info = [info]
         else:
-            info['outputs'] = exp
-            info['inputs'] = [_get_name(context, info=info)]
-            info = [{'name': 'union', 'outputs': info['inputs'], 'inputs': data,
-                     'type': 'transform'}, info]
+            info["outputs"] = exp
+            info["inputs"] = [_get_name(context, info=info)]
+            info = [
+                {
+                    "name": "union",
+                    "outputs": info["inputs"],
+                    "inputs": data,
+                    "type": "transform",
+                },
+                info,
+            ]
         return info
 
     if isinstance(pipe, str):
         if pipe == "passthrough":
-            info = {'name': 'Identity', 'type': 'transform'}
-            info['inputs'] = [_get_name_simple(n, former_data) for n in data]
+            info = {"name": "Identity", "type": "transform"}
+            info["inputs"] = [_get_name_simple(n, former_data) for n in data]
             if isinstance(data, (OrderedDict, dict)) and len(data) > 1:
-                info['outputs'] = [
-                    _get_name(context, data=k, info=info)
-                    for k in data]
+                info["outputs"] = [_get_name(context, data=k, info=info) for k in data]
             else:
-                info['outputs'] = _get_name(context, data=data, info=info)
+                info["outputs"] = _get_name(context, data=data, info=info)
             info = [info]
         else:
-            raise NotImplementedError(  # pragma: no cover
-                f"Not yet implemented for keyword '{type(pipe)}'.")
+            raise NotImplementedError(
+                f"Not yet implemented for keyword '{type(pipe)}'."
+            )
         return info
 
-    raise NotImplementedError(  # pragma: no cover
-        f"Not yet implemented for {type(pipe)}.")
+    raise NotImplementedError(f"Not yet implemented for {type(pipe)}.")
 
 
 def pipeline2dot(pipe, data, **params):
     """
     Exports a *scikit-learn* pipeline to
-    :epkg:`DOT` language. See :ref:`visualizepipelinerst`
+    :epkg:`DOT` language. See :ref:`l-visualize-pipeline-example`
     for an example.
 
-    @param      pipe        *scikit-learn* pipeline
-    @param      data        training data as a dataframe or a numpy array,
-                            or just a list with the variable names
-    @param      params      additional params to draw the graph
-    @return                 string
+    :param pipe: *scikit-learn* pipeline
+    :param data: training data as a dataframe or a numpy array,
+        or just a list with the variable names
+    :param params: additional params to draw the graph
+    :return: string
 
     Default options for the graph are:
 
@@ -215,28 +228,28 @@ def pipeline2dot(pipe, data, **params):
     data = OrderedDict()
     if isinstance(raw_data, pandas.DataFrame):
         for k, c in enumerate(raw_data.columns):
-            data[c] = 'sch0:f%d' % k
+            data[c] = "sch0:f%d" % k
     elif isinstance(raw_data, numpy.ndarray):
         if len(raw_data.shape) != 2:
-            raise NotImplementedError(  # pragma: no cover
-                f"Unexpected training data dimension {raw_data.shape}.")
+            raise NotImplementedError(
+                f"Unexpected training data dimension {raw_data.shape}."
+            )
         for i in range(raw_data.shape[1]):
-            data['X%d' % i] = 'sch0:f%d' % i
+            data["X%d" % i] = "sch0:f%d" % i
     elif not isinstance(raw_data, list):
-        raise TypeError(  # pragma: no cover
-            f"Unexpected data type: {type(raw_data)}.")
+        raise TypeError(f"Unexpected data type: {type(raw_data)}.")
 
     options = {
-        'orientation': 'portrait',
-        'ranksep': '0.25',
-        'nodesep': '0.05',
-        'width': '0.5',
-        'height': '0.1',
+        "orientation": "portrait",
+        "ranksep": "0.25",
+        "nodesep": "0.05",
+        "width": "0.5",
+        "height": "0.1",
     }
     options.update(params)
 
     exp = ["digraph{"]
-    for opt in ['orientation', 'pad', 'nodesep', 'ranksep']:
+    for opt in ["orientation", "pad", "nodesep", "ranksep"]:
         if opt in options:
             exp.append(f"  {opt}={options[opt]};")
     fontsize = 8
@@ -249,53 +262,61 @@ def pipeline2dot(pipe, data, **params):
 
     for i, line in enumerate(info):
         if i == 0:
-            schema = line['schema_after']
+            schema = line["schema_after"]
             labs = []
             for c, col in enumerate(schema):
-                columns[col] = f'sch0:f{c}'
+                columns[col] = f"sch0:f{c}"
                 labs.append(f"<f{c}> {col}")
             node = '  sch0[label="{0}",shape=record,fontsize={1}];'.format(
-                "|".join(labs), params.get('fontsize', fontsize))
+                "|".join(labs), params.get("fontsize", fontsize)
+            )
             exp.append(node)
         else:
-            exp.append('')
-            if line['type'] == 'transform':
-                node = '  node{0}[label="{1}",shape=box,style="filled' \
+            exp.append("")
+            if line["type"] == "transform":
+                node = (
+                    '  node{0}[label="{1}",shape=box,style="filled'
                     ',rounded",color=cyan,fontsize={2}];'.format(
-                        i, line['name'],
-                        int(params.get('fontsize', fontsize) * 1.5))
+                        i, line["name"], int(params.get("fontsize", fontsize) * 1.5)
+                    )
+                )
             else:
-                node = '  node{0}[label="{1}",shape=box,style="filled,' \
+                node = (
+                    '  node{0}[label="{1}",shape=box,style="filled,'
                     'rounded",color=yellow,fontsize={2}];'.format(
-                        i, line['name'],
-                        int(params.get('fontsize', fontsize) * 1.5))
+                        i, line["name"], int(params.get("fontsize", fontsize) * 1.5)
+                    )
+                )
             exp.append(node)
 
-            for inp in line['inputs']:
+            for inp in line["inputs"]:
                 if isinstance(inp, int):
-                    raise IndexError(  # pragma: no cover
+                    raise IndexError(
                         "Unable to guess columns {} in\n{}\n---\n{}".format(
-                            inp, pprint.pformat(columns), '\n'.join(exp)))
+                            inp, pprint.pformat(columns), "\n".join(exp)
+                        )
+                    )
                 else:
                     nc = columns.get(inp, inp)
-                edge = f'  {nc} -> node{i};'
+                edge = f"  {nc} -> node{i};"
                 exp.append(edge)
 
             labs = []
-            for c, out in enumerate(line['outputs']):
-                columns[out] = f'sch{i}:f{c}'
+            for c, out in enumerate(line["outputs"]):
+                columns[out] = f"sch{i}:f{c}"
                 labs.append(f"<f{c}> {out}")
             node = '  sch{0}[label="{1}",shape=record,fontsize={2}];'.format(
-                i, "|".join(labs), params.get('fontsize', fontsize))
+                i, "|".join(labs), params.get("fontsize", fontsize)
+            )
             exp.append(node)
 
-            for out in line['outputs']:
+            for out in line["outputs"]:
                 nc = columns[out]
-                edge = f'  node{i} -> {nc};'
+                edge = f"  node{i} -> {nc};"
                 if edge not in exp:
                     exp.append(edge)
 
-    exp.append('}')
+    exp.append("}")
     return "\n".join(exp)
 
 
@@ -303,8 +324,9 @@ def pipeline2str(pipe, indent=3):
     """
     Exports a *scikit-learn* pipeline to text.
 
-    @param      pipe        *scikit-learn* pipeline
-    @return                 str
+    :param pipe: *scikit-learn* pipeline
+    :param indent: indent
+    :return: str
 
     .. runpython::
         :showcode:
@@ -345,7 +367,7 @@ def pipeline2str(pipe, indent=3):
         if vs is None:
             msg = f"{spaces}{model.__class__.__name__}"
         else:
-            v = ','.join(map(str, vs))
+            v = ",".join(map(str, vs))
             msg = f"{spaces}{model.__class__.__name__}({v})"
         rows.append(msg)
     return "\n".join(rows)

@@ -1,14 +1,11 @@
-"""
-@file
-@brief Implements a piecewise linear regression.
-"""
 import numpy
 import numpy.random
 from sklearn.base import RegressorMixin, clone, BaseEstimator
 from sklearn.utils._joblib import Parallel, delayed
+
 try:
     from tqdm import tqdm
-except ImportError:  # pragma: no cover
+except ImportError:
     pass
 
 
@@ -24,22 +21,22 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
     draws sample by random but keeps the weight associated
     to each of them. Another way could be to draw
     a weighted sample but give them uniform weights.
+
+    :param estimator: predictor trained on every bucket
+    :param n_estimators: number of estimators to train
+    :param n_jobs: number of parallel jobs (for training and predicting)
+    :param alpha: proportion of samples resampled for each training
+    :param verbose: boolean or use ``'tqdm'`` to use :epkg:`tqdm`
+        to fit the estimators
     """
 
-    def __init__(self, estimator=None, n_estimators=10, n_jobs=None,
-                 alpha=1., verbose=False):
-        """
-        @param      estimator           predictor trained on every bucket
-        @param      n_estimators        number of estimators to train
-        @param      n_jobs              number of parallel jobs (for training and predicting)
-        @param      alpha               proportion of samples resampled for each training
-        @param      verbose             boolean or use ``'tqdm'`` to use :epkg:`tqdm`
-                                        to fit the estimators
-        """
+    def __init__(
+        self, estimator=None, n_estimators=10, n_jobs=None, alpha=1.0, verbose=False
+    ):
         BaseEstimator.__init__(self)
         RegressorMixin.__init__(self)
         if estimator is None:
-            raise ValueError("estimator cannot be null.")  # pragma: no cover
+            raise ValueError("estimator cannot be null.")
         self.estimator = estimator
         self.n_jobs = n_jobs
         self.alpha = alpha
@@ -78,9 +75,12 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
         self.estimators_ = []
         estimators = [clone(self.estimator) for i in range(self.n_estimators)]
 
-        loop = tqdm(range(len(estimators))
-                    ) if self.verbose == 'tqdm' else range(len(estimators))
-        verbose = 1 if self.verbose == 'tqdm' else (1 if self.verbose else 0)
+        loop = (
+            tqdm(range(len(estimators)))
+            if self.verbose == "tqdm"
+            else range(len(estimators))
+        )
+        verbose = 1 if self.verbose == "tqdm" else (1 if self.verbose else 0)
 
         def _fit_piecewise_estimator(i, est, X, y, sample_weight, alpha):
             new_size = int(X.shape[0] * alpha + 0.5)
@@ -90,12 +90,14 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
             sr = sample_weight[rnd] if sample_weight is not None else None
             return est.fit(Xr, yr, sr)
 
-        self.estimators_ = \
-            Parallel(n_jobs=self.n_jobs, verbose=verbose,
-                     prefer='threads')(
-                delayed(_fit_piecewise_estimator)(
-                    i, estimators[i], X, y, sample_weight, self.alpha)
-                for i in loop)
+        self.estimators_ = Parallel(
+            n_jobs=self.n_jobs, verbose=verbose, prefer="threads"
+        )(
+            delayed(_fit_piecewise_estimator)(
+                i, estimators[i], X, y, sample_weight, self.alpha
+            )
+            for i in loop
+        )
 
         return self
 

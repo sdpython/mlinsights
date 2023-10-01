@@ -1,37 +1,30 @@
 # -*- coding: utf-8 -*-
-"""
-@brief      test log(time=20s)
-"""
 import unittest
 import numpy
 from numpy.random import RandomState
-from sklearn import __version__ as sklver
 from sklearn import datasets
 from sklearn.exceptions import ConvergenceWarning
+
 try:
     from sklearn.utils._testing import ignore_warnings
 except ImportError:
     from sklearn.utils.testing import ignore_warnings
-from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.texthelper import compare_module_version
+from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel import (
-    ClassifierAfterKMeans, run_test_sklearn_pickle,
-    run_test_sklearn_clone, run_test_sklearn_grid_search_cv)
+    ClassifierAfterKMeans,
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv,
+)
 
 
 class TestClassifierAfterKMeans(ExtTestCase):
-
     @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         clr = ClassifierAfterKMeans()
-        try:
-            clr.fit(X, y)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        clr.fit(X, y)
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
         prob = clr.predict_proba(X)
@@ -44,12 +37,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         clr = ClassifierAfterKMeans()
-        try:
-            clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        clr.fit(X, y, sample_weight=numpy.ones((X.shape[0],)))
         acc = clr.score(X, y)
         self.assertGreater(acc, 0)
 
@@ -57,12 +45,7 @@ class TestClassifierAfterKMeans(ExtTestCase):
     def test_classification_kmeans_pickle(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
-        try:
-            run_test_sklearn_pickle(lambda: ClassifierAfterKMeans(), X, y)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        run_test_sklearn_pickle(lambda: ClassifierAfterKMeans(), X, y)
 
     def test_classification_kmeans_clone(self):
         self.maxDiff = None
@@ -72,20 +55,19 @@ class TestClassifierAfterKMeans(ExtTestCase):
     def test_classification_kmeans_grid_search(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
-        self.assertRaise(lambda: run_test_sklearn_grid_search_cv(
-            lambda: ClassifierAfterKMeans(), X, y), ValueError)
-        try:
-            res = run_test_sklearn_grid_search_cv(
-                lambda: ClassifierAfterKMeans(),
-                X, y, c_n_clusters=[2, 3])
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
-        self.assertIn('model', res)
-        self.assertIn('score', res)
-        self.assertGreater(res['score'], 0)
-        self.assertLesser(res['score'], 1)
+        self.assertRaise(
+            lambda: run_test_sklearn_grid_search_cv(
+                lambda: ClassifierAfterKMeans(), X, y
+            ),
+            ValueError,
+        )
+        res = run_test_sklearn_grid_search_cv(
+            lambda: ClassifierAfterKMeans(), X, y, c_n_clusters=[2, 3]
+        )
+        self.assertIn("model", res)
+        self.assertIn("score", res)
+        self.assertGreater(res["score"], 0)
+        self.assertLesser(res["score"], 1)
 
     @ignore_warnings(category=ConvergenceWarning)
     def test_classification_kmeans_relevance(self):
@@ -103,24 +85,20 @@ class TestClassifierAfterKMeans(ExtTestCase):
         X = numpy.vstack(Xs)
         Y = numpy.array(Ys)
         clk = ClassifierAfterKMeans(c_n_clusters=6, c_random_state=state)
-        try:
-            clk.fit(X, Y)
-        except AttributeError as e:
-            if compare_module_version(sklver, "0.24") < 0:
-                return
-            raise e
+        clk.fit(X, Y)
         score = clk.score(X, Y)
         self.assertGreater(score, 0.95)
 
     @ignore_warnings(category=ConvergenceWarning)
     def test_issue(self):
-        X, labels_true = datasets.make_blobs(
-            n_samples=750, centers=6, cluster_std=0.4)[:2]
+        X, labels_true = datasets.make_blobs(n_samples=750, centers=6, cluster_std=0.4)[
+            :2
+        ]
         labels_true = labels_true % 3
         clcl = ClassifierAfterKMeans(e_max_iter=1000)
         clcl.fit(X, labels_true)
         r = repr(clcl)
-        self.assertIn('ClassifierAfterKMeans(', r)
+        self.assertIn("ClassifierAfterKMeans(", r)
         self.assertIn("c_init='k-means++'", r)
 
 

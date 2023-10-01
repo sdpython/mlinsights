@@ -1,7 +1,3 @@
-"""
-@file
-@brief Combines a *k-means* followed by a predictor.
-"""
 import textwrap
 import inspect
 import numpy
@@ -15,21 +11,19 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
     Applies a *k-means* (see :epkg:`sklearn:cluster:KMeans`)
     for each class, then adds the distance to each cluster
     as a feature for a classifier.
-    See notebook :ref:`logisticregressionclusteringrst`.
+    See example :ref:`l-logisitic-regression-clustering`.
+
+    :param estimator: :class:`sklearn.linear_model.LogisiticRegression` by default
+    :param clus: clustering applied on each class,
+        by default k-means with two classes
+    :param kwargs: sent to
+        :meth:`set_params
+        <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`,
+        see its documentation to understand how to
+        specify parameters
     """
 
     def __init__(self, estimator=None, clus=None, **kwargs):
-        """
-        @param  estimator   :epkg:`sklearn:linear_model:LogisiticRegression`
-                            by default
-        @param  clus        clustering applied on each class,
-                            by default k-means with two classes
-        @param  kwargs      sent to :meth:`set_params
-                            <mlinsights.mlmodel.classification_kmeans.
-                            ClassifierAfterKMeans.set_params>`,
-                            see its documentation to understand how to
-                            specify parameters
-        """
         ClassifierMixin.__init__(self)
         BaseEstimator.__init__(self)
         if estimator is None:
@@ -39,8 +33,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         self.estimator = estimator
         self.clus = clus
         if not hasattr(clus, "transform"):
-            raise AttributeError(  # pragma: no cover
-                "clus does not have a transform method.")
+            raise AttributeError("clus does not have a transform method.")
         if kwargs:
             self.set_params(**kwargs)
 
@@ -70,7 +63,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         for cl in classes:
             m = clone(self.clus)
             Xcl = X[y == cl]
-            if sample_weight is None or 'sample_weight' not in sig.parameters:
+            if sample_weight is None or "sample_weight" not in sig.parameters:
                 w = None
                 m.fit(Xcl)
             else:
@@ -79,8 +72,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
             self.clus_[cl] = m
 
         extX = self.transform_features(X)
-        self.estimator_ = self.estimator.fit(
-            extX, y, sample_weight=sample_weight)
+        self.estimator_ = self.estimator.fit(extX, y, sample_weight=sample_weight)
         return self
 
     def transform_features(self, X):
@@ -89,8 +81,8 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         on every observations and extends the list of
         features.
 
-        @param      X       features
-        @return             extended features
+        :param X: features
+        :return: extended features
         """
         preds = []
         for _, v in sorted(self.clus_.items()):
@@ -124,11 +116,11 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         Returns the parameters for both
         the clustering and the classifier.
 
-        @param      deep        unused here
-        @return                 dict
+        :param deep: unused here
+        :return: dict
 
-        :meth:`set_params <mlinsights.mlmodel.classification_kmeans.
-        ClassifierAfterKMeans.set_params>`
+        :meth:`set_params
+        <mlinsights.mlmodel.classification_kmeans.ClassifierAfterKMeans.set_params>`
         describes the pattern parameters names follow.
         """
         res = {}
@@ -145,28 +137,26 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
         parameter, every parameter prefixed by ``'c_'`` is for
         the :epkg:`sklearn:cluster:KMeans`.
 
-        @param      values      valeurs
-        @return                 dict
+        :param values: valeurs
+        :return: dict
         """
         pc, pe = {}, {}
         for k, v in values.items():
-            if k.startswith('e_'):
+            if k.startswith("e_"):
                 pe[k[2:]] = v
-            elif k.startswith('c_'):
+            elif k.startswith("c_"):
                 pc[k[2:]] = v
             else:
-                raise ValueError(  # pragma: no cover
-                    f"Unexpected parameter name '{k}'")
+                raise ValueError(f"Unexpected parameter name '{k}'")
         self.clus.set_params(**pc)
         self.estimator.set_params(**pe)
 
-    def __repr__(self):  # pylint: disable=W0222
+    def __repr__(self):
         """
         Overloads `repr` as *scikit-learn* now relies
         on the constructor signature.
         """
-        el = ', '.join([f'{k}={v!r}'
-                        for k, v in self.get_params().items()])
+        el = ", ".join([f"{k}={v!r}" for k, v in self.get_params().items()])
         text = f"{self.__class__.__name__}({el})"
-        lines = textwrap.wrap(text, subsequent_indent='    ')
+        lines = textwrap.wrap(text, subsequent_indent="    ")
         return "\n".join(lines)

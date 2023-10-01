@@ -1,9 +1,3 @@
-"""
-@file
-@brief Access to the C API of scikit-learn (decision tree)
-"""
-from libc.stdio cimport printf
-
 import numpy
 cimport numpy
 numpy.import_array()
@@ -32,6 +26,7 @@ cdef SIZE_t _tree_add_node(Tree tree,
                           threshold, impurity,
                           n_node_samples, weighted_n_node_samples,
                           missing_go_to_left)
+
 
 def tree_add_node(tree, parent, is_left, is_leaf, feature, threshold,
                   impurity, n_node_samples, weighted_n_node_samples,

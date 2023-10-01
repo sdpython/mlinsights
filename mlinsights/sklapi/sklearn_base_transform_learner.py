@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a *transform* which converts a *learner* into
-a *transform*.
-"""
 import textwrap
 import numpy
 from .sklearn_base_transform import SkBaseTransform
@@ -15,7 +10,8 @@ class SkBaseTransformLearner(SkBaseTransform):
     method *predict* into *transform*. This way,
     two learners can be inserted into the same pipeline.
     There is another a,d shorter implementation
-    with class @see class TransferTransformer.
+    with class :class:`TransferTransformer
+    <mlinsights.mlmodel.transfer_transformer.TransferTransformer>`.
 
     .. exref::
         :title: Use two learners into a same pipeline
@@ -23,7 +19,7 @@ class SkBaseTransformLearner(SkBaseTransform):
         :lid: ex-pipe2learner
 
         It is impossible to use two *learners* into a pipeline
-        unless we use a class such as @see cl SkBaseTransformLearner
+        unless we use a class such as :class:`SkBaseTransformLearner`
         which disguise a *learner* into a *transform*.
 
         .. runpython::
@@ -78,14 +74,15 @@ class SkBaseTransformLearner(SkBaseTransform):
         super().__init__(**kwargs)
         self.model = model
         if model is None:
-            raise ValueError("value cannot be None")  # pragma: no cover
+            raise ValueError("value cannot be None")
         if method is None:
-            for name in ['predict_proba', 'predict', 'transform']:
+            for name in ["predict_proba", "predict", "transform"]:
                 if hasattr(model.__class__, name):
                     method = name
             if method is None:
-                raise ValueError(  # pragma: no cover
-                    f"Unable to guess a default method for '{repr(model)}'")
+                raise ValueError(
+                    f"Unable to guess a default method for '{repr(model)}'"
+                )
         self.method = method
         self._set_method(method)
 
@@ -95,22 +92,20 @@ class SkBaseTransformLearner(SkBaseTransform):
         into predictions.
         """
         if isinstance(method, str):
-            if method == 'predict':
+            if method == "predict":
                 self.method_ = self.model.predict
-            elif method == 'predict_proba':
+            elif method == "predict_proba":
                 self.method_ = self.model.predict_proba
-            elif method == 'decision_function':
+            elif method == "decision_function":
                 self.method_ = self.model.decision_function
-            elif method == 'transform':
+            elif method == "transform":
                 self.method_ = self.model.transform
             else:
-                raise ValueError(  # pragma: no cover
-                    f"Unexpected method '{method}'")
+                raise ValueError(f"Unexpected method '{method}'")
         elif callable(method):
             self.method_ = method
         else:
-            raise TypeError(  # pragma: no cover
-                f"Unable to find the transform method, method={method}")
+            raise TypeError(f"Unable to find the transform method, method={method}")
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -148,8 +143,8 @@ class SkBaseTransformLearner(SkBaseTransform):
         @return                 dict
         """
         res = self.P.to_dict()
-        res['model'] = self.model
-        res['method'] = self.method
+        res["model"] = self.model
+        res["method"] = self.method
         if deep:
             par = self.model.get_params(deep)
             for k, v in par.items():
@@ -162,25 +157,23 @@ class SkBaseTransformLearner(SkBaseTransform):
 
         @param      values      parameters
         """
-        if 'model' in values:
-            self.model = values['model']
-            del values['model']
-        elif not hasattr(self, 'model') or self.model is None:
-            raise KeyError(  # pragma: no cover
-                f"Missing key 'model' in [{', '.join(sorted(values))}]")
-        if 'method' in values:
-            self._set_method(values['method'])
-            del values['method']
+        if "model" in values:
+            self.model = values["model"]
+            del values["model"]
+        elif not hasattr(self, "model") or self.model is None:
+            raise KeyError(f"Missing key 'model' in [{', '.join(sorted(values))}]")
+        if "method" in values:
+            self._set_method(values["method"])
+            del values["method"]
         for k in values:
-            if not k.startswith('model__'):
-                raise ValueError(  # pragma: no cover
-                    f"Parameter '{k}' must start with 'model__'.")
-        d = len('model__')
+            if not k.startswith("model__"):
+                raise ValueError(f"Parameter '{k}' must start with 'model__'.")
+        d = len("model__")
         pars = {k[d:]: v for k, v in values.items()}
         self.model.set_params(**pars)
-        if 'method' in values:
-            self.method = values['method']
-            self._set_method(values['method'])
+        if "method" in values:
+            self.method = values["method"]
+            self._set_method(values["method"])
 
     #################
     # common methods

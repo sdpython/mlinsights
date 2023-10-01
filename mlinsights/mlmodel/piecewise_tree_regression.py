@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Implements a kind of piecewise linear regression by modifying
-the criterion used by the algorithm which builds a decision tree.
-"""
 import numpy
 from sklearn.tree import DecisionTreeRegressor
 
@@ -19,20 +14,32 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
     * ``simple``: optimizes for a stepwise regression (equivalent to *mse*)
     """
 
-    def __init__(self, criterion='mselin', splitter='best', max_depth=None,
-                 min_samples_split=2, min_samples_leaf=1,
-                 min_weight_fraction_leaf=0.0, max_features=None,
-                 random_state=None, max_leaf_nodes=None,
-                 min_impurity_decrease=0.0):
+    def __init__(
+        self,
+        criterion="mselin",
+        splitter="best",
+        max_depth=None,
+        min_samples_split=2,
+        min_samples_leaf=1,
+        min_weight_fraction_leaf=0.0,
+        max_features=None,
+        random_state=None,
+        max_leaf_nodes=None,
+        min_impurity_decrease=0.0,
+    ):
         DecisionTreeRegressor.__init__(
-            self, criterion=criterion,
-            splitter=splitter, max_depth=max_depth,
+            self,
+            criterion=criterion,
+            splitter=splitter,
+            max_depth=max_depth,
             min_samples_split=min_samples_split,
             min_samples_leaf=min_samples_leaf,
             min_weight_fraction_leaf=min_weight_fraction_leaf,
-            max_features=max_features, random_state=random_state,
+            max_features=max_features,
+            random_state=random_state,
             max_leaf_nodes=max_leaf_nodes,
-            min_impurity_decrease=min_impurity_decrease)
+            min_impurity_decrease=min_impurity_decrease,
+        )
 
     def fit(self, X, y, sample_weight=None, check_input=True):
         """
@@ -40,25 +47,30 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         """
         replace = None
         if isinstance(self.criterion, str):
-            if self.criterion == 'mselin':
-                from .piecewise_tree_regression_criterion_linear import (  # pylint: disable=E0611,C0415
-                    LinearRegressorCriterion)
+            if self.criterion == "mselin":
+                from .piecewise_tree_regression_criterion_linear import (
+                    LinearRegressorCriterion,
+                )
+
                 replace = self.criterion
                 self.criterion = LinearRegressorCriterion(
-                    1 if len(y.shape) <= 1 else y.shape[1], X)
+                    1 if len(y.shape) <= 1 else y.shape[1], X
+                )
             elif self.criterion == "simple":
-                from .piecewise_tree_regression_criterion_fast import (  # pylint: disable=E0611,C0415
-                    SimpleRegressorCriterionFast)
+                from .piecewise_tree_regression_criterion_fast import (
+                    SimpleRegressorCriterionFast,
+                )
+
                 replace = self.criterion
                 self.criterion = SimpleRegressorCriterionFast(
-                    1 if len(y.shape) <= 1 else y.shape[1], X.shape[0])
+                    1 if len(y.shape) <= 1 else y.shape[1], X.shape[0]
+                )
         else:
             replace = None
 
         DecisionTreeRegressor.fit(
-            self, X, y,
-            sample_weight=sample_weight,
-            check_input=check_input)
+            self, X, y, sample_weight=sample_weight, check_input=check_input
+        )
 
         if replace:
             self.criterion = replace
@@ -69,8 +81,11 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
 
     def _mapping_train(self, X):
         tree = self.tree_
-        leaves = [i for i in range(len(tree.children_left))
-                  if tree.children_left[i] <= i and tree.children_right[i] <= i]  # pylint: disable=E1136
+        leaves = [
+            i
+            for i in range(len(tree.children_left))
+            if tree.children_left[i] <= i and tree.children_right[i] <= i
+        ]
         dec_path = self.decision_path(X)
         association = numpy.zeros((X.shape[0],))
         association[:] = -1
@@ -112,16 +127,21 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         points mapped a specific leave. ``leaves_index_`` keeps
         in memory a set of leaves.
         """
-        from .piecewise_tree_regression_criterion_linear import (  # pylint: disable=E0611,C0415
-            LinearRegressorCriterion)
+        from .piecewise_tree_regression_criterion_linear import (
+            LinearRegressorCriterion,
+        )
 
         tree = self.tree_
-        self.leaves_index_ = [i for i in range(len(tree.children_left))
-                              if tree.children_left[i] <= i and tree.children_right[i] <= i]  # pylint: disable=E1136
+        self.leaves_index_ = [
+            i
+            for i in range(len(tree.children_left))
+            if tree.children_left[i] <= i and tree.children_right[i] <= i
+        ]
         if tree.n_leaves != len(self.leaves_index_):
-            raise RuntimeError(  # pragma: no cover
+            raise RuntimeError(
                 f"Unexpected number of leaves {tree.n_leaves} "
-                f"!= {len(self.leaves_index_)}.")
+                f"!= {len(self.leaves_index_)}."
+            )
         pred_leaves = self.predict_leaves(X)
         self.leaves_mapping_ = {k: i for i, k in enumerate(pred_leaves)}
         self.betas_ = numpy.empty((len(self.leaves_index_), X.shape[1] + 1))
@@ -132,10 +152,11 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             if len(ys.shape) == 1:
                 ys = ys[:, numpy.newaxis]
             ys = ys.copy()
-            ws = sample_weight[ind].copy(
-            ) if sample_weight is not None else None
+            ws = sample_weight[ind].copy() if sample_weight is not None else None
+            # Fatal Python error: __pyx_fatalerror: Acquisition count is 0 (line 26868)
             dec = LinearRegressorCriterion.create(xs, ys, ws)
             dec.node_beta(self.betas_[i, :])
+        print("end")
 
     def predict(self, X, check_input=True):
         """
@@ -144,7 +165,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         *mse*, *mae*, *simple*. Computes the predictions
         from linear regression if the criterion is *mselin*.
         """
-        if self.criterion == 'mselin':
+        if self.criterion == "mselin":
             return self._predict_reglin(X, check_input=check_input)
         return DecisionTreeRegressor.predict(self, X, check_input=check_input)
 

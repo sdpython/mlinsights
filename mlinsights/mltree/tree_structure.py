@@ -1,9 +1,5 @@
-"""
-@file
-@brief Helpers to investigate a tree structure.
-"""
 import numpy
-from sklearn.tree._tree import TREE_LEAF  # pylint: disable=E0611
+from sklearn.tree._tree import TREE_LEAF
 
 
 def _get_tree(obj):
@@ -14,8 +10,7 @@ def _get_tree(obj):
         return obj
     if hasattr(obj, "tree_"):
         return obj.tree_
-    raise AttributeError(  # pragma: no cover
-        f"obj is no tree: {type(obj)}")
+    raise AttributeError(f"obj is no tree: {type(obj)}")
 
 
 def tree_leave_index(model):
@@ -37,10 +32,10 @@ def tree_find_path_to_root(tree, i, parents=None):
     """
     Lists nodes involved into the path to find node *i*.
 
-    @param      tree        tree
-    @param      i           node index (``tree.nodes[i]``)
-    @param      parents     precomputed parents (None -> calls @see fn tree_node_range)
-    @return                 one array of size *(D, 2)* where *D* is the number of dimensions
+    :param tree: tree
+    :param i: node index (``tree.nodes[i]``)
+    :param parents: precomputed parents (None -> calls :func:`tree_node_range`)
+    :return: one array of size *(D, 2)* where *D* is the number of dimensions
     """
     tree = _get_tree(tree)
     path_i = [i]
@@ -48,7 +43,7 @@ def tree_find_path_to_root(tree, i, parents=None):
     while current_i in parents:
         current_i = parents[current_i]
         if current_i < 0:
-            current_i = - current_i
+            current_i = -current_i
         path_i.append(current_i)
     return list(reversed(path_i))
 
@@ -57,11 +52,11 @@ def tree_find_common_node(tree, i, j, parents=None):
     """
     Finds the common node to nodes *i* and *j*.
 
-    @param      tree        tree
-    @param      i           node index (``tree.nodes[i]``)
-    @param      j           node index (``tree.nodes[j]``)
-    @param      parents     precomputed parents (None -> calls @see fn tree_node_range)
-    @return                 common root, remaining path to *i*, remaining path to *j*
+    :param tree: tree
+    :param i: node index (``tree.nodes[i]``)
+    :param j: node index (``tree.nodes[j]``)
+    :param parents: precomputed parents (None -> calls :func:`tree_node_range`)
+    :return: common root, remaining path to *i*, remaining path to *j*
     """
     tree = _get_tree(tree)
     if parents is None:
@@ -78,8 +73,7 @@ def tree_find_common_node(tree, i, j, parents=None):
         return j, path_i[pos:], path_j[pos:]
     if pj is not None and pj == i:
         return i, path_i[pos:], path_j[pos:]
-    raise RuntimeError(  # pragma: no cover
-        f"Paths are equal, i={i} and j={j} must be differet.")
+    raise RuntimeError(f"Paths are equal, i={i} and j={j} must be differet.")
 
 
 def tree_node_parents(tree):
@@ -104,10 +98,10 @@ def tree_node_range(tree, i, parents=None):
     Determines the ranges for a node all dimensions.
     ``nan`` means infinity.
 
-    @param      tree        tree
-    @param      i           node index (``tree.nodes[i]``)
-    @param      parents     precomputed parents (None -> calls @see fn tree_node_range)
-    @return                 one array of size *(D, 2)* where *D* is the number of dimensions
+    :param tree: tree
+    :param i: node index (``tree.nodes[i]``)
+    :param parents: precomputed parents (None -> calls :func:`tree_node_range`)
+    :return: one array of size *(D, 2)* where *D* is the number of dimensions
 
     The following example shows what the function returns
     in case of simple grid in two dimensions.
@@ -144,11 +138,9 @@ def tree_node_range(tree, i, parents=None):
         lr = tree.children_left[p] == path[ind + 1]
         th = tree.threshold[p]
         if lr:
-            res[fn, 1] = min(res[fn, 1], th) if not numpy.isnan(
-                res[fn, 1]) else th
+            res[fn, 1] = min(res[fn, 1], th) if not numpy.isnan(res[fn, 1]) else th
         else:
-            res[fn, 0] = max(res[fn, 0], th) if not numpy.isnan(
-                res[fn, 0]) else th
+            res[fn, 0] = max(res[fn, 0], th) if not numpy.isnan(res[fn, 0]) else th
     return res
 
 
@@ -161,11 +153,14 @@ def predict_leaves(model, X):
     @param      X           observations
     @return                 array of leaves
     """
-    if hasattr(model, 'get_leaves_index'):
+    if hasattr(model, "get_leaves_index"):
         leaves_index = model.get_leaves_index()
     else:
-        leaves_index = [i for i in range(len(model.tree_.children_left))
-                        if model.tree_.children_left[i] == TREE_LEAF]
+        leaves_index = [
+            i
+            for i in range(len(model.tree_.children_left))
+            if model.tree_.children_left[i] == TREE_LEAF
+        ]
     leaves = model.decision_path(X)
     leaves = leaves[:, leaves_index]
     mat = numpy.argmax(leaves, 1)
@@ -181,13 +176,13 @@ def tree_leave_neighbors(model):
     grid of the feature spaces, each split multiplies the
     number of cells by two.
 
-    @param      model       a :epkg:`sklearn:tree:DecisionTreeRegressor`,
-                            a :epkg:`sklearn:tree:DecisionTreeClassifier`,
-                            a model which has a member ``tree_``
-    @return                 a dictionary ``{(i, j): (dimension, x1, x2)}``,
-                            *i, j* are node indices, if :math:`X_d * sign < th  * sign`,
-                            the observations goes to node *i*, *j* otherwise,
-                            *i < j*. The border is somewhere in the segment ``[x1, x2]``.
+    :param model: a :class:`sklearn.tree.DecisionTreeRegressor`,
+        a :class:`sklearn.tree.DecisionTreeClassifier`,
+        a model which has a member ``tree_``
+    :return: a dictionary ``{(i, j): (dimension, x1, x2)}``,
+        *i, j* are node indices, if :math:`X_d * sign < th  * sign`,
+        the observations goes to node *i*, *j* otherwise,
+        *i < j*. The border is somewhere in the segment ``[x1, x2]``.
 
     The following example shows what the function returns
     in case of simple grid in two dimensions.
@@ -275,7 +270,7 @@ def tree_leave_neighbors(model):
             # outside the cube
             cl = None
         if cl is not None:
-            for k in range(len(pos)):  # pylint: disable=C0200
+            for k in range(len(pos)):
                 pos[k] += 1
                 try:
                     cl2 = cells[tuple(pos)]

@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@file
-@brief Shortcuts for *mltricks*.
-"""
 from .sklearn_base_classifier import SkBaseClassifier
 from .sklearn_base_learner import SkBaseLearner
 from .sklearn_base_regressor import SkBaseRegressor

@@ -1,7 +1,3 @@
-"""
-@file
-@brief Caches to cache training.
-"""
 import numpy
 
 _caches = {}
@@ -30,8 +26,7 @@ class MLCache:
         """
         key = MLCache.as_key(params)
         if key in self.cached:
-            raise KeyError(  # pragma: no cover
-                f"Key {params} already exists")
+            raise KeyError(f"Key {params} already exists")
         self.cached[key] = value
         self.count_[key] = 0
 
@@ -76,18 +71,16 @@ class MLCache:
                 sv = str(v)
             elif isinstance(v, tuple):
                 if not all(map(lambda e: isinstance(e, (int, float, str)), v)):
-                    raise TypeError(  # pragma: no cover
-                        f"Unable to create a key with value '{k}':{v}")
+                    raise TypeError(f"Unable to create a key with value '{k}':{v}")
                 return str(v)
             elif isinstance(v, numpy.ndarray):
                 # id(v) may have been better but
                 # it does not play well with joblib.
-                sv = hash(v.tostring())
+                sv = hash(v.tobytes())
             elif v is None:
                 sv = ""
             else:
-                raise TypeError(  # pragma: no cover
-                    f"Unable to create a key with value '{k}':{v}")
+                raise TypeError(f"Unable to create a key with value '{k}':{v}")
             els.append((k, sv))
         return str(els)
 
@@ -108,7 +101,7 @@ class MLCache:
         """
         Enumerates all cached keys.
         """
-        for k in self.cached.keys():  # pylint: disable=C0201
+        for k in self.cached.keys():
             yield k
 
     @staticmethod
@@ -119,10 +112,9 @@ class MLCache:
         @param      name        name
         @return                 created cache
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         if name in _caches:
-            raise RuntimeError(  # pragma: no cover
-                f"cache '{name}' already exists.")
+            raise RuntimeError(f"cache '{name}' already exists.")
 
         cache = MLCache(name)
         _caches[name] = cache
@@ -135,7 +127,7 @@ class MLCache:
 
         @param      name        name
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         del _caches[name]
 
     @staticmethod
@@ -146,7 +138,7 @@ class MLCache:
         @param      name        name
         @return                 created cache
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         return _caches[name]
 
     @staticmethod
@@ -157,5 +149,5 @@ class MLCache:
         @param      name        name
         @return                 boolean
         """
-        global _caches  # pylint: disable=W0603,W0602
+        global _caches
         return name in _caches

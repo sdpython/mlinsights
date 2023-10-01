@@ -1,7 +1,3 @@
-"""
-@file
-@brief Featurizers for machine learned models.
-"""
 import numpy
 import pandas
 from sklearn.linear_model import LogisticRegression
@@ -12,6 +8,7 @@ class FeaturizerTypeError(TypeError):
     """
     Unable to process a type.
     """
+
     pass
 
 
@@ -21,11 +18,11 @@ def model_featurizer(model, **params):
     a vector into features produced by the model.
     It can be the output itself or intermediate results.
     The model can come from :epkg:`scikit-learn`,
-    :epkg:`keras` or :epkg:`torch`.
+    :epkg:`torch`.
 
-    @param      model       model
-    @param      params      additional parameters
-    @return                 function
+    :param model: model
+    :param params: additional parameters
+    :return: function
     """
     tried = []
     if isinstance(model, LogisticRegression):
@@ -36,15 +33,16 @@ def model_featurizer(model, **params):
     tried.append(RandomForestClassifier)
     if hasattr(model, "layers"):
         # It should be a keras model.
-        return model_featurizer_keras(model, **params)  # pragma: no cover
+        return model_featurizer_keras(model, **params)
     tried.append("Keras")
     if hasattr(model, "forward"):
         # It should be a torch model.
         return model_featurizer_torch(model, **params)
     tried.append("torch")
     raise FeaturizerTypeError(  # pragma no cover
-        "Unable to process type %r, allowed:\n%s" % (
-            type(model), '\n'.join(sorted(str(_) for _ in tried))))
+        "Unable to process type %r, allowed:\n%s"
+        % (type(model), "\n".join(sorted(str(_) for _ in tried)))
+    )
 
 
 def is_vector(X):
@@ -67,7 +65,8 @@ def is_vector(X):
             return False
         return True
     raise TypeError(  # pragma no cover
-        f"Unable to guess if X is a vector, type(X)={type(X)}")
+        f"Unable to guess if X is a vector, type(X)={type(X)}"
+    )
 
 
 def wrap_predict_sklearn(X, fct, many):
@@ -83,8 +82,7 @@ def wrap_predict_sklearn(X, fct, many):
     """
     isv = is_vector(X)
     if many == isv:
-        raise ValueError(  # pragma: no cover
-            "Inconsistency X is a single vector, many is True")
+        raise ValueError("Inconsistency X is a single vector, many is True")
     if isv:
         X = [X]
     y = fct(X)
@@ -121,6 +119,7 @@ def model_featurizer_rfc(model, output=True):
     @return                 function
     """
     if output:
+
         def feat1(X, model, many):
             "wraps sklearn"
             return wrap_predict_sklearn(X, model.predict_proba, many)
@@ -134,7 +133,7 @@ def model_featurizer_rfc(model, output=True):
     return lambda X, many, model=model: feat2(X, model, many)
 
 
-def wrap_predict_keras(X, fct, many, shapes):  # pragma: no cover
+def wrap_predict_keras(X, fct, many, shapes):
     """
     Checks types and dimension.
     Calls *fct* and returns the approriate type.
@@ -155,7 +154,7 @@ def wrap_predict_keras(X, fct, many, shapes):  # pragma: no cover
     return fct(x).ravel()
 
 
-def model_featurizer_keras(model, layer=None):  # pragma: no cover
+def model_featurizer_keras(model, layer=None):
     """
     Builds a featurizer from a :epkg:`keras` model
     It returns a function which returns the output of one
@@ -175,7 +174,9 @@ def model_featurizer_keras(model, layer=None):  # pragma: no cover
         "wraps keras"
         return wrap_predict_keras(X, model.predict, many, shapes)
 
-    return lambda X, many, model=model, shapes=model._feed_input_shapes[0]: feat(X, model, many, shapes)
+    return lambda X, many, model=model, shapes=model._feed_input_shapes[0]: feat(
+        X, model, many, shapes
+    )
 
 
 def wrap_predict_torch(X, fct, many, shapes):
