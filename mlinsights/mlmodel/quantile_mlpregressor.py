@@ -186,10 +186,13 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         # due to the modification of the loss function.
         deltas[last] = self._modify_loss_derivatives(deltas[last])
 
+        # recent version of scikit-learn
         # Compute gradient for the last layer
         temp = self._compute_loss_grad(
             last, n_samples, activations, deltas, coef_grads, intercept_grads
         )
+
+        inplace_derivative = DERIVATIVES[self.activation]
         if temp is None:
             # recent version of scikit-learn
             # Compute gradient for the last layer
@@ -197,7 +200,6 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 last, n_samples, activations, deltas, coef_grads, intercept_grads
             )
 
-            inplace_derivative = DERIVATIVES[self.activation]
             # Iterate over the hidden layers
             for i in range(self.n_layers_ - 2, 0, -1):
                 deltas[i - 1] = safe_sparse_dot(deltas[i], self.coefs_[i].T)
@@ -207,18 +209,12 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                     i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
                 )
         else:
-            coef_grads, intercept_grads = temp
-
             # Iterate over the hidden layers
             for i in range(self.n_layers_ - 2, 0, -1):
                 deltas[i - 1] = safe_sparse_dot(deltas[i], self.coefs_[i].T)
-                inplace_derivative = DERIVATIVES[self.activation]
                 inplace_derivative(activations[i], deltas[i - 1])
 
-                (
-                    coef_grads,
-                    intercept_grads,
-                ) = self._compute_loss_grad(
+                self._compute_loss_grad(
                     i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
                 )
 
