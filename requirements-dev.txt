@@ -12,6 +12,7 @@ matplotlib
 memory_profiler>=0.55
 notebook
 numba
+onnxruntime
 pandas_streaming
 pybind11
 pytest
