@@ -2,9 +2,14 @@ name: Build Wheel Windows
 
 on:
   push:
+#    branches:
+#      - main
+#      - 'releases/**'
+  pull_request:
+    types:
+      - closed
     branches:
       - main
-      - 'releases/**'
 
 jobs:
   build_wheels:
@@ -30,9 +35,6 @@ jobs:
 
       - name: Build wheels
         run: python -m cibuildwheel
-        # to supply options, put them in 'env', like:
-        # env:
-        #   CIBW_BUILD: cp310-win_amd64* cp311-win_amd64*
 
       - uses: actions/upload-artifact@v3
         with:

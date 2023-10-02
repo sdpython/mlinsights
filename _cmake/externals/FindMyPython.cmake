@@ -55,6 +55,7 @@ if(USE_SETUP_PYTHON)
     endif()
 
     add_library(${name} ${type} ${PYTHON_ADD_LIBRARY_UNPARSED_ARGUMENTS})
+    target_compile_definitions(${name} PRIVATE PYTHON_MANYLINUX=${PYTHON_MANYLINUX})
     target_include_directories(
       ${name} PRIVATE
       ${Python3_INCLUDE_DIRS}
