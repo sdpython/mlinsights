@@ -28,7 +28,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
     # @unittest.skip(
     #    reason="self.y = y raises: Fatal Python error: "
     #    "__pyx_fatalerror: Acquisition count is"
-    # RuntimeWarning: sklearn.tree._splitter.Splitter size changed, 
+    # RuntimeWarning: sklearn.tree._splitter.Splitter size changed,
     # may indicate binary incompatibility.
     # Expected 1360 from C header, got 1576 from PyObject
     # )
