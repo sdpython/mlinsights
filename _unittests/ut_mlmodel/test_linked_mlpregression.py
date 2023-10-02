@@ -8,12 +8,12 @@ from numpy.random import random
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.exceptions import ConvergenceWarning
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.mlmodel import LinkedMLPRegressor
 from mlinsights.mlmodel import (
-    test_sklearn_pickle,
-    test_sklearn_clone,
-    test_sklearn_grid_search_cv,
+    run_test_sklearn_pickle,
+    run_test_sklearn_clone,
+    run_test_sklearn_grid_search_cv,
 )
 
 
@@ -86,12 +86,14 @@ class TestLinkedMLPRegression(ExtTestCase):
         eps = numpy.hstack([eps1, eps2])
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
-        test_sklearn_pickle(lambda: MLPRegressor(hidden_layer_sizes=(3,)), X, Y)
-        test_sklearn_pickle(lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)), X, Y)
+        run_test_sklearn_pickle(lambda: MLPRegressor(hidden_layer_sizes=(3,)), X, Y)
+        run_test_sklearn_pickle(
+            lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)), X, Y
+        )
 
     @ignore_warnings(ConvergenceWarning)
     def test_regression_clone(self):
-        test_sklearn_clone(lambda: LinkedMLPRegressor())
+        run_test_sklearn_clone(lambda: LinkedMLPRegressor())
 
     @ignore_warnings(ConvergenceWarning)
     def test_regression_grid_search(self):
@@ -102,12 +104,12 @@ class TestLinkedMLPRegression(ExtTestCase):
         X = X.reshape((100, 1))  # pylint: disable=E1101
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(
-            lambda: test_sklearn_grid_search_cv(
+            lambda: run_test_sklearn_grid_search_cv(
                 lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)), X, Y
             ),
             ValueError,
         )
-        res = test_sklearn_grid_search_cv(
+        res = run_test_sklearn_grid_search_cv(
             lambda: LinkedMLPRegressor(hidden_layer_sizes=(3,)),
             X,
             Y,
