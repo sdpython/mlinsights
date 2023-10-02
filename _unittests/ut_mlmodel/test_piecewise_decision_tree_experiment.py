@@ -25,10 +25,13 @@ from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
 
 
 class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
-    )
+    # @unittest.skip(
+    #    reason="self.y = y raises: Fatal Python error: "
+    #    "__pyx_fatalerror: Acquisition count is"
+    # RuntimeWarning: sklearn.tree._splitter.Splitter size changed, 
+    # may indicate binary incompatibility.
+    # Expected 1360 from C header, got 1576 from PyObject
+    # )
     def test_criterions(self):
         X = numpy.array([[1.0, 2.0]]).T
         y = numpy.array([1.0, 2.0])
