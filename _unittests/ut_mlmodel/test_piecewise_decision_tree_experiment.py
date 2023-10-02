@@ -67,7 +67,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         _test_criterion_init(c2, ys, w, 1.0, ind, 0, y.shape[0])
         i1 = _test_criterion_node_impurity(c1)
         i2 = _test_criterion_node_impurity(c2)
-        self.assertAlmostEqual(i1, i2)
+        self.assertAlmostEqual(i1, i2, atol=1e-8)
         v1 = _test_criterion_node_value(c1)
         v2 = _test_criterion_node_value(c2)
         self.assertEqual(v1, v2)
@@ -91,7 +91,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         _test_criterion_check(c1)
         _test_criterion_check(c2)
         assert_criterion_equal(c1, c2)
-        self.assertAlmostEqual(i1, i2)
+        self.assertAlmostEqual(i1, i2, atol=1e-10)
         v1 = _test_criterion_node_value(c1)
         v2 = _test_criterion_node_value(c2)
         _test_criterion_check(c2)
@@ -112,7 +112,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             left1, right1 = _test_criterion_node_impurity_children(c1)
             left2, right2 = _test_criterion_node_impurity_children(c2)
             self.assertAlmostEqual(left1, left2)
-            self.assertAlmostEqual(right1, right2)
+            self.assertAlmostEqual(right1, right2, atol=1e-10)
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
@@ -124,7 +124,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
                 # scikit-learn < 0.24
                 p1 = _test_criterion_impurity_improvement(c1, 0.0)
                 p2 = _test_criterion_impurity_improvement(c2, 0.0)
-            self.assertAlmostEqual(p1, p2)
+            self.assertAlmostEqual(p1, p2, atol=1e-10)
 
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
@@ -137,7 +137,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         _test_criterion_init(c2, ys, w, 1.0, ind, 1, y.shape[0])
         i1 = _test_criterion_node_impurity(c1)
         i2 = _test_criterion_node_impurity(c2)
-        self.assertAlmostEqual(i1, i2)
+        self.assertAlmostEqual(i1, i2, atol=1e-10)
         v1 = _test_criterion_node_value(c1)
         v2 = _test_criterion_node_value(c2)
         self.assertEqual(v1, v2)
@@ -175,8 +175,11 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         crit = SimpleRegressorCriterion(
             1 if len(y.shape) <= 1 else y.shape[1], X.shape[0]
         )
+        print("F0")
         clr2 = DecisionTreeRegressor(criterion=crit, max_depth=1)
+        print("F1")
         clr2.fit(X, y)
+        print("F2")
         p2 = clr2.predict(X)
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)

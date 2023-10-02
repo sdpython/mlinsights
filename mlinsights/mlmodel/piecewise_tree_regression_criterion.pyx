@@ -5,7 +5,7 @@ cimport numpy as cnp
 cnp.import_array()
 
 from libc.stdlib cimport calloc, free
-# from libc.stdio cimport printf
+from libc.stdio cimport printf
 
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
@@ -116,7 +116,9 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.end = end
         self.weighted_n_samples = weighted_n_samples
         # Fatal Python error: __pyx_fatalerror: Acquisition count is 0
+        printf("init_with_X:A\n")
         self.y = y
+        printf("init_with_X:B\n")
 
         self.sample_sum_wy = 0.
         self.sample_sum_w = 0.
