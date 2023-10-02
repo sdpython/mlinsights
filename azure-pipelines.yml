@@ -56,6 +56,14 @@ jobs:
       mkdir dist
       cp mlinsights*.whl dist
     displayName: 'copy wheel'
+  - script: |
+      pip install auditwheel-symbols
+      auditwheel-symbols --manylinux 2014 dist/*.whl || exit 0
+    displayName: 'Audit wheel'
+  - script: |
+      pip install abi3audit
+      abi3audit dist/*.whl || exit 0
+    displayName: 'abi3audit wheel'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-linux-pip-$(python.version)'
@@ -67,7 +75,7 @@ jobs:
   strategy:
     matrix:
       Python311-Linux:
-        python.version: '3.11'
+        python.version: '3.10'
     maxParallel: 3
 
   steps:
@@ -119,6 +127,14 @@ jobs:
   - script: |
       python -u setup.py bdist_wheel
     displayName: 'Build Package'
+  - script: |
+      pip install auditwheel-symbols
+      auditwheel-symbols --manylinux 2014 dist/*.whl || exit 0
+    displayName: 'Audit wheel'
+  - script: |
+      pip install abi3audit
+      abi3audit dist/*.whl || exit 0
+    displayName: 'abi3audit wheel'
   - script: |
       ls dist/*
       find dist -type f \( -name "mlinsights*.whl" \) | while read f; do

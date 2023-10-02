@@ -1,10 +1,9 @@
-recursive-include mlinsights *.c *.cpp *.h *.pyx *.pxd *.pxi *.py
+recursive-include mlinsights *.c *.cpp *.h *.pyx *.pxd *.pxi *.py _cmake *.cmake *.in
 include pyproject.toml
 include MANIFEST.in
 include setup.cfg
 prune _doc
 prune _unittests
-prune bin
 exclude *.bat
 exclude *.yml
 exclude *.git*
