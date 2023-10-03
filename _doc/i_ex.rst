@@ -1,5 +1,5 @@
-Examples
-========
+Short Examples
+==============
 
 .. contents::
     :local:
