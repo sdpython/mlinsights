@@ -141,7 +141,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         return 0
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-                    DOUBLE_t *weight) nogil:
+                    DOUBLE_t *weight) noexcept nogil:
         """
         Computes the mean of *y* between *start* and *end*.
         """
@@ -176,7 +176,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         return 0. if weight == 0. else squ / weight - mean ** 2
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end,
-                              SIZE_t old_pos, SIZE_t new_pos) nogil:
+                              SIZE_t old_pos, SIZE_t new_pos) noexcept nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
         when `pos` changes.

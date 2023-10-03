@@ -10,10 +10,10 @@ from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 cdef class CommonRegressorCriterion(Criterion):
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end,
-                              SIZE_t old_pos, SIZE_t new_pos) nogil
+                              SIZE_t old_pos, SIZE_t new_pos) noexcept nogil
 
     cdef void _mean(self, SIZE_t start, SIZE_t end,
-                    DOUBLE_t *mean, DOUBLE_t *weight) nogil
+                    DOUBLE_t *mean, DOUBLE_t *weight) noexcept nogil
 
     cdef double _mse(self, SIZE_t start, SIZE_t end,
                      DOUBLE_t mean, DOUBLE_t weight) noexcept nogil
@@ -21,4 +21,4 @@ cdef class CommonRegressorCriterion(Criterion):
     cdef void children_impurity_weights(self, double* impurity_left,
                                         double* impurity_right,
                                         double* weight_left,
-                                        double* weight_right) nogil
+                                        double* weight_right) noexcept nogil

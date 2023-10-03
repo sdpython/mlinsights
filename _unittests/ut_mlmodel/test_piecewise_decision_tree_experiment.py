@@ -175,11 +175,8 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         crit = SimpleRegressorCriterion(
             1 if len(y.shape) <= 1 else y.shape[1], X.shape[0]
         )
-        print("F0")
         clr2 = DecisionTreeRegressor(criterion=crit, max_depth=1)
-        print("F1")
         clr2.fit(X, y)
-        print("F2")
         p2 = clr2.predict(X)
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)

@@ -1,13 +1,12 @@
+from libc.stdlib cimport calloc, free
 cimport cython
 # import numpy as np
 cimport numpy as cnp
 
 cnp.import_array()
 
-from libc.stdlib cimport calloc, free
-from libc.stdio cimport printf
-
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
+from sklearn.tree._criterion cimport Criterion
 from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
 
 
@@ -116,9 +115,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         self.end = end
         self.weighted_n_samples = weighted_n_samples
         # Fatal Python error: __pyx_fatalerror: Acquisition count is 0
-        printf("init_with_X:A\n")
         self.y = y
-        printf("init_with_X:B\n")
 
         self.sample_sum_wy = 0.
         self.sample_sum_w = 0.
@@ -143,7 +140,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         return self.reset()
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end, SIZE_t old_pos,
-                              SIZE_t new_pos) nogil:
+                              SIZE_t new_pos) noexcept nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
         when `pos` changes.
@@ -156,7 +153,7 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             self.weighted_n_right += self.sample_w[k]
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-                    DOUBLE_t *weight) nogil:
+                    DOUBLE_t *weight) noexcept nogil:
         """
         Computes the mean of *y* between *start* and *end*.
         """

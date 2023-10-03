@@ -241,7 +241,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         return 0
 
     cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-                    DOUBLE_t *weight) nogil:
+                    DOUBLE_t *weight) noexcept nogil:
         """
         Computes mean between *start* and *end*.
         """
@@ -257,7 +257,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
 
-    cdef void _reglin(self, SIZE_t start, SIZE_t end, int low_rank) nogil:
+    cdef void _reglin(self, SIZE_t start, SIZE_t end, int low_rank) noexcept nogil:
         """
         Solves the linear regression between *start* and *end*
         assuming corresponding points are approximated by a line.
@@ -330,7 +330,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             squ += d * d * self.sample_w[k]
         return 0. if weight == 0. else squ / weight
 
-    cdef void _node_beta(self, double* dest) nogil:
+    cdef void _node_beta(self, double* dest) noexcept nogil:
         """
         Stores the results of the linear regression
         in an allocated numpy array.
