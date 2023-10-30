@@ -86,6 +86,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         _test_criterion_init(c2, ys, w, 1.0, ind, 0, y.shape[0])
         _test_criterion_check(c1)
         _test_criterion_check(c2)
+        self.assertStartsWith("SimpleRegressorCriterion(", str(c2))
         i1 = _test_criterion_node_impurity(c1)
         i2 = _test_criterion_node_impurity(c2)
         _test_criterion_check(c1)
@@ -109,6 +110,7 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             _test_criterion_update(c2, i)
             _test_criterion_check(c2)
             assert_criterion_equal(c1, c2)
+            self.assertIsInstance(c2.printd(), str)
             left1, right1 = _test_criterion_node_impurity_children(c1)
             left2, right2 = _test_criterion_node_impurity_children(c2)
             self.assertAlmostEqual(left1, left2)
@@ -116,14 +118,10 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            try:
-                # scikit-learn >= 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            except TypeError:
-                # scikit-learn < 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0)
+            p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
+            p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
+            # print(left1, right1, "*", left2, right2)
+            # print(c2.printd())
             self.assertAlmostEqual(p1, p2, atol=1e-10)
 
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
@@ -155,14 +153,8 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            try:
-                # scikit-learn >= 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            except TypeError:
-                # scikit-learn < 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0)
+            p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
+            p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
             self.assertAlmostEqual(p1, p2)
 
     def test_decision_tree_criterion(self):

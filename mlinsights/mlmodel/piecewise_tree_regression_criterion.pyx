@@ -6,7 +6,6 @@ cimport numpy as cnp
 cnp.import_array()
 
 from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
-from sklearn.tree._criterion cimport Criterion
 from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
 
 
@@ -68,6 +67,13 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
         if self.sample_i == NULL:
             self.sample_i = <SIZE_t*> calloc(n_samples, sizeof(SIZE_t))
 
+    def __str__(self):
+        "usual"
+        return (
+            f"SimpleRegressorCriterion(n_outputs={self.n_outputs}, "
+            f"n_samples={self.n_samples})"
+        )
+
     @cython.boundscheck(False)
     cdef int init(self, const DOUBLE_t[:, ::1] y,
                   const DOUBLE_t[:] sample_weight,
@@ -83,6 +89,21 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
             return -1
         return self.init_with_X(y, sample_weight, weighted_n_samples,
                                 sample_indices, start, end)
+
+    def printd(self):
+        "debug print"
+        rows = [str(self)]
+        rows.append(f"  start={self.start}, pos={self.pos}, end={self.end}")
+        rows.append(f"  weighted_n_samples={self.weighted_n_samples}")
+        rows.append(f"  weighted_n_node_samples={self.weighted_n_node_samples}")
+        rows.append(f"  sample_sum_w={self.sample_sum_w}")
+        rows.append(f"  sample_sum_wy={self.sample_sum_wy}")
+        rows.append(f"  weighted_n_left={self.weighted_n_left} "
+                    f"weighted_n_right={self.weighted_n_right}")
+        for ki in range(self.start, self.end):
+            rows.append(f"  ki={ki}, sample_i={self.sample_i[ki]}, "
+                        f"sample_w={self.sample_w[ki]}, sample_wy={self.sample_wy[ki]}")
+        return "\n".join(rows)
 
     @cython.boundscheck(False)
     cdef int init_with_X(self,

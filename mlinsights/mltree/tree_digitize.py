@@ -137,15 +137,5 @@ def digitize2tree(bins, right=False):
     cl.tree_.value[:, 0, 0] = numpy.array(values, dtype=numpy.float64)
     cl.n_outputs = 1
     cl.n_outputs_ = 1
-    try:
-        # scikit-learn >= 0.24
-        cl.n_features_in_ = 1
-    except AttributeError:
-        # scikit-learn < 0.24
-        cl.n_features_ = 1
-    try:
-        # for scikit-learn<=0.23.2
-        cl.n_features_ = 1
-    except AttributeError:
-        pass
+    cl.n_features_in_ = 1
     return cl

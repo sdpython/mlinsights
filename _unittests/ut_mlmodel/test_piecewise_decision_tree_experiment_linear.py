@@ -118,14 +118,8 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            try:
-                # scikit-learn >= 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            except TypeError:
-                # scikit-learn < 0.23
-                p1 = _test_criterion_impurity_improvement(c1, 0.0)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0)
+            p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
+            p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
             self.assertGreater(p1, p2 - 1.0)
 
             dest = numpy.empty((2,))
@@ -145,7 +139,7 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         c2.node_beta(coef)
         self.assertEqual(coef[:2], numpy.array([1, 10]))
 
-    def test_decision_tree_criterion(self):
+    def test_decision_tree_criterion_linear(self):
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
         clr1 = DecisionTreeRegressor(max_depth=1)
