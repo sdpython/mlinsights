@@ -308,13 +308,15 @@ def _test_criterion_update(Criterion criterion, SIZE_t new_pos):
 
 def _test_criterion_printf(Criterion crit):
     "Test purposes. Methods cannot be directly called from python."
-    printf("start=%zu pos=%zu end=%zu\n", crit.start, crit.pos, crit.end)
     cdef DOUBLE_t left, right, value
     cdef int i
     crit.children_impurity(&left, &right)
     crit.node_value(&value)
-    printf("value: %f total=%f left=%f right=%f\n", value,
-           crit.node_impurity(), left, right)
+    rows = []
+    rows.append("start=%d pos=%d end=%d" % (crit.start, crit.pos, crit.end))
+    rows.append("value: %f total=%f left=%f right=%f" % (
+            value, crit.node_impurity(), left, right))
     cdef int n = crit.y.shape[0]
     for i in range(0, n):
-        printf("-- %d: y=%f\n", i, crit.y[i, 0])
+        rows.append("-- %d: y=%f" % (i, crit.y[i, 0]))
+    return "\n".join(rows)

@@ -12,6 +12,7 @@ from mlinsights.mlmodel._piecewise_tree_regression_common import (
     _test_criterion_node_impurity_children,
     _test_criterion_update,
     _test_criterion_node_value,
+    _test_criterion_printf,
     _test_criterion_proxy_impurity_improvement,
     _test_criterion_impurity_improvement,
 )
@@ -120,8 +121,15 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             self.assertEqual(v1, v2)
             p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
             p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            # print(left1, right1, "*", left2, right2)
-            # print(c2.printd())
+            self.assertIn(
+                "value: 1.500000 total=0.260000 left=0.000000 right=0.186667",
+                _test_criterion_printf(c1),
+            )
+            self.assertIn(
+                "value: 1.500000 total=0.260000 left=0.000000 right=0.186667",
+                _test_criterion_printf(c2),
+            )
+            self.assertEqual(_test_criterion_printf(c1), _test_criterion_printf(c2))
             self.assertAlmostEqual(p1, p2, atol=1e-10)
 
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
