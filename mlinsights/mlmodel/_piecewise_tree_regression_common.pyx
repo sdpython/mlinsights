@@ -1,4 +1,3 @@
-from libc.stdio cimport printf
 from libc.math cimport NAN
 # import numpy
 cimport numpy as cnp
