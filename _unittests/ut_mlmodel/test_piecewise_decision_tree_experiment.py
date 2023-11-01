@@ -1,28 +1,12 @@
 # -*- coding: utf-8 -*-
 import unittest
+import warnings
 import numpy
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    _test_criterion_init,
-    _test_criterion_node_impurity,
-    _test_criterion_node_impurity_children,
-    _test_criterion_update,
-    _test_criterion_node_value,
-    _test_criterion_printf,
-    _test_criterion_proxy_impurity_improvement,
-    _test_criterion_impurity_improvement,
-)
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    _test_criterion_check,
-    assert_criterion_equal,
-)
-from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
-    SimpleRegressorCriterion,
-)
 
 
 class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
@@ -34,6 +18,30 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
     # Expected 1360 from C header, got 1576 from PyObject
     # )
     def test_criterions(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            from mlinsights.mlmodel._piecewise_tree_regression_common import (
+                _test_criterion_check,
+                assert_criterion_equal,
+            )
+            from mlinsights.mlmodel._piecewise_tree_regression_common import (
+                _test_criterion_init,
+                _test_criterion_node_impurity,
+                _test_criterion_node_impurity_children,
+                _test_criterion_update,
+                _test_criterion_node_value,
+                _test_criterion_printf,
+                _test_criterion_proxy_impurity_improvement,
+                _test_criterion_impurity_improvement,
+            )
+            from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
+                SimpleRegressorCriterion,
+            )
+
+            if len(w) > 0:
+                msg = "\n".join(map(str, w))
+                raise AssertionError(f"Warning while importing the library:\n{msg}")
+
         X = numpy.array([[1.0, 2.0]]).T
         y = numpy.array([1.0, 2.0])
         c1 = MSE(1, X.shape[0])
@@ -166,6 +174,10 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
             self.assertAlmostEqual(p1, p2)
 
     def test_decision_tree_criterion(self):
+        from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
+            SimpleRegressorCriterion,
+        )
+
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
         clr1 = DecisionTreeRegressor(max_depth=1)
@@ -182,6 +194,10 @@ class TestPiecewiseDecisionTreeExperiment(ExtTestCase):
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)
 
     def test_decision_tree_criterion_iris(self):
+        from mlinsights.mlmodel.piecewise_tree_regression_criterion import (
+            SimpleRegressorCriterion,
+        )
+
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
         clr1 = DecisionTreeRegressor()
