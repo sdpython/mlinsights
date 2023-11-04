@@ -2,9 +2,10 @@
 import unittest
 import warnings
 import numpy
+import packaging.version as pv
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
-from sklearn import datasets
+from sklearn import datasets, __version__ as skl_ver
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
 
@@ -28,10 +29,10 @@ with warnings.catch_warnings(record=True) as w:
 
 
 class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
-    # @unittest.skip(
-    #    reason="self.y = y raises: Fatal Python error: "
-    #    "__pyx_fatalerror: Acquisition count is"
-    # )
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_criterions(self):
         X = numpy.array([[1.0, 2.0]]).T
         y = numpy.array([1.0, 2.0])
@@ -145,6 +146,10 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
             p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
             self.assertAlmostEqual(p1, p2)
 
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_decision_tree_criterion_fast(self):
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
@@ -159,6 +164,10 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)
 
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_decision_tree_criterion_iris(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -172,6 +181,10 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])
 
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_decision_tree_criterion_iris_dtc(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target

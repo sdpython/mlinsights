@@ -327,6 +327,14 @@ class ExtTestCase(unittest.TestCase):
         if not text.endswith(suffix):
             raise AssertionError(f"Unable to find {suffix!r} in {text!r}.")
 
+    def assertVersionGreaterOrEqual(self, v1, v2):
+        from packaging.version import Version
+
+        if Version(v1) < Version(v2):
+            raise AssertionError(
+                f"Unexpected version, condition {v1} >= {v2} is not true."
+            )
+
     @classmethod
     def tearDownClass(cls):
         for name, line, w in cls._warns:
