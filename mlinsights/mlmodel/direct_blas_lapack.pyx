@@ -1,10 +1,10 @@
 from libc.stdlib cimport calloc, free
 from libc.string cimport memcpy
-
-import numpy
-cimport numpy
 cimport cython
-numpy.import_array()
+cimport numpy as cnp
+
+cnp.import_array()
+
 cimport scipy.linalg.cython_lapack as cython_lapack
 
 

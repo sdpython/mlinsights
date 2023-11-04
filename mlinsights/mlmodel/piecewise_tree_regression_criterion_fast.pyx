@@ -1,13 +1,14 @@
 cimport cython
-import numpy
-cimport numpy
+cimport numpy as cnp
 
-numpy.import_array()
+cnp.import_array()
 
 from libc.stdlib cimport calloc, free
-
-from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
-from ._piecewise_tree_regression_common cimport CommonRegressorCriterion
+from ._piecewise_tree_regression_common cimport (
+    CommonRegressorCriterion,
+    SIZE_t,
+    float64_t,
+)
 
 
 cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
@@ -21,9 +22,9 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
     cumulated sums and avoids loops to compute
     intermediate gains.
     """
-    cdef DOUBLE_t* sample_w_left
-    cdef DOUBLE_t* sample_wy2_left
-    cdef DOUBLE_t* sample_wy_left
+    cdef float64_t* sample_w_left
+    cdef float64_t* sample_wy2_left
+    cdef float64_t* sample_wy_left
 
     def __dealloc__(self):
         """Destructor."""
@@ -55,15 +56,15 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
 
         # allocations
         if self.sample_w_left == NULL:
-            self.sample_w_left = <DOUBLE_t*> calloc(n_samples, sizeof(DOUBLE_t))
+            self.sample_w_left = <float64_t*> calloc(n_samples, sizeof(float64_t))
         if self.sample_wy_left == NULL:
-            self.sample_wy_left = <DOUBLE_t*> calloc(n_samples, sizeof(DOUBLE_t))
+            self.sample_wy_left = <float64_t*> calloc(n_samples, sizeof(float64_t))
         if self.sample_wy2_left == NULL:
-            self.sample_wy2_left = <DOUBLE_t*> calloc(n_samples, sizeof(DOUBLE_t))
+            self.sample_wy2_left = <float64_t*> calloc(n_samples, sizeof(float64_t))
 
-    cdef int init(self, const DOUBLE_t[:, ::1] y,
-                  const DOUBLE_t[:] sample_weight,
-                  double weighted_n_samples,
+    cdef int init(self, const float64_t[:, ::1] y,
+                  const float64_t[:] sample_weight,
+                  float64_t weighted_n_samples,
                   const SIZE_t[:] sample_indices,
                   SIZE_t start, SIZE_t end) except -1 nogil:
         """
@@ -81,9 +82,9 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
 
     @cython.boundscheck(False)
     cdef int init_with_X(self,
-                         const DOUBLE_t[:, ::1] y,
-                         const DOUBLE_t[:] sample_weight,
-                         double weighted_n_samples,
+                         const float64_t[:, ::1] y,
+                         const float64_t[:] sample_weight,
+                         float64_t weighted_n_samples,
                          const SIZE_t[:] sample_indices,
                          SIZE_t start, SIZE_t end) except -1 nogil:
         """
@@ -91,13 +92,13 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         Returns -1 in case of failure to allocate memory
         (and raise *MemoryError*) or 0 otherwise.
 
-        :param y: array-like, dtype=DOUBLE_t
+        :param y: array-like, dtype=float64_t
             y is a buffer that can store values for n_outputs target variables
-        :param sample_weight: array-like, dtype=DOUBLE_t
+        :param sample_weight: array-like, dtype=float64_t
             The weight of each sample
-        :param weighted_n_samples: DOUBLE_t
+        :param weighted_n_samples: float64_t
             The total weight of the samples being considered
-        :param samples: array-like, dtype=DOUBLE_t
+        :param samples: array-like, dtype=float64_t
             Indices of the samples in X and y, where samples[start:end]
             correspond to the samples in this node
         :param start: SIZE_t
@@ -106,7 +107,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
             The last sample used on this node
         """
         cdef SIZE_t ki, ks
-        cdef double w, y_
+        cdef float64_t w, y_
 
         self.start = start
         self.pos = start
@@ -140,34 +141,34 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         self.reset()
         return 0
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-                    DOUBLE_t *weight) noexcept nogil:
+    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+                    float64_t *weight) noexcept nogil:
         """
         Computes the mean of *y* between *start* and *end*.
         """
         if start == end:
             mean[0] = 0.
             return
-        cdef DOUBLE_t m = (
+        cdef float64_t m = (
             self.sample_wy_left[end-1] -
             (self.sample_wy_left[start-1] if start > 0 else 0)
         )
-        cdef DOUBLE_t w = (
+        cdef float64_t w = (
             self.sample_w_left[end-1] -
             (self.sample_w_left[start-1] if start > 0 else 0)
         )
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
 
-    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-                     DOUBLE_t weight) noexcept nogil:
+    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+                        float64_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a constant.
         """
         if start == end:
             return 0.
-        cdef DOUBLE_t squ = (
+        cdef float64_t squ = (
             self.sample_wy2_left[end-1] -
             (self.sample_wy2_left[start-1] if start > 0 else 0)
         )

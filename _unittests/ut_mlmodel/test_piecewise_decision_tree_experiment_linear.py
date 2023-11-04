@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import warnings
 import numpy
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
@@ -7,25 +8,28 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    _test_criterion_init,
-    _test_criterion_node_impurity,
-    _test_criterion_node_impurity_children,
-    _test_criterion_update,
-    _test_criterion_node_value,
-    _test_criterion_proxy_impurity_improvement,
-    _test_criterion_impurity_improvement,
-)
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import (
-    LinearRegressorCriterion,
-)
+
+with warnings.catch_warnings(record=True) as w:
+    warnings.simplefilter("always")
+    from mlinsights.mlmodel._piecewise_tree_regression_common import (
+        _test_criterion_init,
+        _test_criterion_node_impurity,
+        _test_criterion_node_impurity_children,
+        _test_criterion_update,
+        _test_criterion_node_value,
+        _test_criterion_proxy_impurity_improvement,
+        _test_criterion_impurity_improvement,
+    )
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import (
+        LinearRegressorCriterion,
+    )
 
 
 class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
-    )
+    # @unittest.skip(
+    #    reason="self.y = y raises: Fatal Python error: "
+    #    "__pyx_fatalerror: Acquisition count is"
+    # )
     def test_criterions(self):
         X = numpy.array([[10.0, 12.0, 13.0]]).T
         y = numpy.array([20.0, 22.0, 23.0])
@@ -127,10 +131,10 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
             self.assertGreater(dest[0], 0)
             self.assertGreater(dest[1], 0)
 
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
-    )
+    # @unittest.skip(
+    #    reason="self.y = y raises: Fatal Python error: "
+    #    "__pyx_fatalerror: Acquisition count is"
+    # )
     def test_criterions_check_value(self):
         X = numpy.array([[10.0, 12.0, 13.0]]).T
         y = numpy.array([[20.0, 22.0, 23.0]]).T
@@ -164,10 +168,10 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         p2 = clr2.predict(X)
         self.assertEqual(p1.shape, p2.shape)
 
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
-    )
+    # @unittest.skip(
+    #    reason="self.y = y raises: Fatal Python error: "
+    #    "__pyx_fatalerror: Acquisition count is"
+    # )
     def test_decision_tree_criterion_iris_dtc(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -191,10 +195,10 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         self.assertIsInstance(mp, dict)
         self.assertGreater(len(mp), 2)
 
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
-    )
+    # @unittest.skip(
+    #    reason="self.y = y raises: Fatal Python error: "
+    #    "__pyx_fatalerror: Acquisition count is"
+    # )
     def test_decision_tree_criterion_iris_dtc_traintest(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target

@@ -1,33 +1,37 @@
 # -*- coding: utf-8 -*-
 import unittest
+import warnings
 import numpy
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
 from sklearn import datasets
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    _test_criterion_init,
-    _test_criterion_node_impurity,
-    _test_criterion_node_impurity_children,
-    _test_criterion_update,
-    _test_criterion_node_value,
-    _test_criterion_proxy_impurity_improvement,
-    _test_criterion_impurity_improvement,
-)
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    assert_criterion_equal,
-)
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import (
-    SimpleRegressorCriterionFast,
-)
+
+with warnings.catch_warnings(record=True) as w:
+    warnings.simplefilter("always")
+    from mlinsights.mlmodel._piecewise_tree_regression_common import (
+        _test_criterion_init,
+        _test_criterion_node_impurity,
+        _test_criterion_node_impurity_children,
+        _test_criterion_update,
+        _test_criterion_node_value,
+        _test_criterion_proxy_impurity_improvement,
+        _test_criterion_impurity_improvement,
+    )
+    from mlinsights.mlmodel._piecewise_tree_regression_common import (
+        assert_criterion_equal,
+    )
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import (
+        SimpleRegressorCriterionFast,
+    )
 
 
 class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
-    )
+    # @unittest.skip(
+    #    reason="self.y = y raises: Fatal Python error: "
+    #    "__pyx_fatalerror: Acquisition count is"
+    # )
     def test_criterions(self):
         X = numpy.array([[1.0, 2.0]]).T
         y = numpy.array([1.0, 2.0])

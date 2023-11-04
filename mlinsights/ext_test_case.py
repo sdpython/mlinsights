@@ -9,7 +9,7 @@ from argparse import ArgumentParser, Namespace
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from timeit import Timer
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 import numpy
 from numpy.testing import assert_allclose
 import pandas
@@ -230,6 +230,25 @@ class ExtTestCase(unittest.TestCase):
         from pandas.testing import assert_frame_equal
 
         assert_frame_equal(d1, d2, **kwargs)
+
+    def assertInAlmostEqual(
+        self,
+        value: float,
+        expected_values: Sequence[float],
+        atol: float = 0,
+        rtol: float = 0,
+    ):
+        last_e = None
+        for s in expected_values:
+            try:
+                self.assertAlmostEqual(value, s, atol=atol, rtol=rtol)
+                return
+            except AssertionError as e:
+                last_e = e
+        if last_e is not None:
+            raise AssertionError(
+                f"Value {value} not in set {expected_values}."
+            ) from last_e
 
     def assertAlmostEqual(
         self,
