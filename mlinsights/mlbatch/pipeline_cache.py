@@ -1,6 +1,7 @@
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline, _fit_transform_one
 from sklearn.utils import _print_elapsed_time
+from sklearn.utils.validation import check_memory
 from .cache_model import MLCache
 
 
@@ -54,10 +55,11 @@ class PipelineCache(Pipeline):
                 fit_params_steps[step][param] = pval
         return fit_params_steps
 
-    def _fit(self, X, y=None, **fit_params):
+    def _fit(self, X, y=None, routed_params=None):
         self.steps = list(self.steps)
         self._validate_steps()
-        fit_params_steps = self._get_fit_params_steps(fit_params)
+        memory = check_memory(self.memory)
+        fit_transform_one_cached = memory.cache(_fit_transform_one)
         if not MLCache.has_cache(self.cache_name):
             self.cache_ = MLCache.create_cache(self.cache_name)
         else:
@@ -80,14 +82,14 @@ class PipelineCache(Pipeline):
             cached = self.cache_.get(params)
             if cached is None:
                 cloned_transformer = clone(transformer)
-                Xt, fitted_transformer = _fit_transform_one(
+                Xt, fitted_transformer = fit_transform_one_cached(
                     cloned_transformer,
                     Xt,
                     y,
                     None,
                     message_clsname="PipelineCache",
                     message=self._log_message(step_idx),
-                    **fit_params_steps[name],
+                    params=routed_params[name],
                 )
                 self.cache_.cache(params, fitted_transformer)
             else:
