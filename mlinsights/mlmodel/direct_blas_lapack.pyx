@@ -68,7 +68,7 @@ def dgelss(double[:, ::1] A, double [:, ::1] B, double prec=-1.):
     return res
 
 
-cdef void copy2array2(const double* pC, double[:, ::1] C) nogil:
+cdef void copy2array2(const double* pC, double[:, ::1] C) noexcept nogil:
     """
     Copies double from a buffer to an array.
     """
@@ -76,7 +76,7 @@ cdef void copy2array2(const double* pC, double[:, ::1] C) nogil:
     memcpy(&C[0, 0], pC, size * sizeof(double))
 
 
-cdef void copy2array1(const double* pC, double[::1] C) nogil:
+cdef void copy2array1(const double* pC, double[::1] C) noexcept nogil:
     """
     Copies double from a buffer to an array.
     """
@@ -110,7 +110,7 @@ cdef int _dgelss(double[:, ::1] A, double [:, ::1] B, int* rank,
 
 
 cdef void _dgelss_noalloc(double[:, ::1] A, double [:, ::1] B, int* rank, double* rcond,
-                          double* pS, double *pC, int* work, int* info) nogil:
+                          double* pS, double *pC, int* work, int* info) noexcept nogil:
     """
     Same function as :func:`dgels` but does no check.
 
