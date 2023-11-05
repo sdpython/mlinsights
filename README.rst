@@ -52,4 +52,4 @@ a linear regression on each piece. **IntervalRegressor** produces
 confidence interval by using bootstrapping. **ApproximateNMFPredictor**
 approximates a NMF to produce prediction without retraining.
 
-`documentation <https://sdpython.github.io/doc/dev/mlinsights/>`_
+`mlinsights documentation <https://sdpython.github.io/doc/mlinsights/dev/>`_
