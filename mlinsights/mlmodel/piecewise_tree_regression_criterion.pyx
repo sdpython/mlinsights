@@ -26,6 +26,10 @@ cdef class SimpleRegressorCriterion(CommonRegressorCriterion):
     <https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/tree/_criterion.pyx>`_.
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
+
+    If the file does not compile or crashes, some explanations are given
+    in :ref:`scikit-learn internal API
+    <blog-internal-api-impurity-improvement>`.
     """
     cdef float64_t* sample_w
     cdef float64_t* sample_wy

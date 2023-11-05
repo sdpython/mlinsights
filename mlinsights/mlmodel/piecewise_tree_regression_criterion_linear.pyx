@@ -24,6 +24,10 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     design used in :class:`SimpleRegressorCriterion
     <mlinsights.mlmodel.piecewise_tree_regression_criterion.SimpleRegressorCriterion>`
     and is even slow as the criterion is more complex to compute.
+
+    If the file does not compile or crashes, some explanations are given
+    in :ref:`scikit-learn internal API
+    <blog-internal-api-impurity-improvement>`.
     """
     cdef SIZE_t n_features
     cdef const float64_t[:, ::1] sample_X

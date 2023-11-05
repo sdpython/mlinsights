@@ -10,6 +10,8 @@ API
     metrics
     batch
     mlmodel
+    mlmodel_tree
+    mlmodel_api
     tree
     search_rank
     blaslapack

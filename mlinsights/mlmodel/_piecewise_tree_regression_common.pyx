@@ -22,9 +22,9 @@ cdef class CommonRegressorCriterion(Criterion):
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
 
-    If the file does not compile, some explanations are given
+    If the file does not compile or crashes, some explanations are given
     in :ref:`scikit-learn internal API
-    <blog-internal-api-impurity-improvement>`_.
+    <blog-internal-api-impurity-improvement>`.
     """
     def __getstate__(self):
         return {}
