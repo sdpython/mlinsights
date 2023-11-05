@@ -2,9 +2,6 @@
 mlinsights: tricky scikit-learn
 ===============================
 
-.. image:: https://raw.github.com/sdpython/mlinsights/blob/main/_doc/_static/project_ico.png
-    :target: https://github.com/sdpython/mlinsights/
-
 .. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status%2Fsdpython.mlinsights%20(2)?branchName=main
     :target: https://dev.azure.com/xavierdupre3/mlinsights/_build/latest?definitionId=16&branchName=main
 
@@ -95,3 +92,10 @@ version...
 
     from sklearn import __version__
     print(__version__)
+
+Source are available at `sdpython/mlinsights <https://github.com/sdpython/mlinsights/>_`.
+
+Older versions
+++++++++++++++
+
+* `0.5.0 <../v0.5.0/index.html>`_
