@@ -23,8 +23,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
     intermediate gains.
 
     If the file does not compile or crashes, some explanations are given
-    in :ref:`scikit-learn internal API
-    <blog-internal-api-impurity-improvement>`.
+    in :ref:`blog-internal-api-impurity-improvement`.
     """
     cdef float64_t* sample_w_left
     cdef float64_t* sample_wy2_left

@@ -49,7 +49,8 @@ Criterions
 ==========
 
 The following classes require :epkg:`scikit-learn` *>= 1.3.0*,
-otherwise, they do not get compiled.
+otherwise, they do not get compiled. Section :ref:`blog-internal-api-impurity-improvement`
+explains why the execution may crash.
 
 SimpleRegressorCriterion
 ++++++++++++++++++++++++

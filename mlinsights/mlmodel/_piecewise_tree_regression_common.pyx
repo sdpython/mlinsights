@@ -23,8 +23,7 @@ cdef class CommonRegressorCriterion(Criterion):
     It adds the features to the class.
 
     If the file does not compile or crashes, some explanations are given
-    in :ref:`scikit-learn internal API
-    <blog-internal-api-impurity-improvement>`.
+    in :ref:`blog-internal-api-impurity-improvement`.
     """
     def __getstate__(self):
         return {}

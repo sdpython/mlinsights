@@ -93,7 +93,7 @@ ignore_directives = [
     "runpython",
 ]
 ignore_roles = ["epkg", "pr"]
-ignore_messages = "Duplicate implicit target name: \"setup.py\""
+ignore_messages = "Hyperlink target \"blog-internal-api-impurity-improvement\" is not referenced"
 
 [tool.setuptools.packages.find]
 namespaces = false

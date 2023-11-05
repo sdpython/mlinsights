@@ -14,8 +14,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
     * ``simple``: optimizes for a stepwise regression (equivalent to *mse*)
 
     If the file does not compile or crashes, some explanations are given
-    in :ref:`scikit-learn internal API
-    <blog-internal-api-impurity-improvement>`.
+    in :ref:`blog-internal-api-impurity-improvement`.
     """
 
     def __init__(
