@@ -28,10 +28,10 @@ requires-python = ">=3.9"
 version = "0.5.0"
 
 [project.urls]
-homepage = "https://sdpython.github.io/doc/dev/mlinsights/"
-documentation = "https://sdpython.github.io/doc/dev/mlinsights/"
-repository = "https://github.com/sdpython/mlinsights/dev/"
-changelog = "https://github.com/sdpython/mlinsights/dev/CHANGELOGS.rst"
+homepage = "https://sdpython.github.io/doc/mlinsights/dev/"
+documentation = "https://sdpython.github.io/doc/mlinsights/dev/"
+repository = "https://github.com/sdpython/mlinsights/"
+changelog = "https://sdpython.github.io/doc/mlinsights/dev/CHANGELOGS.html"
 
 [project.optional-dependencies]
 dev = [
