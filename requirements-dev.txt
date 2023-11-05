@@ -3,7 +3,7 @@ chardet
 clang-format
 cmakelang
 coverage
-cython>=3.0
+cython>=3.0.5
 cython-lint
 furo; sys_platform == 'linux'
 isort

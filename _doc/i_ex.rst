@@ -1,8 +1,5 @@
-Examples
-========
-
-.. contents::
-    :local:
+Short Examples
+==============
 
 .. exreflist::
     :contents:

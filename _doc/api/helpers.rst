@@ -1,9 +1,6 @@
 
-Helpers
-=======
-
-.. contents::
-    :local:
+mlinsights.helpers
+==================
 
 Formatting
 ++++++++++

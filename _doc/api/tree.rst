@@ -2,9 +2,6 @@
 Trees
 =====
 
-.. contents::
-    :local:
-
 Digging into the tree structure
 +++++++++++++++++++++++++++++++
 

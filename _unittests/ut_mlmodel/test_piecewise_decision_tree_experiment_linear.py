@@ -1,30 +1,35 @@
 # -*- coding: utf-8 -*-
 import unittest
+import warnings
 import numpy
+import packaging.version as pv
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
-from sklearn import datasets
+from sklearn import datasets, __version__ as skl_ver
 from sklearn.model_selection import train_test_split
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    _test_criterion_init,
-    _test_criterion_node_impurity,
-    _test_criterion_node_impurity_children,
-    _test_criterion_update,
-    _test_criterion_node_value,
-    _test_criterion_proxy_impurity_improvement,
-    _test_criterion_impurity_improvement,
-)
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import (
-    LinearRegressorCriterion,
-)
+
+with warnings.catch_warnings(record=True) as w:
+    warnings.simplefilter("always")
+    from mlinsights.mlmodel._piecewise_tree_regression_common import (
+        _test_criterion_init,
+        _test_criterion_node_impurity,
+        _test_criterion_node_impurity_children,
+        _test_criterion_update,
+        _test_criterion_node_value,
+        _test_criterion_proxy_impurity_improvement,
+        _test_criterion_impurity_improvement,
+    )
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion_linear import (
+        LinearRegressorCriterion,
+    )
 
 
 class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
     )
     def test_criterions(self):
         X = numpy.array([[10.0, 12.0, 13.0]]).T
@@ -118,14 +123,8 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            try:
-                # scikit-learn >= 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            except TypeError:
-                # scikit-learn < 0.23
-                p1 = _test_criterion_impurity_improvement(c1, 0.0)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0)
+            p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
+            p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
             self.assertGreater(p1, p2 - 1.0)
 
             dest = numpy.empty((2,))
@@ -133,9 +132,9 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
             self.assertGreater(dest[0], 0)
             self.assertGreater(dest[1], 0)
 
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
     )
     def test_criterions_check_value(self):
         X = numpy.array([[10.0, 12.0, 13.0]]).T
@@ -145,7 +144,11 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         c2.node_beta(coef)
         self.assertEqual(coef[:2], numpy.array([1, 10]))
 
-    def test_decision_tree_criterion(self):
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
+    def test_decision_tree_criterion_linear(self):
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
         clr1 = DecisionTreeRegressor(max_depth=1)
@@ -159,6 +162,10 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)
 
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_decision_tree_criterion_iris(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -170,9 +177,9 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         p2 = clr2.predict(X)
         self.assertEqual(p1.shape, p2.shape)
 
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
     )
     def test_decision_tree_criterion_iris_dtc(self):
         iris = datasets.load_iris()
@@ -197,9 +204,9 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         self.assertIsInstance(mp, dict)
         self.assertGreater(len(mp), 2)
 
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
     )
     def test_decision_tree_criterion_iris_dtc_traintest(self):
         iris = datasets.load_iris()

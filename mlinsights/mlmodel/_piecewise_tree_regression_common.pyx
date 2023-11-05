@@ -1,12 +1,9 @@
-from libc.stdio cimport printf
 from libc.math cimport NAN
+cimport numpy as cnp
 
-import numpy
-cimport numpy
-numpy.import_array()
+cnp.import_array()
 
 from sklearn.tree._criterion cimport Criterion
-from sklearn.tree._criterion cimport SIZE_t, DOUBLE_t
 
 
 cdef class CommonRegressorCriterion(Criterion):
@@ -25,9 +22,8 @@ cdef class CommonRegressorCriterion(Criterion):
     This implementation is not efficient but was made that way on purpose.
     It adds the features to the class.
 
-    If the file does not compile, some explanations are given
-    in :ref:`scikit-learn internal API
-    <blog-internal-api-impurity-improvement>`_.
+    If the file does not compile or crashes, some explanations are given
+    in :ref:`blog-internal-api-impurity-improvement`.
     """
     def __getstate__(self):
         return {}
@@ -44,7 +40,7 @@ cdef class CommonRegressorCriterion(Criterion):
         return inst
 
     cdef void _update_weights(self, SIZE_t start, SIZE_t end,
-                              SIZE_t old_pos, SIZE_t new_pos) nogil:
+                              SIZE_t old_pos, SIZE_t new_pos) noexcept nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
         when `pos` changes. This method should be overloaded.
@@ -80,45 +76,45 @@ cdef class CommonRegressorCriterion(Criterion):
         self._update_weights(self.start, self.end, self.pos, new_pos)
         self.pos = new_pos
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-                    DOUBLE_t *weight) nogil:
+    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+                    float64_t *weight) noexcept nogil:
         """
         Computes the mean of *y* between *start* and *end*.
         """
         pass
 
-    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-                     DOUBLE_t weight) noexcept nogil:
+    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+                        float64_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
         assuming corresponding points are approximated by a constant.
         """
         return 0.0
 
-    cdef void children_impurity_weights(self, double* impurity_left,
-                                        double* impurity_right,
-                                        double* weight_left,
-                                        double* weight_right) nogil:
+    cdef void children_impurity_weights(self, float64_t* impurity_left,
+                                        float64_t* impurity_right,
+                                        float64_t* weight_left,
+                                        float64_t* weight_right) noexcept nogil:
         """
         Calculates the impurity of children,
         evaluates the impurity in
         children nodes, i.e. the impurity of ``samples[start:pos]``
         the impurity of ``samples[pos:end]``.
 
-        :param impurity_left: double pointer
+        :param impurity_left: float64_t pointer
             The memory address where the impurity of the left child should be
             stored.
-        :param impurity_right: double pointer
+        :param impurity_right: float64_t pointer
             The memory address where the impurity of the right child should be
             stored.
-        :param weight_left: double pointer
+        :param weight_left: float64_t pointer
             The memory address where the weight of the left child should be
             stored.
-        :param weight_right: double pointer
+        :param weight_right: float64_t pointer
             The memory address where the weight of the right child should be
             stored.
         """
-        cdef DOUBLE_t mleft, mright
+        cdef float64_t mleft, mright
         self._mean(self.start, self.pos, &mleft, weight_left)
         self._mean(self.pos, self.end, &mright, weight_right)
         impurity_left[0] = self._mse(self.start, self.pos, mleft, weight_left[0])
@@ -128,43 +124,43 @@ cdef class CommonRegressorCriterion(Criterion):
     # functions used by a the tree optimizer
     ####################
 
-    cdef double node_impurity(self) noexcept nogil:
+    cdef float64_t node_impurity(self) noexcept nogil:
         """
         Calculates the impurity of the node,
         the impurity of ``samples[start:end]``.
         This is the primary function of the criterion class.
         """
-        cdef DOUBLE_t mean, weight
+        cdef float64_t mean, weight
         self._mean(self.start, self.end, &mean, &weight)
         return self._mse(self.start, self.end, mean, weight)
 
-    cdef void children_impurity(self, double* impurity_left,
-                                double* impurity_right) noexcept nogil:
+    cdef void children_impurity(self, float64_t* impurity_left,
+                                float64_t* impurity_right) noexcept nogil:
         """
         Calculates the impurity of children.
 
-        :param impurity_left: double pointer
+        :param impurity_left: float64_t pointer
             The memory address where the impurity of the left child should be
             stored.
-        :param impurity_right: double pointer
+        :param impurity_right: float64_t pointer
             The memory address where the impurity of the right child should be
             stored.
         """
-        cdef DOUBLE_t wl, wr
+        cdef float64_t wl, wr
         self.children_impurity_weights(impurity_left, impurity_right, &wl, &wr)
 
-    cdef void node_value(self, double* dest) noexcept nogil:
+    cdef void node_value(self, float64_t* dest) noexcept nogil:
         """
         Computes the node value, usually, the prediction
         the tree would do. Stores the value into *dest*.
 
-        :param dest: double pointer
+        :param dest: float64_t pointer
             The memory address where the node value should be stored.
         """
-        cdef DOUBLE_t weight
+        cdef float64_t weight
         self._mean(self.start, self.end, dest, &weight)
 
-    cdef double proxy_impurity_improvement(self) noexcept nogil:
+    cdef float64_t proxy_impurity_improvement(self) noexcept nogil:
         """
         Computes a proxy of the impurity reduction
         This method is used to speed up the search for the best split.
@@ -174,8 +170,8 @@ cdef class CommonRegressorCriterion(Criterion):
         The absolute impurity improvement is only computed by the
         *impurity_improvement* method once the best split has been found.
         """
-        cdef double impurity_left
-        cdef double impurity_right
+        cdef float64_t impurity_left
+        cdef float64_t impurity_right
         self.children_impurity_weights(&impurity_left, &impurity_right,
                                        &self.weighted_n_left, &self.weighted_n_right)
         if self.pos == self.start or self.pos == self.end:
@@ -184,9 +180,9 @@ cdef class CommonRegressorCriterion(Criterion):
         return (- self.weighted_n_right * impurity_right
                 - self.weighted_n_left * impurity_left)
 
-    cdef double impurity_improvement(self, double impurity_parent,
-                                     double impurity_left,
-                                     double impurity_right) noexcept nogil:
+    cdef float64_t impurity_improvement(self, float64_t impurity_parent,
+                                        float64_t impurity_left,
+                                        float64_t impurity_right) noexcept nogil:
         """
         Computes the improvement in impurity
         This method computes the improvement in impurity when a split occurs.
@@ -199,41 +195,41 @@ cdef class CommonRegressorCriterion(Criterion):
         at the current node, *N_t_L* is the number of samples in the left child,
         and *N_t_R* is the number of samples in the right child,
 
-        :param impurity_parent: double
+        :param impurity_parent: float64_t
             The initial impurity of the node before the split
-        :param impurity_left: double
+        :param impurity_left: float64_t
             The impurity of the left child
-        :param impurity_right: double
+        :param impurity_right: float64_t
             The impurity of the right child
-        :return: double, improvement in impurity after the split occurs
+        :return: float64_t, improvement in impurity after the split occurs
         """
         # self.children_impurity_weights(&impurity_left, &impurity_right,
         #                                &self.weighted_n_left, &self.weighted_n_right)
         # if self.pos == self.start or self.pos == self.end:
         #     return NAN
 
-        # cdef double weight = self.weighted_n_left + self.weighted_n_right
-        cdef double weight = self.weighted_n_node_samples
+        # cdef float64_t weight = self.weighted_n_left + self.weighted_n_right
+        cdef float64_t weight = self.weighted_n_node_samples
         return ((weight / self.weighted_n_samples) *
                 (impurity_parent - (self.weighted_n_right / weight * impurity_right)
                                  - (self.weighted_n_left / weight * impurity_left)))
 
 
 cdef int _ctest_criterion_init(Criterion criterion,
-                               const DOUBLE_t[:, ::1] y,
-                               DOUBLE_t[:] sample_weight,
-                               double weighted_n_samples,
+                               const float64_t[:, ::1] y,
+                               float64_t[:] sample_weight,
+                               float64_t weighted_n_samples,
                                SIZE_t[:] samples,
                                SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
-    cdef const DOUBLE_t[:, ::1] y2 = y
+    cdef const float64_t[:, ::1] y2 = y
     return criterion.init(y2, sample_weight, weighted_n_samples, samples, start, end)
 
 
 def _test_criterion_init(Criterion criterion,
-                         const DOUBLE_t[:, ::1] y,
-                         DOUBLE_t[:] sample_weight,
-                         double weighted_n_samples,
+                         const float64_t[:, ::1] y,
+                         float64_t[:] sample_weight,
+                         float64_t weighted_n_samples,
                          SIZE_t[:] samples,
                          SIZE_t start, SIZE_t end):
     "Test purposes. Methods cannot be directly called from python."
@@ -280,8 +276,10 @@ def _test_criterion_proxy_impurity_improvement(Criterion criterion):
     return criterion.proxy_impurity_improvement()
 
 
-def _test_criterion_impurity_improvement(Criterion criterion, double impurity_parent,
-                                         double impurity_left, double impurity_right):
+def _test_criterion_impurity_improvement(Criterion criterion,
+                                         float64_t impurity_parent,
+                                         float64_t impurity_left,
+                                         float64_t impurity_right):
     "Test purposes. Methods cannot be directly called from python."
     return criterion.impurity_improvement(
         impurity_parent, impurity_left, impurity_right
@@ -290,14 +288,14 @@ def _test_criterion_impurity_improvement(Criterion criterion, double impurity_pa
 
 def _test_criterion_node_impurity_children(Criterion criterion):
     "Test purposes. Methods cannot be directly called from python."
-    cdef DOUBLE_t left, right
+    cdef float64_t left, right
     criterion.children_impurity(&left, &right)
     return left, right
 
 
 def _test_criterion_node_value(Criterion criterion):
     "Test purposes. Methods cannot be directly called from python."
-    cdef DOUBLE_t value
+    cdef float64_t value
     criterion.node_value(&value)
     return value
 
@@ -309,13 +307,15 @@ def _test_criterion_update(Criterion criterion, SIZE_t new_pos):
 
 def _test_criterion_printf(Criterion crit):
     "Test purposes. Methods cannot be directly called from python."
-    printf("start=%zu pos=%zu end=%zu\n", crit.start, crit.pos, crit.end)
-    cdef DOUBLE_t left, right, value
+    cdef float64_t left, right, value
     cdef int i
     crit.children_impurity(&left, &right)
     crit.node_value(&value)
-    printf("value: %f total=%f left=%f right=%f\n", value,
-           crit.node_impurity(), left, right)
+    rows = []
+    rows.append("start=%d pos=%d end=%d" % (crit.start, crit.pos, crit.end))
+    rows.append("value: %f total=%f left=%f right=%f" % (
+            value, crit.node_impurity(), left, right))
     cdef int n = crit.y.shape[0]
     for i in range(0, n):
-        printf("-- %d: y=%f\n", i, crit.y[i, 0])
+        rows.append("-- %d: y=%f" % (i, crit.y[i, 0]))
+    return "\n".join(rows)

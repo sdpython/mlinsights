@@ -59,19 +59,13 @@ class QuantileLinearRegression(LinearRegression):
         positive=False,
         verbose=False,
     ):
-        try:
-            LinearRegression.__init__(
-                self,
-                fit_intercept=fit_intercept,
-                copy_X=copy_X,
-                n_jobs=n_jobs,
-                positive=positive,
-            )
-        except TypeError:
-            # scikit-learn<0.24
-            LinearRegression.__init__(
-                self, fit_intercept=fit_intercept, copy_X=copy_X, n_jobs=n_jobs
-            )
+        LinearRegression.__init__(
+            self,
+            fit_intercept=fit_intercept,
+            copy_X=copy_X,
+            n_jobs=n_jobs,
+            positive=positive,
+        )
         self.max_iter = max_iter
         self.verbose = verbose
         self.delta = delta
@@ -138,18 +132,12 @@ class QuantileLinearRegression(LinearRegression):
         else:
             Xm = X
 
-        try:
-            clr = LinearRegression(
-                fit_intercept=False,
-                copy_X=self.copy_X,
-                n_jobs=self.n_jobs,
-                positive=self.positive,
-            )
-        except AttributeError:
-            # scikit-learn<0.24
-            clr = LinearRegression(
-                fit_intercept=False, copy_X=self.copy_X, n_jobs=self.n_jobs
-            )
+        clr = LinearRegression(
+            fit_intercept=False,
+            copy_X=self.copy_X,
+            n_jobs=self.n_jobs,
+            positive=self.positive,
+        )
 
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0

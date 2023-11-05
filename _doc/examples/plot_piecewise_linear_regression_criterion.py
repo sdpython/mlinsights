@@ -152,13 +152,15 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #
 # ::
 #
-#    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-#                    DOUBLE_t *weight) nogil:
+#    ctypedef double float64_t
+#
+#    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+#                    float64_t *weight) nogil:
 #        if start == end:
 #            mean[0] = 0.
 #            return
-#        cdef DOUBLE_t m = 0.
-#        cdef DOUBLE_t w = 0.
+#        cdef float64_t m = 0.
+#        cdef float64_t w = 0.
 #        cdef int k
 #        for k in range(start, end):
 #            m += self.sample_wy[k]
@@ -166,11 +168,11 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #        weight[0] = w
 #        mean[0] = 0. if w == 0. else m / w
 #
-#    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-#                     DOUBLE_t weight) nogil:
+#    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+#                     float64_t weight) nogil:
 #        if start == end:
 #            return 0.
-#        cdef DOUBLE_t squ = 0.
+#        cdef float64_t squ = 0.
 #        cdef int k
 #        for k in range(start, end):
 #            squ += (self.y[self.sample_i[k], 0] - mean) ** 2 * self.sample_w[k]
@@ -189,24 +191,26 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #
 # ::
 #
-#    cdef void _mean(self, SIZE_t start, SIZE_t end, DOUBLE_t *mean,
-#                    DOUBLE_t *weight) nogil:
+#    ctypedef double float64_t
+#
+#    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+#                    float64_t *weight) nogil:
 #        if start == end:
 #            mean[0] = 0.
 #            return
-#        cdef DOUBLE_t m = self.sample_wy_left[end-1] -
-#                          (self.sample_wy_left[start-1] if start > 0 else 0)
-#        cdef DOUBLE_t w = self.sample_w_left[end-1] -
-#                          (self.sample_w_left[start-1] if start > 0 else 0)
+#        cdef float64_t m = self.sample_wy_left[end-1] -
+#                           (self.sample_wy_left[start-1] if start > 0 else 0)
+#        cdef float64_t w = self.sample_w_left[end-1] -
+#                           (self.sample_w_left[start-1] if start > 0 else 0)
 #        weight[0] = w
 #        mean[0] = 0. if w == 0. else m / w
 #
-#    cdef double _mse(self, SIZE_t start, SIZE_t end, DOUBLE_t mean,
-#                     DOUBLE_t weight) nogil:
+#    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+#                        float64_t weight) nogil:
 #        if start == end:
 #            return 0.
-#        cdef DOUBLE_t squ = self.sample_wy2_left[end-1] -
-#                            (self.sample_wy2_left[start-1] if start > 0 else 0)
+#        cdef float64_t squ = self.sample_wy2_left[end-1] -
+#                             (self.sample_wy2_left[start-1] if start > 0 else 0)
 #        # This formula only holds if mean is computed on the same interval.
 #        # Otherwise, it is squ / weight - true_mean ** 2 + (mean - true_mean) ** 2.
 #        return 0. if weight == 0. else squ / weight - mean ** 2

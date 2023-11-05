@@ -1,32 +1,37 @@
 # -*- coding: utf-8 -*-
 import unittest
+import warnings
 import numpy
+import packaging.version as pv
 from sklearn.tree._criterion import MSE
 from sklearn.tree import DecisionTreeRegressor
-from sklearn import datasets
+from sklearn import datasets, __version__ as skl_ver
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.mlmodel.piecewise_tree_regression import PiecewiseTreeRegressor
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    _test_criterion_init,
-    _test_criterion_node_impurity,
-    _test_criterion_node_impurity_children,
-    _test_criterion_update,
-    _test_criterion_node_value,
-    _test_criterion_proxy_impurity_improvement,
-    _test_criterion_impurity_improvement,
-)
-from mlinsights.mlmodel._piecewise_tree_regression_common import (
-    assert_criterion_equal,
-)
-from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import (
-    SimpleRegressorCriterionFast,
-)
+
+with warnings.catch_warnings(record=True) as w:
+    warnings.simplefilter("always")
+    from mlinsights.mlmodel._piecewise_tree_regression_common import (
+        _test_criterion_init,
+        _test_criterion_node_impurity,
+        _test_criterion_node_impurity_children,
+        _test_criterion_update,
+        _test_criterion_node_value,
+        _test_criterion_proxy_impurity_improvement,
+        _test_criterion_impurity_improvement,
+    )
+    from mlinsights.mlmodel._piecewise_tree_regression_common import (
+        assert_criterion_equal,
+    )
+    from mlinsights.mlmodel.piecewise_tree_regression_criterion_fast import (
+        SimpleRegressorCriterionFast,
+    )
 
 
 class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
-    @unittest.skip(
-        reason="self.y = y raises: Fatal Python error: "
-        "__pyx_fatalerror: Acquisition count is"
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
     )
     def test_criterions(self):
         X = numpy.array([[1.0, 2.0]]).T
@@ -104,15 +109,8 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
             assert_criterion_equal(c1, c2)
-            try:
-                # scikit-learn >= 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            except TypeError:
-                # scikit-learn < 0.23
-                p1 = _test_criterion_impurity_improvement(c1, 0.0)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0)
-
+            p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
+            p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
             self.assertAlmostEqual(p1, p2)
 
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
@@ -144,17 +142,15 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
             self.assertEqual(v1, v2)
-            try:
-                # scikit-learn >= 0.24
-                p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            except TypeError:
-                # scikit-learn < 0.23
-                p1 = _test_criterion_impurity_improvement(c1, 0.0)
-                p2 = _test_criterion_impurity_improvement(c2, 0.0)
+            p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
+            p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
             self.assertAlmostEqual(p1, p2)
 
-    def test_decision_tree_criterion(self):
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
+    def test_decision_tree_criterion_fast(self):
         X = numpy.array([[1.0, 2.0, 10.0, 11.0]]).T
         y = numpy.array([0.9, 1.1, 1.9, 2.1])
         clr1 = DecisionTreeRegressor(max_depth=1)
@@ -168,6 +164,10 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         self.assertEqual(p1, p2)
         self.assertEqual(clr1.tree_.node_count, clr2.tree_.node_count)
 
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_decision_tree_criterion_iris(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target
@@ -181,6 +181,10 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
         p2 = clr2.predict(X)
         self.assertEqual(p1[:10], p2[:10])
 
+    @unittest.skipIf(
+        pv.Version(skl_ver) < pv.Version("1.3.3"),
+        reason="it works with the main branch and the same cython",
+    )
     def test_decision_tree_criterion_iris_dtc(self):
         iris = datasets.load_iris()
         X, y = iris.data, iris.target

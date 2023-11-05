@@ -1,6 +1,8 @@
+mlinsights.mlbatch
+==================
 
-Speed up batch training
-=======================
+This was written for older version of scikit-learn and never
+revisited since. It may not bring much value.
 
 MLCache
 +++++++

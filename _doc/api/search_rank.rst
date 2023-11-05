@@ -1,6 +1,5 @@
-
-search_rank
-===========
+mlinsights.search_rank
+======================
 
 SearchEngineVectors
 +++++++++++++++++++

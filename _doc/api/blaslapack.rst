@@ -1,9 +1,8 @@
 
-Blas & Lapack
-=============
+mlinsights.mlmodel.direct_blas_lapack
+=====================================
 
-.. contents::
-    :local:
+A simple try to call scipy blas and lapack function from cython.
 
 Lapack
 ++++++
