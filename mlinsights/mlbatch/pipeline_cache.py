@@ -55,7 +55,16 @@ class PipelineCache(Pipeline):
                 fit_params_steps[step][param] = pval
         return fit_params_steps
 
-    def _fit(self, X, y=None, routed_params=None):
+    def _fit(self, X, y=None, *args, **fit_params_steps):
+        if "routed_params" in fit_params_steps:
+            # scikit-learn>=1.4
+            routed_params = fit_params_steps["routed_params"]
+        elif len(args) == 1:
+            # scikit-learn>=1.4
+            routed_params = args[0]
+        else:
+            # scikit-learn<1.4
+            routed_params = None
         self.steps = list(self.steps)
         self._validate_steps()
         memory = check_memory(self.memory)
@@ -82,15 +91,26 @@ class PipelineCache(Pipeline):
             cached = self.cache_.get(params)
             if cached is None:
                 cloned_transformer = clone(transformer)
-                Xt, fitted_transformer = fit_transform_one_cached(
-                    cloned_transformer,
-                    Xt,
-                    y,
-                    None,
-                    message_clsname="PipelineCache",
-                    message=self._log_message(step_idx),
-                    params=routed_params[name],
-                )
+                if routed_params is None:
+                    Xt, fitted_transformer = fit_transform_one_cached(
+                        cloned_transformer,
+                        Xt,
+                        y,
+                        None,
+                        message_clsname="PipelineCache",
+                        message=self._log_message(step_idx),
+                        **fit_params_steps[name],
+                    )
+                else:
+                    Xt, fitted_transformer = fit_transform_one_cached(
+                        cloned_transformer,
+                        Xt,
+                        y,
+                        None,
+                        message_clsname="PipelineCache",
+                        message=self._log_message(step_idx),
+                        params=routed_params[name],
+                    )
                 self.cache_.cache(params, fitted_transformer)
             else:
                 fitted_transformer = cached
