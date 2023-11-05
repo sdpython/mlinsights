@@ -2,15 +2,11 @@
 mlinsights: tricky scikit-learn
 ===============================
 
-.. image:: https://github.com/sdpython/mlinsights/blob/main/_doc/_static/project_ico.png?raw=true
+.. image:: https://raw.github.com/sdpython/mlinsights/blob/main/_doc/_static/project_ico.png
     :target: https://github.com/sdpython/mlinsights/
 
-.. image:: https://travis-ci.com/sdpython/mlinsights.svg?branch=main
-    :target: https://app.travis-ci.com/github/sdpython/mlinsights/
-    :alt: Build status
-
-.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status/sdpython.mlinsights%20(2)
-    :target: https://dev.azure.com/xavierdupre3/mlinsights/
+.. image:: https://dev.azure.com/xavierdupre3/mlinsights/_apis/build/status%2Fsdpython.mlinsights%20(2)?branchName=main
+    :target: https://dev.azure.com/xavierdupre3/mlinsights/_build/latest?definitionId=16&branchName=main
 
 .. image:: https://badge.fury.io/py/mlinsights.svg
     :target: http://badge.fury.io/py/mlinsights
