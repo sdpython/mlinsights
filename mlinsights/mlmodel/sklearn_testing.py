@@ -166,7 +166,7 @@ def _assert_dict_equal(a, b, ext):
     for key in sorted(a):
         if key not in b:
             rows.append(f"** Removed key '{key}' in a")
-    if len(rows) > 0:
+    if rows:
         raise AssertionError("Dictionaries are different\n{0}".format("\n".join(rows)))
 
 
@@ -245,7 +245,7 @@ def run_test_sklearn_grid_search_cv(
     pipe = make_pipeline(model)
     name = model.__class__.__name__.lower()
     parameters = {name + "__" + k: v for k, v in grid_params.items()}
-    if len(parameters) == 0:
+    if not parameters:
         raise ValueError("Some parameters must be tested when running grid search.")
     clf = GridSearchCV(pipe, parameters)
     if y_train is None and w_train is None:

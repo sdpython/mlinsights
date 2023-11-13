@@ -196,7 +196,7 @@ def plot_week_timeseries(
 
             x2 = x1 + value[i] * h
 
-            if len(ys) > 0 and y2 < ys[-1]:
+            if ys and y2 < ys[-1]:
                 if first and label2 is not None:
                     ax.plot(xs, ys, color="orange", linewidth=2, label=label2)
                     first = False
@@ -207,7 +207,7 @@ def plot_week_timeseries(
             xs.append(x2)
             ys.append((y1 + y2) / 2)
 
-        if len(xs) > 0:
+        if xs:
             ax.plot(xs, ys, color="orange", linewidth=2)
 
     return ax

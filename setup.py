@@ -31,7 +31,7 @@ def get_requirements(here):
             requirements = f.read().strip(" \n\r\t").split("\n")
     except FileNotFoundError:
         requirements = []
-    if len(requirements) == 0 or requirements == [""]:
+    if not requirements or requirements == [""]:
         requirements = ["numpy", "scipy", "scikit-learn"]
     return requirements
 
@@ -61,7 +61,7 @@ def get_version_str(here, default_version):
             for _ in [_.strip("\r\n ") for _ in f.readlines()]
             if _.startswith("__version__")
         ]
-        if len(line) > 0:
+        if line:
             VERSION_STR = line[0].split("=")[1].strip('" ')
     if VERSION_STR is None:
         raise ValueError(f"Unable to guess the package version with here={here!r}.")
@@ -497,7 +497,7 @@ class cmake_build_class_extension(Command):
                     os.path.join(build_path, name),
                 ]
             looks_exists = [look for look in looks if os.path.exists(look)]
-            if len(looks_exists) == 0:
+            if not looks_exists:
                 raise FileNotFoundError(
                     f"Unable to find {name!r} as {looks!r} (full_name={full_name!r}), "
                     f"build_path contains {os.listdir(build_path)}."

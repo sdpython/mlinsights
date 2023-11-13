@@ -53,7 +53,7 @@ def is_vector(X):
     @return             boolean
     """
     if isinstance(X, list):
-        if len(X) == 0 or isinstance(X[0], (list, tuple)):
+        if not X or isinstance(X[0], (list, tuple)):
             return False
         return True
     if isinstance(X, numpy.ndarray):

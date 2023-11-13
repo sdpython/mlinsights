@@ -26,7 +26,7 @@ def import_source(module_file_path, module_name):
 class TestDocumentationExamples(ExtTestCase):
     def run_test(self, fold: str, name: str, verbose=0) -> int:
         ppath = os.environ.get("PYTHONPATH", "")
-        if len(ppath) == 0:
+        if not ppath:
             os.environ["PYTHONPATH"] = ROOT
         elif ROOT not in ppath:
             sep = ";" if sys.platform == "win32" else ":"
@@ -43,7 +43,7 @@ class TestDocumentationExamples(ExtTestCase):
             res = p.communicate()
             out, err = res
             st = err.decode("ascii", errors="ignore")
-            if len(st) > 0 and "Traceback" in st:
+            if st and "Traceback" in st:
                 if "No module named 'onnxruntime'" in st:
                     if verbose:
                         print(f"failed: {name!r} due to missing onnxruntime.")

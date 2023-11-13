@@ -557,7 +557,7 @@ def _constraint_association_gain(
                     del cp[0]
                 else:
                     break
-            if len(cp) > 0:
+            if cp:
                 g, destind = cp[0]
                 if g + gain < 0:
                     del cp[0]

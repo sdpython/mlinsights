@@ -276,7 +276,7 @@ class PiecewiseEstimator(BaseEstimator):
         Generic *predict* method, works for *predict_proba* and
         *decision_function* as well.
         """
-        if len(self.estimators_) == 0:
+        if not self.estimators_:
             raise RuntimeError(
                 "Estimator was apparently fitted but contains no estimator."
             )
