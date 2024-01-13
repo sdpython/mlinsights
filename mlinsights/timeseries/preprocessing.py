@@ -58,11 +58,9 @@ class TimeSeriesDifferenceInv(BaseReciprocalTimeSeriesTransformer):
 
     def __init__(self, estimator):
         BaseReciprocalTimeSeriesTransformer.__init__(self, estimator.context_length)
-        if not isinstance(estimator, TimeSeriesDifference):
-            raise TypeError(
-                f"estimator must be of type TimeSeriesDifference not "
-                f"{type(estimator)}."
-            )
+        assert isinstance(estimator, TimeSeriesDifference), (
+            f"estimator must be of type TimeSeriesDifference not " f"{type(estimator)}."
+        )
         self.estimator = estimator
 
     def fit(self, X=None, y=None, sample_weight=None):

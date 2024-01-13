@@ -35,8 +35,7 @@ class IntervalRegressor(BaseEstimator, RegressorMixin):
     ):
         BaseEstimator.__init__(self)
         RegressorMixin.__init__(self)
-        if estimator is None:
-            raise ValueError("estimator cannot be null.")
+        assert estimator is not None, "estimator cannot be null."
         self.estimator = estimator
         self.n_jobs = n_jobs
         self.alpha = alpha

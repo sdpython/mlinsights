@@ -137,8 +137,7 @@ def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
 
 
 def _assert_list_equal(l1, l2, ext):
-    if len(l1) != len(l2):
-        raise AssertionError(f"Lists have different length {len(l1)} != {len(l2)}")
+    assert len(l1) == len(l2), f"Lists have different length {len(l1)} != {len(l2)}"
     for a, b in zip(l1, l2):
         if isinstance(a, tuple) and isinstance(b, tuple):
             _assert_tuple_equal(a, b, ext)
@@ -171,8 +170,7 @@ def _assert_dict_equal(a, b, ext):
 
 
 def _assert_tuple_equal(t1, t2, ext):
-    if len(t1) != len(t2):
-        raise AssertionError(f"Lists have different length {len(t1)} != {len(t2)}")
+    assert len(t1) == len(t2), f"Lists have different length {len(t1)} != {len(t2)}"
     for a, b in zip(t1, t2):
         if isinstance(a, BaseEstimator) and isinstance(b, BaseEstimator):
             assert_estimator_equal(a, b, ext)
@@ -199,27 +197,25 @@ def assert_estimator_equal(esta, estb, ext=None):
         if (att.endswith("_") and not att.endswith("__")) or (
             att.startswith("_") and not att.startswith("__")
         ):
-            if not hasattr(estb, att):
-                raise AssertionError(
-                    "Missing fitted attribute '{}' class {}\n==1 {}\n==2 {}".format(
-                        att,
-                        esta.__class__,
-                        list(sorted(esta.__dict__)),
-                        list(sorted(estb.__dict__)),
-                    )
-                )
+            assert hasattr(
+                estb, att
+            ), "Missing fitted attribute '{}' class {}\n==1 {}\n==2 {}".format(
+                att,
+                esta.__class__,
+                list(sorted(esta.__dict__)),
+                list(sorted(estb.__dict__)),
+            )
             if isinstance(getattr(esta, att), BaseEstimator):
                 assert_estimator_equal(getattr(esta, att), getattr(estb, att), ext)
             else:
                 ext.assertEqual(getattr(esta, att), getattr(estb, att))
     for att in estb.__dict__:
         if att.endswith("_") and not att.endswith("__"):
-            if not hasattr(esta, att):
-                raise AssertionError(
-                    "Missing fitted attribute\n==1 {}\n==2 {}".format(
-                        list(sorted(esta.__dict__)), list(sorted(estb.__dict__))
-                    )
-                )
+            assert hasattr(
+                esta, att
+            ), "Missing fitted attribute\n==1 {}\n==2 {}".format(
+                list(sorted(esta.__dict__)), list(sorted(estb.__dict__))
+            )
 
 
 def run_test_sklearn_grid_search_cv(
@@ -245,8 +241,7 @@ def run_test_sklearn_grid_search_cv(
     pipe = make_pipeline(model)
     name = model.__class__.__name__.lower()
     parameters = {name + "__" + k: v for k, v in grid_params.items()}
-    if not parameters:
-        raise ValueError("Some parameters must be tested when running grid search.")
+    assert parameters, "Some parameters must be tested when running grid search."
     clf = GridSearchCV(pipe, parameters)
     if y_train is None and w_train is None:
         clf.fit(X_train)

@@ -196,10 +196,9 @@ class ConstraintKMeans(KMeans):
                 return labels
             return KMeans.predict(self, X)
         else:
-            if self.balanced_predictions:
-                raise RuntimeError(
-                    "balanced_predictions and weights_ cannot be used together."
-                )
+            assert (
+                not self.balanced_predictions
+            ), "balanced_predictions and weights_ cannot be used together."
             return KMeans.predict(self, X)
 
     def transform(self, X):
@@ -226,10 +225,9 @@ class ConstraintKMeans(KMeans):
                 return distances
             return KMeans.transform(self, X)
         else:
-            if self.balanced_predictions:
-                raise RuntimeError(
-                    "balanced_predictions and weights_ cannot be used together."
-                )
+            assert (
+                not self.balanced_predictions
+            ), "balanced_predictions and weights_ cannot be used together."
             res = KMeans.transform(self, X)
             res *= self.weights_.reshape((1, -1))
             return res
@@ -251,10 +249,9 @@ class ConstraintKMeans(KMeans):
                 return dist_close
             res = euclidean_distances(self.cluster_centers_, X, squared=True)
         else:
-            if self.balanced_predictions:
-                raise RuntimeError(
-                    "balanced_predictions and weights_ cannot be used together."
-                )
+            assert (
+                not self.balanced_predictions
+            ), "balanced_predictions and weights_ cannot be used together."
             res = euclidean_distances(X, self.cluster_centers_, squared=True)
             res *= self.weights_.reshape((1, -1))
         return res.max(axis=1)
@@ -272,13 +269,7 @@ class ConstraintKMeans(KMeans):
         for row in triangles:
             for j in range(1, row.shape[-1]):
                 a, b = row[j - 1 : j + 1]
-                if a < b:
-                    edges.add((a, b))
-                else:
-                    edges.add((b, a))
+                edges.add((a, b) if a < b else (b, a))
             a, b = row[0], row[-1]
-            if a < b:
-                edges.add((a, b))
-            else:
-                edges.add((b, a))
+            edges.add((a, b) if a < b else (b, a))
         return edges

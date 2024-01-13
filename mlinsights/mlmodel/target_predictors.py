@@ -224,11 +224,9 @@ class TransformedTargetClassifier2(BaseEstimator, ClassifierMixin):
             Predicted values.
         """
         self._check_is_fitted()
-        if not hasattr(self.classifier_, method):
-            raise RuntimeError(
-                f"Unable to find method {method!r} in model "
-                f"{type(self.classifier_)}."
-            )
+        assert hasattr(self.classifier_, method), (
+            f"Unable to find method {method!r} in model " f"{type(self.classifier_)}."
+        )
         meth = getattr(self.classifier_, method)
         X_trans, _ = self.transformer_.transform(X, None)
         pred = meth(X_trans)

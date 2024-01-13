@@ -29,8 +29,9 @@ def plot_gallery_images(
 
     if hasattr(imgs, "shape") and len(imgs.shape) == 2:
         height, width = imgs.shape
-        if ax is not None and ax.shape != imgs.shape:
-            raise ValueError(f"ax.shape {ax.shape} != imgs.shape {imgs.shape}")
+        assert (
+            ax is None or ax.shape == imgs.shape
+        ), f"ax.shape {ax.shape} != imgs.shape {imgs.shape}"
         imgs = imgs.ravel()
         if texts is not None:
             texts = texts.ravel()

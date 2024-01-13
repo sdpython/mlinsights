@@ -196,12 +196,11 @@ class _DecisionTreeLogisticRegressionNode:
 
         if not isinstance(self.estimator, LinearClassifierMixin):
             # The classifier is not linear and cannot be improved.
-            if dtlr.fit_improve_algo == "intercept_sort_always":
-                raise RuntimeError(
-                    f"The model is not linear "
-                    f"({self.estimator.__class__.__name__!r}), "
-                    f"intercept cannot be improved."
-                )
+            assert dtlr.fit_improve_algo != "intercept_sort_always", (
+                f"The model is not linear "
+                f"({self.estimator.__class__.__name__!r}), "
+                f"intercept cannot be improved."
+            )
             return prob
 
         above = prob[:, 1] > self.threshold
@@ -391,10 +390,8 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
             self.estimator = LogisticRegression()
         else:
             self.estimator = estimator
-        if max_depth is None:
-            raise ValueError("'max_depth' cannot be None.")
-        if max_depth > 1024:
-            raise ValueError("'max_depth' must be <= 1024.")
+        assert max_depth, "'max_depth' cannot be None."
+        assert max_depth <= 1024, "'max_depth' must be <= 1024."
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
@@ -437,14 +434,14 @@ class DecisionTreeLogisticRegression(BaseEstimator, ClassifierMixin):
                 X = X.values
         if not isinstance(X, numpy.ndarray):
             raise TypeError("'X' must be an array.")
-        if sample_weight is not None and not isinstance(sample_weight, numpy.ndarray):
-            raise TypeError("'sample_weight' must be an array.")
+        assert sample_weight is None or isinstance(
+            sample_weight, numpy.ndarray
+        ), "'sample_weight' must be an array."
         self.classes_ = numpy.array(sorted(set(y)))
-        if len(self.classes_) != 2:
-            raise RuntimeError(
-                f"The model only supports binary classification but labels are "
-                f"{self.classes_}."
-            )
+        assert len(self.classes_) == 2, (
+            f"The model only supports binary classification but labels are "
+            f"{self.classes_}."
+        )
 
         if self.strategy == "parallel":
             return self._fit_parallel(X, y, sample_weight)

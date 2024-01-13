@@ -60,21 +60,20 @@ def _assign_labels_csr(X, sample_weight, x_squared_norms, centers, labels, dista
     """Compute label assignment and inertia for a CSR input
     Return the inertia (sum of squared distances to the centers).
     """
-    if distances is not None and distances.shape != (X.shape[0],):
-        raise ValueError(
-            f"Dimension mismatch for distance got "
-            f"{distances.shape}, expecting "
-            f"{(X.shape[0], centers.shape[0])}."
-        )
+    assert distances is None or distances.shape == (X.shape[0],), (
+        f"Dimension mismatch for distance got "
+        f"{distances.shape}, expecting "
+        f"{(X.shape[0], centers.shape[0])}."
+    )
     n_clusters = centers.shape[0]
     n_samples = X.shape[0]
     store_distances = 0
     inertia = 0.0
 
-    if centers.dtype == numpy.float32:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float32)
-    else:
-        center_squared_norms = numpy.zeros(n_clusters, dtype=numpy.float64)
+    center_squared_norms = numpy.zeros(
+        n_clusters,
+        dtype=numpy.float32 if centers.dtype == numpy.float32 else numpy.float64,
+    )
 
     if n_samples == distances.shape[0]:
         store_distances = 1

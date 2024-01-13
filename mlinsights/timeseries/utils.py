@@ -55,8 +55,9 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
         print('nx=', nx)
         print('ny=', ny)
     """
-    if not hasattr(model, "use_all_past") or not hasattr(model, "past"):
-        raise TypeError(f"model must be of type BaseTimeSeries not {type(model)}")
+    assert hasattr(model, "use_all_past") and hasattr(
+        model, "past"
+    ), f"model must be of type BaseTimeSeries not {type(model)}"
     if same_rows:
         if model.use_all_past:
             ncol = X.shape[1] if X is not None else 0
@@ -162,28 +163,30 @@ def check_ts_X_y(model, X, y):
     cfg = get_config()
     if cfg.get("assume_finite", True):
         return
-    if X.dtype not in (numpy.float32, numpy.float64):
-        raise TypeError(f"Features must be of type float32 and float64 not {X.dtype}.")
-    if y is not None and y.dtype not in (numpy.float32, numpy.float64):
-        raise TypeError(f"Features must be of type float32 and float64 not {y.dtype}.")
+    assert X.dtype in (
+        numpy.float32,
+        numpy.float64,
+    ), f"Features must be of type float32 and float64 not {X.dtype}."
+    assert y is None or y.dtype not in (
+        numpy.float32,
+        numpy.float64,
+    ), f"Features must be of type float32 and float64 not {y.dtype}."
     cst = model.past
     if hasattr(model, "preprocessing_") and model.preprocessing_ is not None:
         cst += model.preprocessing_.context_length
     if y is None:
-        if cst > 0:
-            raise AssertionError(
-                f"y must be specified to give the model past data to predict, "
-                f"it requires at least {cst} observations."
-            )
-        return
-    if y.shape[0] != X.shape[0]:
-        raise AssertionError(
-            f"X and y must have the same number of rows {X.shape[0]} != {y.shape[0]}."
-        )
-    if len(y.shape) > 1 and y.shape[1] != 1:
-        raise AssertionError(f"y must be 1-dimensional not has shape {y.shape}.")
-    if y.shape[0] < cst:
-        raise AssertionError(
-            f"y is not enough past data to predict, "
+        assert cst <= 0, (
+            f"y must be specified to give the model past data to predict, "
             f"it requires at least {cst} observations."
         )
+        return
+    assert (
+        y.shape[0] == X.shape[0]
+    ), f"X and y must have the same number of rows {X.shape[0]} != {y.shape[0]}."
+    assert (
+        len(y.shape) <= 1 or y.shape[1] == 1
+    ), f"y must be 1-dimensional not has shape {y.shape}."
+    assert y.shape[0] >= cst, (
+        f"y is not enough past data to predict, "
+        f"it requires at least {cst} observations."
+    )

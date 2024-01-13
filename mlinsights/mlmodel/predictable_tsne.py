@@ -45,19 +45,16 @@ class PredictableTSNE(BaseEstimator, TransformerMixin):
         self.transformer = transformer
         self.normalizer = normalizer
         self.keep_tsne_outputs = keep_tsne_outputs
-        if normalizer is not None and not hasattr(normalizer, "transform"):
-            raise AttributeError(
-                f"normalizer {type(normalizer)} does not have a 'transform' method."
-            )
-        if not hasattr(transformer, "fit_transform"):
-            raise AttributeError(
-                f"transformer {type(transformer)} does not have a "
-                f"'fit_transform' method."
-            )
-        if not hasattr(estimator, "predict"):
-            raise AttributeError(
-                f"estimator {type(estimator)} does not have a 'predict' method."
-            )
+        assert normalizer is None or hasattr(
+            normalizer, "transform"
+        ), f"normalizer {type(normalizer)} does not have a 'transform' method."
+        assert hasattr(transformer, "fit_transform"), (
+            f"transformer {type(transformer)} does not have a "
+            f"'fit_transform' method."
+        )
+        assert hasattr(
+            estimator, "predict"
+        ), f"estimator {type(estimator)} does not have a 'predict' method."
         self.normalize = normalize
 
     def fit(self, X, y, sample_weight=None):

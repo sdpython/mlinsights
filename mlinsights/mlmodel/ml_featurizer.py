@@ -81,8 +81,7 @@ def wrap_predict_sklearn(X, fct, many):
     @param      many    many observations or just one
     """
     isv = is_vector(X)
-    if many == isv:
-        raise ValueError("Inconsistency X is a single vector, many is True")
+    assert many != isv, "Inconsistency X is a single vector, many is True"
     if isv:
         X = [X]
     y = fct(X)
