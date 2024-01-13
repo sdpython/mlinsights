@@ -93,7 +93,7 @@ version...
     from sklearn import __version__
     print(__version__)
 
-Source are available at `sdpython/mlinsights <https://github.com/sdpython/mlinsights/>_`.
+Source are available at `sdpython/mlinsights <https://github.com/sdpython/mlinsights/>`_.
 
 Older versions
 ++++++++++++++
