@@ -93,8 +93,9 @@ def constraint_kmeans(
     @return                     tuple (best_labels, best_centers, best_inertia,
                                 iter, all_centers)
     """
-    if labels.dtype != numpy.int32:
-        raise TypeError(f"Labels must be an array of int not '{labels.dtype}'")
+    assert (
+        labels.dtype == numpy.int32
+    ), f"Labels must be an array of int not '{labels.dtype}'"
 
     if strategy == "weights":
         return _constraint_kmeans_weights(
@@ -557,7 +558,7 @@ def _constraint_association_gain(
                     del cp[0]
                 else:
                     break
-            if len(cp) > 0:
+            if cp:
                 g, destind = cp[0]
                 if g + gain < 0:
                     del cp[0]
@@ -578,8 +579,7 @@ def _constraint_association_gain(
                 bisect.insort(transfer[cur, dest], (gain, ind))
 
     neg = (counters < ave).sum()
-    if neg > 0:
-        raise RuntimeError(f"The algorithm failed, counters={counters}")
+    assert neg <= 0, f"The algorithm failed, counters={counters}"
 
     _switch_clusters(labels, distances)
     distances_close[:] = distances[numpy.arange(X.shape[0]), labels]
@@ -656,12 +656,11 @@ def _constraint_kmeans_weights(
         inertia, diff = _labels_inertia_weights(
             X, centers, sw, weights, labels, total_inertia
         )
-        if numpy.isnan(inertia):
-            raise RuntimeError(
-                f"nanNobs={X.shape[0]} Nclus={centers.shape[0]}\n"
-                f"inertia={inertia}\nweights={weights}\ndiff={diff}\n"
-                f"labels={set(labels)}"
-            )
+        assert not numpy.isnan(inertia), (
+            f"nanNobs={X.shape[0]} Nclus={centers.shape[0]}\n"
+            f"inertia={inertia}\nweights={weights}\ndiff={diff}\n"
+            f"labels={set(labels)}"
+        )
 
         # best option so far?
         if best_inertia is None or inertia < best_inertia:

@@ -1,5 +1,5 @@
 
-.. image:: https://github.com/sdpython/mlinsights/blob/main/_doc/sphinxdoc/source/_static/project_ico.png?raw=true
+.. image:: https://github.com/sdpython/mlinsights/raw/main/_doc/_static/project_ico.png
     :target: https://github.com/sdpython/mlinsights/
 
 mlinsights: extensions to scikit-learn

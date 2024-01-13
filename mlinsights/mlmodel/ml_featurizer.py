@@ -53,7 +53,7 @@ def is_vector(X):
     @return             boolean
     """
     if isinstance(X, list):
-        if len(X) == 0 or isinstance(X[0], (list, tuple)):
+        if not X or isinstance(X[0], (list, tuple)):
             return False
         return True
     if isinstance(X, numpy.ndarray):
@@ -81,8 +81,7 @@ def wrap_predict_sklearn(X, fct, many):
     @param      many    many observations or just one
     """
     isv = is_vector(X)
-    if many == isv:
-        raise ValueError("Inconsistency X is a single vector, many is True")
+    assert many != isv, "Inconsistency X is a single vector, many is True"
     if isv:
         X = [X]
     y = fct(X)

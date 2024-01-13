@@ -72,20 +72,16 @@ class BaseTimeSeries(BaseEstimator):
         self.delay2 = delay2
         self.use_all_past = use_all_past
         self.preprocessing = preprocessing
-        if self.delay1 < 1:
-            raise ValueError("delay1 must be >= 1")
-        if self.delay2 <= self.delay1:
-            raise ValueError("delay2 must be >= 1")
-        if self.past < 0:
-            raise ValueError("past must be > 0")
-        if preprocessing is not None and not isinstance(
+        assert self.delay1 >= 1, "delay1 must be >= 1"
+        assert self.delay2 > self.delay1, "delay2 must be >= 1"
+        assert self.past >= 0, "past must be > 0"
+        assert preprocessing is None or isinstance(
             preprocessing, BaseReciprocalTimeSeriesTransformer
-        ):
-            raise TypeError(
-                f"preprocessing must be of type "
-                f"'BaseReciprocalTimeSeriesTransformer' "
-                f"not {type(preprocessing)}."
-            )
+        ), (
+            f"preprocessing must be of type "
+            f"'BaseReciprocalTimeSeriesTransformer' "
+            f"not {type(preprocessing)}."
+        )
 
     def _fit_preprocessing(self, X, y, sample_weight=None):
         """
@@ -121,8 +117,7 @@ class BaseTimeSeries(BaseEstimator):
 
         The *y* series is moved by *self.delay1* in the past.
         """
-        if y is None:
-            raise RuntimeError("y cannot be None")
+        assert y is not None, "y cannot be None"
         X, y, sample_weight = build_ts_X_y(self, X, y, sample_weight, same_rows=True)
         X, y, sample_weight = self._fit_preprocessing(X, y, sample_weight)
         return X, y, sample_weight

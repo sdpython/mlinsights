@@ -280,7 +280,7 @@ class ExtTestCase(unittest.TestCase):
     def assertEmpty(self, value: Any):
         if value is None:
             return
-        if len(value) == 0:
+        if not value:
             return
         raise AssertionError(f"value is not empty: {value!r}.")
 
@@ -288,7 +288,7 @@ class ExtTestCase(unittest.TestCase):
         if value is None:
             raise AssertionError(f"value is empty: {value!r}.")
         if isinstance(value, (list, dict, tuple, set)):
-            if len(value) == 0:
+            if not value:
                 raise AssertionError(f"value is empty: {value!r}.")
 
     def assertStartsWith(self, prefix: str, full: str):
@@ -392,13 +392,13 @@ def get_parsed_args(
         epilog = ""
     parser = ArgumentParser(prog=name, description=description, epilog=epilog)
     if expose is not None:
-        to_publish = set(expose.split(",")) if len(expose) > 0 else set()
+        to_publish = set(expose.split(",")) if not expose else set()
         if scenarios is not None:
             rows = ", ".join(f"{k}: {v}" for k, v in scenarios.items())
             parser.add_argument(
                 "-s", "--scenario", help=f"Available scenarios: {rows}."
             )
-        if len(to_publish) == 0 or "number" in to_publish:
+        if not to_publish or "number" in to_publish:
             parser.add_argument(
                 "-n",
                 "--number",
@@ -406,7 +406,7 @@ def get_parsed_args(
                 type=int,
                 default=number,
             )
-        if len(to_publish) == 0 or "repeat" in to_publish:
+        if not to_publish or "repeat" in to_publish:
             parser.add_argument(
                 "-r",
                 "--repeat",
@@ -414,7 +414,7 @@ def get_parsed_args(
                 type=int,
                 default=repeat,
             )
-        if len(to_publish) == 0 or "warmup" in to_publish:
+        if not to_publish or "warmup" in to_publish:
             parser.add_argument(
                 "-w",
                 "--warmup",
@@ -422,7 +422,7 @@ def get_parsed_args(
                 type=int,
                 default=warmup,
             )
-        if len(to_publish) == 0 or "sleep" in to_publish:
+        if not to_publish or "sleep" in to_publish:
             parser.add_argument(
                 "-S",
                 "--sleep",
@@ -430,7 +430,7 @@ def get_parsed_args(
                 type=float,
                 default=sleep,
             )
-        if len(to_publish) == 0 or "tries" in to_publish:
+        if not to_publish or "tries" in to_publish:
             parser.add_argument(
                 "-t",
                 "--tries",

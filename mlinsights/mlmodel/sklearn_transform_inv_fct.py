@@ -51,8 +51,7 @@ class FunctionReciprocalTransformer(BaseReciprocalTransformer):
                     f"Unknown fct '{fct}', it should in {list(sorted(opts))}."
                 )
         else:
-            if fct_inv is None:
-                raise ValueError("If fct is callable, fct_inv must be specified.")
+            assert fct_inv is not None, "If fct is callable, fct_inv must be specified."
         self.fct = fct
         self.fct_inv = fct_inv
 
@@ -112,8 +111,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
         """
         Defines a random permutation over the targets.
         """
-        if y is None:
-            raise RuntimeError("targets cannot be empty.")
+        assert y is not None, "targets cannot be empty."
         num = numpy.issubdtype(y.dtype, numpy.floating)
         perm = {}
         for u in y.ravel():
@@ -199,8 +197,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             return X, yp.reshape(y.shape)
         else:
             # y is probababilies or raw score
-            if len(y.shape) != 2:
-                raise RuntimeError(f"yp should be a matrix but has shape {y.shape}.")
+            assert len(y.shape) == 2, f"yp should be a matrix but has shape {y.shape}."
             cl = [(v, k) for k, v in self.permutation_.items()]
             cl.sort()
             new_perm = {}

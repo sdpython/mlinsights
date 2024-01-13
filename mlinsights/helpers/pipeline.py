@@ -121,17 +121,13 @@ class BaseEstimatorDebugInformation:
         """
         rows = [f"BaseEstimatorDebugInformation({self.model.__class__.__name__})"]
         for k in sorted(self.inputs):
-            if k in self.outputs:
-                rows.append("  " + k + "(")
-                self.display(self.inputs[k], nrows)
-                rows.append(textwrap.indent(self.display(self.inputs[k], nrows), "   "))
-                rows.append("  ) -> (")
-                rows.append(
-                    textwrap.indent(self.display(self.outputs[k], nrows), "   ")
-                )
-                rows.append("  )")
-            else:
-                raise KeyError(f"Unable to find output for method '{k}'.")
+            assert k in self.outputs, f"Unable to find output for method '{k}'."
+            rows.append("  " + k + "(")
+            self.display(self.inputs[k], nrows)
+            rows.append(textwrap.indent(self.display(self.inputs[k], nrows), "   "))
+            rows.append("  ) -> (")
+            rows.append(textwrap.indent(self.display(self.outputs[k], nrows), "   "))
+            rows.append("  )")
         return "\n".join(rows)
 
     def display(self, data, nrows):
@@ -195,12 +191,11 @@ def alter_pipeline_for_debugging(pipe):
         "predict_proba": predict_proba,
     }
 
-    if hasattr(pipe, "_debug"):
-        raise RuntimeError(
-            "The same operator cannot be used twice in "
-            "the same pipeline or this method was called "
-            "a second time."
-        )
+    assert not hasattr(pipe, "_debug"), (
+        "The same operator cannot be used twice in "
+        "the same pipeline or this method was called "
+        "a second time."
+    )
 
     for model_ in enumerate_pipeline_models(pipe):
         model = model_[1]

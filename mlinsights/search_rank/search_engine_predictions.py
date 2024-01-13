@@ -66,8 +66,9 @@ class SearchEnginePredictions(SearchEngineVectors):
             )
         else:
             self._prepare_fit(data=data, features=features, metadata=metadata)
-            if isinstance(self.features_, list):
-                raise TypeError("features_ cannot be a list when training the model.")
+            assert not isinstance(
+                self.features_, list
+            ), "features_ cannot be a list when training the model."
             self.features_ = self.fct(self.features_, True)
         return self._fit_knn()
 

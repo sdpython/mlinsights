@@ -80,7 +80,7 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
             lambda: run_test_sklearn_grid_search_cv(
                 lambda: DecisionTreeLogisticRegression(fit_improve_algo=None), X, Y
             ),
-            ValueError,
+            AssertionError,
         )
         res = run_test_sklearn_grid_search_cv(
             lambda: DecisionTreeLogisticRegression(fit_improve_algo=None),
@@ -98,7 +98,7 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
         X, y = data.data, data.target
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
         dtlr = DecisionTreeLogisticRegression(fit_improve_algo=None)
-        self.assertRaise(lambda: dtlr.fit(X_train, y_train), RuntimeError)
+        self.assertRaise(lambda: dtlr.fit(X_train, y_train), AssertionError)
         y = y % 2
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
         dtlr.fit(X_train, y_train)
@@ -128,7 +128,7 @@ class TestDecisionTreeLogisticRegression(ExtTestCase):
             ValueError,
         )
         dtlr = DecisionTreeLogisticRegression(fit_improve_algo="intercept_sort_always")
-        self.assertRaise(lambda: dtlr.fit(X_train, y_train), RuntimeError)
+        self.assertRaise(lambda: dtlr.fit(X_train, y_train), AssertionError)
         y = y % 2
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11)
         dtlr.fit(X_train, y_train)

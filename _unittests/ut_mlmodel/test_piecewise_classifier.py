@@ -179,7 +179,7 @@ class TestPiecewiseClassifier(ExtTestCase):
             lambda: run_test_sklearn_grid_search_cv(
                 lambda: PiecewiseClassifier(), X, Y
             ),
-            ValueError,
+            AssertionError,
         )
         res = run_test_sklearn_grid_search_cv(
             lambda: PiecewiseClassifier(), X, Y, binner__max_depth=[2, 3]

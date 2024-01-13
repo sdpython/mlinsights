@@ -21,8 +21,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
             return [_get_name(context, el, info, data) for el in prefix]
         if isinstance(prefix, int):
             prefix = former_data[prefix]
-        if isinstance(prefix, int):
-            raise TypeError(f"prefix must be a string.\ninfo={info}")
+        assert not isinstance(prefix, int), f"prefix must be a string.\ninfo={info}"
         sug = "%s%d" % (prefix, context["n"])
         while sug in context["names"]:
             context["n"] += 1
@@ -34,10 +33,9 @@ def _pipeline_info(pipe, data, context, former_data=None):
         if isinstance(name, str):
             return name
         res = data[name]
-        if isinstance(res, int):
-            raise RuntimeError(
-                f"Column name is still a number and not a name: {name} and {data}."
-            )
+        assert not isinstance(
+            res, int
+        ), f"Column name is still a number and not a name: {name!r} and {data!r}."
         return res
 
     if isinstance(pipe, Pipeline):
@@ -290,14 +288,12 @@ def pipeline2dot(pipe, data, **params):
             exp.append(node)
 
             for inp in line["inputs"]:
-                if isinstance(inp, int):
-                    raise IndexError(
-                        "Unable to guess columns {} in\n{}\n---\n{}".format(
-                            inp, pprint.pformat(columns), "\n".join(exp)
-                        )
-                    )
-                else:
-                    nc = columns.get(inp, inp)
+                assert not isinstance(
+                    inp, int
+                ), "Unable to guess columns {} in\n{}\n---\n{}".format(
+                    inp, pprint.pformat(columns), "\n".join(exp)
+                )
+                nc = columns.get(inp, inp)
                 edge = f"  {nc} -> node{i};"
                 exp.append(edge)
 

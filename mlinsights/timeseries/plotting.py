@@ -48,8 +48,7 @@ def plot_week_timeseries(
             value2=agg['y']/2, label2="y/2", normalise=False)
         plt.show()
     """
-    if time.shape[0] != value.shape[0]:
-        raise AssertionError("Dimension mismatch")
+    assert time.shape[0] == value.shape[0], "Dimension mismatch"
 
     def coor(ti):
         days = ti.days
@@ -80,8 +79,7 @@ def plot_week_timeseries(
         if i < time.shape[0] - 1:
             ti1 = time[i + 1]
             delta = (ti1 - ti) if delta is None else min(delta, ti1 - ti)
-            if delta == 0:
-                raise RuntimeError("The timeseries contains duplicated time values.")
+            assert delta, "The timeseries contains duplicated time values."
         else:
             ti1 = ti + delta
         x1, y1 = coor(ti)
@@ -196,7 +194,7 @@ def plot_week_timeseries(
 
             x2 = x1 + value[i] * h
 
-            if len(ys) > 0 and y2 < ys[-1]:
+            if ys and y2 < ys[-1]:
                 if first and label2 is not None:
                     ax.plot(xs, ys, color="orange", linewidth=2, label=label2)
                     first = False
@@ -207,7 +205,7 @@ def plot_week_timeseries(
             xs.append(x2)
             ys.append((y1 + y2) / 2)
 
-        if len(xs) > 0:
+        if xs:
             ax.plot(xs, ys, color="orange", linewidth=2)
 
     return ax

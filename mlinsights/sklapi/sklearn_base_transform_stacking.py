@@ -97,7 +97,7 @@ class SkBaseTransformStacking(SkBaseTransform):
         res = list(
             map(lambda c: convert2transform(c, new_learners), zip(models, method))
         )
-        if len(new_learners) == 0:
+        if not new_learners:
             # We need to do that to avoid creating new objects
             # when it is not necessary. This behavior is not
             # supported anymore by scikit-learn.

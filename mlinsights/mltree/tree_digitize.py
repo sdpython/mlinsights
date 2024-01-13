@@ -65,8 +65,9 @@ def digitize2tree(bins, right=False):
     n_nodes = []
 
     def add_root(index):
-        if index < 0 or index >= len(bins):
-            raise IndexError("Unexpected index %d / len(bins)=%d." % (index, len(bins)))
+        assert index >= 0 and index < len(
+            bins
+        ), "Unexpected index %d / len(bins)=%d." % (index, len(bins))
         parent = -1
         is_left = False
         is_leaf = False

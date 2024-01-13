@@ -76,10 +76,12 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         n_iter_no_change,
         max_fun,
     ):
-        if "max_fun" in inspect.signature(BaseMultilayerPerceptron.__init__).parameters:
-            args = [15000]
-        else:
-            args = []
+        args = (
+            [15000]
+            if "max_fun"
+            in inspect.signature(BaseMultilayerPerceptron.__init__).parameters
+            else []
+        )
         BaseMultilayerPerceptron.__init__(
             self,
             hidden_layer_sizes,
@@ -428,13 +430,12 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
             The predicted values.
         """
         check_is_fitted(self)
-        if hasattr(self, "_predict"):
-            y_pred = self._predict(X)
-        else:
-            y_pred = self._forward_pass_fast(X)
-        if y_pred.shape[1] == 1:
-            return y_pred.ravel()
-        return y_pred
+        y_pred = (
+            self._predict(X)
+            if hasattr(self, "_predict")
+            else self._forward_pass_fast(X)
+        )
+        return y_pred.ravel() if y_pred.shape[1] == 1 else y_pred
 
     def _validate_input(self, X, y, incremental, reset=False):
         X, y = check_X_y(

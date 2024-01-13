@@ -166,7 +166,7 @@ class TestQuantileRegression(ExtTestCase):
             lambda: run_test_sklearn_grid_search_cv(
                 lambda: QuantileLinearRegression(), X, Y
             ),
-            (ValueError, TypeError),
+            (AssertionError, ValueError, TypeError),
         )
         res = run_test_sklearn_grid_search_cv(
             lambda: QuantileLinearRegression(), X, Y, delta=[0.1, 0.001]

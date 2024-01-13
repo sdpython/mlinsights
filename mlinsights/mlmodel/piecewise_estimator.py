@@ -103,13 +103,11 @@ class PiecewiseEstimator(BaseEstimator):
 
     def __init__(self, binner=None, estimator=None, n_jobs=None, verbose=False):
         BaseEstimator.__init__(self)
-        if estimator is None:
-            raise ValueError("estimator cannot be null.")
-        if binner is None:
-            raise TypeError(
-                f"Unsupported options for binner=='tree' and model {type(estimator)}."
-            )
-        elif binner == "bins":
+        assert estimator is not None, "estimator cannot be null."
+        assert (
+            binner is not None
+        ), f"Unsupported options for binner=='tree' and model {type(estimator)}."
+        if binner == "bins":
             binner = KBinsDiscretizer()
         self.binner = binner
         self.estimator = estimator
@@ -276,15 +274,13 @@ class PiecewiseEstimator(BaseEstimator):
         Generic *predict* method, works for *predict_proba* and
         *decision_function* as well.
         """
-        if len(self.estimators_) == 0:
-            raise RuntimeError(
-                "Estimator was apparently fitted but contains no estimator."
-            )
-        if not hasattr(self.estimators_[0], method):
-            raise TypeError(
-                f"Estimator {type(self.estimators_[0])} "
-                f"does not have method {method!r}."
-            )
+        assert (
+            len(self.estimators_) > 0
+        ), "Estimator was apparently fitted but contains no estimator."
+        assert hasattr(self.estimators_[0], method), (
+            f"Estimator {type(self.estimators_[0])} "
+            f"does not have method {method!r}."
+        )
         if isinstance(X, pandas.DataFrame):
             X = X.values
 

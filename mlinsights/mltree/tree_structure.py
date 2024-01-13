@@ -17,8 +17,8 @@ def tree_leave_index(model):
     """
     Returns the indices of every leave in a tree.
 
-    @param      model       something which has a member ``tree_``
-    @return                 leave indices
+    :param model: something which has a member ``tree_``
+    :return: leave indices
     """
     tree = _get_tree(model)
     res = []

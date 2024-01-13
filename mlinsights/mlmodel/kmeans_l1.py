@@ -105,10 +105,7 @@ def _k_init(norm, X, n_clusters, random_state, n_local_trials=None):
         best_candidate = candidate_ids[best_candidate]
 
         # Permanently add best center candidate found in local tries
-        if issparse(X):
-            centers[c] = X[best_candidate].toarray()
-        else:
-            centers[c] = X[best_candidate]
+        centers[c] = X[best_candidate].toarray() if issparse(X) else X[best_candidate]
 
     return centers
 
@@ -174,16 +171,14 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
 
     def _validate_center_shape(X, k, centers):
         """Check if centers is compatible with X and n_clusters"""
-        if centers.shape[0] != k:
-            raise ValueError(
-                f"The shape of the initial centers {centers.shape} does not "
-                f"match the number of clusters {k}."
-            )
-        if centers.shape[1] != X.shape[1]:
-            raise ValueError(
-                f"The shape of the initial centers {centers.shape} does not "
-                f"match the number of features of the data {X.shape[1]}."
-            )
+        assert centers.shape[0] == k, (
+            f"The shape of the initial centers {centers.shape} does not "
+            f"match the number of clusters {k}."
+        )
+        assert centers.shape[1] == X.shape[1], (
+            f"The shape of the initial centers {centers.shape} does not "
+            f"match the number of features of the data {X.shape[1]}."
+        )
 
     _validate_center_shape(X, k, centers)
     return centers

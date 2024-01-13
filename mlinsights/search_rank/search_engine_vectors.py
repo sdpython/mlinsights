@@ -147,7 +147,7 @@ class SearchEngineVectors:
         *ind* contains the indices of the nearest points in the population matrix.
         """
         if isinstance(X, list):
-            if len(X) == 0 or isinstance(X[0], (list, tuple)):
+            if not X or isinstance(X[0], (list, tuple)):
                 raise TypeError("X must be a list or a vector (1)")
             X = [X]
         if isinstance(X, numpy.ndarray) and (len(X.shape) > 1 and X.shape[0] != 1):

@@ -104,7 +104,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             scol = col.split()
             res = []
             for c in sorted(scol):
-                if len(res) == 0 or res[-1][0] != c:
+                if not res or res[-1][0] != c:
                     res.append((c, 1))
                 else:
                     res[-1] = (c, res[-1][1] + 1)

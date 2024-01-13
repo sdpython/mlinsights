@@ -50,8 +50,9 @@ class ARTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
             self.estimator = DummyTimeSeriesRegressor(
                 past=past, delay1=delay1, delay2=delay2, use_all_past=use_all_past
             )
-        if not hasattr(self.estimator, "fit"):
-            raise TypeError(f"estimator is not an estimator but {type(estimator)}")
+        assert hasattr(
+            self.estimator, "fit"
+        ), f"estimator is not an estimator but {type(estimator)}"
 
     def fit(self, X, y, sample_weight=None):
         """
