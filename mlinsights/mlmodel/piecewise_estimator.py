@@ -275,7 +275,7 @@ class PiecewiseEstimator(BaseEstimator):
         *decision_function* as well.
         """
         assert (
-            not self.estimators_
+            len(self.estimators_) > 0
         ), "Estimator was apparently fitted but contains no estimator."
         assert hasattr(self.estimators_[0], method), (
             f"Estimator {type(self.estimators_[0])} "

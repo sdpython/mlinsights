@@ -2,7 +2,7 @@ import unittest
 import datetime
 import warnings
 import sys
-from mlinsights.ext_test_case import ExtTestCase
+from mlinsights.ext_test_case import ExtTestCase, ignore_warnings
 from mlinsights.timeseries.datasets import artificial_data
 from mlinsights.timeseries.agg import aggregate_timeseries
 from mlinsights.timeseries.plotting import plot_week_timeseries
@@ -13,6 +13,7 @@ class TestPlotTimeSeries(ExtTestCase):
         sys.platform == "win32" and __name__ != "__main__",
         reason="issue with matplotlib",
     )
+    @ignore_warnings(UserWarning)
     def test_plot_data(self):
         try:
             import matplotlib.pyplot as plt

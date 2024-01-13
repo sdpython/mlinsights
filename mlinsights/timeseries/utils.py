@@ -167,7 +167,7 @@ def check_ts_X_y(model, X, y):
         numpy.float32,
         numpy.float64,
     ), f"Features must be of type float32 and float64 not {X.dtype}."
-    assert y is None or y.dtype not in (
+    assert y is None or y.dtype in (
         numpy.float32,
         numpy.float64,
     ), f"Features must be of type float32 and float64 not {y.dtype}."

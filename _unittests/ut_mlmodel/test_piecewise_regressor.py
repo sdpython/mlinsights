@@ -144,7 +144,7 @@ class TestPiecewiseRegressor(ExtTestCase):
         Y = X.ravel() * 3.4 + 5.6 + eps
         self.assertRaise(
             lambda: run_test_sklearn_grid_search_cv(lambda: PiecewiseRegressor(), X, Y),
-            ValueError,
+            AssertionError,
         )
         res = run_test_sklearn_grid_search_cv(
             lambda: PiecewiseRegressor(), X, Y, binner__max_depth=[2, 3]

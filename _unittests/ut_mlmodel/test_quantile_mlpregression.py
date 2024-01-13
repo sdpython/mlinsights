@@ -75,7 +75,7 @@ class TestQuantileMLPRegression(ExtTestCase):
             lambda: run_test_sklearn_grid_search_cv(
                 lambda: QuantileMLPRegressor(hidden_layer_sizes=(3,)), X, Y
             ),
-            ValueError,
+            AssertionError,
         )
         res = run_test_sklearn_grid_search_cv(
             lambda: QuantileMLPRegressor(hidden_layer_sizes=(3,)),

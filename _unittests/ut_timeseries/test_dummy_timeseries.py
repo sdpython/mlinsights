@@ -10,7 +10,7 @@ class TestDummyTimeSeries(ExtTestCase):
         X = None
         y = numpy.arange(10)
         bs = DummyTimeSeriesRegressor(past=2)
-        self.assertRaise(lambda: bs.fit(X, y), TypeError)
+        self.assertRaise(lambda: bs.fit(X, y), AssertionError)
         y = y.astype(numpy.float64)
         np = bs.predict(X, y)
         self.assertEqual(np.ravel()[2:], numpy.arange(1, 9).astype(numpy.float64))

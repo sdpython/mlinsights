@@ -165,8 +165,7 @@ def _assert_dict_equal(a, b, ext):
     for key in sorted(a):
         if key not in b:
             rows.append(f"** Removed key '{key}' in a")
-    if rows:
-        raise AssertionError("Dictionaries are different\n{0}".format("\n".join(rows)))
+    assert not rows, "Dictionaries are different\n{0}".format("\n".join(rows))
 
 
 def _assert_tuple_equal(t1, t2, ext):
@@ -241,7 +240,10 @@ def run_test_sklearn_grid_search_cv(
     pipe = make_pipeline(model)
     name = model.__class__.__name__.lower()
     parameters = {name + "__" + k: v for k, v in grid_params.items()}
-    assert parameters, "Some parameters must be tested when running grid search."
+    assert len(parameters) > 0, (
+        f"Some parameters must be tested when running grid search, "
+        f"grid_params={grid_params}."
+    )
     clf = GridSearchCV(pipe, parameters)
     if y_train is None and w_train is None:
         clf.fit(X_train)

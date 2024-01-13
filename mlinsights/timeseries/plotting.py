@@ -79,7 +79,7 @@ def plot_week_timeseries(
         if i < time.shape[0] - 1:
             ti1 = time[i + 1]
             delta = (ti1 - ti) if delta is None else min(delta, ti1 - ti)
-            assert delta > 0, "The timeseries contains duplicated time values."
+            assert delta, "The timeseries contains duplicated time values."
         else:
             ti1 = ti + delta
         x1, y1 = coor(ti)
