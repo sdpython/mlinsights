@@ -119,8 +119,9 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
             for j in range(cor.shape[1]):
                 xj_train = df_train[:, j : j + 1]
                 xj_test = df_test[:, j : j + 1]
-                if not xj_test or not xi_test:
-                    raise ValueError(f"One column is empty i={i} j={j}.")
+                assert (
+                    len(xj_test) > 0 and len(xi_test) > 0
+                ), f"One column is empty i={i} j={j}."
                 mod = clone(model)
                 try:
                     mod.fit(xi_train, xj_train.ravel())
