@@ -17,7 +17,6 @@ Piecewise data
 Let's build a toy problem based on two linear models.
 """
 
-
 import matplotlib.pyplot as plt
 import numpy
 import numpy.random as npr

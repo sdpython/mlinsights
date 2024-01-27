@@ -11,7 +11,6 @@ implementation overwrites method ``_backprop``.
 We first generate some dummy data.
 """
 
-
 import numpy
 from pandas import DataFrame
 import matplotlib.pyplot as plt

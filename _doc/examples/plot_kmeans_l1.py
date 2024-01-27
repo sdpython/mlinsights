@@ -8,7 +8,6 @@ This demonstrates how results change when using norm L1 for a k-means
 algorithm.
 """
 
-
 import matplotlib.pyplot as plt
 import numpy
 import numpy.random as rnd

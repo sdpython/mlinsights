@@ -13,6 +13,7 @@ Function :func:`digitize2tree
 Simple example
 ==============
 """
+
 import numpy
 import matplotlib.pyplot as plt
 from onnxruntime import InferenceSession

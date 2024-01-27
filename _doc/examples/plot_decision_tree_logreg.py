@@ -13,6 +13,7 @@ The following code shows the border defined by two machine learning
 models on the `Iris
 dataset <https://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html>`_.
 """
+
 import numpy
 from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt

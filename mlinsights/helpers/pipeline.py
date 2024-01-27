@@ -105,9 +105,9 @@ class BaseEstimatorDebugInformation:
             )
         if hasattr(model, "decision_function") and callable(model.decision_function):
             model._debug_decision_function = model.decision_function
-            self.methods[
-                "decision_function"
-            ] = lambda model, X: model._debug_decision_function(X)
+            self.methods["decision_function"] = (
+                lambda model, X: model._debug_decision_function(X)
+            )
 
     def __repr__(self):
         """
