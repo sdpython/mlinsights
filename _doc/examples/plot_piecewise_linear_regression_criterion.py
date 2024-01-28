@@ -153,7 +153,7 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #
 #    ctypedef double float64_t
 #
-#    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+#    cdef void _mean(self, intp_t start, intp_t end, float64_t *mean,
 #                    float64_t *weight) nogil:
 #        if start == end:
 #            mean[0] = 0.
@@ -167,7 +167,7 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #        weight[0] = w
 #        mean[0] = 0. if w == 0. else m / w
 #
-#    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+#    cdef float64_t _mse(self, intp_t start, intp_t end, float64_t mean,
 #                     float64_t weight) nogil:
 #        if start == end:
 #            return 0.
@@ -192,7 +192,7 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #
 #    ctypedef double float64_t
 #
-#    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+#    cdef void _mean(self, intp_t start, intp_t end, float64_t *mean,
 #                    float64_t *weight) nogil:
 #        if start == end:
 #            mean[0] = 0.
@@ -204,7 +204,7 @@ measure_time("model2.fit(X_train, y_train)", globals())
 #        weight[0] = w
 #        mean[0] = 0. if w == 0. else m / w
 #
-#    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+#    cdef float64_t _mse(self, intp_t start, intp_t end, float64_t mean,
 #                        float64_t weight) nogil:
 #        if start == end:
 #            return 0.

@@ -10,7 +10,7 @@ from libc.string cimport memcpy
 cimport scipy.linalg.cython_lapack as cython_lapack
 from ._piecewise_tree_regression_common cimport (
     CommonRegressorCriterion,
-    SIZE_t,
+    intp_t,
     float64_t,
 )
 
@@ -28,7 +28,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     If the file does not compile or crashes, some explanations are given
     in :ref:`blog-internal-api-impurity-improvement`.
     """
-    cdef SIZE_t n_features
+    cdef intp_t n_features
     cdef const float64_t[:, ::1] sample_X
     cdef float64_t* sample_w
     cdef float64_t* sample_y
@@ -37,14 +37,14 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     cdef float64_t* sample_pC
     cdef float64_t* sample_pS
     cdef float64_t* sample_work
-    cdef SIZE_t* sample_i
+    cdef intp_t* sample_i
     cdef float64_t* sample_f_buffer
 
     cdef float64_t sample_sum_wy
     cdef float64_t sample_sum_w
-    cdef SIZE_t nbvar
-    cdef SIZE_t nbrows
-    cdef SIZE_t work
+    cdef intp_t nbvar
+    cdef intp_t nbrows
+    cdef intp_t work
 
     def __dealloc__(self):
         """Destructor."""
@@ -73,7 +73,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, SIZE_t n_outputs, const float64_t[:, ::1] X):
+    def __cinit__(self, intp_t n_outputs, const float64_t[:, ::1] X):
         self.n_outputs = n_outputs
         self.sample_X = X
         self.n_samples = X.shape[0]
@@ -102,7 +102,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         if self.sample_y == NULL:
             self.sample_y = <float64_t*> calloc(self.n_samples, sizeof(float64_t))
         if self.sample_i == NULL:
-            self.sample_i = <SIZE_t*> calloc(self.n_samples, sizeof(SIZE_t))
+            self.sample_i = <intp_t*> calloc(self.n_samples, sizeof(intp_t))
         if self.sample_f == NULL:
             self.sample_f = <float64_t*> calloc(
                 self.n_samples * (self.n_features + 1), sizeof(float64_t)
@@ -110,9 +110,9 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
 
         self.nbvar = self.n_features + 1
         self.nbrows = self.n_samples
-        self.work = <SIZE_t>(min(self.nbrows, self.nbvar) * <SIZE_t>3 +
+        self.work = <intp_t>(min(self.nbrows, self.nbvar) * <intp_t>3 +
                              max(max(self.nbrows, self.nbvar),
-                                 min(self.nbrows, self.nbvar) * <SIZE_t>2))
+                                 min(self.nbrows, self.nbvar) * <intp_t>2))
         if self.sample_f_buffer == NULL:
             self.sample_f_buffer = <float64_t*> calloc(
                 self.n_samples * self.nbvar, sizeof(float64_t)
@@ -145,10 +145,10 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         :param sample_weight: sample weight
         :return: an instance of :class:`LinearRegressorCriterion`
         """
-        cdef SIZE_t i
+        cdef intp_t i
         cdef const float64_t[:] ws
         cdef float64_t sum
-        cdef SIZE_t[:] parr = np.empty(y.shape[0], dtype=np.int64)
+        cdef intp_t[:] parr = np.empty(y.shape[0], dtype=np.int64)
         for i in range(0, y.shape[0]):
             parr[i] = i
         if sample_weight is None:
@@ -165,8 +165,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
     cdef int init(self, const float64_t[:, ::1] y,
                   const float64_t[:] sample_weight,
                   float64_t weighted_n_samples,
-                  const SIZE_t[:] sample_indices,
-                  SIZE_t start, SIZE_t end) except -1 nogil:
+                  const intp_t[:] sample_indices,
+                  intp_t start, intp_t end) except -1 nogil:
         """
         This function is overwritten to check *y* and *X* size are the same.
         This API changed in 0.21.
@@ -190,8 +190,8 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                          const float64_t[:, ::1] y,
                          const float64_t[:] sample_weight,
                          float64_t weighted_n_samples,
-                         const SIZE_t[:] sample_indices,
-                         SIZE_t start, SIZE_t end) except -1 nogil:
+                         const intp_t[:] sample_indices,
+                         intp_t start, intp_t end) except -1 nogil:
         """
         Initializes the criterion.
 
@@ -205,12 +205,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         :param samples: array-like, dtype=float64_t
             Indices of the samples in X and y, where samples[start:end]
             correspond to the samples in this node
-        :param start: SIZE_t
+        :param start: intp_t
             The first sample to be used on this node
-        :param end: SIZE_t
+        :param end: intp_t
             The last sample used on this node
         """
-        cdef SIZE_t ki, ks, idx, c
+        cdef intp_t ki, ks, idx, c
 
         self.start = start
         self.pos = start
@@ -246,7 +246,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             )
         return 0
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+    cdef void _mean(self, intp_t start, intp_t end, float64_t *mean,
                     float64_t *weight) noexcept nogil:
         """
         Computes mean between *start* and *end*.
@@ -256,21 +256,21 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
             return
         cdef float64_t m = 0.
         cdef float64_t w = 0.
-        cdef SIZE_t k
+        cdef intp_t k
         for k in range(<int>start, <int>end):
             m += self.sample_wy[k]
             w += self.sample_w[k]
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
 
-    cdef void _reglin(self, SIZE_t start, SIZE_t end, int low_rank) noexcept nogil:
+    cdef void _reglin(self, intp_t start, intp_t end, int low_rank) noexcept nogil:
         """
         Solves the linear regression between *start* and *end*
         assuming corresponding points are approximated by a line.
         *mean* is unused but could be if the inverse does not exist.
         The solution is the vector ``self.sample_pC[:self.nbvar]``.
         """
-        cdef SIZE_t i, j, idx, pos
+        cdef intp_t i, j, idx, pos
         cdef float64_t w
         cdef float64_t* sample_f_buffer = self.sample_f_buffer
         pos = 0
@@ -306,7 +306,7 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
                              self.sample_pS, &rcond, &rank,     # 8-10
                              self.sample_work, &work, &info)    # 11-13
 
-    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+    cdef float64_t _mse(self, intp_t start, intp_t end, float64_t mean,
                         float64_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
@@ -320,12 +320,12 @@ cdef class LinearRegressorCriterion(CommonRegressorCriterion):
         self._reglin(start, end, 0)
 
         cdef float64_t* pC = self.sample_pC
-        cdef SIZE_t j, idx
+        cdef intp_t j, idx
 
         # replaces what follows by gemm
         cdef float64_t squ = 0.
         cdef float64_t d
-        cdef SIZE_t k
+        cdef intp_t k
         idx = start * self.nbvar
         for k in range(<int>start, <int>end):
             d = 0.

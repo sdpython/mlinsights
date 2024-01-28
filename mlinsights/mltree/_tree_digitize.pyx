@@ -2,8 +2,9 @@ cimport numpy as cnp
 
 cnp.import_array()
 
-ctypedef cnp.npy_intp SIZE_t
+# ctypedef cnp.npy_intp intp_t
 ctypedef double float64_t
+from sklearn.utils._typedefs cimport intp_t
 
 from sklearn.tree._tree cimport Tree
 
@@ -11,14 +12,14 @@ TREE_LEAF = -1
 TREE_UNDEFINED = -2
 
 
-cdef SIZE_t _tree_add_node(Tree tree,
-                           SIZE_t parent,
+cdef intp_t _tree_add_node(Tree tree,
+                           intp_t parent,
                            bint is_left,
                            bint is_leaf,
-                           SIZE_t feature,
+                           intp_t feature,
                            float64_t threshold,
                            float64_t impurity,
-                           SIZE_t n_node_samples,
+                           intp_t n_node_samples,
                            float64_t weighted_n_node_samples,
                            char missing_go_to_left):
     if parent == -1:

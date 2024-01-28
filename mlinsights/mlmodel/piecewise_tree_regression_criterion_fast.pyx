@@ -6,7 +6,7 @@ cnp.import_array()
 from libc.stdlib cimport calloc, free
 from ._piecewise_tree_regression_common cimport (
     CommonRegressorCriterion,
-    SIZE_t,
+    intp_t,
     float64_t,
 )
 
@@ -44,7 +44,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
     def __setstate__(self, d):
         pass
 
-    def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
+    def __cinit__(self, intp_t n_outputs, intp_t n_samples):
         self.n_outputs = n_outputs
         self.n_samples = n_samples
 
@@ -68,8 +68,8 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
     cdef int init(self, const float64_t[:, ::1] y,
                   const float64_t[:] sample_weight,
                   float64_t weighted_n_samples,
-                  const SIZE_t[:] sample_indices,
-                  SIZE_t start, SIZE_t end) except -1 nogil:
+                  const intp_t[:] sample_indices,
+                  intp_t start, intp_t end) except -1 nogil:
         """
         This function is overwritten to check *y* and *X* size are the same.
         This API has changed in 0.21.
@@ -88,8 +88,8 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
                          const float64_t[:, ::1] y,
                          const float64_t[:] sample_weight,
                          float64_t weighted_n_samples,
-                         const SIZE_t[:] sample_indices,
-                         SIZE_t start, SIZE_t end) except -1 nogil:
+                         const intp_t[:] sample_indices,
+                         intp_t start, intp_t end) except -1 nogil:
         """
         Initializes the criterion.
         Returns -1 in case of failure to allocate memory
@@ -104,12 +104,12 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         :param samples: array-like, dtype=float64_t
             Indices of the samples in X and y, where samples[start:end]
             correspond to the samples in this node
-        :param start: SIZE_t
+        :param start: intp_t
             The first sample to be used on this node
-        :param end: SIZE_t
+        :param end: intp_t
             The last sample used on this node
         """
-        cdef SIZE_t ki, ks
+        cdef intp_t ki, ks
         cdef float64_t w, y_
 
         self.start = start
@@ -144,7 +144,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         self.reset()
         return 0
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+    cdef void _mean(self, intp_t start, intp_t end, float64_t *mean,
                     float64_t *weight) noexcept nogil:
         """
         Computes the mean of *y* between *start* and *end*.
@@ -163,7 +163,7 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         weight[0] = w
         mean[0] = 0. if w == 0. else m / w
 
-    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+    cdef float64_t _mse(self, intp_t start, intp_t end, float64_t mean,
                         float64_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
@@ -179,8 +179,8 @@ cdef class SimpleRegressorCriterionFast(CommonRegressorCriterion):
         # Otherwise, it is squ / weight - true_mean ** 2 + (mean - true_mean) ** 2.
         return 0. if weight == 0. else squ / weight - mean ** 2
 
-    cdef void _update_weights(self, SIZE_t start, SIZE_t end,
-                              SIZE_t old_pos, SIZE_t new_pos) noexcept nogil:
+    cdef void _update_weights(self, intp_t start, intp_t end,
+                              intp_t old_pos, intp_t new_pos) noexcept nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
         when `pos` changes.
