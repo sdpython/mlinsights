@@ -1,4 +1,5 @@
 black
+category_encoders
 chardet
 clang-format
 cmakelang
