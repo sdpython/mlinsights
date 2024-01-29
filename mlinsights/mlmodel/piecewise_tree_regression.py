@@ -159,7 +159,6 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
             # Fatal Python error: __pyx_fatalerror: Acquisition count is 0 (line 26868)
             dec = LinearRegressorCriterion.create(xs, ys, ws)
             dec.node_beta(self.betas_[i, :])
-        print("end")
 
     def predict(self, X, check_input=True):
         """
