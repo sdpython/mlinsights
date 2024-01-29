@@ -15,7 +15,6 @@ scikit-learn version
 ~~~~~~~~~~~~~~~~~~~~
 """
 
-
 import numpy
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from mlinsights.mlmodel.sklearn_text import (

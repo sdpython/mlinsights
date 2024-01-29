@@ -39,8 +39,8 @@ cdef class CommonRegressorCriterion(Criterion):
         inst = self.__class__(self.n_outputs, self.n_samples)
         return inst
 
-    cdef void _update_weights(self, SIZE_t start, SIZE_t end,
-                              SIZE_t old_pos, SIZE_t new_pos) noexcept nogil:
+    cdef void _update_weights(self, intp_t start, intp_t end,
+                              intp_t old_pos, intp_t new_pos) noexcept nogil:
         """
         Updates members `weighted_n_right` and `weighted_n_left`
         when `pos` changes. This method should be overloaded.
@@ -63,27 +63,27 @@ cdef class CommonRegressorCriterion(Criterion):
         self._update_weights(self.start, self.end, self.pos, self.end)
         self.pos = self.end
 
-    cdef int update(self, SIZE_t new_pos) except -1 nogil:
+    cdef int update(self, intp_t new_pos) except -1 nogil:
         """
         Updates statistics by moving ``samples[pos:new_pos]`` to the left child.
         This updates the collected statistics by moving ``samples[pos:new_pos]``
         from the right child to the left child. It must be implemented by
         the subclass.
 
-        :param new_pos: SIZE_t
+        :param new_pos: intp_t
             New starting index position of the samples in the right child
         """
         self._update_weights(self.start, self.end, self.pos, new_pos)
         self.pos = new_pos
 
-    cdef void _mean(self, SIZE_t start, SIZE_t end, float64_t *mean,
+    cdef void _mean(self, intp_t start, intp_t end, float64_t *mean,
                     float64_t *weight) noexcept nogil:
         """
         Computes the mean of *y* between *start* and *end*.
         """
         pass
 
-    cdef float64_t _mse(self, SIZE_t start, SIZE_t end, float64_t mean,
+    cdef float64_t _mse(self, intp_t start, intp_t end, float64_t mean,
                         float64_t weight) noexcept nogil:
         """
         Computes mean square error between *start* and *end*
@@ -219,8 +219,8 @@ cdef int _ctest_criterion_init(Criterion criterion,
                                const float64_t[:, ::1] y,
                                float64_t[:] sample_weight,
                                float64_t weighted_n_samples,
-                               SIZE_t[:] samples,
-                               SIZE_t start, SIZE_t end):
+                               const intp_t[:] samples,
+                               intp_t start, intp_t end):
     "Test purposes. Methods cannot be directly called from python."
     cdef const float64_t[:, ::1] y2 = y
     return criterion.init(y2, sample_weight, weighted_n_samples, samples, start, end)
@@ -230,8 +230,8 @@ def _test_criterion_init(Criterion criterion,
                          const float64_t[:, ::1] y,
                          float64_t[:] sample_weight,
                          float64_t weighted_n_samples,
-                         SIZE_t[:] samples,
-                         SIZE_t start, SIZE_t end):
+                         const intp_t[:] samples,
+                         intp_t start, intp_t end):
     "Test purposes. Methods cannot be directly called from python."
     if _ctest_criterion_init(criterion, y, sample_weight, weighted_n_samples,
                              samples, start, end) != 0:
@@ -300,7 +300,7 @@ def _test_criterion_node_value(Criterion criterion):
     return value
 
 
-def _test_criterion_update(Criterion criterion, SIZE_t new_pos):
+def _test_criterion_update(Criterion criterion, intp_t new_pos):
     "Test purposes. Methods cannot be directly called from python."
     return criterion.update(new_pos)
 

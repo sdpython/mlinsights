@@ -7,7 +7,6 @@ We can wonder which leave is close to another one even though
 the predict the same value (or class). Do they share a border?
 """
 
-
 ##############################
 # A simple tree
 # +++++++++++++

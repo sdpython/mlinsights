@@ -3,7 +3,6 @@ from .sklearn_base import SkBase
 
 
 class SkBaseLearner(SkBase):
-
     """
     Pattern of a *learner* qui suit la même API que :epkg:`scikit-learn`.
     """

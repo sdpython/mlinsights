@@ -13,7 +13,6 @@ A dummy datasets and not convex
 -------------------------------
 """
 
-
 import numpy
 import pandas
 import matplotlib.pyplot as plt

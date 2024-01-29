@@ -3,7 +3,6 @@ import textwrap
 
 
 class SkException(Exception):
-
     """
     custom exception
     """
@@ -12,7 +11,6 @@ class SkException(Exception):
 
 
 class SkLearnParameters:
-
     """
     Defines a class to store parameters of a *learner* or a *transform*.
     """

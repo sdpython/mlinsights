@@ -140,9 +140,9 @@ class TestPiecewiseDecisionTreeExperimentLinear(ExtTestCase):
         X = numpy.array([[10.0, 12.0, 13.0]]).T
         y = numpy.array([[20.0, 22.0, 23.0]]).T
         c2 = LinearRegressorCriterion.create(X, y)
-        coef = numpy.empty((3,))
+        coef = numpy.empty((3,), dtype=X.dtype)
         c2.node_beta(coef)
-        self.assertEqual(coef[:2], numpy.array([1, 10]))
+        self.assertEqualArray(coef[:2], numpy.array([1, 10], dtype=X.dtype), atol=1e-8)
 
     @unittest.skipIf(
         pv.Version(skl_ver) < pv.Version("1.3.3"),

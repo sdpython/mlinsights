@@ -1,4 +1,5 @@
 black
+category_encoders
 chardet
 clang-format
 cmakelang
@@ -6,6 +7,7 @@ coverage
 cython>=3.0.5
 cython-lint
 furo; sys_platform == 'linux'
+ijson
 isort
 llvmlite
 matplotlib
