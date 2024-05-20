@@ -45,6 +45,39 @@ def ignore_warnings(warns: List[Warning]) -> Callable:
     return wrapper
 
 
+def is_azure() -> bool:
+    "Tells if the job is running on Azure DevOps."
+    return os.environ.get("AZURE_HTTP_USER_AGENT", "undefined") != "undefined"
+
+
+def is_windows() -> bool:
+    return sys.platform == "win32"
+
+
+def is_apple() -> bool:
+    return sys.platform == "darwin"
+
+
+def skipif_ci_windows(msg) -> Callable:
+    """
+    Skips a unit test if it runs on :epkg:`azure pipeline` on :epkg:`Windows`.
+    """
+    if is_windows() and is_azure():
+        msg = f"Test does not work on azure pipeline (Windows). {msg}"
+        return unittest.skip(msg)
+    return lambda x: x
+
+
+def skipif_ci_apple(msg) -> Callable:
+    """
+    Skips a unit test if it runs on :epkg:`azure pipeline` on :epkg:`Windows`.
+    """
+    if is_apple() and is_azure():
+        msg = f"Test does not work on azure pipeline (Apple). {msg}"
+        return unittest.skip(msg)
+    return lambda x: x
+
+
 def measure_time(
     stmt: Union[str, Callable],
     context: Optional[Dict[str, Any]] = None,

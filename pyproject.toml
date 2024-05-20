@@ -147,10 +147,10 @@ disable_error_code = ["override", "index"]
 exclude = [".eggs", ".git", "build", "dist"]
 line-length = 88
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "_unittests/ut_plotting/test_dot.py" = ["E501"]
 "mlinsights/mlbatch/__init__.py" = ["F401"]
 "mlinsights/metrics/__init__.py" = ["F401"]
