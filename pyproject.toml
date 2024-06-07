@@ -116,7 +116,7 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 # repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} || exit 0"
 
 [tool.cibuildwheel.macos]
-archs = ["arm64", "AMD64"]
+archs = ["arm64", "universal2"]
 build = "cp*"
 before-build = "brew install llvm libomp"
 skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* pypy* pp*"
