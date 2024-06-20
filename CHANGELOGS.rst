@@ -3,6 +3,11 @@
 Change Logs
 ===========
 
+0.5.1
+=====
+
+* :pr:`130`build with python 3.12, numpy 2.0
+
 0.5.0
 =====
 
