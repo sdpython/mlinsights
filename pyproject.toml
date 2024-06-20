@@ -25,7 +25,7 @@ license = {file = "LICENSE.txt"}
 name = "mlinsights"
 readme = "README.rst"
 requires-python = ">=3.9"
-version = "0.5.0"
+version = "0.5.1"
 
 [project.urls]
 homepage = "https://sdpython.github.io/doc/mlinsights/dev/"
