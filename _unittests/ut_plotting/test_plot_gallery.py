@@ -4,6 +4,7 @@ import tempfile
 import unittest
 import warnings
 import http.client
+import urllib.error
 import numpy
 from mlinsights.ext_test_case import ExtTestCase, unzip_files
 from mlinsights.plotting import plot_gallery_images
@@ -62,9 +63,8 @@ class TestPlotGallery(ExtTestCase):
 
         try:
             fig, ax = plot_gallery_images(files, return_figure=True)
-        except http.client.RemoteDisconnected as e:
-            warnings.warn(f"Unable to fetch image {e}'")
-            return
+        except (http.client.RemoteDisconnected, urllib.error.HTTPError) as e:
+            raise unittest.SkipTest(f"Unable to fetch image {e} (url={root!r})")
         self.assertNotEmpty(fig)
         self.assertNotEmpty(ax)
 
