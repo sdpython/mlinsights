@@ -24,7 +24,7 @@ jobs:
   - script: pip install -r requirements-dev.txt
     displayName: 'Install Requirements dev'
   - script: |
-      ruff .
+      ruff check .
     displayName: 'Ruff'
   - script: |
       black --diff .
@@ -98,7 +98,7 @@ jobs:
   - script: pip install -r requirements-dev.txt
     displayName: 'Install Requirements dev'
   - script: |
-      ruff .
+      ruff check .
     displayName: 'Ruff'
   - script: |
       black --diff .

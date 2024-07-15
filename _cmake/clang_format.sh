@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 echo "--ruff--"
-ruff .
+ruff check .
 echo "--cython-lint--"
 cython-lint .
 echo "--clang-format--"
