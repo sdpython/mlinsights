@@ -1,9 +1,9 @@
 from sklearn.base import clone
 from sklearn.pipeline import Pipeline, _fit_transform_one
+
 try:
     from sklearn.utils._user_interface import _print_elapsed_time
 except ImportError:
-    # old scikit-learn
     from sklearn.utils import _print_elapsed_time
 from sklearn.utils.validation import check_memory
 from .cache_model import MLCache
