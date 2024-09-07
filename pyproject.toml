@@ -106,7 +106,7 @@ manylinux-x86_64-image = "manylinux2014"
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp312-* pypy* *musllinux*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* pypy* *musllinux*"
 manylinux-x86_64-image = "manylinux2014"
 before-build = "pip install auditwheel-symbols abi3audit"
 build-verbosity = 1
@@ -116,12 +116,12 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 [tool.cibuildwheel.macos]
 archs = ["x86_64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp312-* pypy* pp*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* pypy* pp*"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp312-* pypy*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* pypy*"
 
 [tool.cython-lint]
 max-line-length = 88
