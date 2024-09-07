@@ -120,7 +120,7 @@ class BaseEstimatorDebugInformation:
         """
         rows = [f"BaseEstimatorDebugInformation({self.model.__class__.__name__})"]
         for k in sorted(self.inputs):
-            assert k in self.outputs, f"Unable to find output for method '{k}'."
+            assert k in self.outputs, f"Unable to find output for method {k!r}."
             rows.append("  " + k + "(")
             self.display(self.inputs[k], nrows)
             rows.append(textwrap.indent(self.display(self.inputs[k], nrows), "   "))

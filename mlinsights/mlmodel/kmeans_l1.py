@@ -173,7 +173,7 @@ def _init_centroids(norm, X, k, init, random_state=None, init_size=None):
         """Check if centers is compatible with X and n_clusters"""
         assert centers.shape[0] == k, (
             f"The shape of the initial centers {centers.shape} does not "
-            f"match the number of clusters {k}."
+            f"match the number of clusters {k!r}."
         )
         assert centers.shape[1] == X.shape[1], (
             f"The shape of the initial centers {centers.shape} does not "

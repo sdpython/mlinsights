@@ -131,7 +131,7 @@ def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
                 ext.assertEqual(p1[k], p2[k])
             except AssertionError as e:
                 raise AssertionError(
-                    f"Difference for key '{k}'\n==1 {p1[k]}\n==2 {p2[k]}"
+                    f"Difference for key {k!r}\n==1 {p1[k]}\n==2 {p2[k]}"
                 ) from e
     return conv, cloned
 
@@ -303,7 +303,7 @@ def clone_with_fitted_parameters(est):
                     v1 = getattr(obj1, k)
                     setattr(obj2, k, clone_with_fitted_parameters(v1))
                 else:
-                    raise RuntimeError(f"Cloned object is missing '{k}' in {obj2}.")
+                    raise RuntimeError(f"Cloned object is missing {k!r} in {obj2}.")
 
     if isinstance(est, BaseEstimator):
         cloned = clone(est)

@@ -163,7 +163,7 @@ class SkBaseTransformStacking(SkBaseTransform):
             del values["method"]
         for k, _v in values.items():
             if not k.startswith("models_"):
-                raise ValueError(f"Parameter '{k}' must start with 'models_'.")
+                raise ValueError(f"Parameter {k!r} must start with 'models_'.")
         d = len("models_")
         pars = [{} for m in self.models]
         for k, v in values.items():

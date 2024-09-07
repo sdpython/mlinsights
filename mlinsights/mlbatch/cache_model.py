@@ -80,7 +80,7 @@ class MLCache:
             elif v is None:
                 sv = ""
             else:
-                raise TypeError(f"Unable to create a key with value '{k}':{v}")
+                raise TypeError(f"Unable to create a key with value {k!r}:{v!r}")
             els.append((k, sv))
         return str(els)
 
