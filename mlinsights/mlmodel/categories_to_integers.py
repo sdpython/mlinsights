@@ -145,9 +145,10 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     if len(lv) > 20:
                         lv = lv[:20]
                         lv.append("...")
+                    m = "\n".join(map(str, lv))
                     raise ValueError(
-                        "Unable to find category value %r type(v)=%r "
-                        "among\n%s" % (v, type(v), "\n".join(lv))
+                        f"Unable to find category value {v} "
+                        f"type(v)={type(v)} among\n{m}"
                     )
                 return numpy.nan
 
@@ -178,10 +179,12 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                             if len(lv) > 20:
                                 lv = lv[:20]
                                 lv.append("...")
+                            m = "\n".join(map(str, lv))
                             raise ValueError(
-                                "Unable to find category value %r: %r "
-                                "type(v)=%r among\n%s" % (k, v, type(v), "\n".join(lv))
+                                f"Unable to find category value {k}: {v} "
+                                f"type(v)={type(v)} among\n{m}"
                             )
+                        p = pos[k]
                     else:
                         p = pos[k] + vec[k][v]
                     res[i, p] = 1.0

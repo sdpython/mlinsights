@@ -35,14 +35,12 @@ changelog = "https://sdpython.github.io/doc/mlinsights/dev/CHANGELOGS.html"
 
 [project.optional-dependencies]
 dev = [
-    "autopep8",
     "black",
     "clang-format",
     "cmakelang",
     "coverage",
     "cython",
     "cython-lint",
-    "flake8",
     "furo",
     "isort",
     "joblib",
@@ -174,7 +172,13 @@ select = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"**" = ["B905", "C401", "C408", "C413", "RUF012", "RUF100", "RUF010", "SIM108", "SIM910", "SIM110", "SIM102", "SIM114", "SIM103", "UP015", "UP027", "UP031", "UP034", "UP032", "UP006", "UP035", "UP007", "UP038"]
+"**" = [
+    "B905",
+    "C401", "C408", "C413",
+    "RUF012", "RUF100", "RUF010",
+    "SIM108", "SIM910", "SIM110", "SIM102", "SIM114", "SIM103", "UP015",
+    "UP027", "UP031", "UP034", "UP032", "UP006", "UP035", "UP007", "UP038"
+]
 "**/plot*.py" = ["B018"]
 "_unittests/**.py" = ["B904", "RUF015", "C400"]
 "_unittests/ut_plotting/test_dot.py" = ["E501"]
