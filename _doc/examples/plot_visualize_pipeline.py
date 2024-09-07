@@ -238,6 +238,6 @@ model.steps[0][1]._debug
 # Every piece behaves the same way.
 
 
-for coor, model, vars in enumerate_pipeline_models(model):
+for coor, m, _vars in enumerate_pipeline_models(model):
     print(coor)
-    print(model._debug)
+    print(m._debug)

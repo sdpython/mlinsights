@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy.random
 from sklearn.linear_model import LinearRegression, LogisticRegression

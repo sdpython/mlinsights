@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy
 from scipy.spatial import Delaunay
 from sklearn.cluster import KMeans

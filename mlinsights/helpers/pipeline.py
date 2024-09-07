@@ -28,7 +28,6 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
 
         class PassThrough:
             "dummy class to help display"
-            pass
 
         yield coor, PassThrough(), vs
     else:
@@ -40,7 +39,7 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
             raise NotImplementedError("Unable to handle this specific case.")
         elif hasattr(pipe, "mapper") and pipe.mapper:
             # azureml DataTransformer
-            for couple in enumerate_pipeline_models(pipe.mapper, coor + (0,)):
+            for couple in enumerate_pipeline_models(pipe.mapper, (*coor, 0)):
                 yield couple
         elif hasattr(pipe, "built_features"):
             # sklearn_pandas.dataframe_mapper.DataFrameMapper
@@ -48,25 +47,25 @@ def enumerate_pipeline_models(pipe, coor=None, vs=None):
                 if isinstance(columns, str):
                     columns = (columns,)
                 if transformers is None:
-                    yield (coor + (i,)), None, columns
+                    yield (*coor, i), None, columns
                 else:
                     for couple in enumerate_pipeline_models(
-                        transformers, coor + (i,), columns
+                        transformers, (*coor, i), columns
                     ):
                         yield couple
         elif isinstance(pipe, Pipeline):
             for i, (_, model) in enumerate(pipe.steps):
-                for couple in enumerate_pipeline_models(model, coor + (i,)):
+                for couple in enumerate_pipeline_models(model, (*coor, i)):
                     yield couple
         elif isinstance(pipe, ColumnTransformer):
             for i, (_, fitted_transformer, column) in enumerate(pipe.transformers):
                 for couple in enumerate_pipeline_models(
-                    fitted_transformer, coor + (i,), column
+                    fitted_transformer, (*coor, i), column
                 ):
                     yield couple
         elif isinstance(pipe, FeatureUnion):
             for i, (_, model) in enumerate(pipe.transformer_list):
-                for couple in enumerate_pipeline_models(model, coor + (i,)):
+                for couple in enumerate_pipeline_models(model, (*coor, i)):
                     yield couple
         elif isinstance(pipe, TransformedTargetRegressor):
             raise NotImplementedError(
@@ -205,5 +204,6 @@ def alter_pipeline_for_debugging(pipe):
                 setattr(model, k, MethodType(new_methods[k], model))
             except AttributeError:
                 warnings.warn(
-                    f"Unable to overwrite method {k!r} for class {type(model)!r}."
+                    f"Unable to overwrite method {k!r} for class {type(model)!r}.",
+                    stacklevel=0,
                 )

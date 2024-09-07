@@ -86,9 +86,8 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                 raise ValueError(
                     f"Too many categories ({nb}) for one column '{c}' max_cat={max_cat}"
                 )
-            self._categories[c] = dict(
-                (c, i) for i, c in enumerate(list(sorted(distinct)))
-            )
+            self._categories[c] = dict(enumerate(list(sorted(distinct))))
+
         self._schema = self._build_schema()
         return self
 

@@ -201,7 +201,7 @@ class PermutationReciprocalTransformer(BaseReciprocalTransformer):
             cl = [(v, k) for k, v in self.permutation_.items()]
             cl.sort()
             new_perm = {}
-            for cl, current in cl:
+            for _cl, current in cl:
                 new_perm[current] = len(new_perm)
             yp = y.copy()
             for i in range(y.shape[1]):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Any, Dict
 import textwrap
 import warnings
@@ -106,7 +105,8 @@ class SkBase:
                 if exc and v1 is not v2:
                     warnings.warn(
                         f"v2 is a clone of v1 not v1 itself for key "
-                        f"{k!r} and class {type(v1)}."
+                        f"{k!r} and class {type(v1)}.",
+                        stacklevel=0,
                     )
             elif isinstance(v1, list) and isinstance(v2, list) and len(v1) == len(v2):
                 b = True

@@ -202,7 +202,7 @@ def evaluation():
     rnd = []
     perf_reg = []
     perf_clr = []
-    for rs in range(0, 200):
+    for rs in range(200):
         rnd.append(rs)
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=rs)
         reg = LinearRegression()
@@ -247,7 +247,7 @@ def evaluation2():
     perf_clr = []
     acc_reg = []
     acc_clr = []
-    for rs in range(0, 50):
+    for rs in range(50):
         rnd.append(rs)
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=rs)
         reg = LinearRegression()
@@ -368,7 +368,7 @@ logp.fit(X_train, y_train_permuted)
 
 
 rows = []
-for i in range(0, 10):
+for _i in range(10):
     regpt = TransformedTargetRegressor2(LinearRegression(), transformer="permute")
     regpt.fit(X_train, y_train)
     logpt = TransformedTargetClassifier2(

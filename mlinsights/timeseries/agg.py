@@ -49,23 +49,21 @@ def aggregate_timeseries(
         if per == "week":
             pyres = res.to_pydatetime()
             return pandas.to_timedelta(
-                map(
-                    lambda t: datetime.timedelta(
-                        days=t.weekday(), hours=t.hour, minutes=t.minute
-                    ),
-                    pyres,
-                )
+                [
+                    datetime.timedelta(days=t.weekday(), hours=t.hour, minutes=t.minute)
+                    for t in pyres
+                ]
             )
+
         if per == "month":
             pyres = res.to_pydatetime()
             return pandas.to_timedelta(
-                map(
-                    lambda t: datetime.timedelta(
-                        days=t.day, hours=t.hour, minutes=t.minute
-                    ),
-                    pyres,
-                )
+                [
+                    datetime.timedelta(days=t.day, hours=t.hour, minutes=t.minute)
+                    for t in pyres
+                ]
             )
+
         raise ValueError(f"Unknown frequency '{per}'.")
 
     agg_name = _get_column_name(df)
@@ -78,14 +76,14 @@ def aggregate_timeseries(
     if not isinstance(values, list):
         values = [values]
     if agg == "sum":
-        gr = df[[agg_name] + values].groupby(agg_name, as_index=False).sum()
+        gr = df[[agg_name, *values]].groupby(agg_name, as_index=False).sum()
         agg_name = _get_column_name(gr, "week" + index)
-        gr.columns = [agg_name] + list(gr.columns[1:])
+        gr.columns = [agg_name, *gr.columns[1:]]
     elif agg == "norm":
-        gr = df[[agg_name] + values].groupby(agg_name, as_index=False).sum()
+        gr = df[[agg_name, *values]].groupby(agg_name, as_index=False).sum()
         agg_name = _get_column_name(gr, "week" + index)
         agg_cols = list(gr.columns[1:])
-        gr.columns = [agg_name] + agg_cols
+        gr.columns = [agg_name, *agg_cols]
         for c in agg_cols:
             su = gr[c].sum()
             if su != 0:

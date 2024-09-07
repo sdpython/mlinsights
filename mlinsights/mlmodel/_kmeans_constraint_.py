@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import bisect
 from collections import Counter
 from pandas import DataFrame
@@ -49,7 +48,7 @@ def linearize_matrix(mat, *adds):
         c = mat.shape[1]
         ic = numpy.arange(mat.shape[1])
         res = numpy.empty((n * c, 3 + len(adds)), dtype=mat.dtype)
-        for i in range(0, n):
+        for i in range(n):
             a = i * c
             b = (i + 1) * c
             res[a:b, 1] = i
@@ -534,7 +533,7 @@ def _constraint_association_gain(
 
     transfer = {}
 
-    for i in range(0, sorted_distances.shape[0]):
+    for i in range(sorted_distances.shape[0]):
         gain = sorted_distances[i, 3]
         ind = int(sorted_distances[i, 1])
         dest = int(sorted_distances[i, 2])
@@ -812,7 +811,7 @@ def _adjust_weights(X, sw, weights, labels, lr):
     """
     www, exp, N = _compute_balance(X, sw, labels, weights.shape[0])
 
-    for i in range(0, weights.shape[0]):
+    for i in range(weights.shape[0]):
         nw = (www[i] - exp) / exp
         delta = nw * lr
         weights[i] += delta

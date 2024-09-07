@@ -69,6 +69,6 @@ class DummyTimeSeriesRegressor(BaseTimeSeries, TimeSeriesRegressorMixin):
         pred = numpy.empty((nbrow, nb), dtype=X.dtype)
         first = nbrow - X.shape[0]
         pred[:first] = numpy.nan
-        for i in range(0, nb):
+        for i in range(nb):
             pred[first:, i] = X[:, -1]
         return pred

@@ -72,7 +72,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         the polynomial features.
         """
         if input_features is None:
-            input_features = ["x%d" % i for i in range(0, self.n_input_features_)]
+            input_features = ["x%d" % i for i in range(self.n_input_features_)]
         elif len(input_features) != self.n_input_features_:
             raise ValueError(
                 f"input_features should contain {self.n_input_features_} strings."
@@ -81,7 +81,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         names = ["1"] if self.poly_include_bias else []
         n = self.n_input_features_
         interaction_only = self.poly_interaction_only
-        for d in range(0, self.poly_degree):
+        for d in range(self.poly_degree):
             if d == 0:
                 pos = len(names)
                 names.extend(input_features)
@@ -90,7 +90,7 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
             else:
                 new_index = []
                 end = index[-1]
-                for i in range(0, n):
+                for i in range(n):
                     a = index[i]
                     new_index.append(len(names))
                     start = a + (index[i + 1] - index[i] if interaction_only else 0)
@@ -195,6 +195,6 @@ class ExtendedFeatures(BaseEstimator, TransformerMixin):
         XP = numpy.empty(
             (X.shape[0], self.n_output_features_), dtype=X.dtype, order=order
         )
-        for i, comb in enumerate(comb):
-            XP[:, i] = X[:, comb].prod(1)
+        for i, cc in enumerate(comb):
+            XP[:, i] = X[:, cc].prod(1)
         return XP

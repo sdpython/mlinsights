@@ -57,7 +57,7 @@ class ApproximateNMFPredictor(BaseEstimator, RegressorMixin, MultiOutputMixin):
         of the estimator.
         """
         res = NMF._get_param_names()
-        res = res + ["force_positive"]
+        res = [*res, "force_positive"]
         return res
 
     def get_params(self, deep=True):

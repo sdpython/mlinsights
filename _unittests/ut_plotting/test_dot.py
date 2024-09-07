@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 from io import StringIO
 from textwrap import dedent
@@ -168,7 +167,7 @@ class TestDot(ExtTestCase):
             ),
             LinearRegression(),
         )
-        train_cols = cols + ["weekday"]
+        train_cols = [*cols, "weekday"]
         model.fit(df, df[train_cols])
         dot = pipeline2dot(model, df)
         self.assertIn('label="Identity"', dot)

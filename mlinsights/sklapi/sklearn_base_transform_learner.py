@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import textwrap
 import numpy
 from .sklearn_base_transform import SkBaseTransform

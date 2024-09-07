@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import tempfile
 import unittest
@@ -19,7 +18,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
             try:
                 import torchvision.models as tmodels
             except (SyntaxError, ModuleNotFoundError) as e:
-                warnings.warn(f"torch is not available: {e}")
+                warnings.warn(f"torch is not available: {e}", stacklevel=0)
                 return
             from torchvision import datasets, transforms
             from torch.utils.data import DataLoader
@@ -55,7 +54,7 @@ class TestSearchPredictionsImagesTorch(ExtTestCase):
             imgs_ = datasets.ImageFolder(temp, trans)
             dataloader = DataLoader(imgs_, batch_size=1, shuffle=False, num_workers=1)
             img_seq = iter(dataloader)
-            imgs = list(img[0] for img in img_seq)
+            imgs = [img[0] for img in img_seq]
 
             # search
             se = SearchEnginePredictionImages(model, n_neighbors=5)

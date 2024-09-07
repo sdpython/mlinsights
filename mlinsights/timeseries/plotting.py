@@ -154,7 +154,7 @@ def plot_week_timeseries(
     xs = ax.get_xticks()
     xticks = []
     xlabels = []
-    for i in range(0, len(xs) - 1):
+    for i in range(len(xs) - 1):
         if xs[i] < 0:
             continue
         dx = xs[i] - int(xs[i] / input_maxy) * input_maxy

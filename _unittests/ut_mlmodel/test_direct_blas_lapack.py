@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from scipy.linalg.lapack import dgelss as scipy_dgelss

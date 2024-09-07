@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from scipy.sparse import csr_matrix

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from numpy.random import RandomState
@@ -75,8 +74,8 @@ class TestClassifierAfterKMeans(ExtTestCase):
         Xs = []
         Ys = []
         n = 20
-        for i in range(0, 5):
-            for j in range(0, 4):
+        for i in range(5):
+            for j in range(4):
                 x1 = state.rand(n) + i * 1.1
                 x2 = state.rand(n) + j * 1.1
                 Xs.append(numpy.vstack([x1, x2]).T)

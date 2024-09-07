@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 from sklearn.datasets import make_classification
 from sklearn.decomposition import PCA, TruncatedSVD as SVD

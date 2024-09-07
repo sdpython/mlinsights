@@ -11,7 +11,7 @@ def _transform_iall(degree, bias, XP, X, multiply, final):
         pos = 0
 
     n = X.shape[1]
-    for d in range(0, degree):
+    for d in range(degree):
         if d == 0:
             XP[:, pos : pos + n] = X
             index = list(range(pos, pos + n))
@@ -20,7 +20,7 @@ def _transform_iall(degree, bias, XP, X, multiply, final):
         else:
             new_index = []
             end = index[-1]
-            for i in range(0, n):
+            for i in range(n):
                 a = index[i]
                 new_index.append(pos)
                 new_pos = pos + end - a
@@ -42,7 +42,7 @@ def _transform_ionly(degree, bias, XP, X, multiply, final):
         pos = 0
 
     n = X.shape[1]
-    for d in range(0, degree):
+    for d in range(degree):
         if d == 0:
             XP[:, pos : pos + n] = X
             index = list(range(pos, pos + n))
@@ -51,7 +51,7 @@ def _transform_ionly(degree, bias, XP, X, multiply, final):
         else:
             new_index = []
             end = index[-1]
-            for i in range(0, n):
+            for i in range(n):
                 a = index[i]
                 new_index.append(pos)
                 dec = index[i + 1] - index[i]
