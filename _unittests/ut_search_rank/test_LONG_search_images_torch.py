@@ -6,10 +6,17 @@ from contextlib import redirect_stderr
 from io import StringIO
 import pandas
 import numpy
-from mlinsights.ext_test_case import ExtTestCase, unzip_files
+from mlinsights.ext_test_case import (
+    ExtTestCase,
+    unzip_files,
+    skipif_ci_apple,
+    ignore_warnings,
+)
 
 
 class TestSearchPredictionsImagesTorch(ExtTestCase):
+    @skipif_ci_apple("crash")
+    @ignore_warnings(UserWarning)
     def test_search_predictions_torch(self):
         from mlinsights.search_rank import SearchEnginePredictionImages
 
