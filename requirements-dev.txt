@@ -4,7 +4,7 @@ chardet
 clang-format
 cmakelang
 coverage
-cython>=3.0.5
+cython>=3.0.10
 cython-lint
 furo; sys_platform == 'linux'
 ijson
@@ -14,14 +14,16 @@ matplotlib
 memory_profiler>=0.55
 notebook
 numba
+numpy>=2.0
 onnxruntime
 pandas_streaming
-pybind11
+pybind11>=2.12.0
 pytest
 pytest-cov
 pytest-subtests
 rstcheck[sphinx,toml]
 ruff
+scikit-learn>=1.5.0
 seaborn
 skl2onnx>=1.14.1
 sphinx<7.2; sys_platform == 'linux'  # furo still fails with sphinx==7.2.0 (issue unused furo.css)
