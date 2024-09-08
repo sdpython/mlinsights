@@ -12,7 +12,7 @@ class TestPreprocessingTimeSeries(ExtTestCase):
         y = numpy.arange(10) * 100
         bs = BaseTimeSeries(past=2)
         nx, ny, _ = build_ts_X_y(bs, X, y)
-        for d in range(0, 5):
+        for d in range(5):
             proc = TimeSeriesDifference(d)
             proc.fit(nx, ny)
             px, py = proc.transform(nx, ny)
@@ -28,7 +28,7 @@ class TestPreprocessingTimeSeries(ExtTestCase):
         bs = BaseTimeSeries(past=2)
         nx, ny, _ = build_ts_X_y(bs, X, y)
         weights = numpy.ones((nx.shape[0],), dtype=nx.dtype)
-        for d in range(0, 5):
+        for d in range(5):
             proc = TimeSeriesDifference(d)
             proc.fit(nx, ny, weights)
             px, py = proc.transform(nx, ny)

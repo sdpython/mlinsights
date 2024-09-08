@@ -129,10 +129,10 @@ def run_test_sklearn_clone(fct_model, ext=None, copy_fitted=False):
         else:
             try:
                 ext.assertEqual(p1[k], p2[k])
-            except AssertionError:
+            except AssertionError as e:
                 raise AssertionError(
-                    f"Difference for key '{k}'\n==1 {p1[k]}\n==2 {p2[k]}"
-                )
+                    f"Difference for key {k!r}\n==1 {p1[k]}\n==2 {p2[k]}"
+                ) from e
     return conv, cloned
 
 
@@ -159,13 +159,13 @@ def _assert_dict_equal(a, b, ext):
         else:
             if a[key] != b[key]:
                 rows.append(
-                    "** Value != for key '{0}': != id({1}) != id({2})\n==1 "
+                    "** Value != for key '{0}': != id({1}) != id({2})\n==1 "  # noqa: UP030
                     "{3}\n==2 {4}".format(key, id(a[key]), id(b[key]), a[key], b[key])
                 )
     for key in sorted(a):
         if key not in b:
             rows.append(f"** Removed key '{key}' in a")
-    assert not rows, "Dictionaries are different\n{0}".format("\n".join(rows))
+    assert not rows, "Dictionaries are different\n{}".format("\n".join(rows))
 
 
 def _assert_tuple_equal(t1, t2, ext):
@@ -303,14 +303,14 @@ def clone_with_fitted_parameters(est):
                     v1 = getattr(obj1, k)
                     setattr(obj2, k, clone_with_fitted_parameters(v1))
                 else:
-                    raise RuntimeError(f"Cloned object is missing '{k}' in {obj2}.")
+                    raise RuntimeError(f"Cloned object is missing {k!r} in {obj2}.")
 
     if isinstance(est, BaseEstimator):
         cloned = clone(est)
         adjust(est, cloned)
         res = cloned
     elif isinstance(est, list):
-        res = list(clone_with_fitted_parameters(o) for o in est)
+        res = [clone_with_fitted_parameters(o) for o in est]
     elif isinstance(est, tuple):
         res = tuple(clone_with_fitted_parameters(o) for o in est)
     elif isinstance(est, dict):

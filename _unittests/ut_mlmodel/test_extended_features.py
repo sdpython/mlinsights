@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from scipy import sparse
@@ -304,7 +303,7 @@ class TestExtendedFeatures(ExtTestCase):
             ext = ExtendedFeatures(poly_degree=deg)
             X_ext = ext.fit_transform(X)
 
-            inames = ["x%d" % i for i in range(0, X.shape[1])]
+            inames = ["x%d" % i for i in range(X.shape[1])]
             names_ext = ext.get_feature_names_out(inames)
 
             self.assertEqual(len(names_sk), len(names_ext))
@@ -329,7 +328,7 @@ class TestExtendedFeatures(ExtTestCase):
             )
             X_ext = ext.fit_transform(X)
 
-            inames = ["x%d" % i for i in range(0, X.shape[1])]
+            inames = ["x%d" % i for i in range(X.shape[1])]
             names_ext = ext.get_feature_names_out(inames)
 
             self.assertEqual(len(names_sk), len(names_ext))

@@ -147,7 +147,7 @@ trans = transforms.Compose(
 imgs = datasets.ImageFolder("simages", trans)
 dataloader = DataLoader(imgs, batch_size=1, shuffle=True, num_workers=1)
 img_seq = iter(dataloader)
-imgs = list(img[0] for i, img in zip(range(2), img_seq))
+imgs = [img[0] for i, img in zip(range(2), img_seq)]
 #######################################
 #
 
@@ -182,7 +182,7 @@ dataloader = DataLoader(
     ConcatDataset([imgs1, imgs2]), batch_size=1, shuffle=True, num_workers=1
 )
 img_seq = iter(dataloader)
-imgs = list(img[0] for i, img in zip(range(10), img_seq))
+imgs = [img[0] for i, img in zip(range(10), img_seq)]
 #######################################
 #
 
@@ -259,7 +259,7 @@ trans = transforms.Compose(
 imgs = datasets.ImageFolder("simages", trans)
 dataloader = DataLoader(imgs, batch_size=1, shuffle=False, num_workers=1)
 img_seq = iter(dataloader)
-imgs = list(img[0] for img in img_seq)
+imgs = [img[0] for img in img_seq]
 
 all_outputs = [model.forward(img).detach().numpy().ravel() for img in imgs]
 

@@ -223,7 +223,7 @@ def tree_leave_neighbors(model):
     features_keys = features.keys()
     for fe in features_keys:
         features[fe] = list(sorted(set(features[fe])))
-    for fe, v in features.items():
+    for _fe, v in features.items():
         if len(v) == 1:
             d = abs(v[0]) / 10
             if d == v[0]:

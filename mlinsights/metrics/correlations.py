@@ -111,7 +111,7 @@ def non_linear_correlations(df, model, draws=5, minmax=False):
             maxi = cor.copy()
     df = scale(df)
 
-    for k in range(0, draws):
+    for k in range(draws):
         df_train, df_test = train_test_split(df, test_size=0.5)
         for i in range(cor.shape[0]):
             xi_train = df_train[:, i : i + 1]

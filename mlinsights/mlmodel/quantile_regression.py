@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
@@ -142,7 +141,7 @@ class QuantileLinearRegression(LinearRegression):
         W = numpy.ones(X.shape[0]) if sample_weight is None else sample_weight
         self.n_iter_ = 0
         lastE = None
-        for i in range(0, self.max_iter):
+        for i in range(self.max_iter):
             clr.fit(Xm, y, W)
             beta = clr.coef_
             W, epsilon = compute_z(Xm, beta, y, W, delta=self.delta)

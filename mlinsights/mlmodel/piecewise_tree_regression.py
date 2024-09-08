@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy
 from sklearn.tree import DecisionTreeRegressor
 
@@ -190,7 +189,7 @@ class PiecewiseTreeRegressor(DecisionTreeRegressor):
         leaves = self.predict_leaves(X)
         pred = numpy.ones((X.shape[0], 1))
         Xone = numpy.hstack([X, pred])
-        for i in range(0, X.shape[0]):
+        for i in range(X.shape[0]):
             li = leaves[i]
             pred[i] = numpy.dot(Xone[i, :], self.betas_[li, :])
         return pred.ravel()

@@ -147,7 +147,7 @@ class ClassifierAfterKMeans(BaseEstimator, ClassifierMixin):
             elif k.startswith("c_"):
                 pc[k[2:]] = v
             else:
-                raise ValueError(f"Unexpected parameter name '{k}'")
+                raise ValueError(f"Unexpected parameter name {k!r}")
         self.clus.set_params(**pc)
         self.estimator.set_params(**pe)
 

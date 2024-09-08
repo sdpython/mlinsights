@@ -19,7 +19,7 @@ class TestPlotTimeSeries(ExtTestCase):
             import matplotlib.pyplot as plt
         except Exception as e:
             if "generated new fontManager" in str(e):
-                warnings.warn(e)
+                warnings.warn(e, stacklevel=0)
                 return
             raise e
         dt1 = datetime.datetime(2019, 8, 1)

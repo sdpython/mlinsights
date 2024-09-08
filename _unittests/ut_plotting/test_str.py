@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, MinMaxScaler

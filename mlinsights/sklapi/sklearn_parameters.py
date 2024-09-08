@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import textwrap
 
 
@@ -6,8 +5,6 @@ class SkException(Exception):
     """
     custom exception
     """
-
-    pass
 
 
 class SkLearnParameters:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sklearn.metrics import accuracy_score
 from .sklearn_base_learner import SkBaseLearner
 

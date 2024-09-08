@@ -50,7 +50,7 @@ def _pipeline_info(pipe, data, context, former_data=None):
         infos = []
         outputs = []
         for _, model, vs in pipe.transformers:
-            if all(map(lambda o: isinstance(o, int), vs)):
+            if all(isinstance(o, int) for o in vs):
                 new_data = []
                 if isinstance(data, OrderedDict):
                     new_data = [_[1] for _ in data.items()]
@@ -265,22 +265,24 @@ def pipeline2dot(pipe, data, **params):
             for c, col in enumerate(schema):
                 columns[col] = f"sch0:f{c}"
                 labs.append(f"<f{c}> {col}")
-            node = '  sch0[label="{0}",shape=record,fontsize={1}];'.format(
-                "|".join(labs), params.get("fontsize", fontsize)
+            node = (
+                '  sch0[label="{0}",shape=record,fontsize={1}];'.format(  # noqa: UP030
+                    "|".join(labs), params.get("fontsize", fontsize)
+                )
             )
             exp.append(node)
         else:
             exp.append("")
             if line["type"] == "transform":
                 node = (
-                    '  node{0}[label="{1}",shape=box,style="filled'
+                    '  node{0}[label="{1}",shape=box,style="filled'  # noqa: UP030
                     ',rounded",color=cyan,fontsize={2}];'.format(
                         i, line["name"], int(params.get("fontsize", fontsize) * 1.5)
                     )
                 )
             else:
                 node = (
-                    '  node{0}[label="{1}",shape=box,style="filled,'
+                    '  node{0}[label="{1}",shape=box,style="filled,'  # noqa: UP030
                     'rounded",color=yellow,fontsize={2}];'.format(
                         i, line["name"], int(params.get("fontsize", fontsize) * 1.5)
                     )
@@ -301,7 +303,7 @@ def pipeline2dot(pipe, data, **params):
             for c, out in enumerate(line["outputs"]):
                 columns[out] = f"sch{i}:f{c}"
                 labs.append(f"<f{c}> {out}")
-            node = '  sch{0}[label="{1}",shape=record,fontsize={2}];'.format(
+            node = '  sch{0}[label="{1}",shape=record,fontsize={2}];'.format(  # noqa: UP030
                 i, "|".join(labs), params.get("fontsize", fontsize)
             )
             exp.append(node)

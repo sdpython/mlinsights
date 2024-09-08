@@ -1,9 +1,9 @@
 """
 Custom DecisionTreeRegressor adapted to a linear regression
 ===========================================================
- 
+
 A :class:`sklearn.tree.DecisionTreeRegressor`
-can be trained with a couple of possible criterions but it is possible 
+can be trained with a couple of possible criterions but it is possible
 to implement a custom one (see `hellinger_distance_criterion
 <https://github.com/EvgeniDubov/hellinger-distance-criterion/blob/master/hellinger_distance_criterion.pyx>`_).
 See also tutorial

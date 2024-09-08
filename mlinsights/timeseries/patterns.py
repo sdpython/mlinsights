@@ -58,7 +58,7 @@ def find_ts_group_pattern(
     all_merged.fillna(0, inplace=True)
     ncol = all_merged.shape[1] // len(gr_names)
     gr_feats = []
-    for i, name in enumerate(gr_names):
+    for i, _name in enumerate(gr_names):
         feats = all_merged.iloc[:, i * ncol : (i + 1) * ncol].values.ravel()
         gr_feats.append(feats)
 

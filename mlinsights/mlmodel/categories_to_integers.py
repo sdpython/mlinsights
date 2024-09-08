@@ -70,10 +70,11 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
         """
         if not isinstance(X, pandas.DataFrame):
             raise TypeError(f"this transformer only accept Dataframes, not {type(X)}")
-        if self.columns:
-            columns = self.columns
-        else:
-            columns = [c for c, d in zip(X.columns, X.dtypes) if d in (object,)]
+        columns = (
+            self.columns
+            if self.columns
+            else [c for c, d in zip(X.columns, X.dtypes) if d in (object, str)]
+        )
 
         self._fit_columns = columns
         max_cat = max(len(X) // 2 + 1, 10000)
@@ -86,9 +87,8 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                 raise ValueError(
                     f"Too many categories ({nb}) for one column '{c}' max_cat={max_cat}"
                 )
-            self._categories[c] = dict(
-                (c, i) for i, c in enumerate(list(sorted(distinct)))
-            )
+            self._categories[c] = {c: i for i, c in enumerate(list(sorted(distinct)))}
+
         self._schema = self._build_schema()
         return self
 
@@ -146,9 +146,10 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                     if len(lv) > 20:
                         lv = lv[:20]
                         lv.append("...")
+                    m = "\n".join(map(str, lv))
                     raise ValueError(
-                        "Unable to find category value %r type(v)=%r "
-                        "among\n%s" % (v, type(v), "\n".join(lv))
+                        f"Unable to find category value {v} "
+                        f"type(v)={type(v)} among\n{m}"
                     )
                 return numpy.nan
 
@@ -179,10 +180,12 @@ class CategoriesToIntegers(BaseEstimator, TransformerMixin):
                             if len(lv) > 20:
                                 lv = lv[:20]
                                 lv.append("...")
+                            m = "\n".join(map(str, lv))
                             raise ValueError(
-                                "Unable to find category value %r: %r "
-                                "type(v)=%r among\n%s" % (k, v, type(v), "\n".join(lv))
+                                f"Unable to find category value {k!r}: {v!r} "
+                                f"type(v)={type(v)} among\n{m}"
                             )
+                        p = pos[k]
                     else:
                         p = pos[k] + vec[k][v]
                     res[i, p] = 1.0

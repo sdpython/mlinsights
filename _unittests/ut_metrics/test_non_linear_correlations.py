@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import pandas
 from sklearn import datasets
@@ -18,7 +17,7 @@ class TestNonLinearCorrelations(ExtTestCase):
         self.assertEqual(cor.shape, (4, 4))
         self.assertEqual(list(cor.columns), ["X1", "X2", "X3", "X4"])
         self.assertEqual(list(cor.index), ["X1", "X2", "X3", "X4"])
-        self.assertEqual(list(cor.iloc[i, i] for i in range(0, 4)), [1, 1, 1, 1])
+        self.assertEqual(list(cor.iloc[i, i] for i in range(4)), [1, 1, 1, 1])
         self.assertGreater(cor.values.min(), 0)
 
     def test_non_linear_correlations_array(self):
@@ -27,7 +26,7 @@ class TestNonLinearCorrelations(ExtTestCase):
         df = pandas.DataFrame(X).values
         cor = non_linear_correlations(df, LinearRegression(fit_intercept=False))
         self.assertEqual(cor.shape, (4, 4))
-        self.assertEqual(list(cor[i, i] for i in range(0, 4)), [1, 1, 1, 1])
+        self.assertEqual(list(cor[i, i] for i in range(4)), [1, 1, 1, 1])
         self.assertGreater(cor.min(), 0)
 
     def test_non_linear_correlations_df_tree(self):
@@ -39,7 +38,7 @@ class TestNonLinearCorrelations(ExtTestCase):
         self.assertEqual(cor.shape, (4, 4))
         self.assertEqual(list(cor.columns), ["X1", "X2", "X3", "X4"])
         self.assertEqual(list(cor.index), ["X1", "X2", "X3", "X4"])
-        self.assertGreater(max(cor.iloc[i, i] for i in range(0, 4)), 0.98)
+        self.assertGreater(max(cor.iloc[i, i] for i in range(4)), 0.98)
         self.assertGreater(cor.values.min(), 0)
 
     def test_non_linear_correlations_df_minmax(self):
@@ -53,9 +52,9 @@ class TestNonLinearCorrelations(ExtTestCase):
         self.assertEqual(cor.shape, (4, 4))
         self.assertEqual(list(cor.columns), ["X1", "X2", "X3", "X4"])
         self.assertEqual(list(cor.index), ["X1", "X2", "X3", "X4"])
-        self.assertEqual(list(cor.iloc[i, i] for i in range(0, 4)), [1, 1, 1, 1])
-        self.assertEqual(list(mini.iloc[i, i] for i in range(0, 4)), [1, 1, 1, 1])
-        self.assertEqual(list(maxi.iloc[i, i] for i in range(0, 4)), [1, 1, 1, 1])
+        self.assertEqual(list(cor.iloc[i, i] for i in range(4)), [1, 1, 1, 1])
+        self.assertEqual(list(mini.iloc[i, i] for i in range(4)), [1, 1, 1, 1])
+        self.assertEqual(list(maxi.iloc[i, i] for i in range(4)), [1, 1, 1, 1])
         self.assertGreater(cor.values.min(), 0)
         self.assertEqual(list(mini.columns), ["X1", "X2", "X3", "X4"])
         self.assertEqual(list(mini.index), ["X1", "X2", "X3", "X4"])
@@ -74,9 +73,9 @@ class TestNonLinearCorrelations(ExtTestCase):
             df, LinearRegression(fit_intercept=False), minmax=True
         )
         self.assertEqual(cor.shape, (4, 4))
-        self.assertEqual(list(cor[i, i] for i in range(0, 4)), [1, 1, 1, 1])
-        self.assertEqual(list(mini[i, i] for i in range(0, 4)), [1, 1, 1, 1])
-        self.assertEqual(list(maxi[i, i] for i in range(0, 4)), [1, 1, 1, 1])
+        self.assertEqual(list(cor[i, i] for i in range(4)), [1, 1, 1, 1])
+        self.assertEqual(list(mini[i, i] for i in range(4)), [1, 1, 1, 1])
+        self.assertEqual(list(maxi[i, i] for i in range(4)), [1, 1, 1, 1])
         self.assertGreater(cor.min(), 0)
         self.assertEqual(mini.shape, (4, 4))
         self.assertLesser(mini.min(), cor.min())

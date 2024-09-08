@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from sklearn.linear_model import LinearRegression

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import tempfile
 import unittest
@@ -73,7 +72,7 @@ class TestPlotGallery(ExtTestCase):
             ax = plot_gallery_images(files, return_figure=False, ax=ax)
             self.assertNotEmpty(ax)
         except http.client.RemoteDisconnected as e:
-            warnings.warn(f"Unable to fetch image {e}'")
+            warnings.warn(f"Unable to fetch image {e}'", stacklevel=0)
             plt.close("all")
             return
         plt.close("all")

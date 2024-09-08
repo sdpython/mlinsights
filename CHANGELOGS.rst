@@ -1,7 +1,11 @@
-
 ===========
 Change Logs
 ===========
+
+0.5.1
+=====
+
+* :pr:`132` builds against scikit-learn==1.5.0, python 3.12
 
 0.5.0
 =====

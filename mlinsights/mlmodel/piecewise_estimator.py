@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.utils._joblib import Parallel, delayed
 
-try:
+try:  # noqa: SIM105
     from tqdm import tqdm
 except ImportError:
     pass
