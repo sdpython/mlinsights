@@ -117,6 +117,7 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 archs = ["x86_64"]
 build = "cp*"
 skip = "cp36-* cp37-* cp38-* cp39-* cp313-* pypy* pp*"
+before-build = "brew install libomp llvm"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
