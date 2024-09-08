@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 __version__ = "0.5.1"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/mlinsights"

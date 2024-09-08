@@ -3,7 +3,7 @@ import numpy.random
 from sklearn.base import RegressorMixin, clone, BaseEstimator
 from sklearn.utils._joblib import Parallel, delayed
 
-try:
+try:  # noqa: SIM105
     from tqdm import tqdm
 except ImportError:
     pass

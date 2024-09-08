@@ -303,7 +303,7 @@ class ExtTestCase(unittest.TestCase):
             fct()
         except exc_type as e:
             if not isinstance(e, exc_type):
-                raise AssertionError(f"Unexpected exception {type(e)!r}.")
+                raise AssertionError(f"Unexpected exception {type(e)!r}.")  # noqa: B904
             if msg is None:
                 return
             self.assertIn(msg, str(e))
@@ -348,13 +348,13 @@ class ExtTestCase(unittest.TestCase):
             try:
                 self.assertLesser(d, precision)
             except AssertionError:
-                raise AssertionError(f"{a} != {b} (p={precision})")
+                raise AssertionError(f"{a} != {b} (p={precision})")  # noqa: B904
         else:
             r = float(abs(a - b)) / mi
             try:
                 self.assertLesser(r, precision)
             except AssertionError:
-                raise AssertionError(f"{a} != {b} (p={precision})")
+                raise AssertionError(f"{a} != {b} (p={precision})")  # noqa: B904
 
     def assertEndsWith(self, suffix: str, text: str):
         if not text.endswith(suffix):
@@ -371,7 +371,7 @@ class ExtTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         for name, line, w in cls._warns:
-            warnings.warn(f"\n{name}:{line}: {type(w)}\n  {str(w)}")
+            warnings.warn(f"\n{name}:{line}: {type(w)}\n  {str(w)}", stacklevel=0)
 
     def capture(self, fct: Callable):
         """
@@ -382,9 +382,8 @@ class ExtTestCase(unittest.TestCase):
         """
         sout = StringIO()
         serr = StringIO()
-        with redirect_stdout(sout):
-            with redirect_stderr(serr):
-                res = fct()
+        with redirect_stdout(sout), redirect_stderr(serr):
+            res = fct()
         return res, sout.getvalue(), serr.getvalue()
 
 
@@ -529,7 +528,7 @@ def unzip_files(
     except zipfile.BadZipFile as e:
         if isinstance(zipf, BytesIO):
             raise e
-        raise IOError(f"Unable to read file '{zipf}'") from e
+        raise OSError(f"Unable to read file '{zipf}'") from e
 
     files: List[Union[str, Tuple[str, Any]]] = []
     with zipfile.ZipFile(zipf, "r") as file:
@@ -545,7 +544,9 @@ def unzip_files(
                             f"Unable to extract {info.filename!r} due to {e}"
                         ) from e
                     warnings.warn(
-                        f"Unable to extract {info.filename!r} due to {e}", UserWarning
+                        f"Unable to extract {info.filename!r} due to {e}",
+                        UserWarning,
+                        stacklevel=0,
                     )
                     continue
                 files.append((info.filename, content))
@@ -566,7 +567,9 @@ def unzip_files(
                             f"Unable to extract {info.filename!r} due to {e}"
                         ) from e
                     warnings.warn(
-                        f"Unable to extract {info.filename!r} due to {e}", UserWarning
+                        f"Unable to extract {info.filename!r} due to {e}",
+                        UserWarning,
+                        stacklevel=0,
                     )
                     continue
                 if verbose > 0:
@@ -577,3 +580,36 @@ def unzip_files(
             elif not info.filename.endswith("/"):
                 files.append(tos)
     return files
+
+
+def is_azure() -> bool:
+    "Tells if the job is running on Azure DevOps."
+    return os.environ.get("AZURE_HTTP_USER_AGENT", "undefined") != "undefined"
+
+
+def is_windows() -> bool:
+    return sys.platform == "win32"
+
+
+def is_apple() -> bool:
+    return sys.platform == "darwin"
+
+
+def skipif_ci_windows(msg) -> Callable:
+    """
+    Skips a unit test if it runs on :epkg:`azure pipeline` on :epkg:`Windows`.
+    """
+    if is_windows() and is_azure():
+        msg = f"Test does not work on azure pipeline (Windows). {msg}"
+        return unittest.skip(msg)
+    return lambda x: x
+
+
+def skipif_ci_apple(msg) -> Callable:
+    """
+    Skips a unit test if it runs on :epkg:`azure pipeline` on :epkg:`Windows`.
+    """
+    if is_apple() and is_azure():
+        msg = f"Test does not work on azure pipeline (Apple). {msg}"
+        return unittest.skip(msg)
+    return lambda x: x

@@ -23,8 +23,8 @@ from mlinsights.mlmodel import ClassifierAfterKMeans
 Xs = []
 Ys = []
 n = 20
-for i in range(0, 5):
-    for j in range(0, 4):
+for i in range(5):
+    for j in range(4):
         x1 = numpy.random.rand(n) + i * 1.1
         x2 = numpy.random.rand(n) + j * 1.1
         Xs.append(numpy.vstack([x1, x2]).T)
@@ -41,7 +41,7 @@ X.shape, Y.shape, set(Y)
 fig, ax = plt.subplots(1, 1, figsize=(6, 4))
 for i in set(Y):
     ax.plot(
-        X[Y == i, 0], X[Y == i, 1], "o", label="cl%d" % i, color=plt.cm.tab20.colors[i]
+        X[i == Y, 0], X[i == Y, 1], "o", label="cl%d" % i, color=plt.cm.tab20.colors[i]
     )
 ax.legend()
 ax.set_title("Classification not convex")

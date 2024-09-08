@@ -62,7 +62,7 @@ hist = Counter(cl)
 
 colors = "brgy"
 fig, ax = plt.subplots(1, 1, figsize=(4, 4))
-for i in range(0, max(cl) + 1):
+for i in range(max(cl) + 1):
     ax.plot(X[cl == i, 0], X[cl == i, 1], colors[i] + ".", label="cl%d" % i)
     x = [km.cluster_centers_[i, 0], km.cluster_centers_[i, 0]]
     y = [km.cluster_centers_[i, 1], km.cluster_centers_[i, 1]]
@@ -97,7 +97,7 @@ hist2 = Counter(cl2)
 #
 
 fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-for i in range(0, max(cl1) + 1):
+for i in range(max(cl1) + 1):
     ax[0].plot(X[cl1 == i, 0], X[cl1 == i, 1], colors[i] + ".", label="cl%d" % i)
     ax[1].plot(X[cl2 == i, 0], X[cl2 == i, 1], colors[i] + ".", label="cl%d" % i)
     x = [km1.cluster_centers_[i, 0], km1.cluster_centers_[i, 0]]
@@ -135,7 +135,7 @@ edges = km.cluster_edges()
 
 
 fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-for i in range(0, max(cl) + 1):
+for i in range(max(cl) + 1):
     ax[0].plot(X[cl == i, 0], X[cl == i, 1], colors[i] + ".", label="cl%d" % i)
     x = [km.cluster_centers_[i, 0], km.cluster_centers_[i, 0]]
     y = [km.cluster_centers_[i, 1], km.cluster_centers_[i, 1]]
@@ -145,7 +145,7 @@ ax[0].legend()
 
 cls = km.cluster_centers_iter_
 ax[1].plot(X[:, 0], X[:, 1], ".", label="X", color="#AAAAAA", ms=3)
-for i in range(0, max(cl) + 1):
+for i in range(max(cl) + 1):
     ms = numpy.arange(cls.shape[-1]).astype(numpy.float64) / cls.shape[-1] * 50 + 1
     ax[1].scatter(cls[i, 0, :], cls[i, 1, :], color=colors[i], s=ms, label="cl%d" % i)
     plot_delaunay(ax[1], edges, km.cluster_centers_)

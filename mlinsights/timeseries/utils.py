@@ -68,11 +68,11 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
             )
             first = y.shape[0] - nrow
             if X is not None:
-                for i in range(0, model.past):
+                for i in range(model.past):
                     begin = i * ncol
                     end = begin + ncol
                     new_X[i:, begin:end] = X[i:]
-            for i in range(0, model.past):
+            for i in range(model.past):
                 end = y.shape[0] + i + model.delay1 - 1 - model.delay2
                 new_X[first - i : first - i + end - i, i + ncol * model.past] = y[i:end]
 
@@ -113,11 +113,11 @@ def build_ts_X_y(model, X, y, weights=None, same_rows=False):
 
             new_X = numpy.empty((nrow, ncol * model.past + model.past), dtype=y.dtype)
             if X is not None:
-                for i in range(0, model.past):
+                for i in range(model.past):
                     begin = i * ncol
                     end = begin + ncol
                     new_X[:, begin:end] = X[i : i + nrow]
-            for i in range(0, model.past):
+            for i in range(model.past):
                 end = y.shape[0] + i + model.delay1 - 1 - model.delay2
                 new_X[:, i + ncol * model.past] = y[i:end]
 

@@ -9,8 +9,6 @@ class FeaturizerTypeError(TypeError):
     Unable to process a type.
     """
 
-    pass
-
 
 def model_featurizer(model, **params):
     """

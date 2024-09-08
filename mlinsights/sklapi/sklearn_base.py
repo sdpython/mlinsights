@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from typing import Any, Dict
 import textwrap
 import warnings
@@ -92,12 +91,12 @@ class SkBase:
         for k in p1:
             if k not in p2:
                 if exc:
-                    raise KeyError(f"Key '{k}' was removed.")
+                    raise KeyError(f"Key {k!r} was removed.")
                 return False
         for k in p2:
             if k not in p1:
                 if exc:
-                    raise KeyError(f"Key '{k}' was added.")
+                    raise KeyError(f"Key {k!r} was added.")
                 return False
         for k in sorted(p1):
             v1, v2 = p1[k], p2[k]
@@ -106,7 +105,8 @@ class SkBase:
                 if exc and v1 is not v2:
                     warnings.warn(
                         f"v2 is a clone of v1 not v1 itself for key "
-                        f"{k!r} and class {type(v1)}."
+                        f"{k!r} and class {type(v1)}.",
+                        stacklevel=0,
                     )
             elif isinstance(v1, list) and isinstance(v2, list) and len(v1) == len(v2):
                 b = True
@@ -133,7 +133,7 @@ class SkBase:
             if not b:
                 if exc:
                     raise ValueError(
-                        f"Values for key '{k}' are different.\n---\n{v1}\n---\n{v2}"
+                        f"Values for key {k!r} are different.\n---\n{v1}\n---\n{v2}"
                     )
                 return False
         return True

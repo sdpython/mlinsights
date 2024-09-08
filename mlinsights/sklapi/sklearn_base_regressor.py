@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sklearn.metrics import r2_score
 from .sklearn_base_learner import SkBaseLearner
 

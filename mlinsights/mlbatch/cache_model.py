@@ -70,7 +70,7 @@ class MLCache:
                 sv = str(v)
             elif isinstance(v, tuple):
                 assert all(
-                    map(lambda e: isinstance(e, (int, float, str)), v)
+                    isinstance(e, (int, float, str)) for e in v
                 ), f"Unable to create a key with value {k!r}:{v}"
                 return str(v)
             elif isinstance(v, numpy.ndarray):
@@ -80,7 +80,7 @@ class MLCache:
             elif v is None:
                 sv = ""
             else:
-                raise TypeError(f"Unable to create a key with value '{k}':{v}")
+                raise TypeError(f"Unable to create a key with value {k!r}:{v!r}")
             els.append((k, sv))
         return str(els)
 
@@ -94,15 +94,13 @@ class MLCache:
         """
         Enumerates all cached items.
         """
-        for item in self.cached.items():
-            yield item
+        yield from self.cached.items()
 
     def keys(self):
         """
         Enumerates all cached keys.
         """
-        for k in self.cached.keys():
-            yield k
+        yield from self.cached.keys()
 
     @staticmethod
     def create_cache(name):

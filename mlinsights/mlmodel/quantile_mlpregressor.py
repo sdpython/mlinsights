@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import inspect
 import numpy as np
 from sklearn.base import RegressorMixin
@@ -388,7 +387,7 @@ class QuantileMLPRegressor(CustomizedMultilayerPerceptron, RegressorMixin):
         """
         See :epkg:`sklearn:neural_networks:MLPRegressor`
         """
-        sup = super(QuantileMLPRegressor, self)
+        sup = super(QuantileMLPRegressor, self)  # noqa: UP008
         if "max_fun" not in kwargs:
             sig = inspect.signature(sup.__init__)
             if "max_fun" in sig.parameters:

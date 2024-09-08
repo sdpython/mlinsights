@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import distutils
 import os
 import platform
@@ -250,7 +249,7 @@ class cmake_build_class_extension(Command):
         (
             "manylinux=",
             None,
-            "Enforces the compilation with manylinux, " "default is set to 0.",
+            "Enforces the compilation with manylinux, default is set to 0.",
         ),
     ]
 
@@ -435,7 +434,8 @@ class cmake_build_class_extension(Command):
         # Builds the project.
         build_path = os.path.abspath(build_temp)
         build_lib = getattr(self, "build_lib", build_path)
-        cmake_args = cmake_args + [
+        cmake_args = [
+            *cmake_args,
             f"-DSETUP_BUILD_PATH={os.path.abspath(build_path)}",
             f"-DSETUP_BUILD_LIB={os.path.abspath(build_lib)}",
         ]
@@ -518,8 +518,8 @@ class cmake_build_class_extension(Command):
         # Ensure that CMake is present and working
         try:
             subprocess.check_output(["cmake", "--version"])
-        except OSError:
-            raise RuntimeError("Cannot find CMake executable")
+        except OSError as e:
+            raise RuntimeError("Cannot find CMake executable") from e
 
         cfg = "Release"
         cmake_args = self.get_cmake_args(cfg)

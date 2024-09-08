@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 from mlinsights.ext_test_case import ExtTestCase
 from mlinsights.helpers.parameters import format_value

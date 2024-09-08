@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import numpy
 from mlinsights.ext_test_case import ExtTestCase

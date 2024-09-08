@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import textwrap
 import numpy
 from .sklearn_base_transform import SkBaseTransform
@@ -94,9 +93,7 @@ class SkBaseTransformStacking(SkBaseTransform):
             return res
 
         new_learners = []
-        res = list(
-            map(lambda c: convert2transform(c, new_learners), zip(models, method))
-        )
+        res = [convert2transform(c, new_learners) for c in zip(models, method)]
         if not new_learners:
             # We need to do that to avoid creating new objects
             # when it is not necessary. This behavior is not
@@ -164,9 +161,9 @@ class SkBaseTransformStacking(SkBaseTransform):
         if "method" in values:
             self.method = values["method"]
             del values["method"]
-        for k, v in values.items():
+        for k, _v in values.items():
             if not k.startswith("models_"):
-                raise ValueError(f"Parameter '{k}' must start with 'models_'.")
+                raise ValueError(f"Parameter {k!r} must start with 'models_'.")
         d = len("models_")
         pars = [{} for m in self.models]
         for k, v in values.items():
@@ -186,7 +183,7 @@ class SkBaseTransformStacking(SkBaseTransform):
         usual
         """
         rps = repr(self.P)
-        res = "{0}([{1}], [{2}], {3})".format(
+        res = "{0}([{1}], [{2}], {3})".format(  # noqa: UP030
             self.__class__.__name__,
             ", ".join(repr(m.model if hasattr(m, "model") else m) for m in self.models),
             ", ".join(
