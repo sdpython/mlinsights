@@ -117,8 +117,15 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 # repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} || exit 0"
 
 [tool.cibuildwheel.macos]
-environment = "MACOSX_DEPLOYMENT_TARGET=14.0"
-archs = "x86_64 arm64"
+archs = "x86_64 arm64"  # or "universal2" for a single universal wheel
+environment = """
+    MACOSX_DEPLOYMENT_TARGET=14.0
+    LDFLAGS='-L$(brew --prefix libomp)/lib'
+    CPPFLAGS='-I$(brew --prefix libomp)/include'
+    CFLAGS='-I$(brew --prefix libomp)/include -arch x86_64 -arch arm64'
+    CXXFLAGS='-I$(brew --prefix libomp)/include -arch x86_64 -arch arm64'
+    DYLD_LIBRARY_PATH='$(brew --prefix libomp)/lib:$DYLD_LIBRARY_PATH'
+"""
 build = "cp*"
 skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy* pp*"
 before-build = "brew install libomp llvm&&echo 'export PATH=\"/opt/homebrew/opt/llvm/bin:$PATH\"' >> /Users/runner/.bash_profile"
