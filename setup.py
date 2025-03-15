@@ -265,8 +265,8 @@ class cmake_build_class_extension(Command):
         self._parent.initialize_options(self)
 
         # boolean
-        b_values = {0, 1, "1", "0", True, False}
-        t_values = {1, "1", True}
+        b_values = {0, 1, "1", "0", True, False}  # noqa: B033
+        t_values = {1, "1", True}  # noqa: B033
         for att in ["use_nvtx", "use_cuda", "manylinux"]:
             v = getattr(self, att)
             if v is not None:
@@ -295,7 +295,7 @@ class cmake_build_class_extension(Command):
     def finalize_options(self):
         self._parent.finalize_options(self)
 
-        b_values = {0, 1, "1", "0", True, False, "True", "False"}
+        b_values = {0, 1, "1", "0", True, False, "True", "False"}  # noqa: B033
         if self.use_nvtx not in b_values:
             raise ValueError(f"use_nvtx={self.use_nvtx!r} must be in {b_values}.")
         if self.use_cuda is None:
@@ -303,9 +303,9 @@ class cmake_build_class_extension(Command):
         if self.use_cuda not in b_values:
             raise ValueError(f"use_cuda={self.use_cuda!r} must be in {b_values}.")
 
-        self.use_nvtx = self.use_nvtx in {1, "1", True, "True"}
-        self.use_cuda = self.use_cuda in {1, "1", True, "True"}
-        self.manylinux = self.manylinux in {1, "1", True, "True"}
+        self.use_nvtx = self.use_nvtx in {1, "1", True, "True"}  # noqa: B033
+        self.use_cuda = self.use_cuda in {1, "1", True, "True"}  # noqa: B033
+        self.manylinux = self.manylinux in {1, "1", True, "True"}  # noqa: B033
 
         if self.cuda_version in (None, ""):
             self.cuda_version = None
@@ -599,7 +599,7 @@ def get_ext_modules():
                 add_cuda = False
         elif "--use-cuda=0" in sys.argv:
             add_cuda = False
-        elif os.environ.get("USE_CUDA", None) in {0, "0", False}:
+        elif os.environ.get("USE_CUDA", None) in {0, "0", False}:  # noqa: B033
             add_cuda = False
         if add_cuda:
             cuda_extensions.extend([])
