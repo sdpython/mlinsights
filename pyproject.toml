@@ -120,12 +120,12 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 archs = ["arm64", "universal2"]
 build = "cp*"
 skip = "cp36-* cp37-* cp38-* cp39-* cp314-* cp315-* pypy* pp*"
-before-build = "brew install libomp llvm&&echo 'export PATH=\"/opt/homebrew/opt/llvm/bin:$PATH\"' >> /Users/runner/.bash_profile"
+before-build = "brew install libomp llvm&&echo 'export PATH=\"/opt/homebrew/opt/llvm/bin:$PATH\"\\nexport MACOSX_DEPLOYMENT_TARGET=14.0' >> /Users/runner/.bash_profile"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp314-* cp315-* pypy*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy*"
 
 [tool.cython-lint]
 max-line-length = 88
