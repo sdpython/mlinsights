@@ -118,7 +118,7 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 
 [tool.cibuildwheel.macos]
 environment = "MACOSX_DEPLOYMENT_TARGET=14.0"
-archs = ["universal2"]
+archs = "x86_64 arm64"
 build = "cp*"
 skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy* pp*"
 before-build = "brew install libomp llvm&&echo 'export PATH=\"/opt/homebrew/opt/llvm/bin:$PATH\"' >> /Users/runner/.bash_profile"
