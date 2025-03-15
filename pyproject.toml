@@ -109,7 +109,7 @@ manylinux-x86_64-image = "manylinux2014"
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp314-* cp315-* pypy* *musllinux*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy* *musllinux*"
 manylinux-x86_64-image = "manylinux2014"
 before-build = "pip install auditwheel-symbols abi3audit"
 build-verbosity = 1
@@ -119,7 +119,7 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 [tool.cibuildwheel.macos]
 archs = ["arm64", "universal2"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp314-* cp315-* pypy* pp*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy* pp*"
 before-build = "brew install libomp llvm&&echo 'export PATH=\"/opt/homebrew/opt/llvm/bin:$PATH\"\\nexport MACOSX_DEPLOYMENT_TARGET=14.0' >> /Users/runner/.bash_profile"
 
 [tool.cibuildwheel.windows]
