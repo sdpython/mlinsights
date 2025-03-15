@@ -4,7 +4,7 @@ jobs:
   black-format-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: psf/black@stable
         with:
           options: "--diff --check"
@@ -12,5 +12,5 @@ jobs:
   ruff-format-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: chartboost/ruff-action@v1

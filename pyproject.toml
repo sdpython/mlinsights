@@ -14,9 +14,10 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: MacOS",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = ["numpy", "onnx>=1.14.0", "scipy"]
 description = "Extends the list of supported operators in onnx reference implementation and onnxruntime, or implements faster versions in C++."
@@ -24,7 +25,7 @@ keywords = ["onnx", "cython", "scikit-learn", "machine-learning"]
 license = {file = "LICENSE.txt"}
 name = "mlinsights"
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 version = "0.5.1"
 
 [project.urls]
@@ -108,7 +109,7 @@ manylinux-x86_64-image = "manylinux2014"
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* pypy* *musllinux*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy* *musllinux*"
 manylinux-x86_64-image = "manylinux2014"
 before-build = "pip install auditwheel-symbols abi3audit"
 build-verbosity = 1
@@ -116,15 +117,23 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} ; abi3audit 
 # repair-wheel-command = "auditwheel-symbols --manylinux 2014 {wheel} || exit 0"
 
 [tool.cibuildwheel.macos]
-archs = ["arm64", "universal2"]
+archs = "arm64"  # or "universal2" for a single universal wheel
+environment = """
+    MACOSX_DEPLOYMENT_TARGET=14.0
+    LDFLAGS='-L$(brew --prefix libomp)/lib'
+    CPPFLAGS='-I$(brew --prefix libomp)/include'
+    CFLAGS='-I$(brew --prefix libomp)/include -arch x86_64 -arch arm64'
+    CXXFLAGS='-I$(brew --prefix libomp)/include -arch x86_64 -arch arm64'
+    DYLD_LIBRARY_PATH='$(brew --prefix libomp)/lib:$DYLD_LIBRARY_PATH'
+"""
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* pypy* pp*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy* pp*"
 before-build = "brew install libomp llvm&&echo 'export PATH=\"/opt/homebrew/opt/llvm/bin:$PATH\"' >> /Users/runner/.bash_profile"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = "cp*"
-skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* pypy*"
+skip = "cp36-* cp37-* cp38-* cp39-* cp313-* cp314-* cp315-* pypy*"
 
 [tool.cython-lint]
 max-line-length = 88
