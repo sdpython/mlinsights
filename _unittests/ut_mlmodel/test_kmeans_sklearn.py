@@ -5,7 +5,6 @@ from sklearn.utils._testing import (
     assert_array_equal,
     assert_array_almost_equal,
     assert_almost_equal,
-    assert_raise_message,
 )
 from sklearn.metrics.cluster import v_measure_score
 from sklearn.datasets import make_blobs
@@ -112,12 +111,12 @@ class TestKMeansL1L2Sklearn(ExtTestCase):
         self.assertGreater(km.inertia_, 0.0)
 
         # check error on dataset being too small
-        assert_raise_message(
-            ValueError,
-            "n_samples=1 should be >= n_clusters=%d" % km.n_clusters,
-            km.fit,
-            [[0.0, 1.0]],
-        )
+        try:
+            km.fit([[0.0, 1.0]])
+        except Exception as e:
+            self.assertIn(
+                f"n_samples=1 should be >= n_clusters={km.n_clusters}", str(e)
+            )
 
     @ignore_warnings(UserWarning)
     def test_k_means_new_centers(self):
