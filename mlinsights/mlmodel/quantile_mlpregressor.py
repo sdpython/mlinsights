@@ -14,7 +14,7 @@ except ImportError:
 from sklearn.metrics import mean_absolute_error
 
 
-def absolute_loss(y_true, y_pred):
+def absolute_loss(y_true, y_pred, sample_weight=None):
     """
     Computes the absolute loss for regression.
 
@@ -22,10 +22,16 @@ def absolute_loss(y_true, y_pred):
         Ground truth (correct) values.
     :param y_pred: array-like or label indicator matrix
         Predicted values, as returned by a regression estimator.
+    :param sample_weights: sample weights
     :return: loss, float
         The degree to which the samples are correctly predicted.
     """
-    return np.sum(np.abs(y_true - y_pred)) / y_true.shape[0]
+    if sample_weight is None:
+        return np.sum(np.abs(y_true - y_pred)) / y_true.shape[0]
+    return (
+        np.average(np.abs(y_true - y_pred), weights=sample_weight, axis=0)
+        / y_true.shape[0]
+    )
 
 
 def float_sign(a):
@@ -132,7 +138,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
             return DERIVATIVE_LOSS_FUNCTIONS["absolute_loss"](last_deltas)
         return last_deltas
 
-    def _backprop(self, X, y, activations, deltas, coef_grads, intercept_grads):
+    def _backprop(self, *args):
         """
         Computes the MLP loss function and its corresponding derivatives
         with respect to each parameter: weights and bias vectors.
@@ -141,6 +147,8 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
             The input data.
         :param y: array-like, shape (n_samples,)
             The target values.
+        :param sample_weight: array-like of shape (n_samples,), default=None
+                Sample weights.
         :param activations: list, length = n_layers - 1
              The ith element of the list holds the values of the ith layer.
         :param deltas: list, length = n_layers - 1
@@ -155,10 +163,18 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         :param intercept_grads: list, length = n_layers - 1
             The ith element contains the amount of change used to update the
             intercept parameters of the ith layer in an iteration.
-        :return: loss, float
-        :return: coef_grads, list, length = n_layers - 1
-        :return: intercept_grads, list, length = n_layers - 1
+        :return: loss (float),
+            coef_grads (list, length = n_layers - 1)
+            intercept_grads: (list, length = n_layers - 1)
+
+
         """
+        if len(args) == 6:
+            X, y, activations, deltas, coef_grads, intercept_grads = args
+            sample_weight = None
+        else:
+            X, y, sample_weight, activations, deltas, coef_grads, intercept_grads = args
+
         n_samples = X.shape[0]
 
         # Forward propagate
@@ -169,10 +185,12 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         if loss_func_name == "log_loss" and self.out_activation_ == "logistic":
             loss_func_name = "binary_log_loss"
         loss_function = self._get_loss_function(loss_func_name)
-        loss = loss_function(y, activations[-1])
+        loss = loss_function(y, activations[-1], sample_weight)
         # Add L2 regularization term to loss
         values = np.sum(np.array([np.dot(s.ravel(), s.ravel()) for s in self.coefs_]))
-        loss += (0.5 * self.alpha) * values / n_samples
+
+        sw_sum = n_samples if sample_weight is None else sample_weight.sum()
+        loss += (0.5 * self.alpha) * values / sw_sum
 
         # Backward propagate
         last = self.n_layers_ - 2
@@ -182,6 +200,8 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
         # sigmoid and binary cross entropy, softmax and categorical cross
         # entropy, and identity with squared loss
         deltas[last] = activations[-1] - y
+        if sample_weight is not None:
+            deltas[last] *= sample_weight.reshape(-1, 1)
 
         # We insert the following modification to modify the gradient
         # due to the modification of the loss function.
@@ -189,13 +209,13 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
 
         # Compute gradient for the last layer
         temp = self._compute_loss_grad(
-            last, n_samples, activations, deltas, coef_grads, intercept_grads
+            last, sw_sum, activations, deltas, coef_grads, intercept_grads
         )
         if temp is None:
             # recent version of scikit-learn
             # Compute gradient for the last layer
             self._compute_loss_grad(
-                last, n_samples, activations, deltas, coef_grads, intercept_grads
+                last, sw_sum, activations, deltas, coef_grads, intercept_grads
             )
 
             inplace_derivative = DERIVATIVES[self.activation]
@@ -205,7 +225,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                 inplace_derivative(activations[i], deltas[i - 1])
 
                 self._compute_loss_grad(
-                    i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
+                    i - 1, sw_sum, activations, deltas, coef_grads, intercept_grads
                 )
         else:
             coef_grads, intercept_grads = temp
@@ -220,7 +240,7 @@ class CustomizedMultilayerPerceptron(BaseMultilayerPerceptron):
                     coef_grads,
                     intercept_grads,
                 ) = self._compute_loss_grad(
-                    i - 1, n_samples, activations, deltas, coef_grads, intercept_grads
+                    i - 1, sw_sum, activations, deltas, coef_grads, intercept_grads
                 )
 
         return loss, coef_grads, intercept_grads
