@@ -5,7 +5,11 @@ from sklearn.base import BaseEstimator, RegressorMixin, ClassifierMixin, clone
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import KBinsDiscretizer
-from sklearn.utils._joblib import Parallel, delayed
+
+try:
+    from sklearn.utils.parallel import Parallel, delayed
+except ImportError:
+    from sklearn.utils._joblib import Parallel, delayed
 
 try:  # noqa: SIM105
     from tqdm import tqdm
