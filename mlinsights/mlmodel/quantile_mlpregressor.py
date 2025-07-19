@@ -22,7 +22,7 @@ def absolute_loss(y_true, y_pred, sample_weight=None):
         Ground truth (correct) values.
     :param y_pred: array-like or label indicator matrix
         Predicted values, as returned by a regression estimator.
-    :param sample_weights: sample weights
+    :param sample_weight: sample weights
     :return: loss, float
         The degree to which the samples are correctly predicted.
     """
