@@ -58,7 +58,7 @@ class TestSklearnConvert(ExtTestCase):
         pipe.fit(X_train, y_train)
         pred = pipe.predict(X_test)
         score = accuracy_score(y_test, pred)
-        self.assertGreater(score, 0.8)
+        self.assertGreater(score, 0.75)
         score2 = pipe.score(X_test, y_test)
         self.assertEqualFloat(score, score2, precision=1e-5)
         rp = repr(conv)

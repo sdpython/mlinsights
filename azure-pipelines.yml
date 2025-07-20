@@ -1,6 +1,76 @@
 jobs:
 
-- job: 'TestLinuxWheelNoCuda'
+- job: 'TestLinuxWheelNoCuda313'
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      Python311-Linux:
+        python.version: '3.13'
+    maxParallel: 3
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: sudo apt-get update
+    displayName: 'AptGet Update'
+  - script: sudo apt-get install -y graphviz
+    displayName: 'Install Graphviz'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: pip install -r requirements-dev.txt
+    displayName: 'Install Requirements dev'
+  - script: |
+      ruff check .
+    displayName: 'Ruff'
+  - script: |
+      black --diff .
+    displayName: 'Black'
+  - script: |
+      cmake-lint _cmake/Find* --disabled-codes C0103 C0113 --line-width=88
+      cmake-lint _cmake/CMake* --disabled-codes C0103 C0113 --line-width=88
+    displayName: 'cmake-lint'
+  - script: |
+      rstcheck -r ./_doc ./mlinsights
+    displayName: 'rstcheck'
+  - script: |
+      cython-lint .
+    displayName: 'cython-lint'
+  - script: |
+      export USE_CUDA=0
+      python -m pip install -e . --config-settings="--use_cuda=0" -v
+    displayName: 'pip install -e . --config-settings="--use_cuda=0" -v'
+  - script: |
+      python -m pytest _unittests --durations=10
+    displayName: 'Runs Unit Tests'
+  - script: |
+      # --config-settings does not work yet.
+      # python -m pip wheel . --config-settings="--use_cuda=0" -v
+      export USE_CUDA=0
+      python -m pip wheel . --config-settings="--use_cuda=0" -v
+    displayName: 'build wheel'
+  - script: |
+      mkdir dist
+      cp mlinsights*.whl dist
+    displayName: 'copy wheel'
+  - script: |
+      pip install auditwheel-symbols
+      auditwheel-symbols --manylinux 2014 dist/*.whl || exit 0
+    displayName: 'Audit wheel'
+  - script: |
+      pip install abi3audit
+      abi3audit dist/*.whl || exit 0
+    displayName: 'abi3audit wheel'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-linux-pip-$(python.version)'
+      targetPath: 'dist'
+
+- job: 'TestLinuxWheelNoCuda312'
   pool:
     vmImage: 'ubuntu-latest'
   strategy:
@@ -70,13 +140,13 @@ jobs:
       artifactName: 'wheel-linux-pip-$(python.version)'
       targetPath: 'dist'
 
-- job: 'TestLinux'
+- job: 'TestLinux311'
   pool:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
       Python311-Linux:
-        python.version: '3.10'
+        python.version: '3.11'
     maxParallel: 3
 
   steps:
@@ -158,13 +228,13 @@ jobs:
       artifactName: 'wheel-linux-$(python.version)'
       targetPath: 'dist'
 
-- job: 'TestWindows'
+- job: 'TestWindows312'
   pool:
     vmImage: 'windows-latest'
   strategy:
     matrix:
       Python311-Windows:
-        python.version: '3.11'
+        python.version: '3.12'
     maxParallel: 3
 
   steps:
@@ -204,13 +274,13 @@ jobs:
       artifactName: 'wheel-windows-$(python.version)'
       targetPath: 'dist'
 
-- job: 'TestMac'
+- job: 'TestMac312'
   pool:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
       Python311-Mac:
-        python.version: '3.11'
+        python.version: '3.12'
     maxParallel: 3
 
   steps:
