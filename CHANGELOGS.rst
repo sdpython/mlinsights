@@ -5,6 +5,7 @@ Change Logs
 0.5.2
 =====
 
+* :pr:`137`: update to pybind11 3.0
 * :pr:`136`: adds Python 3.13 to CI, updates the package to support scikit-learn==1.7.1
 
 0.5.1
