@@ -165,9 +165,7 @@ ax.set_title("Logistic Regression and K-Means - 2 clusters per class")
 
 dt = []
 for cl in range(1, 6):
-    clk = ClassifierAfterKMeans(
-        c_n_clusters=cl, e_solver="lbfgs", e_max_iter=700
-    )
+    clk = ClassifierAfterKMeans(c_n_clusters=cl, e_solver="lbfgs", e_max_iter=700)
     clk.fit(X, Y)
     sc = clk.score(X, Y)
     dt.append(dict(score=sc, nb_clusters=cl))
