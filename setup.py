@@ -670,7 +670,7 @@ def get_package_data():
 
 setup(
     name="mlinsights",
-    version=get_version_str(here, "0.5.2"),
+    version=get_version_str(here, "0.5.3"),
     description=get_description(),
     long_description=get_long_description(here),
     author="Xavier Dupré",
