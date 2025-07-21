@@ -45,6 +45,9 @@ jobs:
       python -m pip install -e . --config-settings="--use_cuda=0" -v
     displayName: 'pip install -e . --config-settings="--use_cuda=0" -v'
   - script: |
+      python -m pip freeze
+    displayName: 'pip freeze'
+  - script: |
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
@@ -115,6 +118,9 @@ jobs:
       python -m pip install -e . --config-settings="--use_cuda=0" -v
     displayName: 'pip install -e . --config-settings="--use_cuda=0" -v'
   - script: |
+      python -m pip freeze
+    displayName: 'pip freeze'
+  - script: |
       python -m pytest _unittests --durations=10
     displayName: 'Runs Unit Tests'
   - script: |
@@ -123,6 +129,9 @@ jobs:
       export USE_CUDA=0
       python -m pip wheel . --config-settings="--use_cuda=0" -v
     displayName: 'build wheel'
+  - script: |
+      python -m pip freeze
+    displayName: 'pip freeze'
   - script: |
       mkdir dist
       cp mlinsights*.whl dist
@@ -185,6 +194,9 @@ jobs:
       # python -m pip install -e .
       python setup.py build_ext --inplace
     displayName: 'build inplace'
+  - script: |
+      python -m pip freeze
+    displayName: 'pip freeze'
   - bash: |
       contents=$(cat .build_path.txt)
       export BUILD_PATH="$contents"
@@ -258,6 +270,9 @@ jobs:
   - script: |
         python setup.py install
     displayName: 'build wheel'
+  - script: |
+      python -m pip freeze
+    displayName: 'pip freeze'
   - powershell: |
         $contents = Get-Content -Path ".build_path.txt"
         cd $contents
@@ -321,6 +336,9 @@ jobs:
   - script: |
       python setup.py build_ext --inplace
     displayName: 'build'
+  - script: |
+      python -m pip freeze
+    displayName: 'pip freeze'
   - script: |
       python setup.py bdist_wheel
     displayName: 'build wheel'
