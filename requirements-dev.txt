@@ -30,7 +30,7 @@ sphinx-issues; sys_platform == 'linux'
 sphinx-runpython
 toml; python_version < '3.11'
 tomli
-torch
+torch==2.9.1+cpu
 torchvision
 torchaudio
 tqdm

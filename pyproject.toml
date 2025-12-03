@@ -118,7 +118,7 @@ repair-wheel-command = "auditwheel-symbols --manylinux 2_28 {wheel} ; abi3audit 
 [tool.cibuildwheel.macos]
 archs = "arm64"  # or "universal2" for a single universal wheel
 environment = """
-    MACOSX_DEPLOYMENT_TARGET=14.0
+    MACOSX_DEPLOYMENT_TARGET=15.0
     LDFLAGS='-L$(brew --prefix libomp)/lib'
     CPPFLAGS='-I$(brew --prefix libomp)/include'
     CFLAGS='-I$(brew --prefix libomp)/include -arch x86_64 -arch arm64'
