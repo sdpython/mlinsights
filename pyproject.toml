@@ -1,3 +1,6 @@
+[global]
+extra-index-url = https://download.pytorch.org/whl/cpu
+
 [project]
 authors = [{name="Xavier Dupré", email="xavier.dupre@gmail.com"}]
 classifiers = [
