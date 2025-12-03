@@ -1,3 +1,4 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 black
 category_encoders
 chardet
@@ -30,7 +31,7 @@ sphinx-issues; sys_platform == 'linux'
 sphinx-runpython
 toml; python_version < '3.11'
 tomli
-torch>=2.9.0+cpu
+torch>=2.9.0
 torchvision
 torchaudio
 tqdm
