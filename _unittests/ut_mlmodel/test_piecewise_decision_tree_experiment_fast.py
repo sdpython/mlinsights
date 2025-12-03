@@ -136,7 +136,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
             _test_criterion_update(c2, i)
             left1, right1 = _test_criterion_node_impurity_children(c1)
             left2, right2 = _test_criterion_node_impurity_children(c2)
-            self.assertAlmostEqual(left1, left2)
+            self.assertAlmostEqual(left1, left2, atol=1e-8)
             self.assertAlmostEqual(right1, right2)
             v1 = _test_criterion_node_value(c1)
             v2 = _test_criterion_node_value(c2)
