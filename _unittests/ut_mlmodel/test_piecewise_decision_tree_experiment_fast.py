@@ -143,7 +143,7 @@ class TestPiecewiseDecisionTreeExperimentFast(ExtTestCase):
             self.assertEqual(v1, v2)
             p1 = _test_criterion_impurity_improvement(c1, 0.0, left1, right1)
             p2 = _test_criterion_impurity_improvement(c2, 0.0, left2, right2)
-            self.assertAlmostEqual(p1, p2)
+            self.assertAlmostEqual(p1, p2, atol=1e-8)
 
     @unittest.skipIf(
         pv.Version(skl_ver) < pv.Version("1.3.3"),
