@@ -43,7 +43,7 @@ def graph(X, Y, model):
     Z = Z.reshape(xx.shape)
 
     # Put the result into a color plot
-    fig, ax = plt.subplots(1, 1, figsize=(4, 3))
+    _fig, ax = plt.subplots(1, 1, figsize=(4, 3))
     ax.pcolormesh(xx, yy, Z, cmap=plt.cm.Paired)
 
     # Plot also the training points

@@ -1,10 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 black
 category_encoders
 chardet
 clang-format
 cmakelang
 coverage
-cython>=3.0.10
 cython-lint
 furo; sys_platform == 'linux'
 ijson
@@ -17,7 +17,6 @@ numba
 numpy>=2.0
 onnxruntime
 pandas_streaming
-pybind11>=2.12.0
 pytest
 pytest-cov
 pytest-subtests
@@ -26,13 +25,13 @@ ruff
 scikit-learn>=1.5.0
 seaborn
 skl2onnx>=1.14.1
-sphinx<7.2; sys_platform == 'linux'  # furo still fails with sphinx==7.2.0 (issue unused furo.css)
+sphinx>=8; sys_platform == 'linux'  # furo still fails with sphinx==7.2.0 (issue unused furo.css)
 sphinx-gallery; sys_platform == 'linux'
 sphinx-issues; sys_platform == 'linux'
-git+https://github.com/sdpython/sphinx-runpython.git
+sphinx-runpython
 toml; python_version < '3.11'
 tomli
-torch
+torch>=2.9.0; sys_platform != 'darwin'
 torchvision
 torchaudio
 tqdm

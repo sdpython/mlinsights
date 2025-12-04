@@ -150,12 +150,19 @@ configure_file(
 #
 
 # AVX instructions
+# Check with bash _cmake/intrin.sh <avx function name>
 if(MSVC)
   # disable warning for #pragma unroll
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
   add_compile_options(/wd4068)
 else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx")
+  # Other possible flags
+  # "-mavx512f", "-mavx512bw", "-mavx512dq", "-mavx512vl", "-mlzcnt"
+  # See https://gcc.gnu.org/onlinedocs/gcc/x86-Built-in-Functions.html
+  if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    # -march=native selects the best option for AVX instructions
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native -mf16c")
+  endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
@@ -176,6 +183,7 @@ message(STATUS "CMAKE_C_FLAGS_INIT=${CMAKE_C_FLAGS_INIT}")
 message(STATUS "CMAKE_C_FLAGS=${CMAKE_C_FLAGS}")
 message(STATUS "CMAKE_C_FLAGS_RELEASE=${CMAKE_C_FLAGS_RELEASE}")
 message(STATUS "CMAKE_C_COMPILER_VERSION=${CMAKE_C_COMPILER_VERSION}")
+message(STATUS "CMAKE_SYSTEM_PROCESSOR=${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
 message(STATUS "CMAKE_CXX_FLAGS_INIT=${CMAKE_CXX_FLAGS_INIT}")
 message(STATUS "CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")

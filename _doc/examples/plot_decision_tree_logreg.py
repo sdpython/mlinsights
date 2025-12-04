@@ -259,7 +259,7 @@ def draw_border(
     cmap = plt.cm.tab20
     Z = Z.reshape(xx.shape)
     if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=figsize or (4, 3))
+        _fig, ax = plt.subplots(1, 1, figsize=figsize or (4, 3))
     ax.pcolormesh(xx, yy, Z, cmap=cmap)
 
     # Plot also the training points

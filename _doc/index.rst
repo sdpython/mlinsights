@@ -98,5 +98,5 @@ Source are available at `sdpython/mlinsights <https://github.com/sdpython/mlinsi
 Older versions
 ++++++++++++++
 
-* `0.5.2 <../v0.5.1/index.html>`_
-* `0.5.1 <../v0.5.1/index.html>`_
+* `0.5.3 <../v0.5.3/index.html>`_
+* `0.5.2 <../v0.5.2/index.html>`_
