@@ -2,6 +2,14 @@
 Change Logs
 ===========
 
+0.5.4
+=====
+
+0.5.3
+=====
+
+* :pr:`139`: fix compilation issues on MacOSX
+
 0.5.2
 =====
 
