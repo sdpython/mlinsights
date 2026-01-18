@@ -28,7 +28,6 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.preprocessing import StandardScaler
 from mlinsights.mlmodel import PredictableTSNE
 
-
 digits = datasets.load_digits(n_class=6)
 Xd = digits.data
 yd = digits.target

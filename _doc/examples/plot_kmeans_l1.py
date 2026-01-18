@@ -14,7 +14,6 @@ import numpy.random as rnd
 from sklearn.cluster import KMeans
 from mlinsights.mlmodel import KMeansL1L2
 
-
 ######################################################################
 # Simple datasets
 # ---------------

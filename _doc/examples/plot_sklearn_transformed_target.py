@@ -31,7 +31,6 @@ from sklearn.utils._testing import ignore_warnings
 from mlinsights.mlmodel import TransformedTargetRegressor2
 from mlinsights.mlmodel import TransformedTargetClassifier2
 
-
 rnd = random((1000, 1))
 rndn = randn(1000)
 X = rnd[:, :1] * 10

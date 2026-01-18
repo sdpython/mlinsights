@@ -26,7 +26,6 @@ from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.dummy import DummyRegressor
 from mlinsights.mlmodel import PiecewiseRegressor
 
-
 X = npr.normal(size=(1000, 4))
 alpha = [4, -2]
 t = (X[:, 0] + X[:, 3] * 0.5) > 0
