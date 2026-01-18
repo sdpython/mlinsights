@@ -34,7 +34,6 @@ from mlinsights.helpers.pipeline import (
 )
 from mlinsights.plotting import pipeline2dot, pipeline2str
 
-
 iris = datasets.load_iris()
 X = iris.data[:, :4]
 df = pandas.DataFrame(X)

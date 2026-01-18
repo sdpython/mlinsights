@@ -122,8 +122,7 @@ class TestDot(ExtTestCase):
         self.assertIn("MinMaxScaler", dot)
 
     def test_onehotencoder_dot(self):
-        data = dedent(
-            """
+        data = dedent("""
             date,value,notrend,trend,weekday,lag1,lag2,lag3,lag4,lag5,lag6,lag7,lag8
             2017-07-10 13:27:04.669830,0.003463591425601385,0.0004596547917981044,0.0030039366338032807,
             ###0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
@@ -151,8 +150,7 @@ class TestDot(ExtTestCase):
             2017-07-21 13:27:04.669830,0.005866058541412791,0.00217339675927127,0.0036926617821415207,4,0.004773874566436903,
             ###0.004200435956007872,0.0038464710972236286,0.0035533180858140765,0.008716378909294038,0.006336617719481035,
             ###0.006078151848127084,0.004277700876279705
-            """
-        ).replace("\n###", "")
+            """).replace("\n###", "")
         df = pandas.read_csv(StringIO(data))
         cols = ["lag1", "lag2", "lag3", "lag4", "lag5", "lag6", "lag7", "lag8"]
         model = make_pipeline(
@@ -180,9 +178,7 @@ class TestDot(ExtTestCase):
             7.8,0.76,0.04,2.3,0.092,15.0,54.0,0.997,3.26,0.65,9.8,5,red
             11.2,0.28,0.56,1.9,0.075,17.0,60.0,0.998,3.16,0.58,9.8,6,white
             7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5,red
-            """.replace(
-            "            ", ""
-        )
+            """.replace("            ", "")
         X_train = pandas.read_csv(StringIO(buffer)).drop("quality", axis=1)
 
         pipe = Pipeline(
@@ -224,9 +220,7 @@ class TestDot(ExtTestCase):
             7.8,0.76,0.04,2.3,0.092,15.0,54.0,0.997,3.26,0.65,9.8,5,red
             11.2,0.28,0.56,1.9,0.075,17.0,60.0,0.998,3.16,0.58,9.8,6,white
             7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5,red
-            """.replace(
-            "            ", ""
-        )
+            """.replace("            ", "")
         X_train = pandas.read_csv(StringIO(buffer)).drop("quality", axis=1)
 
         numeric_features = [c for c in X_train if c != "color"]

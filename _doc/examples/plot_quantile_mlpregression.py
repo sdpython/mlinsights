@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPRegressor
 from mlinsights.mlmodel import QuantileMLPRegressor
 
-
 X = numpy.random.random(1000)
 eps1 = (numpy.random.random(900) - 0.5) * 0.1
 eps2 = (numpy.random.random(100)) * 10

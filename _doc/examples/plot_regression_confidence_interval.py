@@ -35,7 +35,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from mlinsights.mlmodel import IntervalRegressor, QuantileLinearRegression
 
-
 N = 200
 X = rand(N, 1) * 2
 eps = randn(N, 1) * 0.2

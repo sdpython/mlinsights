@@ -26,7 +26,6 @@ from mlinsights.ext_test_case import unzip_files
 from mlinsights.plotting import plot_gallery_images
 from torchvision.models.squeezenet import SqueezeNet1_0_Weights
 
-
 model = models.squeezenet1_0(weights=SqueezeNet1_0_Weights.IMAGENET1K_V1)
 model
 

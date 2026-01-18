@@ -22,7 +22,6 @@ from mlinsights.mlmodel.sklearn_text import (
     TraceableTfidfVectorizer,
 )
 
-
 corpus = numpy.array(
     [
         "This is the first document.",
